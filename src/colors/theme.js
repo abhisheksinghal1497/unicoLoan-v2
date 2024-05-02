@@ -4,13 +4,19 @@ const customTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-   primary: "#2E52A1",
+    primary: "#2E52A1",
     primaryContainer: "#E1F3FF",
     primaryShadow: "rgba(105, 87, 211, 0.3)",
     surfaceVariant: "#D7E7F4",
     surface: "#0076C7",
     background: "#FFFFFF",
+    seconderyBackground: "rgba(254, 249, 235, 1)",
     textInputBackground: "#FFFFFF",
+    error: "rgba(232, 41, 45, 1)",
+    errorContainer: "rgba(251, 226, 226, 1)",
+    success: "rgba(15, 157, 88, 1)",
+    primaryText: "#000000",
+    seconderyText: "rgba(124, 126, 139, 1)",
     elevation: {
       level3: "rgba(0, 0, 0, 0.25)",
       // level0: "#E6F4FF",
@@ -30,21 +36,37 @@ const customTheme = {
       fontFamily: "Nunito",
       fontWeight: "normal",
       fontSize: 12,
+      color: '#000000',
+    },
+    smallLightText: {
+      fontFamily: "Nunito",
+      fontWeight: "normal",
+      fontSize: 12,
+      color: 'rgba(124, 126, 139, 1)',
     },
     regularText: {
       fontFamily: "Nunito",
       fontWeight: "normal",
       fontSize: 14,
+      color: '#000000',
+    },
+    regularLightText: {
+      fontFamily: "Nunito",
+      fontWeight: "normal",
+      fontSize: 14,
+      color: 'rgba(124, 126, 139, 1)',
     },
     mediumText: {
       fontFamily: "Nunito",
       fontWeight: "bold",
       fontSize: 14,
+      color: '#000000',
     },
     default: {
       fontFamily: "Nunito",
       fontWeight: "normal",
       letterSpacing: 0,
+      color: '#000000',
     },
 
     titleMedium: {
@@ -53,6 +75,7 @@ const customTheme = {
       fontWeight: "400",
       letterSpacing: 0.15,
       lineHeight: 24,
+      color: '#000000',
     },
     titleLarge: {
       fontFamily: "Nunito",
@@ -60,6 +83,7 @@ const customTheme = {
       fontWeight: "400",
       letterSpacing: 0,
       lineHeight: 28,
+      color: '#000000',
     },
     bodySmall: {
       fontFamily: "Nunito",
@@ -67,6 +91,7 @@ const customTheme = {
       fontWeight: "400",
       letterSpacing: 0.4,
       lineHeight: 16,
+      color: '#000000',
     },
     labelSmall: {
       fontFamily: "Nunito",
@@ -74,6 +99,7 @@ const customTheme = {
       fontWeight: "500",
       letterSpacing: 0.5,
       lineHeight: 16,
+      color: 'rgba(136, 136, 136, 1)',
     },
     labelMedium: {
       fontFamily: "Nunito",
@@ -81,6 +107,7 @@ const customTheme = {
       fontWeight: "500",
       letterSpacing: 0.5,
       lineHeight: 16,
+      color: 'rgba(136, 136, 136, 1)',
     },
     labelLarge: {
       fontFamily: "Nunito",
@@ -88,6 +115,7 @@ const customTheme = {
       fontWeight: "500",
       letterSpacing: 0.1,
       lineHeight: 20,
+      color: 'rgba(136, 136, 136, 1)',
     },
     headlineSmall: {
       fontFamily: "Nunito",
@@ -95,6 +123,7 @@ const customTheme = {
       fontWeight: "400",
       letterSpacing: 0,
       lineHeight: 32,
+      color: '#000000',
     },
     headlineMedium: {
       fontFamily: "Nunito",
@@ -102,6 +131,7 @@ const customTheme = {
       fontWeight: "400",
       letterSpacing: 0,
       lineHeight: 36,
+      color: '#000000',
     },
     headlineLarge: {
       fontFamily: "Nunito",
@@ -109,6 +139,7 @@ const customTheme = {
       fontWeight: "400",
       letterSpacing: 0,
       lineHeight: 40,
+      color: '#000000',
     },
   },
 };
