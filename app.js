@@ -24,54 +24,69 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     StyleSheet,
     Text,
     View,
     FlatList,
 } from 'react-native';
-
+import {
+    MD3LightTheme as DefaultTheme,
+    PaperProvider,
+    useTheme,
+} from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import {oauth, net} from 'react-native-force';
+import { oauth, net } from 'react-native-force';
+import customTheme from './src/colors/theme';
+import { Provider as Reduxprovider } from 'react-redux';
+import store from './src/store/redux';
 
-class ContactListScreen extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {data: []};
-    }
-    
-    componentDidMount() {
-        var that = this;
+const ContactListScreen = () => {
+    const [data, setData] = useState([
+        "Header",
+        "Card",
+        "Modal",
+        "Errors",
+        "Buttons",
+        "Alert",
+        "Toast",
+        "Bottom Popover",
+        "small card grid",
+        "Progress bar",
+        "Loading",
+        "Stepper Component"
+    ]);
+    const {colors} = useTheme();
+
+    useEffect(() => {
         oauth.getAuthCredentials(
-            () => that.fetchData(), // already logged in
+            () => fetchData(), // already logged in
             () => {
                 oauth.authenticate(
-                    () => that.fetchData(),
+                    () => fetchData(),
                     (error) => console.log('Failed to authenticate:' + error)
                 );
             });
-    }
+    }, [])
 
-    fetchData() {
-        var that = this;
+    function fetchData() {
         net.query('SELECT Id, Name FROM Contact LIMIT 100',
-                  (response) => that.setState({data: response.records})
-                 );
-    }
-
-    render() {
-        return (
-            <View style={styles.container}>
-              <FlatList
-                data={this.state.data}
-                renderItem={({item}) => <Text style={styles.item}>{item.Name}</Text>}
-                keyExtractor={(item, index) => 'key_' + index}
-              />
-            </View>
+            (response) => {}
         );
     }
+
+    return (
+        
+        <View style={styles.container}>
+            <FlatList
+                data={data}
+                renderItem={({ item }) => <Text style={[styles.item, {color: colors.primary}]}>{item}</Text>}
+                keyExtractor={(item, index) => 'key_' + index}
+            />
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
@@ -89,12 +104,16 @@ const styles = StyleSheet.create({
 
 const Stack = createStackNavigator();
 
-export const App = function() {
+export const App = function () {
     return (
-        <NavigationContainer>
-          <Stack.Navigator>
-            <Stack.Screen name="Mobile SDK Sample App" component={ContactListScreen} />
-          </Stack.Navigator>
-        </NavigationContainer>
+        <PaperProvider theme={customTheme}>
+            <NavigationContainer>
+            <Reduxprovider store={store}>
+                <Stack.Navigator>
+                    <Stack.Screen name="Mobile SDK Sample App" component={ContactListScreen} />
+                </Stack.Navigator>
+                </Reduxprovider>
+            </NavigationContainer>
+        </PaperProvider>
     );
 }

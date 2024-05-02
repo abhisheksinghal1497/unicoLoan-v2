@@ -21,6 +21,7 @@
         "react-native": "0.70.6",
         "react-native-force": "git+https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#v11.0.0",
         "react-native-gesture-handler": "^1.10.3",
+        "react-native-paper": "^5.12.3",
         "react-native-safe-area-context": "^3.3.0",
         "react-native-screens": "^3.4.0",
         "redux-thunk": "^3.1.0"
