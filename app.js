@@ -40,6 +40,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { oauth, net } from 'react-native-force';
 import customTheme from './src/colors/theme';
+import { Provider as Reduxprovider } from 'react-redux';
+import store from './src/store/redux';
+import Dashboard from './src/Navigation/Dashboard';
 
 const ContactListScreen = () => {
     const [data, setData] = useState([
@@ -76,6 +79,7 @@ const ContactListScreen = () => {
     }
 
     return (
+        
         <View style={styles.container}>
             <FlatList
                 data={data}
@@ -100,16 +104,12 @@ const styles = StyleSheet.create({
     }
 });
 
-const Stack = createStackNavigator();
-
 export const App = function () {
     return (
         <PaperProvider theme={customTheme}>
-            <NavigationContainer>
-                <Stack.Navigator>
-                    <Stack.Screen name="Mobile SDK Sample App" component={ContactListScreen} />
-                </Stack.Navigator>
-            </NavigationContainer>
+              <Reduxprovider store={store}>
+           <Dashboard/>
+            </Reduxprovider>
         </PaperProvider>
     );
 }
