@@ -1,14 +1,12 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const PancardNumber = () => {
+export const HomeScreenStyle = () => {
   return (
     <View>
-      <Text>PancardNumber</Text>
+      <Text>HomeScreenStyle</Text>
     </View>
   )
 }
-
-export default PancardNumber
 
 const styles = StyleSheet.create({})
