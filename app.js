@@ -42,6 +42,8 @@ import { oauth, net } from 'react-native-force';
 import customTheme from './src/colors/theme';
 import { Provider as Reduxprovider } from 'react-redux';
 import store from './src/store/redux';
+import AuthStack from './src/Navigation/AuthStack';
+import Dashboard from './src/Navigation/Dashboard';
 
 const ContactListScreen = () => {
     const [data, setData] = useState([
@@ -103,18 +105,13 @@ const styles = StyleSheet.create({
     }
 });
 
-const Stack = createStackNavigator();
-
 export const App = function () {
     return (
         <PaperProvider theme={customTheme}>
-            <NavigationContainer>
-            <Reduxprovider store={store}>
-                <Stack.Navigator>
-                    <Stack.Screen name="Mobile SDK Sample App" component={ContactListScreen} />
-                </Stack.Navigator>
-                </Reduxprovider>
-            </NavigationContainer>
+              <Reduxprovider store={store}>
+           {/* <AuthStack/> */}
+           <Dashboard/>
+            </Reduxprovider>
         </PaperProvider>
     );
 }
