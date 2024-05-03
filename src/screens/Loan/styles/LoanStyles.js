@@ -1,14 +1,12 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const PhoneNumber = () => {
+export const LoanStyles = () => {
   return (
     <View>
-      <Text>PhoneNumber</Text>
+      <Text>LoanStyles</Text>
     </View>
   )
 }
-
-export default PhoneNumber
 
 const styles = StyleSheet.create({})
