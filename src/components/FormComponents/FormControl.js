@@ -4,7 +4,7 @@ import InputField from "./InputField";
 export const component = {
   readOnly: "readOnly",
   maskInput: "maskInput",
-  input: "input",
+  textInput: "textInput",
   otpInput: "otpInput",
   number: "number",
   photograph: "photograph",
@@ -18,7 +18,7 @@ export const FormControl = ({ compType, options, ...rest }) => {
   switch (compType) {
     //   case component.readOnly:
     //     return <ReadOnly {...rest} />;
-    case component.input:
+    case component.textInput:
       return <InputField {...rest} />;
     //   case component.otpInput:
     //     return <OtpInput {...rest} />;

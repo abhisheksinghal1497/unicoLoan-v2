@@ -1,10 +1,18 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Text, TouchableOpacity, Modal } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Modal,
+  FlatList,
+} from "react-native";
 import { useTheme } from "react-native-paper";
 import { Controller } from "react-hook-form";
 import { colors } from "../../colors";
 import customTheme from "../../colors/theme";
 import CustomShadow from "./CustomShadow";
+import { getErrMsg } from "../../services/globalHelper";
 
 export default DropDown = ({
   control,
@@ -19,10 +27,13 @@ export default DropDown = ({
   tooltipText = "",
   placeholder,
   style = {},
+  data = [],
   ...rest
 }) => {
   const { colors, fonts } = useTheme();
   const [modalVisible, setModalVisible] = useState(false);
+
+  const [valueText, setValueText] = useState("");
 
   return (
     <>
@@ -57,7 +68,7 @@ export default DropDown = ({
                     ]}
                   >
                     <Text style={[value ? { color: colors.grey } : {}]}>
-                      {value || placeholder}
+                      {valueText || placeholder}
                     </Text>
                     <Text style={styles.selectArr}>&#9013;</Text>
                   </View>
@@ -91,7 +102,26 @@ export default DropDown = ({
           }}
         >
           <View style={styles.modal}>
-            <Text>Options</Text>
+            <FlatList
+              data={data}
+              keyExtractor={(item) => item?.id?.toString()}
+              renderItem={({ item }) => {
+                return (
+                  <TouchableOpacity
+                    style={styles.itemView}
+                    onPress={() => {
+                      if (setValue) {
+                        setValue(name, item.value);
+                        setValueText(item.label);
+                      }
+                      setModalVisible(false);
+                    }}
+                  >
+                    <Text style={styles.itemText}>{item?.label}</Text>
+                  </TouchableOpacity>
+                );
+              }}
+            />
           </View>
         </TouchableOpacity>
       </Modal>
@@ -149,5 +179,12 @@ const styles = StyleSheet.create({
     padding: 10,
     maxHeight: 650,
     paddingBottom: 20,
+  },
+  itemView: {
+    padding: 10,
+    borderTopWidth: 0.5,
+  },
+  itemText: {
+    color: colors.black,
   },
 });
