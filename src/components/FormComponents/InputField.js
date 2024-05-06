@@ -20,7 +20,7 @@ export default InputField = ({
   tooltipText = "",
   ...rest
 }) => {
-  const { colors } = useTheme();
+  const { colors, fonts } = useTheme();
 
   return (
     <Controller
@@ -33,7 +33,7 @@ export default InputField = ({
         return (
           <View style={styles.container}>
             <View style={styles.labelContainer}>
-              <Text>
+              <Text style={fonts.regularText}>
                 {isRequired && <Text style={styles.asterisk}>* </Text>}
                 {label}
               </Text>
@@ -55,6 +55,8 @@ export default InputField = ({
                 mode="outlined"
                 outlineColor={colors.border}
                 outlineStyle={styles.inputOutline}
+                placeholder="Enter Here"
+                placeholderTextColor={colors.seconderyText}
                 {...rest}
               />
             </CustomShadow>

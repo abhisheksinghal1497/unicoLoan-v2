@@ -1,25 +1,32 @@
 import React from "react";
-import { Dimensions } from "react-native";
-import { BoxShadow } from "react-native-shadow";
-import { colors } from "../constants/colorConstant";
+import { View, StyleSheet } from "react-native";
+import { colors } from "../../colors";
 
-const { width: deviceWidth } = Dimensions.get("screen");
+const CustomShadow = (props) => {
+  const { children } = props;
 
-const CustomShadow = ({ children, shadowColor = colors.primary }) => {
-  const shadowOpt = {
-    width: deviceWidth - 40,
-    height: 50,
-    color: shadowColor,
-    border: 3,
-    radius: 8,
-    opacity: 0.65,
-    blur: 10,
-    x: 3,
-    y: 3,
-    style: { marginVertical: 5, borderRadius: 8 },
-  };
-
-  return <BoxShadow setting={shadowOpt}>{children}</BoxShadow>;
+  return (
+    <View style={styles.container}>
+      <View style={styles.shadowView}>{children}</View>
+    </View>
+  );
 };
 
 export default CustomShadow;
+
+const styles = StyleSheet.create({
+  container: {
+    overflow: "hidden",
+    paddingBottom: 5,
+    borderRadius: 30,
+  },
+  shadowView: {
+    backgroundColor: colors.white,
+    shadowColor: colors.black,
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.4,
+    shadowRadius: 3,
+    elevation: 8,
+    borderRadius: 40,
+  },
+});

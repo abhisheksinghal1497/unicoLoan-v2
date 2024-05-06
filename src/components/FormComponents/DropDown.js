@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity, Modal } from "react-native";
 import { useTheme } from "react-native-paper";
 import { Controller } from "react-hook-form";
 import { colors } from "../../colors";
 import customTheme from "../../colors/theme";
+import CustomShadow from "./CustomShadow";
 
 export default DropDown = ({
   control,
@@ -18,7 +19,7 @@ export default DropDown = ({
   tooltipText = "",
   ...rest
 }) => {
-  const { colors } = useTheme();
+  const { colors, fonts } = useTheme();
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
@@ -33,7 +34,7 @@ export default DropDown = ({
           return (
             <View style={styles.container}>
               <View style={styles.labelContainer}>
-                <Text>
+                <Text style={fonts.regularText}>
                   {isRequired && <Text style={styles.asterisk}>* </Text>}
                   {label}
                 </Text>
@@ -81,7 +82,16 @@ export default DropDown = ({
           setModalVisible(false);
         }}
       >
-        <View style={styles.modalContainer}></View>
+        <TouchableOpacity
+          style={styles.modalContainer}
+          onPress={() => {
+            setModalVisible(false);
+          }}
+        >
+          <View style={styles.modal}>
+            <Text>Options</Text>
+          </View>
+        </TouchableOpacity>
       </Modal>
     </>
   );
@@ -129,5 +139,13 @@ const styles = StyleSheet.create({
   modalContainer: {
     backgroundColor: "#00000077",
     flex: 1,
+    justifyContent: "flex-end",
+  },
+  modal: {
+    backgroundColor: colors.white,
+    borderRadius: 8,
+    padding: 10,
+    maxHeight: 650,
+    paddingBottom: 20,
   },
 });

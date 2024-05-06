@@ -30,4 +30,5 @@ export const colors = {
   asteriskRequired: '#FF0000',
   selectedItemColor: '#d6e0f5',
   success: '#72DA7D',
+  grey: "#777777",
 };
