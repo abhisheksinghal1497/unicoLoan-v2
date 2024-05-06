@@ -19,6 +19,7 @@ export default InputField = ({
   isRequired = false,
   tooltipText = "",
   placeholder,
+  style = {},
   ...rest
 }) => {
   const { colors, fonts } = useTheme();
@@ -52,7 +53,7 @@ export default InputField = ({
                 value={value?.toString()}
                 disabled={isDisabled}
                 dense={true}
-                style={styles.textInput}
+                style={[styles.textInput, style]}
                 mode="outlined"
                 outlineColor={colors.border}
                 outlineStyle={styles.inputOutline}

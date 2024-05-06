@@ -18,6 +18,7 @@ export default DropDown = ({
   isRequired = false,
   tooltipText = "",
   placeholder,
+  style = {},
   ...rest
 }) => {
   const { colors, fonts } = useTheme();
@@ -43,7 +44,7 @@ export default DropDown = ({
 
               <CustomShadow shadowColor={error ? colors.error : colors.primary}>
                 <TouchableOpacity
-                  style={styles.selectContainer}
+                  style={[styles.selectContainer, style]}
                   activeOpacity={1}
                   onPress={() => {
                     setModalVisible(true);

@@ -35,6 +35,7 @@ export default function ApplicationDetails() {
         errors={errors.leadId}
         isRequired
         placeholder="Enter Lead Id"
+        // style={{}}
       />
 
       <FormControl
@@ -57,6 +58,7 @@ export default function ApplicationDetails() {
         errors={errors.leadSrc}
         isRequired
         placeholder="Please select Lead Source"
+        // style={{}}
       />
     </View>
   );
