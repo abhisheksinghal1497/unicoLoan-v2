@@ -5,6 +5,7 @@ import { Controller } from "react-hook-form";
 import { colors } from "../../colors";
 import customTheme from "../../colors/theme";
 import { getErrMsg } from "../../services/globalHelper";
+import CustomShadow from "./CustomShadow";
 
 export default InputField = ({
   control,
@@ -37,24 +38,26 @@ export default InputField = ({
                 {label}
               </Text>
             </View>
-            <TextInput
-              onBlur={onBlur}
-              keyboardType={type}
-              returnKeyType="done"
-              error={error?.message}
-              scrollEnabled={false}
-              onChangeText={(value) => {
-                onChange(value);
-              }}
-              value={value?.toString()}
-              disabled={isDisabled}
-              dense={true}
-              style={styles.textInput}
-              mode="outlined"
-              outlineColor={colors.border}
-              outlineStyle={styles.inputOutline}
-              {...rest}
-            />
+            <CustomShadow shadowColor={error ? colors.error : colors.primary}>
+              <TextInput
+                onBlur={onBlur}
+                keyboardType={type}
+                returnKeyType="done"
+                error={error?.message}
+                scrollEnabled={false}
+                onChangeText={(value) => {
+                  onChange(value);
+                }}
+                value={value?.toString()}
+                disabled={isDisabled}
+                dense={true}
+                style={styles.textInput}
+                mode="outlined"
+                outlineColor={colors.border}
+                outlineStyle={styles.inputOutline}
+                {...rest}
+              />
+            </CustomShadow>
 
             {error && (
               <Text style={styles.error}>

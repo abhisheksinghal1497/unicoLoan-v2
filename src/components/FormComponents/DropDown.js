@@ -39,25 +39,27 @@ export default DropDown = ({
                 </Text>
               </View>
 
-              <TouchableOpacity
-                style={styles.selectContainer}
-                activeOpacity={1}
-                onPress={() => {
-                  setModalVisible(true);
-                }}
-              >
-                <View
-                  style={[
-                    styles.selectField,
-                    error && { borderColor: colors.error },
-                  ]}
+              <CustomShadow shadowColor={error ? colors.error : colors.primary}>
+                <TouchableOpacity
+                  style={styles.selectContainer}
+                  activeOpacity={1}
+                  onPress={() => {
+                    setModalVisible(true);
+                  }}
                 >
-                  <Text style={[value ? { color: colors.grey } : {}]}>
-                    {value || "Select"}
-                  </Text>
-                  <Text style={styles.selectArr}>&#9013;</Text>
-                </View>
-              </TouchableOpacity>
+                  <View
+                    style={[
+                      styles.selectField,
+                      error && { borderColor: colors.error },
+                    ]}
+                  >
+                    <Text style={[value ? { color: colors.grey } : {}]}>
+                      {value || "Select"}
+                    </Text>
+                    <Text style={styles.selectArr}>&#9013;</Text>
+                  </View>
+                </TouchableOpacity>
+              </CustomShadow>
 
               {error && (
                 <Text style={styles.error}>
@@ -70,8 +72,6 @@ export default DropDown = ({
         }}
         name={name}
       />
-
-      {/* //! show modal when modalVisible is true */}
 
       <Modal
         animationType="fade"
