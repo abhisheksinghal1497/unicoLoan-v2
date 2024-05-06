@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContainer: {
-    backgroundColor: "#00000077",
+    backgroundColor: customTheme.colors.elevation.level3,
     flex: 1,
     justifyContent: "flex-end",
   },
