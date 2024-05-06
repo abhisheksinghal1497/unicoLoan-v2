@@ -40,6 +40,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { oauth, net } from 'react-native-force';
 import customTheme from './src/colors/theme';
+import CustomButton from './src/components/Button';
+import { alert, toast } from './src/utils/functions';
 
 const ContactListScreen = () => {
     const [data, setData] = useState([
@@ -56,7 +58,7 @@ const ContactListScreen = () => {
         "Loading",
         "Stepper Component"
     ]);
-    const {colors} = useTheme();
+    const { colors } = useTheme();
 
     useEffect(() => {
         oauth.getAuthCredentials(
@@ -71,15 +73,23 @@ const ContactListScreen = () => {
 
     function fetchData() {
         net.query('SELECT Id, Name FROM Contact LIMIT 100',
-            (response) => {}
+            (response) => { }
         );
     }
 
     return (
         <View style={styles.container}>
+            <CustomButton
+                type="primary"
+                label="Press Me"
+                onPress={() => { alert('Validation', 'Invalid phone number entered.', () => { }) }} />
+            <CustomButton
+                type="secondery"
+                label="Press Me"
+                onPress={() => { toast('Invalid phone number entered.') }} />
             <FlatList
                 data={data}
-                renderItem={({ item }) => <Text style={[styles.item, {color: colors.primary}]}>{item}</Text>}
+                renderItem={({ item }) => <Text style={[styles.item, { color: colors.primary }]}>{item}</Text>}
                 keyExtractor={(item, index) => 'key_' + index}
             />
         </View>
@@ -96,7 +106,7 @@ const styles = StyleSheet.create({
         padding: 10,
         fontSize: 18,
         height: 44,
-        fontFamily:"Nunito-ExtraBoldItalic"
+        fontFamily: "Nunito-ExtraBoldItalic"
     }
 });
 

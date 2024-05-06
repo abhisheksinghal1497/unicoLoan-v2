@@ -1,10 +1,11 @@
 import { MD3LightTheme as DefaultTheme } from "react-native-paper";
+import { colors } from ".";
 
 const customTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    primary: "#2E52A1",
+    primary: "rgba(46, 82, 161, 1)",
     primaryContainer: "#E1F3FF",
     primaryShadow: "rgba(105, 87, 211, 0.3)",
     surfaceVariant: "#D7E7F4",
@@ -92,6 +93,18 @@ const customTheme = {
       letterSpacing: 0.4,
       lineHeight: 16,
       color: '#000000',
+    },
+    buttonText: {
+      fontFamily: "Nunito-Bold",
+      fontSize: 18,
+      lineHeight: 25,
+      color: colors.white,
+    },
+    seconderyButtonText: {
+      fontFamily: "Nunito-Bold",
+      fontSize: 18,
+      lineHeight: 25,
+      color: "rgba(46, 82, 161, 1)",
     },
     labelSmall: {
       fontFamily: "Nunito-Regular",
