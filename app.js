@@ -42,7 +42,9 @@ import { oauth, net } from 'react-native-force';
 import customTheme from './src/colors/theme';
 import { Provider as Reduxprovider } from 'react-redux';
 import store from './src/store/redux';
-import Dashboard from './src/Navigation/Dashboard';
+// import Dashboard from './src/Navigation/Dashboard';
+import HomeScreen from "./src/screens/HomeScreen";
+import ApplicationDetails from './src/screens/ApplicationDetails';
 
 const ContactListScreen = () => {
     const [data, setData] = useState([
@@ -108,7 +110,8 @@ export const App = function () {
     return (
         <PaperProvider theme={customTheme}>
               <Reduxprovider store={store}>
-           <Dashboard/>
+           {/* <HomeScreen/> */}
+           <ApplicationDetails />
             </Reduxprovider>
         </PaperProvider>
     );
