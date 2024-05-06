@@ -17,6 +17,7 @@ export default DropDown = ({
   isDisabled = false,
   isRequired = false,
   tooltipText = "",
+  placeholder,
   ...rest
 }) => {
   const { colors, fonts } = useTheme();
@@ -55,7 +56,7 @@ export default DropDown = ({
                     ]}
                   >
                     <Text style={[value ? { color: colors.grey } : {}]}>
-                      {value || "Select"}
+                      {value || placeholder}
                     </Text>
                     <Text style={styles.selectArr}>&#9013;</Text>
                   </View>

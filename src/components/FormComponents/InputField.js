@@ -18,6 +18,7 @@ export default InputField = ({
   isDisabled = false,
   isRequired = false,
   tooltipText = "",
+  placeholder,
   ...rest
 }) => {
   const { colors, fonts } = useTheme();
@@ -55,7 +56,7 @@ export default InputField = ({
                 mode="outlined"
                 outlineColor={colors.border}
                 outlineStyle={styles.inputOutline}
-                placeholder="Enter Here"
+                placeholder={placeholder}
                 placeholderTextColor={colors.seconderyText}
                 {...rest}
               />

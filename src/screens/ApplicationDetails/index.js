@@ -34,6 +34,7 @@ export default function ApplicationDetails() {
         label="SFDC Lead Id"
         errors={errors.leadId}
         isRequired
+        placeholder="Enter Lead Id"
       />
 
       <FormControl
@@ -44,6 +45,7 @@ export default function ApplicationDetails() {
         label="Phone No."
         errors={errors.phone}
         isRequired
+        placeholder="Enter your phone no."
       />
 
       <FormControl
@@ -54,6 +56,7 @@ export default function ApplicationDetails() {
         label="Lead Source"
         errors={errors.leadSrc}
         isRequired
+        placeholder="Please select Lead Source"
       />
     </View>
   );
