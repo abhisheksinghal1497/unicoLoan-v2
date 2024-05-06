@@ -36,15 +36,16 @@ import {
     PaperProvider,
     useTheme,
 } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
+import NetInfo from '@react-native-community/netinfo';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { oauth, net } from 'react-native-force';
 import customTheme from './src/colors/theme';
 import { Provider as Reduxprovider } from 'react-redux';
 import store from './src/store/redux';
-// import Dashboard from './src/Navigation/Dashboard';
-import HomeScreen from "./src/screens/HomeScreen";
-import ApplicationDetails from './src/screens/ApplicationDetails';
+import Dashboard from './src/Navigation/MainNavigation';
+import NoInternet from './src/screens/NoInternet';
 
 const ContactListScreen = () => {
     const [data, setData] = useState([
@@ -61,7 +62,7 @@ const ContactListScreen = () => {
         "Loading",
         "Stepper Component"
     ]);
-    const {colors} = useTheme();
+    const { colors } = useTheme();
 
     useEffect(() => {
         oauth.getAuthCredentials(
@@ -76,16 +77,18 @@ const ContactListScreen = () => {
 
     function fetchData() {
         net.query('SELECT Id, Name FROM Contact LIMIT 100',
-            (response) => {}
+            (response) => { }
         );
     }
 
+
+
     return (
-        
+
         <View style={styles.container}>
             <FlatList
                 data={data}
-                renderItem={({ item }) => <Text style={[styles.item, {color: colors.primary}]}>{item}</Text>}
+                renderItem={({ item }) => <Text style={[styles.item, { color: colors.primary }]}>{item}</Text>}
                 keyExtractor={(item, index) => 'key_' + index}
             />
         </View>
@@ -102,16 +105,26 @@ const styles = StyleSheet.create({
         padding: 10,
         fontSize: 18,
         height: 44,
-        fontFamily:"Nunito-ExtraBoldItalic"
+        fontFamily: "Nunito-ExtraBoldItalic"
     }
 });
 
 export const App = function () {
+    const [isConnected, setIsConnected] = useState(true);
+
+    useEffect(() => {
+        const unsubscribe = NetInfo.addEventListener(state => {
+            setIsConnected(state.isConnected);
+        });
+        return () => {
+            unsubscribe();
+        };
+    }, []);
+
     return (
         <PaperProvider theme={customTheme}>
-              <Reduxprovider store={store}>
-           {/* <HomeScreen/> */}
-           <ApplicationDetails />
+            <Reduxprovider store={store}>
+                {isConnected ? <Dashboard /> : <NoInternet />}
             </Reduxprovider>
         </PaperProvider>
     );
