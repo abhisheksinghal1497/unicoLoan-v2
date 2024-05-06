@@ -72,6 +72,17 @@ export default DropDown = ({
       />
 
       {/* //! show modal when modalVisible is true */}
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}
+      >
+        <View style={styles.modalContainer}></View>
+      </Modal>
     </>
   );
 };
@@ -114,5 +125,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  modalContainer: {
+    backgroundColor: "#00000077",
+    flex: 1,
   },
 });
