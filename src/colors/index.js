@@ -8,7 +8,7 @@ export const colors = {
   tertiary: '#080F18',
   black: '#000000',
   secondaryText: '#999999',
-  bgColor: '#D7E7F4',
+  bgColor: 'rgba(239,239,237,255)',
   bgLight: '#E6F4FF',
   bgDark: '#0076C7',
   placeholder: '#BBBBBB',
@@ -30,5 +30,6 @@ export const colors = {
   asteriskRequired: '#FF0000',
   selectedItemColor: '#d6e0f5',
   success: '#72DA7D',
+  link: '#0076C7',
   grey: "#777777",
 };
