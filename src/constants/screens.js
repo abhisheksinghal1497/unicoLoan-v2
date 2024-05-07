@@ -1,5 +1,6 @@
 export const screens = {
     Splash: 'Splash',
+    PanDetails: 'PanDetails',
     HomeScreen: 'HomeScreen',
     ApplicantDetails: 'ApplicantDetails',
     ApplyForLoan: 'ApplyForLoan',
