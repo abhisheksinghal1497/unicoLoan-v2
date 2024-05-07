@@ -24,92 +24,149 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, View, FlatList, Pressable } from "react-native";
 import {
-    StyleSheet,
-    Text,
-    View,
-    FlatList,
-} from 'react-native';
-import {
-    MD3LightTheme as DefaultTheme,
-    PaperProvider,
-    useTheme,
-} from 'react-native-paper';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { oauth, net } from 'react-native-force';
-import customTheme from './src/colors/theme';
+  MD3LightTheme as DefaultTheme,
+  PaperProvider,
+  useTheme,
+} from "react-native-paper";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { oauth, net } from "react-native-force";
+import customTheme from "./src/colors/theme";
+import Card from "./src/components/Card";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import CustomModal from "./src/components/CustomModal";
 
 const ContactListScreen = () => {
-    const [data, setData] = useState([
-        "Header",
-        "Card",
-        "Modal",
-        "Errors",
-        "Buttons",
-        "Alert",
-        "Toast",
-        "Bottom Popover",
-        "small card grid",
-        "Progress bar",
-        "Loading",
-        "Stepper Component"
-    ]);
-    const {colors} = useTheme();
+  const [data, setData] = useState([
+    "Header",
+    "Card",
+    "Modal",
+    "Errors",
+    "Buttons",
+    "Alert",
+    "Toast",
+    "Bottom Popover",
+    "small card grid",
+    "Progress bar",
+    "Loading",
+    "Stepper Component",
+  ]);
+  const { colors } = useTheme();
+  const [showModal, setShowModal] = useState(false);
+  const [showBottomModal, setShowBottomModal] = useState(false);
 
-    useEffect(() => {
-        oauth.getAuthCredentials(
-            () => fetchData(), // already logged in
-            () => {
-                oauth.authenticate(
-                    () => fetchData(),
-                    (error) => console.log('Failed to authenticate:' + error)
-                );
-            });
-    }, [])
-
-    function fetchData() {
-        net.query('SELECT Id, Name FROM Contact LIMIT 100',
-            (response) => {}
+  useEffect(() => {
+    oauth.getAuthCredentials(
+      () => fetchData(), // already logged in
+      () => {
+        oauth.authenticate(
+          () => fetchData(),
+          (error) => console.log("Failed to authenticate:" + error)
         );
-    }
+      }
+    );
+  }, []);
 
-    return (
-        <View style={styles.container}>
-            <FlatList
+  function fetchData() {
+    net.query("SELECT Id, Name FROM Contact LIMIT 100", (response) => {});
+  }
+
+  return (
+    <View style={styles.container}>
+      <Card>
+        <TouchableOpacity onPress={() => setShowModal(!showModal)}>
+          <Text>Open Modal</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setShowBottomModal(!showBottomModal)}>
+          <Text>Open bottom Modal</Text>
+        </TouchableOpacity>
+        <Text>1</Text>
+        <Text>1</Text>
+        <Text>1</Text>
+        <Text>1</Text>
+      </Card>
+      <View
+        style={{
+          width: "100%",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <Card cardStyle={{ width: "30%" }}>
+          <Text>1</Text>
+        </Card>
+        <Card cardStyle={{ width: "30%" }}>
+          <Text>1</Text>
+        </Card>
+        <Card cardStyle={{ width: "30%" }}>
+          <Text>1</Text>
+        </Card>
+      </View>
+      <CustomModal showModal={showModal} setShowModal={setShowModal} type="center">
+        <View style={{ zIndex: 10000000000 }}>
+          <Pressable onPress={() => setShowModal(!showModal)}>
+            <Text>Close Modal</Text>
+          </Pressable>
+          <FlatList
                 data={data}
                 renderItem={({ item }) => <Text style={[styles.item, {color: colors.primary}]}>{item}</Text>}
                 keyExtractor={(item, index) => 'key_' + index}
             />
         </View>
-    );
-}
+      </CustomModal>
+      <CustomModal showModal={showBottomModal} setShowModal={setShowBottomModal} type="bottom">
+        <View style={{ zIndex: 10000000000 }}>
+          <Pressable onPress={() => setShowBottomModal(!showBottomModal)}>
+            <Text>Close Modal</Text>
+          </Pressable>
+          <FlatList
+                data={data}
+                renderItem={({ item }) => <Text style={[styles.item, {color: colors.primary}]}>{item}</Text>}
+                keyExtractor={(item, index) => 'key_' + index}
+            />
+        </View>
+      </CustomModal>
+
+      {/* <FlatList
+                data={data}
+                renderItem={({ item }) => <Text style={[styles.item, {color: colors.primary}]}>{item}</Text>}
+                keyExtractor={(item, index) => 'key_' + index}
+            /> */}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        paddingTop: 22,
-        backgroundColor: 'white',
-    },
-    item: {
-        padding: 10,
-        fontSize: 18,
-        height: 44,
-        fontFamily:"Nunito-ExtraBoldItalic"
-    }
+  container: {
+    flex: 1,
+    paddingTop: 22,
+    backgroundColor: "white",
+    paddingHorizontal: 20,
+  },
+  item: {
+    padding: 10,
+    fontSize: 18,
+    height: 44,
+    fontFamily: "Nunito-ExtraBoldItalic",
+  },
 });
 
 const Stack = createStackNavigator();
 
 export const App = function () {
-    return (
-        <PaperProvider theme={customTheme}>
-            <NavigationContainer>
-                <Stack.Navigator>
-                    <Stack.Screen name="Mobile SDK Sample App" component={ContactListScreen} />
-                </Stack.Navigator>
-            </NavigationContainer>
-        </PaperProvider>
-    );
-}
+  return (
+    <PaperProvider theme={customTheme}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Mobile SDK Sample App"
+            component={ContactListScreen}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </PaperProvider>
+  );
+};
