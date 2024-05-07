@@ -16,7 +16,7 @@ export default function ApplicationDetails() {
     getValues,
     getFieldState,
     setValue,
-  } = useForm({ mode: "onBlur" });
+  } = useForm({ mode: "onBlur", defaultValues: { otp: "", checkbox: false } });
 
   const { colors } = useTheme();
 
@@ -35,6 +35,42 @@ export default function ApplicationDetails() {
         errors={errors.leadId}
         isRequired
         placeholder="Enter Lead Id"
+        // style={{}}
+      />
+
+      <FormControl
+        compType={component.otpInput}
+        control={control}
+        validations={validations.text}
+        name="otp"
+        label="Enter otp"
+        errors={errors.leadId}
+        isRequired
+        // placeholder="Enter Lead Id"
+        // style={{}}
+      />
+
+      <FormControl
+        compType={component.checkbox}
+        control={control}
+        validations={validations.text}
+        name="checkbox"
+        label="Checkbox here"
+        errors={errors.leadId}
+        isRequired
+        // placeholder="Enter Lead Id"
+        // style={{}}
+      />
+
+      <FormControl
+        compType={component.datetime}
+        control={control}
+        validations={validations.text}
+        name="checkbox"
+        label="Checkbox here"
+        errors={errors.leadId}
+        isRequired
+        // placeholder="Enter Lead Id"
         // style={{}}
       />
 
