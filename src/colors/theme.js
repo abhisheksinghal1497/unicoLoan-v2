@@ -9,7 +9,7 @@ const customTheme = {
     primaryShadow: "rgba(105, 87, 211, 0.3)",
     surfaceVariant: "#D7E7F4",
     surface: "#0076C7",
-    background: "#FFFFFF",
+    background: "#EFEFED",
     seconderyBackground: "rgba(254, 249, 235, 1)",
     textInputBackground: "#FFFFFF",
     error: "rgba(232, 41, 45, 1)",
@@ -25,6 +25,7 @@ const customTheme = {
       // level4: "#E6F4FF",
       // level5: "#E6F4FF",
     },
+    border: "#D2D2D2",
   },
   shape: {
     ...DefaultTheme.shape,
