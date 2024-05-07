@@ -44,7 +44,7 @@ import CustomButton from './src/components/Button';
 import { alert, toast } from './src/utils/functions';
 import { Provider as Reduxprovider } from 'react-redux';
 import store from './src/store/redux';
-import Dashboard from './src/Navigation/Dashboard';
+import Dashboard from './src/Navigation/MainNavigation';
 
 const ContactListScreen = () => {
     const [data, setData] = useState([
@@ -81,7 +81,7 @@ const ContactListScreen = () => {
     }
 
     return (
-        
+
         <View style={styles.container}>
             <CustomButton
                 type="primary"
@@ -117,8 +117,8 @@ const styles = StyleSheet.create({
 export const App = function () {
     return (
         <PaperProvider theme={customTheme}>
-              <Reduxprovider store={store}>
-           <Dashboard/>
+            <Reduxprovider store={store}>
+                <Dashboard />
             </Reduxprovider>
         </PaperProvider>
     );

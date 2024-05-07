@@ -7,6 +7,7 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import HomeScreen from '../screens/HomeScreen';
 import { screens } from '../constants/screens';
 import Splash from '../screens/Splash';
+import PanDetails from '../screens/PanDetails';
 
 const Stack = createStackNavigator();
 
@@ -18,6 +19,12 @@ const Dashboard = () => {
         <Stack.Screen
           name={screens.Splash}
           component={Splash}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name={screens.PanDetails}
+          component={PanDetails}
           options={{ headerShown: false }}
         />
 
