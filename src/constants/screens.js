@@ -16,5 +16,8 @@ export const screens = {
     InPrincipleSection: 'InPrincipleSection',
     LoanDetail: 'LoanDetail',
     PancardNumber: 'PancardNumber',
-    PandcardDetails: 'PandcardDetails'
+    PandcardDetails: 'PandcardDetails',
+    NoInternet: 'NoInternet',
+    ErrorScreen:'ErrorScreen',
+    CongratulationScreen:'CongratulationScreen'
   };

@@ -8,6 +8,9 @@ import HomeScreen from '../screens/HomeScreen';
 import { screens } from '../constants/screens';
 import Splash from '../screens/Splash';
 import PanDetails from '../screens/PanDetails';
+import NoInternet from '../screens/NoInternet';
+import ErrorScreen from '../screens/ErrorScreen';
+import CongratulationScreen from '../screens/Congratulation';
 
 const Stack = createStackNavigator();
 
@@ -15,10 +18,21 @@ const Dashboard = () => {
   return (
 
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator initialRouteName={'Splash'}>
         <Stack.Screen
           name={screens.Splash}
           component={Splash}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name={screens.NoInternet}
+          component={NoInternet}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={screens.ErrorScreen}
+          component={ErrorScreen}
           options={{ headerShown: false }}
         />
 
@@ -33,6 +47,13 @@ const Dashboard = () => {
           component={HomeScreen}
           options={{ headerShown: false }}
         />
+
+        <Stack.Screen
+          name={screens.CongratulationScreen}
+          component={CongratulationScreen}
+          options={{ headerShown: false }}
+        />
+
 
       </Stack.Navigator>
     </NavigationContainer>

@@ -36,6 +36,8 @@ import {
     PaperProvider,
     useTheme,
 } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
+import NetInfo from '@react-native-community/netinfo';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { oauth, net } from 'react-native-force';
@@ -44,7 +46,14 @@ import CustomButton from './src/components/Button';
 import { alert, toast } from './src/utils/functions';
 import { Provider as Reduxprovider } from 'react-redux';
 import store from './src/store/redux';
+
 import Dashboard from './src/Navigation/MainNavigation';
+import NoInternet from './src/screens/NoInternet';
+
+// import Dashboard from './src/Navigation/Dashboard';
+import HomeScreen from "./src/screens/HomeScreen";
+import ApplicationDetails from './src/screens/ApplicationDetails';
+
 
 const ContactListScreen = () => {
     const [data, setData] = useState([
@@ -79,6 +88,8 @@ const ContactListScreen = () => {
             (response) => { }
         );
     }
+
+
 
     return (
 
@@ -115,10 +126,23 @@ const styles = StyleSheet.create({
 });
 
 export const App = function () {
+    const [isConnected, setIsConnected] = useState(true);
+
+    useEffect(() => {
+        const unsubscribe = NetInfo.addEventListener(state => {
+            setIsConnected(state.isConnected);
+        });
+        return () => {
+            unsubscribe();
+        };
+    }, []);
+
     return (
         <PaperProvider theme={customTheme}>
             <Reduxprovider store={store}>
-                <Dashboard />
+                {isConnected ? <Dashboard /> : <NoInternet />}
+                {/* <HomeScreen/> */}
+                <ApplicationDetails />
             </Reduxprovider>
         </PaperProvider>
     );
