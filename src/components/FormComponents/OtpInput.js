@@ -15,6 +15,7 @@ export default function OtpInput({
   label,
   isVisible = true,
   isDisabled = false,
+  otpLimit = 6,
   // otp,
   // setOtp,
   ...rest
@@ -54,11 +55,12 @@ export default function OtpInput({
         return (
           <View style={styles.container}>
             <View style={styles.otpContainer}>
-              {Array.from({ length: 6 }, (_, index) => (
+              {Array.from({ length: otpLimit }, (_, index) => (
                 <TextInput
                   key={index}
                   ref={(ref) => (inputRefs[index] = ref)}
                   keyboardType="numeric"
+                  underlineColor="transparent"
                   cursorColor={colors.tertiary}
                   disabled={isDisabled}
                   onChangeText={(text) =>
@@ -96,5 +98,6 @@ const styles = StyleSheet.create({
 
   otpInput: {
     marginLeft: horizontalScale(8),
+    borderBottomWidth: 0,
   },
 });
