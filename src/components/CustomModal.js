@@ -27,7 +27,7 @@ export default CustomModal;
 const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
-    marginTop: 22,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)'
   },
   modalView: {
     backgroundColor: "white",

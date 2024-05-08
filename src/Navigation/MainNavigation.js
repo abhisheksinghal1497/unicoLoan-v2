@@ -7,6 +7,7 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import HomeScreen from '../screens/HomeScreen';
 import { screens } from '../constants/screens';
 import Splash from '../screens/Splash';
+import PanDetails from '../screens/PanDetails';
 import NoInternet from '../screens/NoInternet';
 import ErrorScreen from '../screens/ErrorScreen';
 import CongratulationScreen from '../screens/Congratulation';
@@ -25,7 +26,7 @@ const Dashboard = () => {
           options={{ headerShown: false }}
         />
 
-<Stack.Screen
+        <Stack.Screen
           name={screens.NoInternet}
           component={NoInternet}
           options={{ headerShown: false }}
@@ -34,7 +35,13 @@ const Dashboard = () => {
           name={screens.ErrorScreen}
           component={ErrorScreen}
           options={{ headerShown: false }}
-          />
+        />
+
+        <Stack.Screen
+          name={screens.PanDetails}
+          component={PanDetails}
+          options={{ headerShown: false }}
+        />
 
         <Stack.Screen
           name={screens.HomeScreen}
@@ -42,7 +49,7 @@ const Dashboard = () => {
           options={{ headerShown: false }}
         />
 
-<Stack.Screen
+        <Stack.Screen
           name={screens.CongratulationScreen}
           component={CongratulationScreen}
           options={{ headerShown: false }}

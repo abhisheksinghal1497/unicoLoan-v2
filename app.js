@@ -16,6 +16,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { oauth, net } from 'react-native-force';
 import customTheme from './src/colors/theme';
+import CustomButton from './src/components/Button';
+import { alert, toast } from './src/utils/functions';
 import { Provider as Reduxprovider } from 'react-redux';
 import store from './src/store/redux';
 
@@ -66,6 +68,14 @@ const ContactListScreen = () => {
     return (
 
         <View style={styles.container}>
+            <CustomButton
+                type="primary"
+                label="Press Me"
+                onPress={() => { alert('Validation', 'Invalid phone number entered.', () => { }) }} />
+            <CustomButton
+                type="secondery"
+                label="Press Me"
+                onPress={() => { toast('Invalid phone number entered.') }} />
             <FlatList
                 data={data}
                 renderItem={({ item }) => <Text style={[styles.item, { color: colors.primary }]}>{item}</Text>}
@@ -103,12 +113,10 @@ export const App = function () {
 
     return (
         <PaperProvider theme={customTheme}>
-
+            <Reduxprovider store={store}>
                 {isConnected ? <Dashboard /> : <NoInternet />}
-              <Reduxprovider store={store}>
-           {/* <HomeScreen/> */}
-           {/* <ApplicationDetails /> */}
-
+                {/* <HomeScreen/> */}
+                {/* <ApplicationDetails /> */}
             </Reduxprovider>
         </PaperProvider>
     );
