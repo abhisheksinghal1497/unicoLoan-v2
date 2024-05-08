@@ -11,7 +11,7 @@ const Header = (props) => {
             <TouchableOpacity onPress={() => props.navigation.goBack()}>
                 <Image source={require('../images/back.png')} style={styles.backImage} />
             </TouchableOpacity>
-            <Text style={[fonts.bodyBold, styles.titleText]}>{props.title}</Text>
+            <Text style={[fonts.headerText, styles.titleText]}>{props.title}</Text>
             <Image source={require('../images/question.png')} style={styles.questionImage} />
         </View>
     )

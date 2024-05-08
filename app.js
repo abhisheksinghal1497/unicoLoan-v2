@@ -142,7 +142,7 @@ export const App = function () {
             <Reduxprovider store={store}>
                 {isConnected ? <Dashboard /> : <NoInternet />}
                 {/* <HomeScreen/> */}
-                <ApplicationDetails />
+                {/* <ApplicationDetails /> */}
             </Reduxprovider>
         </PaperProvider>
     );

@@ -101,13 +101,21 @@ const customTheme = {
     },
     bodyRegular: {
       fontFamily: "Nunito-Regular",
-      fontSize: 16,
+      fontSize: 14,
       fontWeight: "600",
       letterSpacing: 0.4,
       lineHeight: 20,
       color: '#000000',
     },
     bodyBold: {
+      fontFamily: "Nunito-Bold",
+      fontSize: 12,
+      fontWeight: "600",
+      letterSpacing: 0.4,
+      lineHeight: 20,
+      color: '#000000',
+    },
+    headerText: {
       fontFamily: "Nunito-Bold",
       fontSize: 18,
       letterSpacing: 0.4,

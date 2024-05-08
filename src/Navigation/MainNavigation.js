@@ -11,6 +11,7 @@ import PanDetails from '../screens/PanDetails';
 import NoInternet from '../screens/NoInternet';
 import ErrorScreen from '../screens/ErrorScreen';
 import CongratulationScreen from '../screens/Congratulation';
+import KYC from '../screens/KYC';
 
 const Stack = createStackNavigator();
 
@@ -18,7 +19,7 @@ const Dashboard = () => {
   return (
 
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={'Splash'}>
+      <Stack.Navigator initialRouteName={screens.KYC}>
         <Stack.Screen
           name={screens.Splash}
           component={Splash}
@@ -39,6 +40,12 @@ const Dashboard = () => {
         <Stack.Screen
           name={screens.PanDetails}
           component={PanDetails}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name={screens.KYC}
+          component={KYC}
           options={{ headerShown: false }}
         />
 
