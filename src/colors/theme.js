@@ -153,8 +153,8 @@ const customTheme = {
       color: 'rgba(136, 136, 136, 1)',
     },
     labelLarge: {
-      fontFamily: "Nunito-Regular",
-      fontSize: 14,
+      fontFamily: "Nunito-Bold",
+      fontSize: 18,
       lineHeight: 20,
       color: 'rgba(136, 136, 136, 1)',
     },

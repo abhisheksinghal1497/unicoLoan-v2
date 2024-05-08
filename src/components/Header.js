@@ -8,11 +8,13 @@ const Header = (props) => {
     const { fonts } = useTheme();
     return (
         <View style={styles.container}>
-            <TouchableOpacity onPress={() => props.navigation.goBack()}>
-                <Image source={require('../images/back.png')} style={styles.backImage} />
-            </TouchableOpacity>
+            {props.left && <TouchableOpacity onPress={() => props.onPressLeft()}>
+                <Image source={props.left} style={styles.backImage} />
+            </TouchableOpacity>}
             <Text style={[fonts.headerText, styles.titleText]}>{props.title}</Text>
-            <Image source={require('../images/question.png')} style={styles.questionImage} />
+            {props.right && <TouchableOpacity onPress={() => props.onPressRight()}>
+                <Image source={props.right} style={styles.questionImage} />
+            </TouchableOpacity>}
         </View>
     )
 }
