@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 import { TextInput, Text, useTheme } from "react-native-paper";
 import { Controller } from "react-hook-form";
 import { colors } from "../../colors";
@@ -20,6 +20,9 @@ export default InputField = ({
   tooltipText = "",
   placeholder,
   style = {},
+  showRightComp = false,
+  iconName,
+  rightComp,
   ...rest
 }) => {
   const { colors, fonts } = useTheme();
@@ -59,6 +62,18 @@ export default InputField = ({
                 outlineStyle={styles.inputOutline}
                 placeholder={placeholder}
                 placeholderTextColor={colors.seconderyText}
+                right={
+                  showRightComp ? (
+                    <TextInput.Icon
+                      // had to pass like this for right for TextInput
+                      icon={
+                        iconName
+                          ? iconName
+                          : () => (rightComp ? rightComp() : null)
+                      }
+                    />
+                  ) : null
+                }
                 {...rest}
               />
             </CustomShadow>

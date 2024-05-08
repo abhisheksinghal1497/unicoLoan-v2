@@ -1,4 +1,4 @@
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Button, Image, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
@@ -61,6 +61,19 @@ export default function ApplicationDetails() {
       value: {},
     },
   ];
+
+  const shouldShowRightComp = (id, err) => {
+    // added this function to show the right component dynamically
+    switch (id) {
+      case "phone":
+        if (!err) {
+          return true;
+        }
+
+      default:
+        return false;
+    }
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -146,6 +159,8 @@ export default function ApplicationDetails() {
         errors={errors.phone}
         isRequired
         placeholder="Enter your phone no."
+        // showRightComp
+        // iconName="eye"
       />
       {mock_data.map((comp) => {
         return (
@@ -161,10 +176,16 @@ export default function ApplicationDetails() {
             data={comp.data}
             key={comp.id}
             setValue={setValue}
+            showRightComp={shouldShowRightComp(comp.id, errors[comp.id])}
+            rightComp={() => (
+              <Image
+                source={require("../../images/tick.png")}
+                style={styles.tickImage}
+              />
+            )}
           />
         );
       })}
-      
 
       {/* // ! temporary submit button */}
       <Button title="Submit" onPress={handleSubmit(onSubmit)} />
@@ -175,5 +196,10 @@ export default function ApplicationDetails() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  tickImage: {
+    width: 15,
+    height: 15,
+    resizeMode: "contain",
   },
 });
