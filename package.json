@@ -4,24 +4,34 @@
     "private": true,
     "scripts": {
         "start": "node node_modules/react-native/local-cli/cli.js start",
-        "test": "jest"
+        "test": "jest",
+        "android": "npx react-native run-android"
     },
     "sdkDependencies": {
         "SalesforceMobileSDK-Android": "https://github.com/forcedotcom/SalesforceMobileSDK-Android.git#v11.0.0",
         "SalesforceMobileSDK-iOS": "https://github.com/forcedotcom/SalesforceMobileSDK-iOS.git#v11.0.0"
     },
     "dependencies": {
+        "@react-native-community/netinfo": "^11.3.1",
         "@react-native-masked-view/masked-view": "^0.2.7",
         "@react-navigation/native": "^6.0.2",
         "@react-navigation/stack": "^6.0.7",
+        "@reduxjs/toolkit": "^2.2.3",
+        "@tanstack/react-query": "^5.32.1",
         "create-react-class": "^15.7.0",
         "react": "18.1.0",
+        "react-hook-form": "^7.51.3",
         "react-native": "0.70.6",
+        "react-native-date-picker": "^5.0.2",
         "react-native-force": "git+https://github.com/forcedotcom/SalesforceMobileSDK-ReactNative.git#v11.0.0",
         "react-native-gesture-handler": "^1.10.3",
         "react-native-paper": "^5.12.3",
         "react-native-safe-area-context": "^3.3.0",
-        "react-native-screens": "^3.6.0"
+        "react-native-screens": "^3.4.0",
+        "react-native-vector-icons": "^10.1.0",
+        "react-native-svg": "^15.2.0",
+        "react-redux": "^9.1.2",
+        "redux-thunk": "^3.1.0"
     },
     "devDependencies": {
         "@babel/core": "^7.12.9",
