@@ -122,7 +122,7 @@ export const App = function () {
   return (
     <PaperProvider theme={customTheme}>
       <Reduxprovider store={store}>
-        {isConnected ? <Dashboard /> : <NoInternet />}
+        {/* {isConnected ? <Dashboard /> : <NoInternet />} */}
         <ApplicationDetails />
       </Reduxprovider>
     </PaperProvider>

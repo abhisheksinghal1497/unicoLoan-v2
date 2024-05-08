@@ -35,7 +35,7 @@ export default InputField = ({
         return (
           <View style={styles.container}>
             <View style={styles.labelContainer}>
-              <Text style={fonts.regularText}>
+              <Text style={[fonts.regularText, styles.labelText]}>
                 {isRequired && <Text style={styles.asterisk}>* </Text>}
                 {label}
               </Text>
@@ -87,6 +87,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-end",
     marginBottom: 2,
+  },
+  labelText: {
+    color: colors.labelColor,
   },
   asterisk: {
     color: colors.asteriskRequired,

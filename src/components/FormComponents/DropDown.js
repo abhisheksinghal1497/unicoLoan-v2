@@ -47,7 +47,7 @@ export default DropDown = ({
           return (
             <View style={styles.container}>
               <View style={styles.labelContainer}>
-                <Text style={fonts.regularText}>
+                <Text style={[fonts.regularText, styles.labelText]}>
                   {isRequired && <Text style={styles.asterisk}>* </Text>}
                   {label}
                 </Text>
@@ -130,6 +130,9 @@ export default DropDown = ({
 };
 
 const styles = StyleSheet.create({
+  labelText: {
+    color: colors.labelColor,
+  },
   container: {
     marginHorizontal: 5,
     marginVertical: 10,

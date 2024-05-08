@@ -2,7 +2,7 @@
 import React from "react";
 import { useState } from "react";
 import { Controller } from "react-hook-form";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import DatePicker from "react-native-date-picker";
 import { TextInput, Text, useTheme } from "react-native-paper";
 import { horizontalScale, verticalScale } from "./../../utils/matrcis";
@@ -59,35 +59,33 @@ export default function CustomDatepicker({
           return (
             <View style={styles.container}>
               <View style={styles.labelContainer}>
-                <Text>
+                <Text style={styles.labelText}>
                   {isRequired && <Text style={styles.asterisk}>* </Text>}
                   {label}
                 </Text>
               </View>
-              <CustomShadow
-                shadowColor={error ? themeColor.error : themeColor.primary}
+              <TouchableOpacity
+                onPress={() => {
+                  !isDisabled && setOpen(true);
+                }}
               >
-                <TextInput
-                  value={value ? formatDate(value) : ""}
-                  editable={false}
-                  disabled={isDisabled}
-                  error={error?.message}
-                  style={styles.textInput}
-                  placeholder="MM/DD/YYYY"
-                  right={
-                    <TextInput.Icon
-                      icon="calendar-month"
-                      onPress={() => {
-                        !isDisabled && setOpen(true);
-                      }}
-                    />
-                  }
-                  mode="outlined"
-                  outlineColor={colors.border}
-                  outlineStyle={styles.inputOutline}
-                  {...rest}
-                />
-              </CustomShadow>
+                <CustomShadow
+                  shadowColor={error ? themeColor.error : themeColor.primary}
+                >
+                  <TextInput
+                    value={value ? formatDate(value) : ""}
+                    editable={false}
+                    disabled={isDisabled}
+                    error={error?.message}
+                    style={styles.textInput}
+                    placeholder="MM/DD/YYYY"
+                    mode="outlined"
+                    outlineColor={colors.border}
+                    outlineStyle={styles.inputOutline}
+                    {...rest}
+                  />
+                </CustomShadow>
+              </TouchableOpacity>
               {error?.message && (
                 <Text style={styles.errorMessage}>{error?.message}</Text>
               )}
@@ -107,11 +105,9 @@ export default function CustomDatepicker({
                   setOpen(false);
                 }}
                 mode="date"
-                // locale="enGB"
                 placeholder="select Date"
                 format="DD-MM-YYYY"
                 is24hourSource="device"
-                // minDate="01-01-1916"
                 confirmBtnText="Confirm"
                 cancelBtnText="Cancel"
               />
@@ -124,8 +120,11 @@ export default function CustomDatepicker({
   );
 }
 const styles = StyleSheet.create({
+  labelText: {
+    color: colors.labelColor,
+  },
   inputOutline: {
-    borderWidth: 0.5,
+    borderWidth: 0,
     borderRadius: 30,
   },
   container: {

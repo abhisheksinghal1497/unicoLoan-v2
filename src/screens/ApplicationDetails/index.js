@@ -1,12 +1,13 @@
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Button, View } from "react-native";
 import React from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
   FormControl,
   component,
 } from "../../components/FormComponents/FormControl";
-import { useTheme } from "react-native-paper";
+import { useTheme, Text } from "react-native-paper";
 import { validations } from "../../constants/validations";
+import { styles } from "./styles/ApplicationDetailStyle";
 
 export default function ApplicationDetails() {
   const {
@@ -24,156 +25,79 @@ export default function ApplicationDetails() {
 
   const mock_data = [
     {
-      id: "leadId",
-      label: "SFDC Lead Id",
+      id: "applicationType",
+      label: "Applicant Type",
       type: component.textInput,
-      placeHolder: "Enter Lead Id",
+      placeHolder: "Applicant Type",
       validations: validations.text,
-      isRequired: true,
-      data: [],
+      isRequired: false,
       value: "",
     },
     {
-      id: "phone",
-      label: "Phone Number",
-      type: component.number,
-      placeHolder: "Enter Phone number",
-      validations: validations.phone,
-      maxLength: 10,
-      keyboardtype: "numeric",
-      isRequired: true,
-      data: [],
-      value: 0,
-    },
-    {
-      id: "leadSrc",
-      label: "Lead Source",
+      id: "customerProfile",
+      label: "Customer Profile",
       type: component.dropdown,
-      placeHolder: "Select lead source",
-      validations: validations.required,
+      placeHolder: "Customer Profile",
+      validations: validations.text,
       isRequired: true,
       data: [
-        { id: 1, label: "Digital", value: "digital" },
-        { id: 2, label: "Direct", value: "direct" },
-        { id: 3, label: "Cutomer", value: "cutomer" },
-        { id: 4, label: "Referral", value: "referral" },
+        { label: "Salaried", value: "Salaried" },
+        { label: "Self-Employed", value: "Self-Employed" },
       ],
-      value: {},
+      value: "",
+    },
+    {
+      id: "firstName",
+      label: "First Name",
+      type: component.textInput,
+      placeHolder: "First Name",
+      validations: validations.text,
+      isRequired: false,
+      value: "",
+    },
+    {
+      id: "lastName",
+      label: "Last Name",
+      type: component.textInput,
+      placeHolder: "Last Name",
+      validations: validations.text,
+      isRequired: false,
+      value: "",
+    },
+    {
+      id: "dateOfBirth",
+      label: "Date of Birth",
+      type: component.datetime,
+      placeHolder: "Select date of birth",
+      validations: validations.text,
+      isRequired: false,
+      value: "",
     },
   ];
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text>ApplicationDetails</Text>
-
-      {/* <FormControl
-      compType={component.textInput}
-      control={control}
-      validations={validations.text}
-      name="leadId"
-      label="SFDC Lead Id"
-      errors={errors.leadId}
-      isRequired
-      placeholder="Enter Lead Id"
-      // style={{}}
-    />
-
-    <FormControl
-      compType={component.number}
-      control={control}
-      validations={validations.phone}
-      name="phone"
-      label="Phone No."
-      errors={errors.phone}
-      isRequired
-      placeholder="Enter your phone no."
-    />
-
-    <FormControl
-      compType={component.dropdown}
-      control={control}
-      validations={validations.required}
-      name="leadSrc"
-      label="Lead Source"
-      errors={errors.leadSrc}
-      isRequired
-      placeholder="Please select Lead Source"
-      // style={{}}
-    /> */}
-
-      <FormControl
-        compType={component.otpInput}
-        control={control}
-        validations={validations.text}
-        name="otp"
-        label="Enter otp"
-        errors={errors.leadId}
-        isRequired
-        // placeholder="Enter Lead Id"
-        // style={{}}
-      />
-
-      <FormControl
-        compType={component.checkbox}
-        control={control}
-        validations={validations.text}
-        name="checkbox"
-        label="Checkbox here"
-        errors={errors.leadId}
-        isRequired
-        // placeholder="Enter Lead Id"
-        // style={{}}
-      />
-
-      <FormControl
-        compType={component.datetime}
-        control={control}
-        validations={validations.text}
-        name="checkbox"
-        label="Checkbox here"
-        errors={errors.leadId}
-        isRequired
-        // placeholder="Enter Lead Id"
-        // style={{}}
-      />
-
-      <FormControl
-        compType={component.number}
-        control={control}
-        validations={validations.phone}
-        name="phone"
-        label="Phone No."
-        errors={errors.phone}
-        isRequired
-        placeholder="Enter your phone no."
-      />
-      {mock_data.map((comp) => {
-        return (
-          <FormControl
-            compType={comp.type}
-            control={control}
-            validations={comp.validations}
-            name={comp.id}
-            label={comp.label}
-            errors={errors[comp.id]}
-            isRequired={comp.isRequired}
-            placeholder={comp.placeHolder}
-            data={comp.data}
-            key={comp.id}
-            setValue={setValue}
-          />
-        );
-      })}
-      
-
-      {/* // ! temporary submit button */}
-      <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+    <View>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        {mock_data.map((comp) => {
+          return (
+            <FormControl
+              compType={comp.type}
+              control={control}
+              validations={comp.validations}
+              name={comp.id}
+              label={comp.label}
+              errors={errors[comp.id]}
+              isRequired={comp.isRequired}
+              placeholder={comp.placeHolder}
+              data={comp.data}
+              key={comp.id}
+              setValue={setValue}
+            />
+          );
+        })}
+        {/* // ! temporary submit button */}
+        <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+      </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
