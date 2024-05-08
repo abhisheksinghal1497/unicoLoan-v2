@@ -25,7 +25,7 @@ const ApplicationCard = () => {
           style={{ height: verticalScale(100) }}
           resizeMode="contain"
         />
-        <Text style={{color:}}>UNICO HOUSING FINANCE LIMITED</Text>
+        <Text>UNICO HOUSING FINANCE LIMITED</Text>
       </View>
     </View>
   );
