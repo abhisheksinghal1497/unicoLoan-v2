@@ -12,6 +12,7 @@ import Header from '../../components/Header'
 import { validations } from "../../constants/validations";
 import customTheme from '../../colors/theme';
 import { screens } from '../../constants/screens';
+import { KycScreen } from '../../constants/stringConstants';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -43,7 +44,7 @@ const KYC = (props) => {
     ) : (
       <TouchableOpacity style={styles.timerContainer} onPress={() => setCounter(60)}>
         <Text
-          style={[fonts.bodyRegular, { color: 'rgba(46, 82, 161, 1)', marginTop: 3 }]}>Resend</Text>
+          style={[fonts.bodyRegular, { color: 'rgba(46, 82, 161, 1)', marginTop: 3 }]}>{KycScreen.resend}</Text>
       </TouchableOpacity>
     )
   }
@@ -57,39 +58,38 @@ const KYC = (props) => {
         right={require('../../images/question.png')}
         onPressRight={() => { }} />
       <View style={styles.subContainer}>
-        <Text style={[fonts.labelSmall, { width: '100%' }]}>Let's verify your identity quickly</Text>
+        <Text style={[fonts.labelSmall, { width: '100%' }]}>{KycScreen.topLabel}</Text>
         <View style={{ alignSelf: 'center', marginTop: 15 }}>
           <View style={styles.recommendedContainer}>
-            <Text style={[fonts.smallLightText, { color: colors.white }]}>Recommended</Text>
+            <Text style={[fonts.smallLightText, { color: colors.white }]}>{KycScreen.recommended}</Text>
           </View>
           <View style={styles.cardContainer}>
             <Image source={require('../../images/aadhar-front.png')} style={styles.frontImage} />
           </View>
         </View>
-        <Text style={[fonts.labelMedium, { marginTop: 10, color: 'rgba(68, 70, 91, 1)' }]}>Generate E-Aadhaar</Text>
-        <Text style={[fonts.labelSmall, { marginTop: 5, lineHeight: 22, textAlign: 'center' }]}>You will receive an OTP on your{'\n'}Aadhaar
-          {'\n'}linked mobile number</Text>
+        <Text style={[fonts.labelMedium, { marginTop: 10, color: 'rgba(68, 70, 91, 1)' }]}>{KycScreen.eCardTitle}</Text>
+        <Text style={[fonts.labelSmall, { marginTop: 5, lineHeight: 22, textAlign: 'center' }]}>{KycScreen.eCardSubTitle}</Text>
         <View style={styles.noteContainer}>
           <Image source={require('../../images/bulb.png')} style={styles.bulbImage} />
           <Text style={fonts.bodySmall}>Choose <Text style={fonts.bodyBold}>e-Aadhaar</Text> to get <Text style={fonts.bodyBold}>special benefits</Text> on Interest Rates!</Text>
         </View>
         <View style={styles.dividerContainer}>
           <View style={styles.horizonalDivider} />
-          <Text style={[fonts.labelSmall, { marginTop: 1, marginHorizontal: 10 }]}>OR</Text>
+          <Text style={[fonts.labelSmall, { marginTop: 1, marginHorizontal: 10 }]}>{KycScreen.or}</Text>
           <View style={styles.horizonalDivider} />
         </View>
         <View style={styles.rowContainer}>
-          <TouchableOpacity  onPress={() => props.navigation.navigate(screens.CaptureAdhaar, { method: "Front" }) }>
+          <TouchableOpacity onPress={() => props.navigation.navigate(screens.CaptureAdhaar, { method: "Front" })}>
             <View style={styles.cardContainerTwo}>
               <Image source={require('../../images/aadhar-front.png')} style={[styles.frontImage, { marginTop: 20 }]} />
             </View>
-            <Text style={[fonts.labelMedium, styles.titleText]}>Upload Your{'\n'}Aadhaar Front{'\n'}Photo</Text>
+            <Text style={[fonts.labelMedium, styles.titleText]}>{KycScreen.frontCardTitle}</Text>
           </TouchableOpacity>
-          <TouchableOpacity  onPress={() => props.navigation.navigate(screens.CaptureAdhaar, { method: "Back" }) } >
+          <TouchableOpacity onPress={() => props.navigation.navigate(screens.CaptureAdhaar, { method: "Back" })} >
             <View style={styles.cardContainerTwo}>
               <Image source={require('../../images/aadhar-back.png')} style={[styles.frontImage, { marginTop: 20 }]} />
             </View>
-            <Text style={[fonts.labelMedium, styles.titleText]}>Upload Your{'\n'}Aadhaar Back{'\n'}Photo</Text>
+            <Text style={[fonts.labelMedium, styles.titleText]}>{KycScreen.backCardTitle}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -100,7 +100,7 @@ const KYC = (props) => {
         onPress={() => { showModal() }} />
       <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.modalContainer}>
         {type === 0 ? <View>
-          <Text style={[fonts.labelMedium, styles.labelText]}>Aadhaar Number</Text>
+          <Text style={[fonts.labelMedium, styles.labelText]}>{KycScreen.aadharLabel}</Text>
           <View style={styles.inputContainer}>
             <TextInput
               placeholder='XXXX-XXXX-XXXX'
@@ -108,7 +108,7 @@ const KYC = (props) => {
               onChangeText={(text) => setPhone(text)} />
             <Image source={require('../../images/tick.png')} style={styles.tickImage} />
           </View>
-          <Text style={[fonts.labelMedium, styles.labelText]}>Enter Captcha</Text>
+          <Text style={[fonts.labelMedium, styles.labelText]}>{KycScreen.captchaLabel}</Text>
           <View style={styles.inputContainer}>
             <TextInput
               placeholder='Captcha'
@@ -130,8 +130,8 @@ const KYC = (props) => {
             onPress={() => { setType(1) }} />
         </View>
           : <View>
-            <Text style={[fonts.labelMedium, { marginTop: 10, color: 'rgba(68, 70, 91, 1)', textAlign: 'center' }]}>OTP Verification</Text>
-            <Text style={[fonts.labelSmall, { marginTop: 5, lineHeight: 18, textAlign: 'center' }]}>One-Time Password has been sent to{'\n'}your registered Mobile Number.</Text>
+            <Text style={[fonts.labelMedium, { marginTop: 10, color: 'rgba(68, 70, 91, 1)', textAlign: 'center' }]}>{KycScreen.otpTitle}</Text>
+            <Text style={[fonts.labelSmall, { marginTop: 5, lineHeight: 18, textAlign: 'center' }]}>{KycScreen.otpSubTitle}</Text>
             <FormControl
               compType={component.otpInput}
               control={control}
