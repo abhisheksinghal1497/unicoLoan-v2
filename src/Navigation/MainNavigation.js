@@ -12,6 +12,7 @@ import NoInternet from '../screens/NoInternet';
 import ErrorScreen from '../screens/ErrorScreen';
 import CongratulationScreen from '../screens/Congratulation';
 import KYC from '../screens/KYC';
+import CaptureAdhaar from '../screens/CaptureAdhaar';
 
 const Stack = createStackNavigator();
 
@@ -46,6 +47,11 @@ const Dashboard = () => {
         <Stack.Screen
           name={screens.KYC}
           component={KYC}
+          options={{ headerShown: false }}
+        />
+         <Stack.Screen
+          name={screens.CaptureAdhaar}
+          component={CaptureAdhaar}
           options={{ headerShown: false }}
         />
 

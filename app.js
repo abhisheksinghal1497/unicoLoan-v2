@@ -50,6 +50,9 @@ import store from './src/store/redux';
 import Dashboard from './src/Navigation/MainNavigation';
 import NoInternet from './src/screens/NoInternet';
 
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+
+
 // import Dashboard from './src/Navigation/Dashboard';
 import HomeScreen from "./src/screens/HomeScreen";
 import ApplicationDetails from './src/screens/ApplicationDetails';
@@ -126,6 +129,7 @@ const styles = StyleSheet.create({
 });
 
 export const App = function () {
+    const queryClient = new QueryClient();
     const [isConnected, setIsConnected] = useState(true);
 
     useEffect(() => {
@@ -139,11 +143,13 @@ export const App = function () {
 
     return (
         <PaperProvider theme={customTheme}>
+            <QueryClientProvider client={queryClient}>
             <Reduxprovider store={store}>
                 {isConnected ? <Dashboard /> : <NoInternet />}
                 {/* <HomeScreen/> */}
                 {/* <ApplicationDetails /> */}
             </Reduxprovider>
+            </QueryClientProvider>
         </PaperProvider>
     );
 }
