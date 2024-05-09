@@ -5,11 +5,11 @@ import { StyleSheet, Text, View } from 'react-native';
 import customTheme from '../colors/theme';
 
 export default function CustomButton(props) {
-    const { type, label, left, right, buttonContainer, labelStyle, icon, onPress } = props;
+    const { type, label, left, right, buttonContainer, labelStyle, icon, onPress, rippleColor } = props;
     const theme = useTheme();
     return type === "primary" ? (
         <TouchableRipple
-            rippleColor="rgba(255, 255, 255, .32)"
+            rippleColor={rippleColor || "rgba(255, 255, 255, .32)"}
             style={[styles.buttonContainer, buttonContainer]}
             onPress={onPress} >
             <View style={styles.rowContainer}>
@@ -21,7 +21,7 @@ export default function CustomButton(props) {
     ) : type === "secondery" ? (
         <TouchableRipple
             style={[styles.seconderyButtonContainer, buttonContainer]}
-            rippleColor="rgba(0, 0, 0, .32)"
+            rippleColor={rippleColor || "rgba(0, 0, 0, .32)"}
             onPress={onPress} >
             <View style={styles.rowContainer}>
                 {left}

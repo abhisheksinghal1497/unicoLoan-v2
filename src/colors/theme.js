@@ -108,13 +108,21 @@ const customTheme = {
     },
     bodyRegular: {
       fontFamily: "Nunito-Regular",
-      fontSize: 16,
+      fontSize: 14,
       fontWeight: "600",
       letterSpacing: 0.4,
       lineHeight: 20,
       color: '#000000',
     },
     bodyBold: {
+      fontFamily: "Nunito-Bold",
+      fontSize: 12,
+      fontWeight: "600",
+      letterSpacing: 0.4,
+      lineHeight: 20,
+      color: '#000000',
+    },
+    headerText: {
       fontFamily: "Nunito-Bold",
       fontSize: 18,
       letterSpacing: 0.4,
@@ -154,6 +162,8 @@ const customTheme = {
     labelLarge: {
       fontFamily: "Nunito-Regular",
       fontSize: 14,
+      fontWeight: "600",
+      letterSpacing: 0.1,
       lineHeight: 20,
       color: 'rgba(136, 136, 136, 1)',
     },
