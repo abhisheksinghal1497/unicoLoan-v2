@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View, SafeAreaView, StatusBar } from 'react-native'
+import {  Text, View, SafeAreaView, StatusBar } from 'react-native'
 import React, { useState } from 'react'
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 import Header from '../../components/Header'
 import AdhaarSection from '../../components/AdhaarSection'
 import CameraSection from '../../components/CameraSection'
@@ -34,7 +34,7 @@ const CaptureAdhaar = ({ navigation }) => {
             });
     };
     const ButtonActions = async (value) => {
-        if(value === "Retry"){
+        if (value === "Retry") {
             setSelectedImage(null)
         }
     }
@@ -47,7 +47,7 @@ const CaptureAdhaar = ({ navigation }) => {
             />
             <SafeAreaView style={styles.container}>
                 <Header title={selectedImage ? 'Review Your Document' : 'Capture Adhaar'} navigation={navigation} />
-                <AdhaarSection uri={selectedImage}AdhaarText={method === 'Front' ? 'Front Side' :  'Back Side' } />
+                <AdhaarSection uri={selectedImage} AdhaarText={method === 'Front' ? 'Front Side' : 'Back Side'} />
                 {selectedImage ? (
                     <>
                         <View style={{ flexDirection: "row", justifyContent: 'space-between', marginTop: 100, }}>
