@@ -45,7 +45,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Dashboard from "./src/Navigation/MainNavigation";
 import NoInternet from "./src/screens/NoInternet";
 
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+
 
 
 // import Dashboard from './src/Navigation/Dashboard';

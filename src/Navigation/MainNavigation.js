@@ -18,7 +18,7 @@ const Dashboard = () => {
   return (
 
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={screens.KYC}>
+      <Stack.Navigator initialRouteName={screens.CaptureAdhaar}>
         <Stack.Screen
           name={screens.Splash}
           component={Splash}

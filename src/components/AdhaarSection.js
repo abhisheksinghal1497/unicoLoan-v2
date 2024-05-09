@@ -23,12 +23,12 @@ export default function AdhaarSection({ AdhaarText, uri }) {
 }
 
 const styles = StyleSheet.create({
-  container: { marginTop: '10%', height: '40%', width: '100%', justifyContent: 'center' },
+  container: { marginTop: '10%',height:'40%',  width: '100%', justifyContent: 'center',minHeight:'40%',maxHeight:'100%' },
   section: { height: '80%', width: '100%', justifyContent: 'center', alignItems: 'center', borderColor: 'grey' },
   imageContainer: {
     width: '100%',
     height: '100%',
-    resizeMode: 'stretch',
+    resizeMode: 'cover',
     borderRadius: 15, borderWidth: 1.5, borderColor: '#C8D0EF',
   },
   emptySection: { height: '80%', borderRadius: 15, borderWidth: 1.5, borderColor: '#C8D0EF', width: '100%', justifyContent: 'center', alignItems: 'center' },

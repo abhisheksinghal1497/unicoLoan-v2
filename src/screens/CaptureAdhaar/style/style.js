@@ -4,7 +4,11 @@ import customTheme from '../../../colors/theme';
 
 
 export const styles = StyleSheet.create({
-  container: { flex: 1, padding: 15, paddingTop: 50 },
+  container: {
+    flex: 1,
+    backgroundColor: colors.bgColor,
+    paddingHorizontal: 16,
+  },
   buttonStyle:{
     width: "48%",
 },
