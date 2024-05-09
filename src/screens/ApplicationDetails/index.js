@@ -15,6 +15,7 @@ import {
 import { useTheme } from "react-native-paper";
 import { validations } from "../../constants/validations";
 import { screens } from "../../constants/screens";
+import CustomButton from "../../components/Button";
 
 export default function ApplicationDetails(props) {
   const [isVerified, setIsVerified] = useState(false);
@@ -114,88 +115,6 @@ export default function ApplicationDetails(props) {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Text>ApplicationDetails</Text>
       <ScrollView>
-        {/* <FormControl
-      compType={component.textInput}
-      control={control}
-      validations={validations.text}
-      name="leadId"
-      label="SFDC Lead Id"
-      errors={errors.leadId}
-      isRequired
-      placeholder="Enter Lead Id"
-      // style={{}}
-    />
-
-    <FormControl
-      compType={component.number}
-      control={control}
-      validations={validations.phone}
-      name="phone"
-      label="Phone No."
-      errors={errors.phone}
-      isRequired
-      placeholder="Enter your phone no."
-    />
-
-    <FormControl
-      compType={component.dropdown}
-      control={control}
-      validations={validations.required}
-      name="leadSrc"
-      label="Lead Source"
-      errors={errors.leadSrc}
-      isRequired
-      placeholder="Please select Lead Source"
-      // style={{}}
-    /> */}
-        {/* <FormControl
-          compType={component.otpInput}
-          control={control}
-          validations={validations.text}
-          name="otp"
-          label="Enter otp"
-          errors={errors.leadId}
-          isRequired
-        // placeholder="Enter Lead Id"
-        // style={{}}
-        />
-
-        {/* <FormControl
-          compType={component.checkbox}
-          control={control}
-          validations={validations.text}
-          name="checkbox"
-          label="Checkbox here"
-          errors={errors.leadId}
-          isRequired
-        // placeholder="Enter Lead Id"
-        // style={{}}
-        /> */}
-        {/*
-        <FormControl
-          compType={component.datetime}
-          control={control}
-          validations={validations.text}
-          name="checkbox"
-          label="Checkbox here"
-          errors={errors.leadId}
-          isRequired
-          // placeholder="Enter Lead Id"
-          // style={{}}
-        />
-        <FormControl
-          compType={component.number}
-          control={control}
-          validations={validations.phone}
-          name="phone"
-          label="Phone No."
-          errors={errors.phone}
-          isRequired
-          placeholder="Enter your phone no."
-          showRightComp
-          iconName="eye-off"
-        />{" "}
-        */}
         {mock_data.map((comp) => {
           return (
             <FormControl
@@ -230,9 +149,12 @@ export default function ApplicationDetails(props) {
             />
           );
         })}
-        {/* // ! temporary submit button */}
-        <Button
-          title="Submit"
+
+        <CustomButton
+          type="primary"
+          label="Continue"
+          buttonContainer={styles.buttonContainer}
+          // buttonContainer={{}}
           onPress={() => {
             //  handleSubmit(onSubmit)
             props?.navigation?.navigate(screens.PanDetails);
@@ -246,11 +168,18 @@ export default function ApplicationDetails(props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 15,
   },
   tickImage: {
     width: 20,
     height: 20,
     resizeMode: "contain",
     // marginTop: 10,
+  },
+  buttonContainer: {
+    // position: "absolute",
+    // width: "100%",
+    // bottom: 10,
+    marginTop: 20,
   },
 });

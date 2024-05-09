@@ -14,6 +14,11 @@ import customTheme from "../../colors/theme";
 import CustomShadow from "./CustomShadow";
 import { getErrMsg } from "../../services/globalHelper";
 import CustomModal from "../CustomModal";
+import {
+  fieldContainerStyle,
+  fieldLabelViewStyle,
+  fieldLabelStyle,
+} from "../../constants/commonStyles";
 
 export default DropDown = ({
   control,
@@ -65,7 +70,7 @@ export default DropDown = ({
           return (
             <View style={styles.container}>
               <View style={styles.labelContainer}>
-                <Text style={fonts.regularText}>
+                <Text style={styles.label}>
                   {isRequired && <Text style={styles.asterisk}>* </Text>}
                   {label}
                 </Text>
@@ -128,9 +133,7 @@ export default DropDown = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginHorizontal: 5,
-    marginVertical: 10,
-    paddingBottom: 0,
+    ...fieldContainerStyle,
   },
   selectArr: {
     fontSize: 18,
@@ -144,15 +147,11 @@ const styles = StyleSheet.create({
     color: customTheme.colors.error,
     marginTop: 5,
   },
-  container: {
-    marginHorizontal: 5,
-    marginVertical: 10,
-    paddingBottom: 0,
-  },
   labelContainer: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    marginBottom: 8,
+    ...fieldLabelViewStyle,
+  },
+  label: {
+    ...fieldLabelStyle,
   },
   selectContainer: {
     backgroundColor: customTheme.colors.textInputBackground,
