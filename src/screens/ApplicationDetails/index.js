@@ -1,4 +1,4 @@
-import { Button, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import React from "react";
 import { useForm } from "react-hook-form";
 import {
@@ -9,6 +9,8 @@ import { useTheme, Text } from "react-native-paper";
 import { validations } from "../../constants/validations";
 import { styles } from "./styles/ApplicationDetailStyle";
 import ApplicationCard from "./component/ApplicationCard";
+import Button from "../../components/Button";
+import { verticalScale } from "../../utils/matrcis";
 
 export default function ApplicationDetails() {
   const {
@@ -110,8 +112,12 @@ export default function ApplicationDetails() {
               />
             );
           })}
-          {/* // ! temporary submit button */}
-          <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+          <Button
+            type="primary"
+            label="Continue"
+            onPress={handleSubmit(onSubmit)}
+            buttonContainer={{ marginVertical: verticalScale(20) }}
+          />
         </View>
       </View>
     </ScrollView>
