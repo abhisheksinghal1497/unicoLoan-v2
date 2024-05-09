@@ -8,6 +8,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import { Button } from "react-native-paper";
 import { styles } from './style/style';
 import { AadharBasicDetails } from "../../constants/stringConstants";
+// import { useQuery,useMutation } from '@tanstack/react-query';
 
 const CaptureAdhaar = ({ navigation }) => {
 
@@ -30,6 +31,12 @@ const CaptureAdhaar = ({ navigation }) => {
         })
             .then((image) => {
                 setSelectedImage(image.path);
+                // useQuery({queryKey:["ImageData"],queryFn: () => [{
+                //     "id": 10,
+                //     "Image":image.path,
+                //      }
+                // ]})
+
                 // setHeight(height);
                 // setWidth(width);
             })
@@ -40,8 +47,16 @@ const CaptureAdhaar = ({ navigation }) => {
     const ButtonActions = async (value) => {
         if (value === firstButtonName) {
             // setSelectedImage(null)
+            onCameraPress()
+        }
+        else{
+            navigation.goBack()
         }
     }
+
+  
+
+    
 
     return (
         <>
@@ -55,7 +70,6 @@ const CaptureAdhaar = ({ navigation }) => {
                     title={selectedImage ? headerText : headerTextSecond}
                     left={require('../../images/back.png')}
                     onPressLeft={() => { navigation.goBack() }}
-                    right={require('../../images/question.png')}
                     onPressRight={() => { }} />
                 <AdhaarSection uri={selectedImage} AdhaarText={method === imageMethod ? imageSide : imageSideSecond} />
                 {selectedImage ? (
