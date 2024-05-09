@@ -14,8 +14,9 @@ import {
 } from "../../components/FormComponents/FormControl";
 import { useTheme } from "react-native-paper";
 import { validations } from "../../constants/validations";
+import { screens } from "../../constants/screens";
 
-export default function ApplicationDetails() {
+export default function ApplicationDetails(props) {
   const [isVerified, setIsVerified] = useState(false);
   const {
     control,
@@ -31,7 +32,11 @@ export default function ApplicationDetails() {
 
   const { colors } = useTheme();
 
-  const onSubmit = (data) => console.log(JSON.stringify(data, null, 2));
+  const onSubmit = (data) => {
+    console.log("njnjnjnb")
+    console.log(JSON.stringify(data, null, 2))
+    props?.navigation?.navigate(screens.PancardNumber)
+  };
 
   const mock_data = [
     {
@@ -142,11 +147,11 @@ export default function ApplicationDetails() {
           label="Enter otp"
           errors={errors.leadId}
           isRequired
-          // placeholder="Enter Lead Id"
-          // style={{}}
+        // placeholder="Enter Lead Id"
+        // style={{}}
         />
 
-        <FormControl
+        {/* <FormControl
           compType={component.checkbox}
           control={control}
           validations={validations.text}
@@ -154,9 +159,9 @@ export default function ApplicationDetails() {
           label="Checkbox here"
           errors={errors.leadId}
           isRequired
-          // placeholder="Enter Lead Id"
-          // style={{}}
-        />
+        // placeholder="Enter Lead Id"
+        // style={{}}
+        /> */}
 
         <FormControl
           compType={component.datetime}
@@ -166,8 +171,8 @@ export default function ApplicationDetails() {
           label="Checkbox here"
           errors={errors.leadId}
           isRequired
-          // placeholder="Enter Lead Id"
-          // style={{}}
+        // placeholder="Enter Lead Id"
+        // style={{}}
         />
 
         <FormControl
@@ -219,7 +224,12 @@ export default function ApplicationDetails() {
         })}
 
         {/* // ! temporary submit button */}
-        <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+        <Button title="Submit" onPress={()=>{
+        //  handleSubmit(onSubmit)
+          props?.navigation?.navigate(screens.PanDetails)
+        }
+          
+          } />
       </ScrollView>
     </View>
   );

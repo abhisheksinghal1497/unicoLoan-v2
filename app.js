@@ -44,6 +44,8 @@ import store from "./src/store/redux";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Dashboard from "./src/Navigation/MainNavigation";
 import NoInternet from "./src/screens/NoInternet";
+import { onlineManager } from "@tanstack/react-query/build/legacy";
+
 
 
 
@@ -134,6 +136,14 @@ export const App = function () {
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
       setIsConnected(state.isConnected);
+      try {
+        onlineManager.setEventListener(setOnline => {
+          setOnline(state.isConnected)
+        })
+
+      } catch (error) {
+        
+      }
     });
     return () => {
       unsubscribe();
