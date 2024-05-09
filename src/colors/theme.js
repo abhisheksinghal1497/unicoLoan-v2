@@ -27,6 +27,7 @@ const customTheme = {
       // level5: "#E6F4FF",
     },
     border: "#D2D2D2",
+    disableBg: "#D3D3D3",
   },
   shape: {
     ...DefaultTheme.shape,
@@ -37,7 +38,7 @@ const customTheme = {
     smallText: {
       fontFamily: "Nunito-Regular",
       fontWeight: "normal",
-      fontSize: 12,
+      fontSize: 11,
       color: '#000000',
     },
     smallLightText: {
@@ -59,7 +60,13 @@ const customTheme = {
       color: 'rgba(124, 126, 139, 1)',
     },
     mediumText: {
-      fontFamily: "Nunito-Regular",
+      fontFamily: "Nunito-Bold",
+      fontWeight: "bold",
+      fontSize: 14,
+      color: '#000000',
+    },
+    largeText: {
+      fontFamily: "Nunito-ExtraBold",
       fontWeight: "bold",
       fontSize: 14,
       color: '#000000',
