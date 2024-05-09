@@ -1,10 +1,11 @@
 import { MD3LightTheme as DefaultTheme } from "react-native-paper";
+import { colors } from ".";
 
 const customTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    primary: "#2E52A1",
+    primary: "rgba(46, 82, 161, 1)",
     primaryContainer: "#E1F3FF",
     primaryShadow: "rgba(105, 87, 211, 0.3)",
     surfaceVariant: "#D7E7F4",
@@ -26,6 +27,7 @@ const customTheme = {
       // level5: "#E6F4FF",
     },
     border: "#D2D2D2",
+    disableBg: "#D3D3D3",
   },
   shape: {
     ...DefaultTheme.shape,
@@ -36,7 +38,7 @@ const customTheme = {
     smallText: {
       fontFamily: "Nunito-Regular",
       fontWeight: "normal",
-      fontSize: 12,
+      fontSize: 11,
       color: '#000000',
     },
     smallLightText: {
@@ -58,7 +60,13 @@ const customTheme = {
       color: 'rgba(124, 126, 139, 1)',
     },
     mediumText: {
-      fontFamily: "Nunito-Regular",
+      fontFamily: "Nunito-Bold",
+      fontWeight: "bold",
+      fontSize: 14,
+      color: '#000000',
+    },
+    largeText: {
+      fontFamily: "Nunito-ExtraBold",
       fontWeight: "bold",
       fontSize: 14,
       color: '#000000',
@@ -69,19 +77,23 @@ const customTheme = {
       letterSpacing: 0,
       color: '#000000',
     },
-
+    titleSmall: {
+      fontFamily: "Nunito-Bold",
+      fontSize: 18,
+      letterSpacing: 0.15,
+      lineHeight: 24,
+      color: '#000000',
+    },
     titleMedium: {
-      fontFamily: "Nunito-Regular",
+      fontFamily: "Nunito-Bold",
       fontSize: 20,
-      fontWeight: "400",
       letterSpacing: 0.15,
       lineHeight: 24,
       color: '#000000',
     },
     titleLarge: {
-      fontFamily: "Nunito-Regular",
+      fontFamily: "Nunito-Bold",
       fontSize: 22,
-      fontWeight: "400",
       letterSpacing: 0,
       lineHeight: 28,
       color: '#000000',
@@ -94,26 +106,63 @@ const customTheme = {
       lineHeight: 16,
       color: '#000000',
     },
+    bodyRegular: {
+      fontFamily: "Nunito-Regular",
+      fontSize: 14,
+      fontWeight: "600",
+      letterSpacing: 0.4,
+      lineHeight: 20,
+      color: '#000000',
+    },
+    bodyBold: {
+      fontFamily: "Nunito-Bold",
+      fontSize: 12,
+      fontWeight: "600",
+      letterSpacing: 0.4,
+      lineHeight: 20,
+      color: '#000000',
+    },
+    headerText: {
+      fontFamily: "Nunito-Bold",
+      fontSize: 18,
+      letterSpacing: 0.4,
+      lineHeight: 22,
+      color: '#000000',
+    },
+    inputText: {
+      fontFamily: "Nunito-Regular",
+      fontSize: 16,
+      lineHeight: 20,
+      color: '#000000',
+    },
+    buttonText: {
+      fontFamily: "Nunito-Bold",
+      fontSize: 18,
+      lineHeight: 25,
+      color: colors.white,
+    },
+    seconderyButtonText: {
+      fontFamily: "Nunito-Bold",
+      fontSize: 18,
+      lineHeight: 25,
+      color: "rgba(46, 82, 161, 1)",
+    },
     labelSmall: {
       fontFamily: "Nunito-Regular",
-      fontSize: 11,
-      fontWeight: "500",
-      letterSpacing: 0.5,
+      fontSize: 14,
       lineHeight: 16,
       color: 'rgba(136, 136, 136, 1)',
     },
     labelMedium: {
       fontFamily: "Nunito-Regular",
-      fontSize: 12,
-      fontWeight: "500",
-      letterSpacing: 0.5,
-      lineHeight: 16,
+      fontSize: 16,
+      lineHeight: 20,
       color: 'rgba(136, 136, 136, 1)',
     },
     labelLarge: {
       fontFamily: "Nunito-Regular",
       fontSize: 14,
-      fontWeight: "500",
+      fontWeight: "600",
       letterSpacing: 0.1,
       lineHeight: 20,
       color: 'rgba(136, 136, 136, 1)',
