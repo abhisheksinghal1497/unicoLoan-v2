@@ -7,10 +7,13 @@ import CameraSection from '../../components/CameraSection'
 import ImagePicker from 'react-native-image-crop-picker';
 import { Button } from "react-native-paper";
 import { styles } from './style/style';
+import { AadharBasicDetails } from "../../constants/stringConstants";
 
 const CaptureAdhaar = ({ navigation }) => {
 
-    const buttonLabels = [{ id: 0, name: "Retry" }, { id: 1, name: "Use this Photo", }]
+    const {firstButtonName,lastButtonName,headerText,headerTextSecond,imageMethod,imageSide,imageSideSecond} = AadharBasicDetails
+
+    const buttonLabels = [{ id: 0, name: firstButtonName }, { id: 1, name: lastButtonName, }]
 
     const route = useRoute();
     const { method } = route.params || {};
@@ -23,6 +26,7 @@ const CaptureAdhaar = ({ navigation }) => {
             width,
             height,
             cropping: true,
+            compressImageQuality:0.6
         })
             .then((image) => {
                 setSelectedImage(image.path);
@@ -34,7 +38,7 @@ const CaptureAdhaar = ({ navigation }) => {
             });
     };
     const ButtonActions = async (value) => {
-        if (value === "Retry") {
+        if (value === firstButtonName) {
             setSelectedImage(null)
         }
     }
@@ -46,8 +50,8 @@ const CaptureAdhaar = ({ navigation }) => {
                 barStyle="dark-content"
             />
             <SafeAreaView style={styles.container}>
-                <Header title={selectedImage ? 'Review Your Document' : 'Capture Adhaar'} navigation={navigation} />
-                <AdhaarSection uri={selectedImage} AdhaarText={method === 'Front' ? 'Front Side' : 'Back Side'} />
+                <Header title={selectedImage ? headerText : headerTextSecond} navigation={navigation} />
+                <AdhaarSection uri={selectedImage} AdhaarText={method === imageMethod ? imageSide : imageSideSecond} />
                 {selectedImage ? (
                     <>
                         <View style={{ flexDirection: "row", justifyContent: 'space-between', marginTop: 100, }}>
@@ -78,7 +82,10 @@ const CaptureAdhaar = ({ navigation }) => {
     )
 }
 
-export default CaptureAdhaar
+export default CaptureAdhaar;
+
+
+
 
 
 
