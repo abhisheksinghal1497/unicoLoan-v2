@@ -160,8 +160,10 @@ const customTheme = {
       color: 'rgba(136, 136, 136, 1)',
     },
     labelLarge: {
-      fontFamily: "Nunito-Bold",
-      fontSize: 18,
+      fontFamily: "Nunito-Regular",
+      fontSize: 14,
+      fontWeight: "600",
+      letterSpacing: 0.1,
       lineHeight: 20,
       color: 'rgba(136, 136, 136, 1)',
     },
