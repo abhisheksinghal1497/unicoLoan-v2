@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Image, KeyboardAvoidingView } from "react-native";
 import { TextInput, Text, useTheme } from "react-native-paper";
 import { Controller } from "react-hook-form";
 import { colors } from "../../colors";
@@ -20,6 +20,11 @@ export default InputField = ({
   tooltipText = "",
   placeholder,
   style = {},
+  showRightComp = false,
+  iconName,
+  rightComp,
+  isMultiline,
+  rightCompPress,
   ...rest
 }) => {
   const { colors, fonts } = useTheme();
@@ -40,28 +45,61 @@ export default InputField = ({
                 {label}
               </Text>
             </View>
-            <CustomShadow shadowColor={error ? colors.error : colors.primary}>
-              <TextInput
-                onBlur={onBlur}
-                keyboardType={type}
-                returnKeyType="done"
-                error={error?.message}
-                scrollEnabled={false}
-                onChangeText={(value) => {
-                  onChange(value);
-                }}
-                value={value?.toString()}
-                disabled={isDisabled}
-                dense={true}
-                style={[styles.textInput, style]}
-                mode="outlined"
-                outlineColor={colors.border}
-                outlineStyle={styles.inputOutline}
-                placeholder={placeholder}
-                placeholderTextColor={colors.seconderyText}
-                {...rest}
-              />
-            </CustomShadow>
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              style={{ flex: 1 }}
+            >
+              <CustomShadow shadowColor={error ? colors.error : colors.primary}>
+                <TextInput
+                  onBlur={onBlur}
+                  keyboardType={type}
+                  returnKeyType="done"
+                  error={error?.message}
+                  scrollEnabled={false}
+                  onChangeText={(value) => {
+                    onChange(value);
+                  }}
+                  value={value?.toString()}
+                  disabled={isDisabled}
+                  dense={true}
+                  style={[
+                    styles.textInput,
+                    style,
+                    isDisabled ? styles.disabledInput : {},
+                  ]}
+                  mode="outlined"
+                  outlineColor={colors.border}
+                  activeOutlineColor="transparent"
+                  outlineStyle={styles.inputOutline}
+                  contentStyle={[
+                    styles.inputContent,
+                    isDisabled ? styles.disabledContent : {},
+                  ]}
+                  placeholder={placeholder}
+                  placeholderTextColor={colors.seconderyText}
+                  right={
+                    showRightComp ? (
+                      <TextInput.Icon
+                        onPress={() => {
+                          if (rightCompPress) {
+                            rightCompPress();
+                          }
+                        }}
+                        // had to pass like this for right for TextInput
+                        icon={
+                          iconName
+                            ? iconName
+                            : () => (rightComp ? rightComp() : null)
+                        }
+                        style={styles.rightIconStyle}
+                      />
+                    ) : null
+                  }
+                  multiline={isMultiline}
+                  {...rest}
+                />
+              </CustomShadow>
+            </KeyboardAvoidingView>
 
             {error && (
               <Text style={styles.error}>
@@ -86,7 +124,7 @@ const styles = StyleSheet.create({
   labelContainer: {
     flexDirection: "row",
     alignItems: "flex-end",
-    marginBottom: 2,
+    marginBottom: 8,
   },
   asterisk: {
     color: colors.asteriskRequired,
@@ -98,9 +136,21 @@ const styles = StyleSheet.create({
   textInput: {
     backgroundColor: customTheme.colors.textInputBackground,
     paddingHorizontal: 5,
+    padding: 5,
+  },
+  disabledInput: {
+    backgroundColor: customTheme.colors.disableBg,
+  },
+  disabledContent: {
+    color: customTheme.colors.black,
   },
   inputOutline: {
     borderWidth: 0.5,
     borderRadius: 30,
   },
+  inputContent: {
+    minHeight: 48,
+    textAlignVertical: "center",
+  },
+  rightIconStyle: { marginTop: 15 },
 });
