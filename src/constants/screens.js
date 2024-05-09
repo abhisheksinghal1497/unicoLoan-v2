@@ -19,5 +19,6 @@ export const screens = {
     PandcardDetails: 'PandcardDetails',
     NoInternet: 'NoInternet',
     ErrorScreen:'ErrorScreen',
-    CongratulationScreen:'CongratulationScreen'
+    CongratulationScreen:'CongratulationScreen',
+    Eligibility:"Eligibility"
   };
