@@ -27,6 +27,7 @@ const customTheme = {
       // level5: "#E6F4FF",
     },
     border: "#D2D2D2",
+    disableBg: "#D3D3D3",
   },
   shape: {
     ...DefaultTheme.shape,

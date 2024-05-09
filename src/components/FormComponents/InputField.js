@@ -62,12 +62,19 @@ export default InputField = ({
                   value={value?.toString()}
                   disabled={isDisabled}
                   dense={true}
-                  style={[styles.textInput, style]}
+                  style={[
+                    styles.textInput,
+                    style,
+                    isDisabled ? styles.disabledInput : {},
+                  ]}
                   mode="outlined"
                   outlineColor={colors.border}
                   activeOutlineColor="transparent"
                   outlineStyle={styles.inputOutline}
-                  contentStyle={styles.inputContent}
+                  contentStyle={[
+                    styles.inputContent,
+                    isDisabled ? styles.disabledContent : {},
+                  ]}
                   placeholder={placeholder}
                   placeholderTextColor={colors.seconderyText}
                   right={
@@ -130,6 +137,12 @@ const styles = StyleSheet.create({
     backgroundColor: customTheme.colors.textInputBackground,
     paddingHorizontal: 5,
     padding: 5,
+  },
+  disabledInput: {
+    backgroundColor: customTheme.colors.disableBg,
+  },
+  disabledContent: {
+    color: customTheme.colors.black,
   },
   inputOutline: {
     borderWidth: 0.5,

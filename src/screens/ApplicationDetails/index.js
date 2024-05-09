@@ -16,7 +16,7 @@ import { useTheme } from "react-native-paper";
 import { validations } from "../../constants/validations";
 
 export default function ApplicationDetails() {
-  const [isVerify, setIsVerify] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
   const {
     control,
     handleSubmit,
@@ -24,7 +24,10 @@ export default function ApplicationDetails() {
     getValues,
     getFieldState,
     setValue,
-  } = useForm({ mode: "onBlur", defaultValues: { otp: "", checkbox: false } });
+  } = useForm({
+    mode: "onBlur",
+    defaultValues: { mobile: 9876543210, otp: "", checkbox: false },
+  });
 
   const { colors } = useTheme();
 
@@ -42,6 +45,19 @@ export default function ApplicationDetails() {
       value: "",
     },
     {
+      id: "mobile",
+      label: "Mobile Number",
+      type: component.number,
+      placeHolder: "Enter Mobile number",
+      validations: validations.phone,
+      maxLength: 10,
+      keyboardtype: "numeric",
+      isRequired: true,
+      data: [],
+      value: 0,
+      isDisabled: true,
+    },
+    {
       id: "phone",
       label: "Phone Number",
       type: component.number,
@@ -52,6 +68,7 @@ export default function ApplicationDetails() {
       isRequired: true,
       data: [],
       value: 0,
+      // isDisabled: true,
     },
     {
       id: "leadSrc",
@@ -165,7 +182,7 @@ export default function ApplicationDetails() {
           showRightComp
           iconName="eye-off"
         />
-        
+
         {mock_data.map((comp) => {
           return (
             <FormControl
@@ -182,8 +199,8 @@ export default function ApplicationDetails() {
               setValue={setValue}
               showRightComp={true}
               rightComp={() =>
-                isVerify ? (
-                  <Text>Hello</Text>
+                isVerified ? (
+                  <Text>Verify</Text>
                 ) : (
                   <Image
                     source={require("../../images/tick.png")}
@@ -192,10 +209,11 @@ export default function ApplicationDetails() {
                 )
               }
               rightCompPress={() => {
-                setIsVerify(!isVerify);
+                setIsVerified(!isVerified);
               }}
               isMultiline={comp.isMultiline}
               maxLength={comp.maxLength}
+              isDisabled={comp.isDisabled}
             />
           );
         })}
