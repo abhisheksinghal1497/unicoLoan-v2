@@ -45,6 +45,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Dashboard from "./src/Navigation/MainNavigation";
 import NoInternet from "./src/screens/NoInternet";
 
+
+
+
 // import Dashboard from './src/Navigation/Dashboard';
 import HomeScreen from "./src/screens/HomeScreen";
 import ApplicationDetails from "./src/screens/ApplicationDetails";
@@ -125,7 +128,8 @@ const styles = StyleSheet.create({
 });
 
 export const App = function () {
-  const [isConnected, setIsConnected] = useState(true);
+    const queryClient = new QueryClient();
+    const [isConnected, setIsConnected] = useState(true);
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
@@ -136,15 +140,15 @@ export const App = function () {
     };
   }, []);
 
-  return (
-    <QueryClientProvider client={queryClient}>
-      <PaperProvider theme={customTheme}>
-        <Reduxprovider store={store}>
-          {isConnected ? <Dashboard /> : <NoInternet />}
-          {/* <HomeScreen/> */}
-          <ApplicationDetails />
-        </Reduxprovider>
-      </PaperProvider>
-    </QueryClientProvider>
-  );
-};
+    return (
+        <PaperProvider theme={customTheme}>
+            <QueryClientProvider client={queryClient}>
+            <Reduxprovider store={store}>
+                {isConnected ? <Dashboard /> : <NoInternet />}
+                {/* <HomeScreen/> */}
+                {/* <ApplicationDetails /> */}
+            </Reduxprovider>
+            </QueryClientProvider>
+        </PaperProvider>
+    );
+}

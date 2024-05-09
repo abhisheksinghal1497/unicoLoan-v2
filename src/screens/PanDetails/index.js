@@ -12,7 +12,12 @@ const PanDetails = (props) => {
   const [phone, setPhone] = useState();
   return (
     <View style={styles.container}>
-      <Header title="PAN Details" navigation={props.navigation} />
+      <Header
+        title="PAN Details"
+        left={require('../../images/back.png')}
+        right={require('../../images/question.png')}
+        onPressLeft={() => { props.navigation.goBack() }}
+        onPressRight={() => { }} />
       <View style={styles.subContainer}>
         <Text style={fonts.labelMedium}>PAN Number</Text>
         <View style={styles.inputContainer}>
