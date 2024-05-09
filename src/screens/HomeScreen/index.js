@@ -119,7 +119,6 @@ const HomeScreen = () => {
             </ImageBackground>
           </View>
         ) :
-        //
           <View style={styles.secondcards}>
             <FlatList
               ref={flatListRef}
