@@ -37,7 +37,7 @@ const customTheme = {
     smallText: {
       fontFamily: "Nunito-Regular",
       fontWeight: "normal",
-      fontSize: 12,
+      fontSize: 11,
       color: '#000000',
     },
     smallLightText: {
@@ -59,7 +59,13 @@ const customTheme = {
       color: 'rgba(124, 126, 139, 1)',
     },
     mediumText: {
-      fontFamily: "Nunito-Regular",
+      fontFamily: "Nunito-Bold",
+      fontWeight: "bold",
+      fontSize: 14,
+      color: '#000000',
+    },
+    largeText: {
+      fontFamily: "Nunito-ExtraBold",
       fontWeight: "bold",
       fontSize: 14,
       color: '#000000',

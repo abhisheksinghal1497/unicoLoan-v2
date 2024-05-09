@@ -1,24 +1,27 @@
 import React, { useState } from "react";
-import { Modal, StyleSheet, Text, Pressable, View } from "react-native";
+import { Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 
 const CustomModal = ({type="center",showModal = true, setShowModal = () => {}, children}) => {
 
   
   return (
-    <View style={[styles.centeredView, {justifyContent:type==="center" ? "center" : "flex-end"}]}>
+    
+    // <View style={[styles.centeredView, {justifyContent:type==="center" ? "center" : "flex-end"}]}>
       <Modal
         animationType="slide"
         transparent={true}
         visible={showModal}
         onRequestClose={() => {
-          setShowModal(!modalVisible);
+          setShowModal(!showModal);
         }}
       >
-        <View style={[styles.centeredView, {justifyContent:type==="center" ? "center" : "flex-end"}]}>
+         <TouchableWithoutFeedback style={{zIndex:0}} onPress={() => setShowModal(!showModal)}>
+        <View style={[styles.centeredView, {justifyContent:type==="center" ? "center" : "flex-end",}]}>
           <View style={styles.modalView}>{children}</View>
         </View>
+        </TouchableWithoutFeedback>
       </Modal>
-     </View>
+    //  </View>
   );
 };
 
@@ -27,7 +30,7 @@ export default CustomModal;
 const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)'
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
   },
   modalView: {
     backgroundColor: "white",
@@ -41,5 +44,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+    maxHeight:'70%'
   },
 });

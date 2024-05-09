@@ -5,7 +5,7 @@ import { colors } from '../colors';
 
 const Card = ({cardStyle={}, children}) => {
   return (
-    <View style={[styles.containerStyle,cardStyle]}>
+    <View style={[styles.containerStyle,{...cardStyle}]}>
       {children}
     </View>
   )
