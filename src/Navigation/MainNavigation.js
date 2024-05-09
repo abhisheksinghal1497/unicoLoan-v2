@@ -1,4 +1,5 @@
 import React from 'react'
+import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../screens/HomeScreen';
@@ -11,18 +12,23 @@ import CongratulationScreen from '../screens/Congratulation';
 import KYC from '../screens/KYC';
 import CaptureAdhaar from '../screens/CaptureAdhaar';
 import Eligibility from '../screens/Eligibility';
+import CaptureSelfie from '../screens/CaptureSelfie';
 
 const Stack = createStackNavigator();
 
 const Dashboard = () => {
   return (
 
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName={screens.KYC}>
+    <NavigationContainer >
+       <StatusBar
+                backgroundColor="white"
+                barStyle="dark-content"
+            />
+      <Stack.Navigator initialRouteName={screens.KYC} >
         <Stack.Screen
           name={screens.Splash}
           component={Splash}
-          options={{ headerShown: false }}
+          options={{ headerShown: false, }}
         />
 
         <Stack.Screen
@@ -50,6 +56,11 @@ const Dashboard = () => {
         <Stack.Screen
           name={screens.CaptureAdhaar}
           component={CaptureAdhaar}
+          options={{ headerShown: false }}
+        />
+         <Stack.Screen
+          name={screens.CaptureSelfie}
+          component={CaptureSelfie}
           options={{ headerShown: false }}
         />
 
