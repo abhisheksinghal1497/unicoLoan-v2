@@ -14,6 +14,7 @@ import {
 } from "../../components/FormComponents/FormControl";
 import { useTheme } from "react-native-paper";
 import { validations } from "../../constants/validations";
+import DownladDoc from "../../components/DownladDoc";
 
 export default function ApplicationDetails() {
   const [isVerified, setIsVerified] = useState(false);
@@ -98,6 +99,7 @@ export default function ApplicationDetails() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Text>ApplicationDetails</Text>
+      {/* <DownladDoc /> */}
       <ScrollView>
         {/* <FormControl
       compType={component.textInput}
@@ -134,7 +136,7 @@ export default function ApplicationDetails() {
       // style={{}}
     /> */}
 
-        <FormControl
+        {/* <FormControl
           compType={component.otpInput}
           control={control}
           validations={validations.text}
@@ -181,7 +183,7 @@ export default function ApplicationDetails() {
           placeholder="Enter your phone no."
           showRightComp
           iconName="eye-off"
-        />
+        /> */}
 
         {mock_data.map((comp) => {
           return (
