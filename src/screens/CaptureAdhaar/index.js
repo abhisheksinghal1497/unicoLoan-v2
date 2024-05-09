@@ -6,6 +6,7 @@ import AdhaarSection from '../../components/AdhaarSection'
 import CameraSection from '../../components/CameraSection'
 import ImagePicker from 'react-native-image-crop-picker';
 import { Button } from "react-native-paper";
+import { styles } from './style/style';
 
 const CaptureAdhaar = ({ navigation }) => {
 
@@ -44,7 +45,7 @@ const CaptureAdhaar = ({ navigation }) => {
                 backgroundColor="white"
                 barStyle="dark-content"
             />
-            <SafeAreaView style={{ flex: 1, padding: 15, paddingTop: 50 }}>
+            <SafeAreaView style={styles.container}>
                 <Header title={selectedImage ? 'Review Your Document' : 'Capture Adhaar'} navigation={navigation} />
                 <AdhaarSection uri={selectedImage}AdhaarText={method === 'Front' ? 'Front Side' :  'Back Side' } />
                 {selectedImage ? (
@@ -52,16 +53,14 @@ const CaptureAdhaar = ({ navigation }) => {
                         <View style={{ flexDirection: "row", justifyContent: 'space-between', marginTop: 100, }}>
                             {buttonLabels.map(function (value) {
                                 return (
-                                    <View style={{
-                                        width: "48%",
-                                    }}>
+                                    <View style={styles.buttonStyle}>
                                         <Button
-                                            style={{ height: 60, borderRadius: 30, justifyContent: 'center' }}
+                                            style={styles.buttonInner}
                                             mode="contained"
                                             textColor="white"
                                             onPress={() => { ButtonActions(value.name) }}
                                         >
-                                            <Text style={{ color: "white", fontSize: 16, fontFamily: '500' }}>{value.name}</Text>
+                                            <Text style={styles.buttonText}>{value.name}</Text>
 
                                         </Button>
                                     </View>
@@ -81,6 +80,5 @@ const CaptureAdhaar = ({ navigation }) => {
 
 export default CaptureAdhaar
 
-const styles = StyleSheet.create({})
 
 
