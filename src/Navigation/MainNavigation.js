@@ -11,6 +11,7 @@ import PanDetails from '../screens/PanDetails';
 import NoInternet from '../screens/NoInternet';
 import ErrorScreen from '../screens/ErrorScreen';
 import CongratulationScreen from '../screens/Congratulation';
+import Eligibility from '../screens/Eligibility';
 
 const Stack = createStackNavigator();
 
@@ -18,7 +19,7 @@ const Dashboard = () => {
   return (
 
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={'Splash'}>
+      <Stack.Navigator initialRouteName={screens.Eligibility}>
         <Stack.Screen
           name={screens.Splash}
           component={Splash}
@@ -51,6 +52,11 @@ const Dashboard = () => {
         <Stack.Screen
           name={screens.CongratulationScreen}
           component={CongratulationScreen}
+          options={{ headerShown: false }}
+        />
+<Stack.Screen
+          name={screens.Eligibility}
+          component={Eligibility}
           options={{ headerShown: false }}
         />
 
