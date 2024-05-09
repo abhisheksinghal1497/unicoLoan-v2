@@ -32,4 +32,7 @@ export const colors = {
   success: '#72DA7D',
   link: '#0076C7',
   grey: "#777777",
+  coreBlue: "#2E52A1",
+  coreCream: "#FEF9EB",
+  greylight: "7C7B7B"
 };
