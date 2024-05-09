@@ -11,7 +11,9 @@ import CustomButton from '../../components/Button'
 import Header from '../../components/Header'
 import { validations } from "../../constants/validations";
 import customTheme from '../../colors/theme';
+
 import { screens } from '../../constants/screens';
+
 
 const WIDTH = Dimensions.get('window').width;
 
