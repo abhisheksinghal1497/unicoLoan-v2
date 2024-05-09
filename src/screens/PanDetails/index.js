@@ -4,6 +4,7 @@ import { colors } from '../../colors'
 import { useTheme } from 'react-native-paper'
 import CustomButton from '../../components/Button'
 import Header from '../../components/Header'
+import { screens } from '../../constants/screens'
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -45,7 +46,7 @@ const PanDetails = (props) => {
           type="primary"
           label="Continue"
           buttonContainer={styles.buttonContainer}
-          onPress={() => { alert('Validation', 'Invalid phone number entered.', () => { }) }} />
+          onPress={() => { props?.navigation?.navigate(screens.KYC)}} />
       </View>
     </View>
   )

@@ -14,9 +14,9 @@ import {
 } from "../../components/FormComponents/FormControl";
 import { useTheme } from "react-native-paper";
 import { validations } from "../../constants/validations";
-import DownladDoc from "../../components/DownladDoc";
+import { screens } from "../../constants/screens";
 
-export default function ApplicationDetails() {
+export default function ApplicationDetails(props) {
   const [isVerified, setIsVerified] = useState(false);
   const {
     control,
@@ -32,7 +32,11 @@ export default function ApplicationDetails() {
 
   const { colors } = useTheme();
 
-  const onSubmit = (data) => console.log(JSON.stringify(data, null, 2));
+  const onSubmit = (data) => {
+    console.log("njnjnjnb");
+    console.log(JSON.stringify(data, null, 2));
+    props?.navigation?.navigate(screens.PancardNumber);
+  };
 
   const mock_data = [
     {
@@ -99,7 +103,6 @@ export default function ApplicationDetails() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Text>ApplicationDetails</Text>
-      {/* <DownladDoc /> */}
       <ScrollView>
         {/* <FormControl
       compType={component.textInput}
@@ -135,7 +138,6 @@ export default function ApplicationDetails() {
       placeholder="Please select Lead Source"
       // style={{}}
     /> */}
-
         {/* <FormControl
           compType={component.otpInput}
           control={control}
@@ -144,11 +146,11 @@ export default function ApplicationDetails() {
           label="Enter otp"
           errors={errors.leadId}
           isRequired
-          // placeholder="Enter Lead Id"
-          // style={{}}
+        // placeholder="Enter Lead Id"
+        // style={{}}
         />
 
-        <FormControl
+        {/* <FormControl
           compType={component.checkbox}
           control={control}
           validations={validations.text}
@@ -156,10 +158,9 @@ export default function ApplicationDetails() {
           label="Checkbox here"
           errors={errors.leadId}
           isRequired
-          // placeholder="Enter Lead Id"
-          // style={{}}
-        />
-
+        // placeholder="Enter Lead Id"
+        // style={{}}
+        /> */}
         <FormControl
           compType={component.datetime}
           control={control}
@@ -171,7 +172,6 @@ export default function ApplicationDetails() {
           // placeholder="Enter Lead Id"
           // style={{}}
         />
-
         <FormControl
           compType={component.number}
           control={control}
@@ -183,8 +183,8 @@ export default function ApplicationDetails() {
           placeholder="Enter your phone no."
           showRightComp
           iconName="eye-off"
-        /> */}
-
+        />{" "}
+        */}
         {mock_data.map((comp) => {
           return (
             <FormControl
@@ -219,9 +219,14 @@ export default function ApplicationDetails() {
             />
           );
         })}
-
         {/* // ! temporary submit button */}
-        <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+        <Button
+          title="Submit"
+          onPress={() => {
+            //  handleSubmit(onSubmit)
+            props?.navigation?.navigate(screens.PanDetails);
+          }}
+        />
       </ScrollView>
     </View>
   );
