@@ -1,9 +1,6 @@
-import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Provider as PaperProvider } from 'react-native-paper';
-
 import HomeScreen from '../screens/HomeScreen';
 import { screens } from '../constants/screens';
 import Splash from '../screens/Splash';
@@ -12,6 +9,8 @@ import NoInternet from '../screens/NoInternet';
 import ErrorScreen from '../screens/ErrorScreen';
 import CongratulationScreen from '../screens/Congratulation';
 import KYC from '../screens/KYC';
+import CaptureAdhaar from '../screens/CaptureAdhaar';
+import Eligibility from '../screens/Eligibility';
 
 const Stack = createStackNavigator();
 
@@ -19,7 +18,7 @@ const Dashboard = () => {
   return (
 
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={screens.KYC}>
+      <Stack.Navigator initialRouteName={screens.CaptureAdhaar}>
         <Stack.Screen
           name={screens.Splash}
           component={Splash}
@@ -48,6 +47,11 @@ const Dashboard = () => {
           component={KYC}
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name={screens.CaptureAdhaar}
+          component={CaptureAdhaar}
+          options={{ headerShown: false }}
+        />
 
         <Stack.Screen
           name={screens.HomeScreen}
@@ -60,8 +64,11 @@ const Dashboard = () => {
           component={CongratulationScreen}
           options={{ headerShown: false }}
         />
-
-
+        <Stack.Screen
+          name={screens.Eligibility}
+          component={Eligibility}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
 
@@ -69,5 +76,3 @@ const Dashboard = () => {
 }
 
 export default Dashboard
-
-const styles = StyleSheet.create({})

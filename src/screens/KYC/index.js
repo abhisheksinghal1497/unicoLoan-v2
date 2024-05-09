@@ -12,6 +12,9 @@ import Header from '../../components/Header'
 import { validations } from "../../constants/validations";
 import customTheme from '../../colors/theme';
 
+import { screens } from '../../constants/screens';
+
+
 const WIDTH = Dimensions.get('window').width;
 
 const KYC = (props) => {
@@ -78,18 +81,18 @@ const KYC = (props) => {
           <View style={styles.horizonalDivider} />
         </View>
         <View style={styles.rowContainer}>
-          <View>
+          <TouchableOpacity  onPress={() => props.navigation.navigate(screens.CaptureAdhaar, { method: "Front" }) }>
             <View style={styles.cardContainerTwo}>
               <Image source={require('../../images/aadhar-front.png')} style={[styles.frontImage, { marginTop: 20 }]} />
             </View>
             <Text style={[fonts.labelMedium, styles.titleText]}>Upload Your{'\n'}Aadhaar Front{'\n'}Photo</Text>
-          </View>
-          <View>
+          </TouchableOpacity>
+          <TouchableOpacity  onPress={() => props.navigation.navigate(screens.CaptureAdhaar, { method: "Back" }) } >
             <View style={styles.cardContainerTwo}>
               <Image source={require('../../images/aadhar-back.png')} style={[styles.frontImage, { marginTop: 20 }]} />
             </View>
             <Text style={[fonts.labelMedium, styles.titleText]}>Upload Your{'\n'}Aadhaar Back{'\n'}Photo</Text>
-          </View>
+          </TouchableOpacity>
         </View>
       </View>
       <CustomButton
