@@ -40,63 +40,73 @@ export default function ApplicationDetails(props) {
 
   const mock_data = [
     {
-      id: "leadId",
-      label: "SFDC Lead Id",
+      id: "applicationType",
+      label: "Appliation Type",
       type: component.textInput,
-      placeHolder: "Enter Lead Id",
-      validations: validations.text,
-      isRequired: true,
-      data: [],
+      placeHolder: "Enter Appliation Type",
       value: "",
     },
     {
-      id: "mobile",
-      label: "Mobile Number",
-      type: component.number,
-      placeHolder: "Enter Mobile number",
-      validations: validations.phone,
-      maxLength: 10,
-      keyboardtype: "numeric",
-      isRequired: true,
-      data: [],
-      value: 0,
-      isDisabled: true,
-    },
-    {
-      id: "phone",
-      label: "Phone Number",
-      type: component.number,
-      placeHolder: "Enter Phone number",
-      validations: validations.phone,
-      maxLength: 10,
-      keyboardtype: "numeric",
-      isRequired: true,
-      data: [],
-      value: 0,
-      // isDisabled: true,
-    },
-    {
-      id: "leadSrc",
-      label: "Lead Source",
+      id: "customerProfile",
+      label: "Customer Profile",
       type: component.dropdown,
-      placeHolder: "Select lead source",
-      validations: validations.required,
+      placeHolder: "Select Customer Profile",
+      validations: validations.phone,
+      maxLength: 10,
+      keyboardtype: "numeric",
       isRequired: true,
       data: [
-        { id: 1, label: "Digital", value: "digital" },
-        { id: 2, label: "Direct", value: "direct" },
-        { id: 3, label: "Cutomer", value: "cutomer" },
-        { id: 4, label: "Referral", value: "referral" },
+        {
+          id: "cust_type_1",
+          label: "Salaried",
+          value: "salaried",
+        },
+
+        {
+          id: "cust_type_2",
+          label: "Self-Employed",
+          value: "self-employed",
+        },
       ],
       value: {},
     },
     {
-      id: "addr",
-      label: "Address",
+      id: "firstName",
+      label: "First Name",
       type: component.textInput,
-      placeHolder: "Enter the Address",
+      placeHolder: "Enter First Name",
+      validations: validations.text,
+      isRequired: true,
       value: "",
-      isMultiline: true,
+    },
+    {
+      id: "lastName",
+      label: "Last Name",
+      type: component.textInput,
+      placeHolder: "Enter Last Name",
+      validations: validations.text,
+      isRequired: true,
+      value: "",
+    },
+    // {
+    //   id: "phone",
+    //   label: "Phone Number",
+    //   type: component.number,
+    //   placeHolder: "Enter Phone number",
+    //   validations: validations.phone,
+    //   maxLength: 10,
+    //   keyboardtype: "numeric",
+    //   isRequired: true,
+    //   data: [],
+    //   value: 0,
+    //   // isDisabled: true,
+    // },
+    {
+      id: "dob",
+      label: "Date of Birth",
+      type: component.datetime,
+      placeHolder: "DD-MM-YYYY",
+      value: "",
     },
   ];
 
@@ -161,6 +171,7 @@ export default function ApplicationDetails(props) {
         // placeholder="Enter Lead Id"
         // style={{}}
         /> */}
+        {/*
         <FormControl
           compType={component.datetime}
           control={control}
