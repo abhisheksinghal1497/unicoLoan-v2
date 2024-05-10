@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   FormControl,
@@ -15,8 +15,28 @@ import {
 import { useTheme } from "react-native-paper";
 import { validations } from "../../constants/validations";
 import { screens } from "../../constants/screens";
+import Header from '../../components/Header'
+import {storeData,getData}  from '../../utils/asyncStorage'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ApplicationDetails(props) {
+
+  const [dataFields, setdataFields] = useState([]);
+  const [phone, setPhone] = useState('');
+useEffect(() => {
+  async function fetchData() {
+    await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.ApplicantDetails));
+    const savedData = await AsyncStorage.getItem('ApplicationDetails');
+    const currentData = JSON.parse(savedData);
+    console.log(currentData?.phone,'current value');
+    setPhone(currentData?.phone?.toString())
+    setValue("phone",'4774746')
+    setdataFields(currentData)
+  }
+  fetchData();
+}, []);
+
+
   const [isVerified, setIsVerified] = useState(false);
   const {
     control,
@@ -27,15 +47,22 @@ export default function ApplicationDetails(props) {
     setValue,
   } = useForm({
     mode: "onBlur",
-    defaultValues: { mobile: 9876543210, otp: "", checkbox: false },
+    defaultValues: { mobile:  9876543210, otp: "", checkbox: false },
   });
 
   const { colors } = useTheme();
 
-  const onSubmit = (data) => {
-    console.log("njnjnjnb")
+  const onSubmit = async(data) => {
+    // alert('true')
+    const values = getValues()
+    console.log("njnjnjnb",values)
+    await AsyncStorage.setItem('ApplicationDetails', JSON.stringify(values));
+    await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.ApplicantDetails));
+    // storeData('ApplicationDetails',values)
+    // storeData('CurrntScreen',screens.ApplicantDetails)
     console.log(JSON.stringify(data, null, 2))
-    props?.navigation?.navigate(screens.PancardNumber)
+    props?.navigation?.navigate(screens.PanDetails)
+    // props?.navigation?.navigate(screens.PancardNumber)
   };
 
   const mock_data = [
@@ -72,7 +99,8 @@ export default function ApplicationDetails(props) {
       keyboardtype: "numeric",
       isRequired: true,
       data: [],
-      value: 0,
+      value: phone
+      ,
       // isDisabled: true,
     },
     {
@@ -102,7 +130,13 @@ export default function ApplicationDetails(props) {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text>ApplicationDetails</Text>
+      {/* <Text>ApplicationDetails</Text> */}
+      <Header
+                    title={'ApplicationDetails'}
+                    left={require('../../images/back.png')}
+                    onPressLeft={() => {props?.navigation?.navigate(screens.HomeScreen)  }}
+                    onPressRight={() => { }}
+                    colour="white" />
       <ScrollView>
         {/* <FormControl
       compType={component.textInput}
@@ -175,7 +209,7 @@ export default function ApplicationDetails(props) {
         // style={{}}
         />
 
-        <FormControl
+        {/* <FormControl
           compType={component.number}
           control={control}
           validations={validations.phone}
@@ -186,7 +220,8 @@ export default function ApplicationDetails(props) {
           placeholder="Enter your phone no."
           showRightComp
           iconName="eye-off"
-        />
+          value={phone}
+        /> */}
 
         {mock_data.map((comp) => {
           return (
@@ -202,6 +237,7 @@ export default function ApplicationDetails(props) {
               data={comp.data}
               key={comp.id}
               setValue={setValue}
+              // value={value}
               showRightComp={true}
               rightComp={() =>
                 isVerified ? (
@@ -225,8 +261,9 @@ export default function ApplicationDetails(props) {
 
         {/* // ! temporary submit button */}
         <Button title="Submit" onPress={()=>{
-        //  handleSubmit(onSubmit)
-          props?.navigation?.navigate(screens.PanDetails)
+          onSubmit()
+         handleSubmit(onSubmit)
+          // props?.navigation?.navigate(screens.PanDetails)
         }
           
           } />

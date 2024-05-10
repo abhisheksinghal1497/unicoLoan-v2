@@ -1,31 +1,64 @@
 import { Dimensions, Image, StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { colors } from '../../colors'
 import { useTheme } from 'react-native-paper'
 import CustomButton from '../../components/Button'
 import Header from '../../components/Header'
 import { screens } from '../../constants/screens'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const WIDTH = Dimensions.get('window').width;
 
 const PanDetails = (props) => {
   const { fonts } = useTheme();
-  const [phone, setPhone] = useState();
+  const [pan, setPan] = useState('');
+  const [dataFields, setdataFields] = useState([]);
+  // const [message, setMessage] = useState('12345');
+
+  useEffect(() => {
+    async function fetchData() {
+      await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.PanDetails));
+      const savedData = await AsyncStorage.getItem('PanDetails');
+      const currentData = JSON.parse(savedData);
+      console.log(currentData,'current value');
+      setPan(currentData.toString())
+      setdataFields(currentData)
+    }
+    fetchData();
+  }, []);
+
+
+  const onSubmit = async() =>{
+
+    console.log(phone,'phone number')
+    await AsyncStorage.setItem('PanDetails', JSON.stringify(phone));
+    await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.PanDetails));
+    props?.navigation?.navigate(screens.KYC)
+  }
+
+  const OnChangePan = async(pan) =>{
+    console.log(pan,'pan here')
+    setPan(pan)
+    await AsyncStorage.setItem('PanDetails', JSON.stringify(pan));
+    await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.PanDetails));
+  }
+
   return (
     <View style={styles.container}>
       <Header
         title="PAN Details"
         left={require('../../images/back.png')}
         right={require('../../images/question.png')}
-        onPressLeft={() => { props.navigation.goBack() }}
+        onPressLeft={() => { props?.navigation?.navigate(screens.ApplicantDetails) }}
         onPressRight={() => { }} />
       <View style={styles.subContainer}>
         <Text style={fonts.labelMedium}>PAN Number</Text>
         <View style={styles.inputContainer}>
           <TextInput
+            value= {pan}
             placeholder='PAN Number'
             style={[fonts.inputText, styles.input]}
-            onChangeText={(text) => setPhone(text)} />
+            onChangeText={(text) => OnChangePan(text)} />
           <Image source={require('../../images/tick.png')} style={styles.tickImage} />
         </View>
         <Text style={[fonts.labelMedium, styles.labelText]}>Name</Text>
@@ -46,7 +79,7 @@ const PanDetails = (props) => {
           type="primary"
           label="Continue"
           buttonContainer={styles.buttonContainer}
-          onPress={() => { props?.navigation?.navigate(screens.KYC)}} />
+          onPress={() => { onSubmit()}} />
       </View>
     </View>
   )

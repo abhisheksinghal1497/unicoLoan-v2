@@ -25,7 +25,7 @@ const Dashboard = () => {
                 backgroundColor="white"
                 barStyle="dark-content"
             />
-      <Stack.Navigator initialRouteName={screens.KYC} >
+      <Stack.Navigator initialRouteName={screens.HomeScreen} >
         <Stack.Screen
           name={screens.Splash}
           component={Splash}

@@ -11,13 +11,20 @@ import CustomButton from '../../components/Button'
 import Header from '../../components/Header'
 import { validations } from "../../constants/validations";
 import customTheme from '../../colors/theme';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { screens } from '../../constants/screens';
 
 
 const WIDTH = Dimensions.get('window').width;
 
 const KYC = (props) => {
+  useEffect(() => {
+    async function fetchData() {
+      await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.KYC));
+    }
+    fetchData();
+  }, []);
+
   const { fonts } = useTheme();
   const [visible, setVisible] = React.useState(false);
   const [type, setType] = React.useState(0);
@@ -28,6 +35,12 @@ const KYC = (props) => {
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
+
+
+  const onSubmit = async() =>{
+    await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.KYC));
+    props.navigation.navigate(screens.CaptureSelfie)
+  }
 
   // const startTimer = React.useCallback()
 
@@ -55,7 +68,7 @@ const KYC = (props) => {
       <Header
         title="Documents"
         left={require('../../images/back.png')}
-        onPressLeft={() => { props.navigation.goBack() }}
+        onPressLeft={() => { props?.navigation?.navigate(screens.PanDetails) }}
         right={require('../../images/question.png')}
         onPressRight={() => { }} />
       <View style={styles.subContainer}>
@@ -150,7 +163,7 @@ const KYC = (props) => {
               type="primary"
               label="Submit"
               buttonContainer={styles.modalButtonContainer}
-              onPress={() => { hideModal(); setType(0); props.navigation.navigate(screens.CaptureSelfie)}} />
+              onPress={() => { hideModal(); setType(0);onSubmit()}} />
           </View>}
       </Modal >
     </View >
