@@ -6,6 +6,11 @@ import { colors } from "../../colors";
 import customTheme from "../../colors/theme";
 import { getErrMsg } from "../../services/globalHelper";
 import CustomShadow from "./CustomShadow";
+import {
+  fieldContainerStyle,
+  fieldLabelViewStyle,
+  fieldLabelStyle,
+} from "../../constants/commonStyles";
 
 export default InputField = ({
   control,
@@ -25,6 +30,7 @@ export default InputField = ({
   rightComp,
   isMultiline,
   rightCompPress,
+  onChangeText,
   ...rest
 }) => {
   const { colors, fonts } = useTheme();
@@ -40,7 +46,7 @@ export default InputField = ({
         return (
           <View style={styles.container}>
             <View style={styles.labelContainer}>
-              <Text style={fonts.regularText}>
+              <Text style={styles.label}>
                 {isRequired && <Text style={styles.asterisk}>* </Text>}
                 {label}
               </Text>
@@ -57,7 +63,13 @@ export default InputField = ({
                   error={error?.message}
                   scrollEnabled={false}
                   onChangeText={(value) => {
-                    onChange(value);
+                    if(onChangeText){
+                      onChangeText(value)
+                    }
+                    else{
+                      onChange(value);
+                    }
+                    
                   }}
                   value={value?.toString()}
                   disabled={isDisabled}
@@ -117,14 +129,13 @@ export default InputField = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginHorizontal: 5,
-    marginVertical: 10,
-    paddingBottom: 0,
+    ...fieldContainerStyle,
   },
   labelContainer: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    marginBottom: 8,
+    ...fieldLabelViewStyle,
+  },
+  label: {
+    ...fieldLabelStyle,
   },
   asterisk: {
     color: colors.asteriskRequired,
