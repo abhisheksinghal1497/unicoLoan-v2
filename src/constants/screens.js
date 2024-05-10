@@ -25,4 +25,5 @@ export const screens = {
     CongratulationScreen:'CongratulationScreen',
     Eligibility:"Eligibility",
     Sanction:"Sanction",
+    LoanDetails:"LoanDetails",
   };

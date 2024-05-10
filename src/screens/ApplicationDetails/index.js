@@ -113,7 +113,6 @@ export default function ApplicationDetails(props) {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text>ApplicationDetails</Text>
       <ScrollView>
         {mock_data.map((comp) => {
           return (

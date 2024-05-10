@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
   ImageBackground,
+  Platform,
 } from "react-native";
 import RNFetchBlob from "rn-fetch-blob";
 import { useTheme } from "react-native-paper";
@@ -27,41 +28,22 @@ const Sanction = (props) => {
   const pdfUrl = "http://www.clickdimensions.com/links/TestPDFfile.pdf";
 
   const downloadPDF = async () => {
-    // setTimeout(() => {
-    //   setProgress(0.2);
-    // }, 1000);
-    // setTimeout(() => {
-    //   let progg = parseFloat(0.39847810929723752).toFixed(2);
-    //   setProgress(progg);
-    // }, 1300);
-
-    // setTimeout(() => {
-    //   setProgress(0.5);
-    // }, 2500);
-
-    // setTimeout(() => {
-    //   let progg = parseFloat(0.6899382107566177).toFixed(2);
-    //   setProgress(progg);
-    // }, 3500);
-    // setTimeout(() => {
-    //   setProgress(1);
-    //   setIsComplete(true);
-    //   setTimeout(() => {
-    //     setProgress(0);
-    //   }, 250);
-    // }, 3800);
-    // return;
-
     let dirs = RNFetchBlob.fs.dirs;
     RNFetchBlob.config({
-      // response data will be saved to this path if it has access right.
-      // path: dirs.DownloadDir + "/Letter.pdf",
-      path: dirs.DownloadDir + "/In-Principle-Sanction-Letter.pdf",
+      // path: dirs.DownloadDir + "/In-Principle-Sanction-Letter1.pdf",
       fileCache: true,
-      appendExt: "pdf",
+      // appendExt: "pdf",
+      addAndroidDownloads: {
+        useDownloadManager: true,
+        mime: "application/pdf",
+        notification: true,
+        path: dirs.DownloadDir + "/In-Principle-Sanction-Letter.pdf",
+        description: "An image file.",
+      },
     })
       .fetch("GET", pdfUrl, {
-        //some headers ..
+        //some headers ...
+        "Cache-Control": "no-store",
       })
       .progress((received, total) => {
         console.log(`${received / total}`);
@@ -76,6 +58,10 @@ const Sanction = (props) => {
         }, 200);
         // the path should be dirs.DocumentDir + 'path-to-file.anything'
         console.log("The file saved to ", res.path());
+
+        if (Platform.OS == "android") {
+          RNFetchBlob.android.actionViewIntent(res.path(), "application/pdf");
+        }
       })
       .catch((errorMessage, statusCode) => {
         // error handling
