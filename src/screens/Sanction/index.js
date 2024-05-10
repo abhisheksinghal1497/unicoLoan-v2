@@ -30,21 +30,18 @@ const Sanction = (props) => {
   const downloadPDF = async () => {
     let dirs = RNFetchBlob.fs.dirs;
     RNFetchBlob.config({
-      // path: dirs.DownloadDir + "/In-Principle-Sanction-Letter1.pdf",
+      path: dirs.DownloadDir + "/In-Principle-Sanction-Letter.pdf",
       fileCache: true,
       // appendExt: "pdf",
       addAndroidDownloads: {
         useDownloadManager: true,
         mime: "application/pdf",
         notification: true,
-        path: dirs.DownloadDir + "/In-Principle-Sanction-Letter.pdf",
-        description: "An image file.",
+        path: dirs.DownloadDir + "/Letter.pdf",
+        //   description: "An image file.",
       },
     })
-      .fetch("GET", pdfUrl, {
-        //some headers ...
-        "Cache-Control": "no-store",
-      })
+      .fetch("GET", pdfUrl, {})
       .progress((received, total) => {
         console.log(`${received / total}`);
 
