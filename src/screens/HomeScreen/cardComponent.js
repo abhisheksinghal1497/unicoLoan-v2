@@ -1,6 +1,5 @@
 import React, { useRef } from 'react';
 import { FlatList, Dimensions, View, StyleSheet, Text, Image } from 'react-native';
-
 import { colors } from '../../colors';
 
 const CardComponent = () => {

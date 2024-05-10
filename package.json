@@ -28,7 +28,6 @@
         "react-native-gesture-handler": "^1.10.3",
         "react-native-image-crop-picker": "^0.41.0",
         "react-native-paper": "^5.12.3",
-        "react-native-reanimated": "^3.11.0",
         "react-native-safe-area-context": "^3.3.0",
         "react-native-screens": "^3.4.0",
         "react-native-simple-toast": "^3.3.1",
