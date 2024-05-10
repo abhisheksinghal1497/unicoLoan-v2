@@ -1,4 +1,4 @@
-import { Text, View, SafeAreaView, StatusBar } from 'react-native'
+import { Text, View, SafeAreaView } from 'react-native'
 import React, { useState } from 'react'
 import { useRoute } from '@react-navigation/native';
 import Header from '../../components/Header'
@@ -8,12 +8,13 @@ import ImagePicker from 'react-native-image-crop-picker';
 import { Button } from "react-native-paper";
 import { styles } from './style/style';
 import { AadharBasicDetails } from "../../constants/stringConstants";
+// import { useQuery,useMutation } from '@tanstack/react-query';
 
 const CaptureAdhaar = ({ navigation }) => {
 
     const { firstButtonName, lastButtonName, headerText, headerTextSecond, imageMethod, imageSide, imageSideSecond } = AadharBasicDetails
 
-    const buttonLabels = [{ id: 0, name: firstButtonName }, { id: 1, name: lastButtonName, }]
+    const buttonLabels = [{ id: 0, name: firstButtonName, }, { id: 1, name: lastButtonName, }]
 
     const route = useRoute();
     const { method } = route.params || {};
@@ -30,6 +31,12 @@ const CaptureAdhaar = ({ navigation }) => {
         })
             .then((image) => {
                 setSelectedImage(image.path);
+                // useQuery({queryKey:["ImageData"],queryFn: () => [{
+                //     "id": 10,
+                //     "Image":image.path,
+                //      }
+                // ]})
+
                 // setHeight(height);
                 // setWidth(width);
             })
@@ -40,23 +47,26 @@ const CaptureAdhaar = ({ navigation }) => {
     const ButtonActions = async (value) => {
         if (value === firstButtonName) {
             // setSelectedImage(null)
+            onCameraPress()
+        }
+        else {
+            navigation.goBack()
         }
     }
 
+
+
+
+
     return (
         <>
-            <StatusBar
-                backgroundColor="white"
-                barStyle="dark-content"
-            />
             <SafeAreaView style={styles.container}>
-                {/* <Header title={selectedImage ? headerText : headerTextSecond} navigation={navigation} /> */}
                 <Header
                     title={selectedImage ? headerText : headerTextSecond}
                     left={require('../../images/back.png')}
                     onPressLeft={() => { navigation.goBack() }}
-                    right={require('../../images/question.png')}
-                    onPressRight={() => { }} />
+                    onPressRight={() => { }}
+                    colour="white" />
                 <AdhaarSection uri={selectedImage} AdhaarText={method === imageMethod ? imageSide : imageSideSecond} />
                 {selectedImage ? (
                     <>
@@ -65,12 +75,12 @@ const CaptureAdhaar = ({ navigation }) => {
                                 return (
                                     <View style={styles.buttonStyle}>
                                         <Button
-                                            style={styles.buttonInner}
+                                            style={value.name === firstButtonName ? styles.buttonInner : styles.buttonInnerSecond}
                                             mode="contained"
                                             textColor="white"
                                             onPress={() => { ButtonActions(value.name) }}
                                         >
-                                            <Text style={styles.buttonText}>{value.name}</Text>
+                                            <Text style={value.name === firstButtonName ? styles.buttonTextSecond : styles.buttonText}>{value.name}</Text>
                                         </Button>
                                     </View>
                                 );
