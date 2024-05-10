@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View, Image } from 'react-native'
 import React from 'react'
 
-export default function AdhaarSection({ AdhaarText, uri }) {
+export default function AdhaarSection({ AdhaarText, image }) {
   return (
     <View style={styles.container}>
-      {uri ? (
+      {image ? (
         <>
           <View style={styles.section}>
             <Image
-              source={{ uri }}
+              source={{ uri : `data:${image.mime};base64,${image.data}` }}
               style={styles.imageContainer}
             />
           </View>

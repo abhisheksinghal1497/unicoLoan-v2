@@ -30,6 +30,7 @@ export default InputField = ({
   rightComp,
   isMultiline,
   rightCompPress,
+  onChangeText,
   ...rest
 }) => {
   const { colors, fonts } = useTheme();
@@ -62,7 +63,13 @@ export default InputField = ({
                   error={error?.message}
                   scrollEnabled={false}
                   onChangeText={(value) => {
-                    onChange(value);
+                    if(onChangeText){
+                      onChangeText(value)
+                    }
+                    else{
+                      onChange(value);
+                    }
+                    
                   }}
                   value={value?.toString()}
                   disabled={isDisabled}
