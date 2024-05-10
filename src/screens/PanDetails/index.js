@@ -29,10 +29,6 @@ const PanDetails = (props) => {
 
 
   const onSubmit = async() =>{
-
-    console.log(phone,'phone number')
-    await AsyncStorage.setItem('PanDetails', JSON.stringify(phone));
-    await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.PanDetails));
     props?.navigation?.navigate(screens.KYC)
   }
 
@@ -61,20 +57,20 @@ const PanDetails = (props) => {
             onChangeText={(text) => OnChangePan(text)} />
           <Image source={require('../../images/tick.png')} style={styles.tickImage} />
         </View>
-        <Text style={[fonts.labelMedium, styles.labelText]}>Name</Text>
-        <View style={styles.inputContainer}>
+        {/* <Text style={[fonts.labelMedium, styles.labelText]}>PAN</Text> */}
+        {/* <View style={styles.inputContainer}>
           <TextInput
             placeholder='Enter your name'
             style={[fonts.inputText, styles.input]}
-            onChangeText={(text) => setPhone(text)} />
+            onChangeText={(text) => setPan(text)} />
         </View>
         <Text style={[fonts.labelMedium, styles.labelText]}>DOB</Text>
         <View style={styles.inputContainer}>
           <TextInput
             placeholder='Select your date of birth'
             style={[fonts.inputText, styles.input]}
-            onChangeText={(text) => setPhone(text)} />
-        </View>
+            onChangeText={(text) => setPan(text)} />
+        </View> */}
         <CustomButton
           type="primary"
           label="Continue"

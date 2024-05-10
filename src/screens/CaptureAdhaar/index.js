@@ -9,7 +9,8 @@ import { Button } from "react-native-paper";
 import { styles } from './style/style';
 import { AadharBasicDetails } from "../../constants/stringConstants";
 // import { useQuery,useMutation } from '@tanstack/react-query';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { screens } from "../../constants/screens";
 const CaptureAdhaar = ({ navigation }) => {
 
     const { firstButtonName, lastButtonName, headerText, headerTextSecond, imageMethod, imageSide, imageSideSecond } = AadharBasicDetails
@@ -27,18 +28,19 @@ const CaptureAdhaar = ({ navigation }) => {
             // width,
             // height,
             cropping: true,
-            compressImageQuality: 0.6
+            compressImageQuality: 0.6,
+            includeBase64: true
         })
-            .then((image) => {
-                setSelectedImage(image.path);
-                // useQuery({queryKey:["ImageData"],queryFn: () => [{
-                //     "id": 10,
-                //     "Image":image.path,
-                //      }
-                // ]})
-
-                // setHeight(height);
-                // setWidth(width);
+            .then(async(image) => {
+                console.log(image,'image value')
+                setSelectedImage(image);
+                console.log(method,'method')
+                if(method === 'Front'){
+                    await AsyncStorage.setItem('FrontAdhaar', JSON.stringify(image));
+                }
+                else{
+                    await AsyncStorage.setItem('BackAdhaar', JSON.stringify(image));
+                }  
             })
             .catch((error) => {
                 console.log(error);
@@ -50,7 +52,8 @@ const CaptureAdhaar = ({ navigation }) => {
             onCameraPress()
         }
         else {
-            navigation.goBack()
+            console.log('here')
+            navigation?.navigate(screens.KYC)
         }
     }
 
@@ -67,7 +70,7 @@ const CaptureAdhaar = ({ navigation }) => {
                     onPressLeft={() => { navigation.goBack() }}
                     onPressRight={() => { }}
                     colour="white" />
-                <AdhaarSection uri={selectedImage} AdhaarText={method === imageMethod ? imageSide : imageSideSecond} />
+                <AdhaarSection image={selectedImage} AdhaarText={method === imageMethod ? imageSide : imageSideSecond} />
                 {selectedImage ? (
                     <>
                         <View style={{ flexDirection: "row", justifyContent: 'space-between', marginTop: 100, }}>
