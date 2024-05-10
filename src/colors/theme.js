@@ -27,6 +27,7 @@ const customTheme = {
       // level5: "#E6F4FF",
     },
     border: "#D2D2D2",
+    disableBg: "#D3D3D3",
   },
   shape: {
     ...DefaultTheme.shape,
@@ -37,8 +38,8 @@ const customTheme = {
     smallText: {
       fontFamily: "Nunito-Regular",
       fontWeight: "normal",
-      fontSize: 12,
-      color: "#000000",
+      fontSize: 11,
+      color: '#000000',
     },
     smallLightText: {
       fontFamily: "Nunito-Regular",
@@ -59,7 +60,13 @@ const customTheme = {
       color: "rgba(124, 126, 139, 1)",
     },
     mediumText: {
-      fontFamily: "Nunito-Regular",
+      fontFamily: "Nunito-Bold",
+      fontWeight: "bold",
+      fontSize: 14,
+      color: '#000000',
+    },
+    largeText: {
+      fontFamily: "Nunito-ExtraBold",
       fontWeight: "bold",
       fontSize: 14,
       color: "#000000",
@@ -101,13 +108,21 @@ const customTheme = {
     },
     bodyRegular: {
       fontFamily: "Nunito-Regular",
-      fontSize: 16,
+      fontSize: 14,
       fontWeight: "600",
       letterSpacing: 0.4,
       lineHeight: 20,
       color: "#000000",
     },
     bodyBold: {
+      fontFamily: "Nunito-Bold",
+      fontSize: 12,
+      fontWeight: "600",
+      letterSpacing: 0.4,
+      lineHeight: 20,
+      color: '#000000',
+    },
+    headerText: {
       fontFamily: "Nunito-Bold",
       fontSize: 18,
       letterSpacing: 0.4,
@@ -147,6 +162,8 @@ const customTheme = {
     labelLarge: {
       fontFamily: "Nunito-Regular",
       fontSize: 14,
+      fontWeight: "600",
+      letterSpacing: 0.1,
       lineHeight: 20,
       color: "rgba(136, 136, 136, 1)",
     },

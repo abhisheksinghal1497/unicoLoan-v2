@@ -41,13 +41,19 @@ import CustomButton from "./src/components/Button";
 import { alert, toast } from "./src/utils/functions";
 import { Provider as Reduxprovider } from "react-redux";
 import store from "./src/store/redux";
-
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Dashboard from "./src/Navigation/MainNavigation";
 import NoInternet from "./src/screens/NoInternet";
+import { onlineManager } from "@tanstack/react-query/build/legacy";
+
+
+
+
 
 // import Dashboard from './src/Navigation/Dashboard';
 import HomeScreen from "./src/screens/HomeScreen";
 import ApplicationDetails from "./src/screens/ApplicationDetails";
+const queryClient = new QueryClient();
 
 const ContactListScreen = () => {
   const [data, setData] = useState([
@@ -124,24 +130,35 @@ const styles = StyleSheet.create({
 });
 
 export const App = function () {
-  const [isConnected, setIsConnected] = useState(true);
+    const queryClient = new QueryClient();
+    const [isConnected, setIsConnected] = useState(true);
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
       setIsConnected(state.isConnected);
+      try {
+        onlineManager.setEventListener(setOnline => {
+          setOnline(state.isConnected)
+        })
+
+      } catch (error) {
+        
+      }
     });
     return () => {
       unsubscribe();
     };
   }, []);
 
-  return (
-    <PaperProvider theme={customTheme}>
-      <Reduxprovider store={store}>
-        {isConnected ? <Dashboard /> : <NoInternet />}
-        {/* <HomeScreen/> */}
-        {/* <ApplicationDetails /> */}
-      </Reduxprovider>
-    </PaperProvider>
-  );
-};
+    return (
+        <PaperProvider theme={customTheme}>
+            <QueryClientProvider client={queryClient}>
+            <Reduxprovider store={store}>
+                {isConnected ? <Dashboard /> : <NoInternet />}
+                {/* <HomeScreen/> */}
+                {/* <ApplicationDetails /> */}
+            </Reduxprovider>
+            </QueryClientProvider>
+        </PaperProvider>
+    );
+}

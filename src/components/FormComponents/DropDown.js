@@ -158,11 +158,11 @@ const styles = StyleSheet.create({
   labelContainer: {
     flexDirection: "row",
     alignItems: "flex-end",
-    marginBottom: 2,
+    marginBottom: 8,
   },
   selectContainer: {
     backgroundColor: customTheme.colors.textInputBackground,
-    padding: 10,
+    padding: 13,
     borderRadius: 30,
     paddingHorizontal: 20,
   },

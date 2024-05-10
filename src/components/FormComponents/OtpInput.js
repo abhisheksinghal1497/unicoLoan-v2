@@ -69,6 +69,7 @@ export default function OtpInput({
                   onKeyPress={(e) => handleKeyPress(e, index, value)}
                   value={value?.charAt(index) || ""}
                   style={[styles.textInput, index !== 0 && styles.otpInput]}
+                  contentStyle={{borderBottomWidth: 0}}
                   maxLength={1}
                   {...rest}
                 />

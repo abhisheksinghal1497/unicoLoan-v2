@@ -4,6 +4,7 @@ import { colors } from '../../colors'
 import { useTheme } from 'react-native-paper'
 import CustomButton from '../../components/Button'
 import Header from '../../components/Header'
+import { screens } from '../../constants/screens'
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -12,7 +13,12 @@ const PanDetails = (props) => {
   const [phone, setPhone] = useState();
   return (
     <View style={styles.container}>
-      <Header title="PAN Details" navigation={props.navigation} />
+      <Header
+        title="PAN Details"
+        left={require('../../images/back.png')}
+        right={require('../../images/question.png')}
+        onPressLeft={() => { props.navigation.goBack() }}
+        onPressRight={() => { }} />
       <View style={styles.subContainer}>
         <Text style={fonts.labelMedium}>PAN Number</Text>
         <View style={styles.inputContainer}>
@@ -40,7 +46,7 @@ const PanDetails = (props) => {
           type="primary"
           label="Continue"
           buttonContainer={styles.buttonContainer}
-          onPress={() => { alert('Validation', 'Invalid phone number entered.', () => { }) }} />
+          onPress={() => { props?.navigation?.navigate(screens.KYC)}} />
       </View>
     </View>
   )

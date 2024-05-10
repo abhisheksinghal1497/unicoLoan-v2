@@ -33,4 +33,7 @@ export const colors = {
   link: "#0076C7",
   grey: "#777777",
   labelColor: "#787E97",
+  coreBlue: "#2E52A1",
+  coreCream: "#FEF9EB",
+  greylight: "7C7B7B"
 };
