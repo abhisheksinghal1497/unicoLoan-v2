@@ -22,5 +22,6 @@ export const screens = {
     NoInternet: 'NoInternet',
     ErrorScreen:'ErrorScreen',
     CongratulationScreen:'CongratulationScreen',
-    Eligibility:"Eligibility"
+    Eligibility:"Eligibility",
+    ProfileImageScreen: "ProfileImageScreen"
   };

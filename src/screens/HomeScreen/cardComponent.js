@@ -6,9 +6,9 @@ const CardComponent = () => {
   const flatListRef = useRef(null);
 
   const data = [
-    { image: require('../../../assets/images/card1.png') },
-    { image: require('../../../assets/images/card2.png') },
-    { image: require('../../../assets/images/card3.png') },
+    { uri: 'https://thumbs.dreamstime.com/b/unico-bank-building-marked-treeo-arkansas-unico-bank-building-marked-tree-arkansas-provides-credit-cards-mortgages-commercial-121368162.jpg' },
+    { uri: 'https://thumbs.dreamstime.com/b/unico-bank-building-marked-treeo-arkansas-unico-bank-building-marked-tree-arkansas-provides-credit-cards-mortgages-commercial-121368162.jpg' },
+    { uri: 'https://thumbs.dreamstime.com/b/unico-bank-building-marked-treeo-arkansas-unico-bank-building-marked-tree-arkansas-provides-credit-cards-mortgages-commercial-121368162.jpg' },
   ];
   const cardWidth = Dimensions.get('window').width - 100; 
   const cardMarginHorizontal = 12; 
@@ -19,7 +19,7 @@ const CardComponent = () => {
         <View style={[styles.card2, { width: cardWidth, marginHorizontal: cardMarginHorizontal }]}>
         <Image
           style={styles.imageView}
-          source={item.image}
+          source={{ uri: item.uri }}
           resizeMode="cover"
         />
       </View>
@@ -27,7 +27,7 @@ const CardComponent = () => {
   };
 
   return (
-    <View style={styles.container}>
+   
       <FlatList
         ref={flatListRef}
         data={data}
@@ -41,7 +41,7 @@ const CardComponent = () => {
         decelerationRate="fast"
         snapToAlignment="center"
       />
-    </View>
+  
   );
 };
 
@@ -51,26 +51,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  imageView:{ width: '100%', height: '100%', borderRadius: 35 },
-  card: {
-    padding: 10,
-    borderRadius: 35,
-    backgroundColor: colors.white,
-    shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    height: 200,
-    marginBottom:10,
-    marginTop:10
-  },
+  imageView:{ width: '100%', height: '100%', borderRadius: 35,  },
+
   card2: {
     borderRadius: 35,
     marginBottom: 10,
     marginTop: 10,
     width: Dimensions.get('window').width - 100, 
     height: 200,
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 });
 

@@ -5,7 +5,7 @@ import { colors } from '../../colors';
 import customTheme from '../../colors/theme';
 import { verticalScale } from '../../utils/matrcis';
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
   const flatListRef = useRef(null);
   const screenWidth = Dimensions.get('window').width;
 
@@ -92,7 +92,7 @@ const HomeScreen = () => {
             }
           </View>
         </View>
-        <View style={[ styles.cardBottomBar,{ marginTop: !item.tenure ? 45 : 2,} ] }>
+        <View style={[ styles.cardBottomBar,{ marginTop: !item.tenure ? verticalScale(45) : verticalScale(2),} ] }>
         {item.nextPayment && item.paymentDate && item.NextPaymentText ? (
     <TouchableOpacity style={styles.seeDetailsresumeJourneyButton}>
       <Text style={styles.seeDetailsresumeJourneyText}>See Details</Text>
@@ -106,13 +106,14 @@ const HomeScreen = () => {
       </View>
     );
   };
-
   return (
    
     <SafeAreaView style={styles.container}>
       <View style={{ backgroundColor: colors.coreCream, height: '27.5%' }}>
         <View style={styles.profileImageView}>
+          <TouchableOpacity onPress={()=>navigation.navigate('ProfileImageScreen')}>
           <Image source={require('../../../assets/images/profileIcon.png')} style={styles.profileIcon} />
+          </TouchableOpacity>
           <Text style={styles.profileName}>Bhavesh Rao</Text>
         </View>
         <View style={{ position: 'absolute', top: 70 }}>
@@ -147,7 +148,6 @@ const HomeScreen = () => {
             />
           </View>
         }
-      
       </View>
 
       <View style={{ marginTop: verticalScale(80) }}>
@@ -161,10 +161,8 @@ const HomeScreen = () => {
           <Text style={styles.serviceText}>{item.title}</Text>
         </TouchableOpacity>
       ))}
-          
         </View>
       </View>
-     
     </SafeAreaView>
     
 
@@ -175,11 +173,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  loanView:{ marginTop: 13, flexDirection: 'row', justifyContent: 'space-between', paddingLeft: 21, paddingRight: 14, alignItems: 'center' },
+  loanView:{ marginTop: verticalScale(13), flexDirection: 'row', justifyContent: 'space-between', paddingLeft: 21, paddingRight: 14, alignItems: 'center' },
   loanTitle:{color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelMedium.fontWeight},
   uhfl:{ color: colors.coreBlue, fontSize: 8, fontWeight: customTheme.fonts.labelMedium.fontWeight },
-  profileImageView:{ flexDirection: 'row', alignItems: 'center', left: 40, marginBottom: 10, marginTop: 21 },
-  lanloanview:{ marginTop: 6, flexDirection: 'row', justifyContent: 'space-between', paddingLeft: 21, paddingRight: 14, alignItems: 'center' },
+  profileImageView:{ flexDirection: 'row', alignItems: 'center', left: 40, marginBottom: verticalScale(10), marginTop: verticalScale(21) },
+  lanloanview:{ marginTop: verticalScale(6), flexDirection: 'row', justifyContent: 'space-between', paddingLeft: 21, paddingRight: 14, alignItems: 'center' },
   lan:{
      color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelMedium.fontWeight 
   },
@@ -262,23 +260,23 @@ const styles = StyleSheet.create({
   },
 
   ourSerices: {
-    color: colors.black, fontSize: 18, lineHeight: 28, left: 30, bottom: 5
+    color: colors.black, fontSize: 18, lineHeight: 28, left: 20, bottom: 5
   },
   servicesCards: {
     width: 105.5, height: 104.5, backgroundColor: colors.white, borderRadius: 6, shadowColor: colors.black, marginBottom: 5,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 1,
     shadowRadius: 3.84,
-    elevation: 5, justifyContent: 'center'
+    elevation: 5, justifyContent: 'center', 
   },
   ourSericesCards:
     { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, flexWrap: 'wrap', },
   serviceImage:
     { width: 39, height: 39, resizeMode: 'contain', alignSelf: 'center' },
-  serviceText: { color: colors.coreBlue, fontSize: 12, fontWeight: customTheme.fonts.labelMedium.fontWeight, alignSelf: 'center', marginTop: 9 },
+  serviceText: { color: colors.coreBlue, fontSize: 12, fontWeight: customTheme.fonts.labelMedium.fontWeight, alignSelf: 'center', marginTop: verticalScale(9) },
   yourLoan: {
 
-    color: colors.black, fontSize: 18, lineHeight: 28, left: 30, bottom: 5
+    color: colors.black, fontSize: 18, lineHeight: 28, left: 20, bottom: 5
   },
   seeDetailsresumeJourneyButton: {
     justifyContent: 'center',
