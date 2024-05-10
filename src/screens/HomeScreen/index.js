@@ -3,6 +3,7 @@ import { FlatList, Dimensions, View, StyleSheet, Text, Image, ScrollView, Toucha
 import CardComponent from './cardComponent';
 import { colors } from '../../colors';
 import customTheme from '../../colors/theme';
+import  CircularProgress  from "../../components/CircularProgress";
 import { screens } from '../../constants/screens';
 
 const HomeScreen = (props) => {
@@ -67,7 +68,8 @@ const HomeScreen = (props) => {
 
         </View>
         <View style={styles.belowCardView}>
-          <Image source={require('../../../assets/images/ProgressBar.png')} style={styles.ProgressCardImage} />
+
+          <CircularProgress size ={90} strokeWidth={15}  progressPercent={10} bgColor ={'#F2F2F2'} pgColor={'#2E52A1'} />
           <View style={{ marginLeft: 11.5 }}>
             {item.nextPayment && item.paymentDate && item.NextPaymentText && (
               <><Text style={styles.naxtPaymentKyc}>{item.NextPaymentText}</Text><Text style={styles.naxtPaymentKyc2}>{item.nextPayment}</Text><Text style={styles.paymentDate}>{item.paymentDate}</Text></>
@@ -307,3 +309,5 @@ const styles = StyleSheet.create({
 });
 
 export default HomeScreen;
+
+

@@ -150,7 +150,7 @@ const KYC = (props) => {
               type="primary"
               label="Submit"
               buttonContainer={styles.modalButtonContainer}
-              onPress={() => { hideModal(); setType(0); }} />
+              onPress={() => { hideModal(); setType(0); props.navigation.navigate(screens.CaptureSelfie)}} />
           </View>}
       </Modal >
     </View >
