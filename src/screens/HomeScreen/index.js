@@ -3,6 +3,7 @@ import { FlatList, Dimensions, View, StyleSheet, Text, Image, ScrollView, Toucha
 import CardComponent from './cardComponent';
 import { colors } from '../../colors';
 import customTheme from '../../colors/theme';
+import { verticalScale } from '../../utils/matrcis';
 
 const HomeScreen = () => {
   const flatListRef = useRef(null);
@@ -39,6 +40,19 @@ const HomeScreen = () => {
   ];
 
   const cardWidth = 350;
+
+  const data2 = [
+    { key: 'calculators', title: 'Calculators', image: require('../../../assets/images/Calculators.png') },
+    { key: 'applyForLoan', title: 'Apply For Loan', image: require('../../../assets/images/applyForLoan.png') },
+    { key: 'statusCheck', title: 'Status Check', image: require('../../../assets/images/StatusCheck.png') },
+  ];
+  
+  const renderItem = ({ item }) => (
+    <TouchableOpacity style={styles.servicesCards}>
+      <Image style={styles.serviceImage} source={item.image} />
+      <Text style={styles.serviceText}>{item.title}</Text>
+    </TouchableOpacity>
+  );
 
   const renderItems = ({ item, index }) => {
     return (
@@ -105,7 +119,7 @@ const HomeScreen = () => {
           <CardComponent />
         </View>
       </View>
-      <View style={{ marginTop: 21, top: 65 }}>
+      <View style={{ marginTop: verticalScale(30), top: 65 }}>
         <Text style={styles.yourLoan}>
           Your Loans
         </Text>
@@ -136,38 +150,17 @@ const HomeScreen = () => {
       
       </View>
 
-      <View style={{ marginTop: 85 }}>
+      <View style={{ marginTop: verticalScale(80) }}>
         <Text style={styles.ourSerices}>
           Our Services
         </Text>
         <View style={styles.ourSericesCards}>
-          <TouchableOpacity style={styles.servicesCards}>
-            <Image
-              style={styles.serviceImage}
-              source={require('../../../assets/images/Calculators.png')}
-            />
-            <Text style={styles.serviceText}>
-              Calulators
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.servicesCards}>
-            <Image
-              style={styles.serviceImage}
-              source={require('../../../assets/images/applyForLoan.png')}
-            />
-            <Text style={styles.serviceText}>
-              Apply For Loan
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.servicesCards}>
-            <Image
-              style={styles.serviceImage}
-              source={require('../../../assets/images/StatusCheck.png')}
-            />
-            <Text style={styles.serviceText}>
-              Status Check
-            </Text>
-          </TouchableOpacity>
+        {data2.map(item => (
+        <TouchableOpacity key={item.key} style={styles.servicesCards}>
+          <Image style={styles.serviceImage} source={item.image} />
+          <Text style={styles.serviceText}>{item.title}</Text>
+        </TouchableOpacity>
+      ))}
           
         </View>
       </View>
@@ -262,9 +255,10 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     height: 206,
-    marginRight: 10,
+    marginRight: 14,
     width: 350,
-    marginBottom: 5
+    marginBottom: 5,
+    marginLeft: -5
   },
 
   ourSerices: {
