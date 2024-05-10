@@ -123,7 +123,7 @@ export default DropDown = ({
             data={data}
             keyExtractor={(item) => item?.id?.toString()}
             renderItem={renderOptions}
-            ItemSeparatorComponent={<View style={styles.itemSeparator} />}
+            // ItemSeparatorComponent={<View style={styles.itemSeparator} />}
           />
         </View>
       </CustomModal>
