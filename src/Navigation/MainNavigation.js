@@ -26,10 +26,10 @@ const Dashboard = () => {
     <NavigationContainer>
       <Stack.Navigator initialRouteName={screens.HomeScreen}>
     
-       <StatusBar
+       {/* <StatusBar
                 backgroundColor="white"
                 barStyle="dark-content"
-            />
+            /> */}
         <Stack.Screen
           name={screens.Splash}
           component={Splash}

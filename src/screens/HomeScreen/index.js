@@ -4,6 +4,8 @@ import CardComponent from './cardComponent';
 import { colors } from '../../colors';
 import customTheme from '../../colors/theme';
 import { verticalScale } from '../../utils/matrcis';
+import CircularProgress from '../../components/CircularProgress'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = ({navigation}) => {
   const flatListRef = useRef(null);
