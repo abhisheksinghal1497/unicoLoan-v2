@@ -1,5 +1,5 @@
 import { Dimensions, Image, StyleSheet, Text, TextInput, View, ScrollView } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { colors } from '../../colors'
 import { useTheme } from 'react-native-paper'
 import CustomButton from '../../components/Button'
@@ -11,13 +11,19 @@ import {
 } from "../../components/FormComponents/FormControl";
 import { validations } from "../../constants/validations";
 import { Controller, useForm } from "react-hook-form";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import ProgressCard from '../../components/ProgressCard'
 
 const WIDTH = Dimensions.get('window').width;
+const screenName = "PAN Details"
 
 const PanDetails = (props) => {
   const { fonts } = useTheme();
   const [phone, setPhone] = useState();
   const [isVerified, setIsVerified] = useState(true);
+  const [pan, setPan] = useState('');
+  const [dataFields, setdataFields] = useState([]);
+  // const [message, setMessage] = useState('12345');
   const {
     control,
     handleSubmit,
@@ -80,47 +86,58 @@ const PanDetails = (props) => {
     }
   }
 
-  const CircularProgress = ({ percent }) => {
-    let firstProgressLayerStyle;
-    if (percent > 50) {
-      firstProgressLayerStyle = propStyle(50, -135);
-    } else {
-      firstProgressLayerStyle = propStyle(percent, -135);
+  useEffect(() => {
+    async function fetchData() {
+      await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.PanDetails));
+      const savedData = await AsyncStorage.getItem('PanDetails');
+      const currentData = JSON.parse(savedData);
+      console.log(currentData,'current value');
+      setPan(currentData.toString())
+      setdataFields(currentData)
     }
+    fetchData();
+  }, []);
 
-    return (
-      <View style={styles.processContainer}>
-        <View style={[styles.firstProgressLayer, firstProgressLayerStyle]}>
-          <Image source={require('../../assets/home_icon.png')} style={styles.homeIcon} />
-        </View>
-        {renderThirdLayer(50)}
-      </View>
-    );
+
+  const onSubmit = async() =>{
+    props?.navigation?.navigate(screens.KYC)
   }
+
+  const OnChangePan = async(pan) =>{
+    console.log(pan,'pan here')
+    setPan(pan)
+    await AsyncStorage.setItem('PanDetails', JSON.stringify(pan));
+    await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.PanDetails));
+  }
+
+  // const CircularProgress = ({ percent }) => {
+  //   let firstProgressLayerStyle;
+  //   if (percent > 50) {
+  //     firstProgressLayerStyle = propStyle(50, -135);
+  //   } else {
+  //     firstProgressLayerStyle = propStyle(percent, -135);
+  //   }
+
+  //   return (
+  //     <View style={styles.processContainer}>
+  //       <View style={[styles.firstProgressLayer, firstProgressLayerStyle]}>
+  //         <Image source={require('../../assets/home_icon.png')} style={styles.homeIcon} />
+  //       </View>
+  //       {renderThirdLayer(50)}
+  //     </View>
+  //   );
+  // }
 
   return (
     <View style={styles.container}>
       <Header
-        title="PAN Details"
+        title={screenName}
         left={require('../../images/back.png')}
         right={require('../../images/question.png')}
-        onPressLeft={() => { props.navigation.goBack() }}
+        onPressLeft={() => { props?.navigation?.navigate(screens.ApplicantDetails) }}
         onPressRight={() => { }} />
       <ScrollView>
-        <View style={styles.cardContainer}>
-          <View style={{ flexGrow: 1 }}>
-            <Text style={[fonts.labelMedium, { color: 'rgba(46, 82, 161, 1)' }]}>PAN Details</Text>
-            <Text style={[fonts.labelMedium, { color: 'rgba(46, 82, 161, 1)', marginVertical: 5 }]}>LXC537676727</Text>
-            <Text style={[fonts.labelSmall, { color: 'rgba(46, 82, 161, 1)' }]}>Housing Loan</Text>
-          </View>
-          <View style={{
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}>
-            <CircularProgress percent={30} />
-            <Text style={[fonts.smallText, { color: 'rgba(46, 82, 161, 1)', fontSize: 7, marginTop: 10 }]}>UNICO HOUSING FINANCE LIMITED</Text>
-          </View>
-        </View>
+        <ProgressCard screenName={screenName} percentage={10} />
         {mock_data.map((comp, index) => {
           return (index === 0 || (!errors[comp.id] && getValues('panNumber')?.length === 10 && !isVerified)) && (
             <FormControl
@@ -215,15 +232,6 @@ const styles = StyleSheet.create({
     aspectRatio: 1.2,
     resizeMode: 'contain',
     transform: [{ rotateZ: '27deg' }],
-  },
-  cardContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 5,
-    backgroundColor: 'rgba(225, 243, 255, 1)',
-    padding: 15,
-    paddingHorizontal: 20,
-    borderRadius: 5,
   },
   processContainer: {
     width: 100,

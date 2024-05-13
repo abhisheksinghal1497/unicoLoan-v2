@@ -1,11 +1,19 @@
-import checkboxError from './checkbox/checkbox-error.png';
-import checkboxOff from './checkbox/checkbox-off.png';
-import checkboxOn from './checkbox/checkbox-on.png';
+import checkboxError from "./checkbox/checkbox-error.png";
+import checkboxOff from "./checkbox/checkbox-off.png";
+import checkboxOn from "./checkbox/checkbox-on.png";
+import homeCircle from "./icons/home.png";
 import Frame2 from './frame2.png';
+import questionRound from './icons/questionRound.png'
+import back from './icons/back.png'
+import Frame3 from './frame3.png';
 
 export const assets = {
-    checkboxError,
-    checkboxOff,
-    checkboxOn,
-    Frame2
-}
+  checkboxError,
+  checkboxOff,
+  checkboxOn,
+  homeCircle,
+  Frame2,
+  questionRound,
+  back,
+  Frame3
+};

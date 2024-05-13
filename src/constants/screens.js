@@ -3,6 +3,7 @@ export const screens = {
     PanDetails: 'PanDetails',
     KYC: 'KYC',
     CaptureAdhaar: 'CaptureAdhaar',
+    CaptureSelfie: 'CaptureSelfie',
     HomeScreen: 'HomeScreen',
     ApplicantDetails: 'ApplicantDetails',
     ApplyForLoan: 'ApplyForLoan',
@@ -22,5 +23,8 @@ export const screens = {
     NoInternet: 'NoInternet',
     ErrorScreen:'ErrorScreen',
     CongratulationScreen:'CongratulationScreen',
-    Eligibility:"Eligibility"
+    Eligibility:"Eligibility",
+    ProfileImageScreen: "ProfileImageScreen",
+    Sanction:"Sanction",
+    LoanDetails:"LoanDetails",
   };

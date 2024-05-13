@@ -1,23 +1,50 @@
-import {
-  Button,
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import React, { useState } from "react";
+import { Image, ScrollView, StyleSheet, View } from "react-native";
+import React, { useState, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   FormControl,
   component,
 } from "../../components/FormComponents/FormControl";
-import { useTheme } from "react-native-paper";
+import { useTheme, Text } from "react-native-paper";
 import { validations } from "../../constants/validations";
 import { screens } from "../../constants/screens";
+import Button from "././../../components/Button";
+import { horizontalScale, verticalScale } from "../../utils/matrcis";
+import ApplicationCard from "./component/ApplicationCard";
+import { styles } from "./styles/ApplicationDetailStyle";
+import moment from "moment";
+import Header from "../../components/Header";
+import { assets } from "../../assets/assets";
+import HelpModal from "./component/HelpModal";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const initialData = [
+  {
+    id: "applicationType",
+    value: 0
+  },
+  {
+    id: "customerProfile",
+    value: 0
+  },
+  {
+    id: "firstName",
+    value: 0
+  },
+  {
+    id: "lastName",
+    value: 0
+  },
+  {
+    id: "dob",
+    value: 0
+  }
+]
 
 export default function ApplicationDetails(props) {
+
   const [isVerified, setIsVerified] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const {
     control,
     handleSubmit,
@@ -32,217 +59,205 @@ export default function ApplicationDetails(props) {
 
   const { colors } = useTheme();
 
+  useEffect(() => {
+    async function fetchData() {
+      await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.ApplicantDetails));
+      const savedData = await AsyncStorage.getItem('ApplicationDetails');
+      const currentData = JSON.parse(savedData);
+      console.log(currentData, 'current value');
+      {currentData?.map(item =>{
+        console.log(item)
+        setValue(item.id,item.value)
+      })}
+    }
+    fetchData();
+  }, []);
+
   const onSubmit = (data) => {
-    console.log("njnjnjnb")
-    console.log(JSON.stringify(data, null, 2))
-    props?.navigation?.navigate(screens.PancardNumber)
+    console.log("njnjnjnb");
+    console.log(JSON.stringify(data, null, 2));
+    props?.navigation?.navigate(screens.PancardNumber);
   };
 
+  const ChangeValue = async(value, id) => {
+    setValue(id, value)
+    objIndex = initialData.findIndex(obj => obj.id === id);
+    initialData[objIndex].value = value
+    await AsyncStorage.setItem('ApplicationDetails', JSON.stringify(initialData));
+  }
+
+  // {
+  //   id: "leadId", // unique id for field
+  //   label: "SFDC Lead Id", // label to show to the user
+  //   type: component.textInput, // type of field
+  //   placeHolder: "Enter Lead Id12", // placeholder to show to the user when there is no value is entered
+  //   validations: validations.text, // validations for field (smme as we pass to the rule prop in 'Controller' comp from react-hook-form)
+  //   isRequired: true, // whether the filed is mandatory or not
+  //   data: [], // data need for the filed e.g. options for select/dropdown
+  //   value: "", // current value of the filed. can be use directly to send to API
+  // },
   const mock_data = [
     {
-      id: "leadId",
-      label: "SFDC Lead Id",
+      id: "applicationType",
+      label: "Applicant Type",
       type: component.textInput,
-      placeHolder: "Enter Lead Id",
+      placeHolder: "Applicant Type",
       validations: validations.text,
-      isRequired: true,
-      data: [],
+      isRequired: false,
       value: "",
     },
+    { id: "customerProfile",
+    label: "Customer Profile",
+    type: component.dropdown,
+    placeHolder: "Select Customer Profile",
+    validations: validations.text,
+    maxLength: 10,
+    keyboardtype: "numeric",
+    isRequired: true,
+    data: [
+      {
+        id: "cust_type_1",
+        label: "Salaried",
+        value: "salaried",
+      },
+
+      {
+        id: "cust_type_2",
+        label: "Self-Employed",
+        value: "self-employed",
+      },
+    ],
+    value: {},},
     {
-      id: "mobile",
-      label: "Mobile Number",
-      type: component.number,
-      placeHolder: "Enter Mobile number",
-      validations: validations.phone,
-      maxLength: 10,
-      keyboardtype: "numeric",
-      isRequired: true,
-      data: [],
-      value: 0,
-      isDisabled: true,
-    },
-    {
-      id: "phone",
-      label: "Phone Number",
-      type: component.number,
-      placeHolder: "Enter Phone number",
-      validations: validations.phone,
-      maxLength: 10,
-      keyboardtype: "numeric",
-      isRequired: true,
-      data: [],
-      value: 0,
-      // isDisabled: true,
-    },
-    {
-      id: "leadSrc",
-      label: "Lead Source",
-      type: component.dropdown,
-      placeHolder: "Select lead source",
-      validations: validations.required,
-      isRequired: true,
-      data: [
-        { id: 1, label: "Digital", value: "digital" },
-        { id: 2, label: "Direct", value: "direct" },
-        { id: 3, label: "Cutomer", value: "cutomer" },
-        { id: 4, label: "Referral", value: "referral" },
-      ],
-      value: {},
-    },
-    {
-      id: "addr",
-      label: "Address",
+      id: "firstName",
+      label: "First Name",
       type: component.textInput,
-      placeHolder: "Enter the Address",
+      placeHolder: "Enter first Name",
+      validations: validations.text,
+      isRequired: false,
       value: "",
-      isMultiline: true,
+    },
+    {
+      id: "lastName",
+      label: "Last Name",
+      type: component.textInput,
+      placeHolder: "Enter last Name",
+      validations: validations.text,
+      isRequired: false,
+      value: "",
+    },
+    {
+      id: "dob",
+      label: "Date of Birth",
+      type: component.datetime,
+      placeHolder: "DD-MM-YYYY",
+      validations: validations.text,
+      isRequired: false,
+      value: "",
+      datepickerProps: {
+        minimumDate: getDateYearsBack(18),
+        maximumDate: getDateYearsBack(100),
+      },
     },
   ];
 
+  function getDateYearsBack(year) {
+    const currentDate = moment();
+    const date18YearsBack = currentDate.subtract(18, "years");
+    date18YearsBack.year(year);
+    return new Date(date18YearsBack.format("YYYY-MM-DD"));
+  }
+
+  const toggleModal = () => setShowModal(!showModal)
+  const style = styles(colors);
+  const goBack = () => props.navigation.goBack();
+
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text>ApplicationDetails</Text>
-      <ScrollView>
-        {/* <FormControl
-      compType={component.textInput}
-      control={control}
-      validations={validations.text}
-      name="leadId"
-      label="SFDC Lead Id"
-      errors={errors.leadId}
-      isRequired
-      placeholder="Enter Lead Id"
-      // style={{}}
-    />
-
-    <FormControl
-      compType={component.number}
-      control={control}
-      validations={validations.phone}
-      name="phone"
-      label="Phone No."
-      errors={errors.phone}
-      isRequired
-      placeholder="Enter your phone no."
-    />
-
-    <FormControl
-      compType={component.dropdown}
-      control={control}
-      validations={validations.required}
-      name="leadSrc"
-      label="Lead Source"
-      errors={errors.leadSrc}
-      isRequired
-      placeholder="Please select Lead Source"
-      // style={{}}
-    /> */}
-
-        <FormControl
-          compType={component.otpInput}
-          control={control}
-          validations={validations.text}
-          name="otp"
-          label="Enter otp"
-          errors={errors.leadId}
-          isRequired
-        // placeholder="Enter Lead Id"
-        // style={{}}
+    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+      <HelpModal toggleModal={toggleModal} showModal={showModal} setShowModal={setShowModal} />
+      <View
+        style={{
+          paddingHorizontal: horizontalScale(15),
+          marginTop: verticalScale(10),
+        }}
+      >
+        <Header
+          colour="#fff"
+          title="Applicant Details"
+          left={assets.back}
+          right={assets.questionRound}
+          leftStyle={{
+            height: verticalScale(15),
+            width: verticalScale(15),
+          }}
+          leftImageProps={{
+            resizeMode: "contain",
+          }}
+          rightStyle={{
+            height: verticalScale(25),
+            width: verticalScale(25),
+          }}
+          rightImageProps={{
+            resizeMode: "contain",
+          }}
+          titleStyle={{
+            fontSize: verticalScale(18),
+          }}
+          onPressRight={toggleModal}
+          onPressLeft={goBack}
         />
+      </View>
+      <ScrollView contentContainerStyle={style.scrollviewStyle}>
+        <View style={style.container}>
+          <ApplicationCard />
+        </View>
 
-        {/* <FormControl
-          compType={component.checkbox}
-          control={control}
-          validations={validations.text}
-          name="checkbox"
-          label="Checkbox here"
-          errors={errors.leadId}
-          isRequired
-        // placeholder="Enter Lead Id"
-        // style={{}}
-        /> */}
-
-        <FormControl
-          compType={component.datetime}
-          control={control}
-          validations={validations.text}
-          name="checkbox"
-          label="Checkbox here"
-          errors={errors.leadId}
-          isRequired
-        // placeholder="Enter Lead Id"
-        // style={{}}
-        />
-
-        <FormControl
-          compType={component.number}
-          control={control}
-          validations={validations.phone}
-          name="phone"
-          label="Phone No."
-          errors={errors.phone}
-          isRequired
-          placeholder="Enter your phone no."
-          showRightComp
-          iconName="eye-off"
-        />
-
-        {mock_data.map((comp) => {
-          return (
-            <FormControl
-              compType={comp.type}
-              control={control}
-              validations={comp.validations}
-              name={comp.id}
-              label={comp.label}
-              errors={errors[comp.id]}
-              isRequired={comp.isRequired}
-              placeholder={comp.placeHolder}
-              data={comp.data}
-              key={comp.id}
-              setValue={setValue}
-              showRightComp={true}
-              rightComp={() =>
-                isVerified ? (
-                  <Text>Verify</Text>
-                ) : (
-                  <Image
-                    source={require("../../images/tick.png")}
-                    style={styles.tickImage}
-                  />
-                )
-              }
-              rightCompPress={() => {
-                setIsVerified(!isVerified);
-              }}
-              isMultiline={comp.isMultiline}
-              maxLength={comp.maxLength}
-              isDisabled={comp.isDisabled}
-            />
-          );
-        })}
-
-        {/* // ! temporary submit button */}
-        <Button title="Submit" onPress={()=>{
-        //  handleSubmit(onSubmit)
-          props?.navigation?.navigate(screens.PanDetails)
-        }
-          
-          } />
+        <View>
+          {mock_data.map((comp) => {
+            return (
+              <FormControl
+                compType={comp.type}
+                control={control}
+                validations={comp.validations}
+                name={comp.id}
+                label={comp.label}
+                errors={errors[comp.id]}
+                isRequired={comp.isRequired}
+                placeholder={comp.placeHolder}
+                data={comp.data}
+                key={comp.id}
+                setValue={setValue}
+                isMultiline={comp.isMultiline}
+                maxLength={comp.maxLength}
+                isDisabled={comp.isDisabled}
+                onChangeText={(value) => ChangeValue(value, comp.id)}
+                // showRightComp={true}
+                // rightComp={() =>
+                //   isVerified ? (
+                //     <Text>Verify</Text>
+                //   ) : (
+                //     <Image
+                //       source={require("../../images/tick.png")}
+                //       style={styles.tickImage}
+                //     />
+                //   )
+                // }
+                // rightCompPress={() => {
+                //   setIsVerified(!isVerified);
+                // }}
+              />
+            );
+          })}
+        </View>
+        <View style={{ paddingHorizontal: horizontalScale(30) }}>
+          <Button
+            type="primary"
+            label="Continue"
+            onPress={handleSubmit(onSubmit)}
+            buttonContainer={{ marginVertical: verticalScale(20) }}
+          />
+        </View>
       </ScrollView>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  tickImage: {
-    width: 20,
-    height: 20,
-    resizeMode: "contain",
-    // marginTop: 10,
-  },
-});

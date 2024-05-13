@@ -1,5 +1,5 @@
 import { Dimensions, Image, ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useState,useEffect,useCallback } from 'react'
 import { colors } from '../../colors'
 import {
   FormControl,
@@ -13,10 +13,46 @@ import { validations } from "../../constants/validations";
 import customTheme from '../../colors/theme';
 import { screens } from '../../constants/screens';
 import { KycScreen } from '../../constants/stringConstants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
 
 const WIDTH = Dimensions.get('window').width;
 
+
+
 const KYC = (props) => {
+  const [selectedImage, setSelectedImage] = useState('');
+  // useEffect(() => {
+    // async function fetchData() {
+    //   // await AsyncStorage.setItem('FrontAdhaar', JSON.stringify(screens.KYC));
+    //   const savedData = await AsyncStorage.getItem('FrontAdhaar');
+    //   const currentData = JSON.parse(savedData);
+    //   console.log(currentData, 'front adhaar');
+    // }
+    // fetchData();
+  // }, []);
+  useFocusEffect(
+    useCallback(() => {
+      // async function fetchData() {
+      //   await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.KYC));
+      //   const savedData = await AsyncStorage.getItem('FrontAdhaar');
+      //   const currentData = JSON.parse(savedData);
+      //   console.log(currentData, 'front adhaar');
+      //   // setSelectedImage(currentData)
+      // }
+      fetchData();
+
+    }, [])
+  );
+
+const fetchData = async() =>{
+  await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.KYC));
+  const savedData = await AsyncStorage.getItem('FrontAdhaar');
+  const currentData = JSON.parse(savedData);
+  console.log(currentData, 'front adhaar');
+  setSelectedImage(currentData)
+}
+
   const { fonts } = useTheme();
   const [visible, setVisible] = React.useState(false);
   const [type, setType] = React.useState(0);
@@ -39,6 +75,11 @@ const KYC = (props) => {
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
+
+
+  const onSubmit = async() =>{
+    props.navigation.navigate(screens.CaptureSelfie)
+  }
 
   // const startTimer = React.useCallback()
 
@@ -114,7 +155,7 @@ const KYC = (props) => {
       <Header
         title="Documents"
         left={require('../../images/back.png')}
-        onPressLeft={() => { props.navigation.goBack() }}
+        onPressLeft={() => { props?.navigation?.navigate(screens.PanDetails) }}
         right={require('../../images/question.png')}
         onPressRight={() => { }} />
       <View style={styles.subContainer}>
@@ -143,7 +184,9 @@ const KYC = (props) => {
         <View style={styles.rowContainer}>
           <TouchableOpacity onPress={() => props.navigation.navigate(screens.CaptureAdhaar, { method: "Front" })}>
             <View style={styles.cardContainerTwo}>
-              <Image source={require('../../images/aadhar-front.png')} style={[styles.frontImage]} />
+              <Image
+               source={selectedImage ? {uri :  `data:${selectedImage.mime};base64,${selectedImage.data}` } : require('../../images/aadhar-front.png')}
+                style={[styles.frontImage, { marginTop: 20 }]} />
             </View>
             <Text style={[fonts.labelMedium, styles.titleText]}>{KycScreen.frontCardTitle}</Text>
           </TouchableOpacity>
@@ -236,7 +279,7 @@ const KYC = (props) => {
               type="primary"
               label="Submit"
               buttonContainer={styles.modalButtonContainer}
-              onPress={() => { hideModal(); setType(0); }} />
+              onPress={() => { hideModal(); setType(0);onSubmit()}} />
           </View>}
       </Modal >
     </View >
@@ -393,12 +436,14 @@ const styles = StyleSheet.create({
   },
   otpInputContainer: {
     flex: 1,
-    // borderWidth: 1,
-    // borderColor: 'rgba(232, 232, 234, 1)',
+    borderWidth: 1,
+    borderColor: 'rgba(232, 232, 234, 1)',
     backgroundColor: customTheme.colors.textInputBackground,
     marginLeft: 10,
-    height: 40,
+    height: 50,
     borderRadius: 10,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
     marginVertical: 20,
     marginTop: 40,
   },

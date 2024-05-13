@@ -2,12 +2,10 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { colors } from "../../colors";
 
-const CustomShadow = (props) => {
-  const { children } = props;
-
+const CustomShadow = ({ children, containerStyle = {}, shadowSyle = {} }) => {
   return (
-    <View style={styles.container}>
-      <View style={styles.shadowView}>{children}</View>
+    <View style={[styles.container, containerStyle]}>
+      <View style={[styles.shadowView, shadowSyle]}>{children}</View>
     </View>
   );
 };
