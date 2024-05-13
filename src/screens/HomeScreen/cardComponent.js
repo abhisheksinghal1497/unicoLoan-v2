@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { FlatList, Dimensions, View, StyleSheet, Text, Image } from 'react-native';
-import FastImage from 'react-native-fast-image';
+
 import { colors } from '../../colors';
 
 const CardComponent = () => {

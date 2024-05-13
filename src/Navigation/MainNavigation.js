@@ -11,6 +11,7 @@ import CongratulationScreen from '../screens/Congratulation';
 import KYC from '../screens/KYC';
 import CaptureAdhaar from '../screens/CaptureAdhaar';
 import Eligibility from '../screens/Eligibility';
+import ApplicationDetails from '../screens/ApplicationDetails';
 
 const Stack = createStackNavigator();
 
@@ -18,7 +19,7 @@ const Dashboard = () => {
   return (
 
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={screens.KYC}>
+      <Stack.Navigator initialRouteName={screens.HomeScreen}>
         <Stack.Screen
           name={screens.Splash}
           component={Splash}
@@ -67,6 +68,11 @@ const Dashboard = () => {
         <Stack.Screen
           name={screens.Eligibility}
           component={Eligibility}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={screens.ApplicantDetails}
+          component={ApplicationDetails}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

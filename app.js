@@ -45,12 +45,17 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Dashboard from "./src/Navigation/MainNavigation";
 import NoInternet from "./src/screens/NoInternet";
 import Toast from 'react-native-toast-message';
+import ErrorBoundary from 'react-native-error-boundary'
+import { onlineManager } from "@tanstack/react-query/build/legacy";
+
+
 
 
 
 // import Dashboard from './src/Navigation/Dashboard';
 import HomeScreen from "./src/screens/HomeScreen";
 import ApplicationDetails from "./src/screens/ApplicationDetails";
+import ErrorScreen from "./src/screens/ErrorScreen";
 const queryClient = new QueryClient();
 
 const ContactListScreen = () => {
@@ -134,6 +139,14 @@ export const App = function () {
     useEffect(() => {
         const unsubscribe = NetInfo.addEventListener((state) => {
             setIsConnected(state.isConnected);
+            try {
+                onlineManager.setEventListener(setOnline => {
+                    setOnline(state.isConnected)
+                })
+
+            } catch (error) {
+
+            }
         });
         return () => {
             unsubscribe();
@@ -142,17 +155,19 @@ export const App = function () {
 
     return (
         <PaperProvider theme={customTheme}>
-            <QueryClientProvider client={queryClient}>
-                <Reduxprovider store={store}>
-                    {isConnected ? <Dashboard /> : <NoInternet />}
-                    {/* <HomeScreen/> */}
-                    {/* <ContactListScreen /> */}
-                    <Toast
-                        position='bottom'
-                        bottomOffset={20}
-                    />
-                </Reduxprovider>
-            </QueryClientProvider>
+            <ErrorBoundary FallbackComponent={ErrorScreen}>
+                <QueryClientProvider client={queryClient}>
+                    <Reduxprovider store={store}>
+                        {isConnected ? <Dashboard /> : <NoInternet />}
+                        {/* <HomeScreen/> */}
+                        {/* <ContactListScreen /> */}
+                        <Toast
+                            position='bottom'
+                            bottomOffset={20}
+                        />
+                    </Reduxprovider>
+                </QueryClientProvider>
+            </ErrorBoundary>
         </PaperProvider>
     );
 }

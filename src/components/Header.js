@@ -23,20 +23,20 @@ export default Header
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: colors.bgColor,
+        backgroundColor: colors.white,
         flexDirection: 'row',
         alignItems: 'center',
-        marginVertical: 10,
+        marginVertical: 15,
     },
     backImage: {
         width: 20,
         height: 18,
-        marginRight: 10,
+        marginRight: 20,
         tintColor: colors.black,
     },
     questionImage: {
-        width: 20,
-        height: 20,
+        width: 25,
+        height: 25,
         resizeMode: 'contain',
     },
     titleText: {
