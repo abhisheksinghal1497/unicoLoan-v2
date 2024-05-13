@@ -129,7 +129,7 @@ const HomeScreen = ({navigation}) => {
         </View>
         <View style={styles.belowCardView}>
 
-          <CircularProgress size ={90} strokeWidth={15}  progressPercent={10} bgColor ={'#F2F2F2'} pgColor={'#2E52A1'} />
+          <CircularProgress size ={90} strokeWidth={12}  progressPercent={item.ProgressBarPercent} bgColor ={'#F2F2F2'} pgColor={'#2E52A1'} />
           <View style={{ marginLeft: 11.5 }}>
             {item.nextPayment && item.paymentDate && item.NextPaymentText && (
               <><Text style={styles.naxtPaymentKyc}>{item.NextPaymentText}</Text><Text style={styles.naxtPaymentKyc2}>{item.nextPayment}</Text><Text style={styles.paymentDate}>{item.paymentDate}</Text></>
