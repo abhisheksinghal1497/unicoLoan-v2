@@ -3,11 +3,9 @@ import { FlatList, Dimensions, View, StyleSheet, Text, Image, ScrollView, Toucha
 import CardComponent from './cardComponent';
 import { colors } from '../../colors';
 import customTheme from '../../colors/theme';
-import  CircularProgress  from "../../components/CircularProgress";
-import { screens } from '../../constants/screens';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { verticalScale } from '../../utils/matrcis';
 
-const HomeScreen = (props) => {
+const HomeScreen = ({navigation}) => {
   const flatListRef = useRef(null);
   const screenWidth = Dimensions.get('window').width;
   const [currentScreen, setCurrentScreen] = React.useState(false);
@@ -61,6 +59,19 @@ const HomeScreen = (props) => {
 
   const cardWidth = 350;
 
+  const data2 = [
+    { key: 'calculators', title: 'Calculators', image: require('../../../assets/images/Calculators.png') },
+    { key: 'applyForLoan', title: 'Apply For Loan', image: require('../../../assets/images/applyForLoan.png') },
+    { key: 'statusCheck', title: 'Status Check', image: require('../../../assets/images/StatusCheck.png') },
+  ];
+  
+  const renderItem = ({ item }) => (
+    <TouchableOpacity style={styles.servicesCards}>
+      <Image style={styles.serviceImage} source={item.image} />
+      <Text style={styles.serviceText}>{item.title}</Text>
+    </TouchableOpacity>
+  );
+
   const renderItems = ({ item, index }) => {
     return (
       <View style={[styles.card,]}>
@@ -100,34 +111,35 @@ const HomeScreen = (props) => {
             }
           </View>
         </View>
-        <View style={[styles.cardBottomBar, { marginTop: !item.tenure ? 45 : 2, }]}>
-          {item.nextPayment && item.paymentDate && item.NextPaymentText ? (
-            <TouchableOpacity style={styles.seeDetailsresumeJourneyButton}>
-              <Text style={styles.seeDetailsresumeJourneyText}>See Details</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity style={styles.seeDetailsresumeJourneyButton} onPress={() => onResume()}>
-              <Text style={styles.seeDetailsresumeJourneyText}>Resume Journey</Text>
-            </TouchableOpacity>
-          )}
+        <View style={[ styles.cardBottomBar,{ marginTop: !item.tenure ? verticalScale(45) : verticalScale(2),} ] }>
+        {item.nextPayment && item.paymentDate && item.NextPaymentText ? (
+    <TouchableOpacity style={styles.seeDetailsresumeJourneyButton}>
+      <Text style={styles.seeDetailsresumeJourneyText}>See Details</Text>
+    </TouchableOpacity>
+  ) : (
+    <TouchableOpacity style={styles.seeDetailsresumeJourneyButton}>
+      <Text style={styles.seeDetailsresumeJourneyText}>Resume Journey</Text>
+    </TouchableOpacity>
+  )}
         </View>
       </View>
     );
   };
-
   return (
 
     <SafeAreaView style={styles.container}>
       <View style={{ backgroundColor: colors.coreCream, height: '27.5%' }}>
         <View style={styles.profileImageView}>
+          <TouchableOpacity onPress={()=>navigation.navigate('ProfileImageScreen')}>
           <Image source={require('../../../assets/images/profileIcon.png')} style={styles.profileIcon} />
+          </TouchableOpacity>
           <Text style={styles.profileName}>Bhavesh Rao</Text>
         </View>
         <View style={{ position: 'absolute', top: 70 }}>
           <CardComponent />
         </View>
       </View>
-      <View style={{ marginTop: 21, top: 65 }}>
+      <View style={{ marginTop: verticalScale(30), top: 65 }}>
         <Text style={styles.yourLoan}>
           Your Loans
         </Text>
@@ -155,47 +167,21 @@ const HomeScreen = (props) => {
             />
           </View>
         }
-
       </View>
 
-      <View style={{ marginTop: 85 }}>
+      <View style={{ marginTop: verticalScale(80) }}>
         <Text style={styles.ourSerices}>
           Our Services
         </Text>
         <View style={styles.ourSericesCards}>
-          <TouchableOpacity style={styles.servicesCards}>
-            <Image
-              style={styles.serviceImage}
-              source={require('../../../assets/images/Calculators.png')}
-            />
-            <Text style={styles.serviceText}>
-              Calulators
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.servicesCards} onPress={() => {
-            props?.navigation?.navigate(screens.ApplicantDetails)
-          }}>
-            <Image
-              style={styles.serviceImage}
-              source={require('../../../assets/images/applyForLoan.png')}
-            />
-            <Text style={styles.serviceText}>
-              Apply For Loan
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.servicesCards}>
-            <Image
-              style={styles.serviceImage}
-              source={require('../../../assets/images/StatusCheck.png')}
-            />
-            <Text style={styles.serviceText}>
-              Status Check
-            </Text>
-          </TouchableOpacity>
-
+        {data2.map(item => (
+        <TouchableOpacity key={item.key} style={styles.servicesCards}>
+          <Image style={styles.serviceImage} source={item.image} />
+          <Text style={styles.serviceText}>{item.title}</Text>
+        </TouchableOpacity>
+      ))}
         </View>
       </View>
-
     </SafeAreaView>
 
 
@@ -206,13 +192,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  loanView: { marginTop: 13, flexDirection: 'row', justifyContent: 'space-between', paddingLeft: 21, paddingRight: 14, alignItems: 'center' },
-  loanTitle: { color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelMedium.fontWeight },
-  uhfl: { color: colors.coreBlue, fontSize: 8, fontWeight: customTheme.fonts.labelMedium.fontWeight },
-  profileImageView: { flexDirection: 'row', alignItems: 'center', left: 40, marginBottom: 10, marginTop: 21 },
-  lanloanview: { marginTop: 6, flexDirection: 'row', justifyContent: 'space-between', paddingLeft: 21, paddingRight: 14, alignItems: 'center' },
-  lan: {
-    color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelMedium.fontWeight
+  loanView:{ marginTop: verticalScale(13), flexDirection: 'row', justifyContent: 'space-between', paddingLeft: 21, paddingRight: 14, alignItems: 'center' },
+  loanTitle:{color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelMedium.fontWeight},
+  uhfl:{ color: colors.coreBlue, fontSize: 8, fontWeight: customTheme.fonts.labelMedium.fontWeight },
+  profileImageView:{ flexDirection: 'row', alignItems: 'center', left: 40, marginBottom: verticalScale(10), marginTop: verticalScale(21) },
+  lanloanview:{ marginTop: verticalScale(6), flexDirection: 'row', justifyContent: 'space-between', paddingLeft: 21, paddingRight: 14, alignItems: 'center' },
+  lan:{
+     color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelMedium.fontWeight 
   },
   loanAmountText: {
     color: colors.coreBlue, fontSize: 10, fontWeight: customTheme.fonts.labelMedium.fontWeight, paddingRight: 12
@@ -287,29 +273,30 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     height: 206,
-    marginRight: 10,
+    marginRight: 14,
     width: 350,
-    marginBottom: 5
+    marginBottom: 5,
+    marginLeft: -5
   },
 
   ourSerices: {
-    color: colors.black, fontSize: 18, lineHeight: 28, left: 30, bottom: 5
+    color: colors.black, fontSize: 18, lineHeight: 28, left: 20, bottom: 5
   },
   servicesCards: {
     width: 105.5, height: 104.5, backgroundColor: colors.white, borderRadius: 6, shadowColor: colors.black, marginBottom: 5,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 1,
     shadowRadius: 3.84,
-    elevation: 5, justifyContent: 'center'
+    elevation: 5, justifyContent: 'center', 
   },
   ourSericesCards:
     { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, flexWrap: 'wrap', },
   serviceImage:
     { width: 39, height: 39, resizeMode: 'contain', alignSelf: 'center' },
-  serviceText: { color: colors.coreBlue, fontSize: 12, fontWeight: customTheme.fonts.labelMedium.fontWeight, alignSelf: 'center', marginTop: 9 },
+  serviceText: { color: colors.coreBlue, fontSize: 12, fontWeight: customTheme.fonts.labelMedium.fontWeight, alignSelf: 'center', marginTop: verticalScale(9) },
   yourLoan: {
 
-    color: colors.black, fontSize: 18, lineHeight: 28, left: 30, bottom: 5
+    color: colors.black, fontSize: 18, lineHeight: 28, left: 20, bottom: 5
   },
   seeDetailsresumeJourneyButton: {
     justifyContent: 'center',
