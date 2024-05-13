@@ -14,6 +14,8 @@ import CaptureAdhaar from '../screens/CaptureAdhaar';
 import Eligibility from '../screens/Eligibility';
 import CaptureSelfie from '../screens/CaptureSelfie';
 import ApplicationDetails from '../screens/ApplicationDetails';
+import Sanction from '../screens/Sanction';
+import LoanDetails from '../screens/LoanDetails';
 
 const Stack = createStackNavigator();
 
@@ -84,6 +86,16 @@ const Dashboard = () => {
         <Stack.Screen
           name={screens.ApplicantDetails}
           component={ApplicationDetails}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={screens.Sanction}
+          component={Sanction}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={screens.LoanDetails}
+          component={LoanDetails}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
