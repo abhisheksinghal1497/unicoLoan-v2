@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { FlatList, Dimensions, View, StyleSheet, Text, Image, ScrollView, TouchableOpacity, ImageBackground, SafeAreaView } from 'react-native';
+import { FlatList, Dimensions, View, StyleSheet, Text, Image, ScrollView, TouchableOpacity, ImageBackground, SafeAreaView, ActivityIndicator } from 'react-native';
 import CardComponent from './cardComponent';
 import { colors } from '../../colors';
 import customTheme from '../../colors/theme';
@@ -15,6 +15,8 @@ const HomeScreen = ({navigation}) => {
   const getOurServicesCardData = getHomeScreenOurServices()
   const [data, setData] = useState([])
   const [data2, setData2] = useState([])
+  const [isLoading, setIsLoading] = useState(true);
+
   console.log('datatt', data)
   const [currentScreen, setCurrentScreen] = React.useState(false);
 
@@ -25,14 +27,14 @@ const HomeScreen = ({navigation}) => {
 
   useEffect(()=>{
     if(getLoanCardData.data){
-      alert('Active Loan Success')
+      setIsLoading(false)
       setData(getLoanCardData.data)
     }
   },[getLoanCardData.data])
 
   useEffect(()=>{
     if(getOurServicesCardData.data){
-      alert('Our Servies success')
+      setIsLoading(false)
       setData2(getOurServicesCardData.data)
     }
   },[getOurServicesCardData.data])
@@ -158,62 +160,69 @@ const HomeScreen = ({navigation}) => {
   return (
 
     <SafeAreaView style={styles.container}>
-            <ScrollView contentContainerStyle={styles.scrollViewContent}>
-      <View style={{ backgroundColor: colors.coreCream, height: '27.5%' }}>
-        <View style={styles.profileImageView}>
-          <TouchableOpacity onPress={()=>navigation.navigate('ProfileImageScreen')}>
-          <Image source={require('../../../assets/images/profileIcon.png')} style={styles.profileIcon} />
+        {isLoading ? (
+          <View style={styles.ActivityStyle}>
+ <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+      ) : (
+        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        <View style={{ backgroundColor: colors.coreCream, height: '27.5%' }}>
+          <View style={styles.profileImageView}>
+            <TouchableOpacity onPress={()=>navigation.navigate('ProfileImageScreen')}>
+            <Image source={require('../../../assets/images/profileIcon.png')} style={styles.profileIcon} />
+            </TouchableOpacity>
+            <Text style={styles.profileName}>Bhavesh Rao</Text>
+          </View>
+          <View style={{ position: 'absolute', top: 70 }}>
+            <CardComponent />
+          </View>
+        </View>
+        <View style={{ marginTop: verticalScale(30), top: 65 }}>
+          <Text style={styles.yourLoan}>
+            Your Loans
+          </Text>
+          {data.length === 0 ? (
+            <View style={styles.loanapplyview}>
+              <ImageBackground
+                style={styles.imgBackground}
+                source={require('../../../assets/images/loanapply.png')}
+              >
+                <Text style={styles.applyforloan} >Apply For Loan</Text>
+              </ImageBackground>
+            </View>
+          ) :
+            <View style={styles.secondcards}>
+              <FlatList
+                ref={flatListRef}
+                data={data}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={renderItems}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{
+                  paddingHorizontal: (screenWidth - cardWidth) / 2,
+                }}
+              />
+            </View>
+          }
+        </View>
+  
+        <View style={{ marginTop: verticalScale(80) }}>
+          <Text style={styles.ourSerices}>
+            Our Services
+          </Text>
+          <View style={styles.ourSericesCards}>
+          {data2.map(item => (
+          <TouchableOpacity key={item.key} style={styles.servicesCards}>
+            <Image style={styles.serviceImage} source={item.image} />
+            <Text style={styles.serviceText}>{item.title}</Text>
           </TouchableOpacity>
-          <Text style={styles.profileName}>Bhavesh Rao</Text>
-        </View>
-        <View style={{ position: 'absolute', top: 70 }}>
-          <CardComponent />
-        </View>
-      </View>
-      <View style={{ marginTop: verticalScale(30), top: 65 }}>
-        <Text style={styles.yourLoan}>
-          Your Loans
-        </Text>
-        {data.length === 0 ? (
-          <View style={styles.loanapplyview}>
-            <ImageBackground
-              style={styles.imgBackground}
-              source={require('../../../assets/images/loanapply.png')}
-            >
-              <Text style={styles.applyforloan} >Apply For Loan</Text>
-            </ImageBackground>
+        ))}
           </View>
-        ) :
-          <View style={styles.secondcards}>
-            <FlatList
-              ref={flatListRef}
-              data={data}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={renderItems}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{
-                paddingHorizontal: (screenWidth - cardWidth) / 2,
-              }}
-            />
-          </View>
-        }
-      </View>
-
-      <View style={{ marginTop: verticalScale(80) }}>
-        <Text style={styles.ourSerices}>
-          Our Services
-        </Text>
-        <View style={styles.ourSericesCards}>
-        {data2.map(item => (
-        <TouchableOpacity key={item.key} style={styles.servicesCards}>
-          <Image style={styles.serviceImage} source={item.image} />
-          <Text style={styles.serviceText}>{item.title}</Text>
-        </TouchableOpacity>
-      ))}
         </View>
-      </View>
-      </ScrollView>
+        </ScrollView>
+      )}
+            
     </SafeAreaView>
 
 
@@ -223,6 +232,11 @@ const HomeScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  ActivityStyle:{
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   scrollViewContent: {
     flexGrow: 1,
