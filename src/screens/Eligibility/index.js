@@ -1,5 +1,5 @@
 import { View, ScrollView, StyleSheet, ImageBackground } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CustomModal from "../../components/CustomModal";
 import InputField from "../../components/FormComponents/InputField";
 import { useForm } from "react-hook-form";
@@ -15,15 +15,7 @@ import {
 } from "../../components/FormComponents/FormControl";
 import Header from "../../components/Header";
 import { validations } from "../../constants/validations";
-
-const cardData = {
-  Product: "Home Loan",
-  "Request Loan Amount": "50 lac",
-  "Cibil Score": 846,
-  "Number of Enquiries in the last 6 months": 2,
-  "Eligible Status": "Eligible",
-  "Eligible Loan Amount": "45 lac",
-};
+import { getEligibilityDetails } from "../../services/ApiUtils";
 
 const formData = [
   {
@@ -119,6 +111,9 @@ const formData = [
 const Eligibility = () => {
   const [showBottomModal, setShowBottomModal] = useState(false);
   const [applicantData, setApplicantData] = useState([]);
+  const [cardData, setCardData] = useState();
+
+  const eligibilityDetails = getEligibilityDetails();
 
   const {
     control,
@@ -133,26 +128,38 @@ const Eligibility = () => {
     mode: "all",
   });
 
-  console.log("errprs",errors)
+  useEffect(() => {
+    eligibilityDetails.mutate();
+  }, []);
+
+  useEffect(() => {
+    if (eligibilityDetails.data) {
+      // alert('Top Cards Success')
+      setCardData(eligibilityDetails.data);
+    }
+  }, [eligibilityDetails.data]);
+
+  useEffect(() => {
+    if (eligibilityDetails.error) {
+      alert(eligibilityDetails.error);
+    }
+  }, [eligibilityDetails.error]);
 
   const onSubmit = (data) => {
-
-   if(applicantData?.length){
-     setApplicantData([...applicantData, { ...data }]);
-     
-    }else{
-     setApplicantData([ { ...data }]);
-
-   }
-    setShowBottomModal(false)
+    if (applicantData?.length) {
+      setApplicantData([...applicantData, { ...data }]);
+    } else {
+      setApplicantData([{ ...data }]);
+    }
+    setShowBottomModal(false);
   };
 
-  console.log("applicantData",applicantData)
+ if(eligibilityDetails?.isPending)  return (<Text>Loading</Text>)
 
 
   return (
     <ScrollView>
-        <Header
+      <Header
         title="Eligibility"
         left={true}
         containerStyle={{ marginHorizontal: 20 }}
@@ -179,16 +186,30 @@ const Eligibility = () => {
           }}
         >
           <TouchableOpacity
-            style={[styles.btnStyle,{borderColor: applicantData?.length >= 2 ? "#888888" : "#2E52A1"}]}
+            style={[
+              styles.btnStyle,
+              {
+                borderColor: applicantData?.length >= 2 ? "#888888" : "#2E52A1",
+              },
+            ]}
             disabled={applicantData?.length >= 2 ? true : false}
             onPress={() => setShowBottomModal(!showBottomModal)}
           >
-            <Text style={[styles.textStyle ,{color: applicantData?.length >= 2 ? "#888888" : "#2E52A1"}]}>Add Co-Aplicant</Text>
+            <Text
+              style={[
+                styles.textStyle,
+                { color: applicantData?.length >= 2 ? "#888888" : "#2E52A1" },
+              ]}
+            >
+              Add Co-Aplicant
+            </Text>
           </TouchableOpacity>
-          { applicantData?.length ? applicantData.map((el, i) => (
-            <CoApplicantCard data={el} key={i} />
-          )) : null}
-          {Object.keys(cardData).map((el, i) => (
+          {applicantData?.length
+            ? applicantData.map((el, i) => (
+                <CoApplicantCard data={el} key={i} />
+              ))
+            : null}
+          {cardData && Object.keys(cardData).map((el, i) => (
             <CustomComponent title={el} key={i} value={cardData[el]} />
           ))}
         </Card>
@@ -214,7 +235,7 @@ const Eligibility = () => {
               data={el?.data}
             />
           ))}
-        
+
           <CustomButton
             type="primary"
             label="Save"
@@ -247,7 +268,12 @@ const CoApplicantCard = ({ data }) => {
       <View style={styles.con2}>
         <Text style={styles.applicantText2}>Name : {data?.name}</Text>
         <Text style={styles.applicantText2}>
-          DOB : {new Date(data?.dob).getDate() + "/" + new Date(data?.dob).getMonth() + "/" + new Date(data?.dob).getFullYear()}
+          DOB :{" "}
+          {new Date(data?.dob).getDate() +
+            "/" +
+            new Date(data?.dob).getMonth() +
+            "/" +
+            new Date(data?.dob).getFullYear()}
         </Text>
       </View>
       <Text style={styles.applicantText2}>Mobile Number : {data?.number}</Text>

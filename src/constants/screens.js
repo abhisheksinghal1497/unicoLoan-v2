@@ -25,6 +25,7 @@ export const screens = {
     CongratulationScreen:'CongratulationScreen',
     Eligibility:"Eligibility",
     KYCDocuments:"KYCDocuments",
+    ProfileImageScreen: "ProfileImageScreen",
     Sanction:"Sanction",
     LoanDetails:"LoanDetails",
   };
