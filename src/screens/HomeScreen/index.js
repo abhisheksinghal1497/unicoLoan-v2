@@ -101,7 +101,7 @@ const HomeScreen = ({navigation}) => {
         </View>
         <View style={styles.belowCardView}>
 
-          <CircularProgress ImageData={require('../../../assets/images/Home.png')} TextData={'SAMPLE'} size ={90} strokeWidth={15}  progressPercent={10} bgColor ={'#F2F2F2'} pgColor={'#2E52A1'} />
+          <CircularProgress ImageData={require('../../../assets/images/Home.png')} TextData={'SAMPLE'} size ={90} strokeWidth={8}  progressPercent={10} bgColor ={'#F2F2F2'} pgColor={'#2E52A1'} />
           <View style={{ marginLeft: 11.5 }}>
             {item.nextPayment && item.paymentDate && item.NextPaymentText && (
               <><Text style={styles.naxtPaymentKyc}>{item.NextPaymentText}</Text><Text style={styles.naxtPaymentKyc2}>{item.nextPayment}</Text><Text style={styles.paymentDate}>{item.paymentDate}</Text></>
@@ -146,14 +146,16 @@ const HomeScreen = ({navigation}) => {
           Your Loans
         </Text>
         {data.length === 0 ? (
-          <View style={styles.loanapplyview}>
+          <TouchableOpacity onPress={() => {
+            navigation?.navigate(screens.ApplicantDetails)
+          }} style={styles.loanapplyview}>
             <ImageBackground
               style={styles.imgBackground}
               source={require('../../../assets/images/loanapply.png')}
             >
-              <Text style={styles.applyforloan} >Apply For Loan</Text>
+              <Text style={styles.applyforloan} >Apply For Lo</Text>
             </ImageBackground>
-          </View>
+          </TouchableOpacity>
         ) :
           <View style={styles.secondcards}>
             <FlatList
