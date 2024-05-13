@@ -170,6 +170,7 @@ export default function ApplicationDetails(props) {
 
   const toggleModal = () => setShowModal(!showModal)
   const style = styles(colors);
+  const goBack = () => props.navigation.goBack();
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
@@ -203,6 +204,7 @@ export default function ApplicationDetails(props) {
             fontSize: verticalScale(18),
           }}
           onPressRight={toggleModal}
+          onPressLeft={goBack}
         />
       </View>
       <ScrollView contentContainerStyle={style.scrollviewStyle}>
