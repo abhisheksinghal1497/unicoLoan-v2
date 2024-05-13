@@ -1,12 +1,38 @@
-export const AadharBasicDetails ={
-    firstButtonName:"Retry",
-    lastButtonName:"Use this Photo",
-    headerText: 'Review Your Document',
-    headerTextSecond: 'Capture Adhaar',
-    imageMethod:'Front',
-    imageSide:'Front Side',
-    imageSideSecond: 'Back Side'
-}
+export const AadharBasicDetails = {
+  firstButtonName: "Retry",
+  lastButtonName: "Use this Photo",
+  headerText: "Review Your Document",
+  headerTextSecond: "Capture Adhaar",
+  imageMethod: "Front",
+  imageSide: "Front Side",
+  imageSideSecond: "Back Side",
+};
+
+export const LOAN_DETAILS_KEYS = {
+  reqLoanAmt: "reqLoanAmt",
+  reqTenure: "reqTenure",
+  loanPurpose: "loanPurpose",
+  mobile: "mobile",
+  isExistingCustomer: "isExistingCustomer",
+  custId: "custId",
+  bankBalance: "bankBalance",
+  currPF: "currPF",
+  valShareSecr: "valShareSecr",
+  fd: "fd",
+  invPlantMachVehi: "invPlantMachVehi",
+  ownContri: "ownContri",
+  assetVal: "assetVal",
+  totalAsset: "totalAsset",
+  amtConstructPurchase: "amtConstructPurchase",
+  savings: "savings",
+  dispAsset: "dispAsset",
+  familyFund: "familyFund",
+  srvcFund: "srvcFund",
+  totalIncome: "totalIncome",
+  totalObligation: "totalObligation",
+  resAddr: "resAddr",
+  currAddr: "currAddr",
+};
 
 export const KycScreen = {
     topLabel: "Let's verify your identity quickly",

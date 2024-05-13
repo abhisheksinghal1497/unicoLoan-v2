@@ -15,7 +15,7 @@ export default function CustomButton(props) {
             onPress={onPress} >
             <View style={styles.rowContainer}>
                 {left}
-                <Text style={[theme.fonts.buttonText, labelStyle]} numberOfLines={1}>{label}</Text>
+                <Text style={[theme.fonts.buttonText, labelStyle, isDisabled ? {color: colors.black}: {}]} numberOfLines={1}>{label}</Text>
                 {right}
             </View>
         </TouchableRipple>
