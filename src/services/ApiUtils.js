@@ -60,6 +60,31 @@ export const getHomeScreenDetails = () =>{
 
     return mutate
 }
+export const getEligibilityDetails = () =>{
+    const mutate = useMutation({
+        networkMode:"always",
+        mutationFn:async()=>{
+        
+           return new Promise((resolve, reject)=>{
+              
+                 setTimeout(()=>{
+                    const data = {
+                        Product: "Home Loan",
+                        "Request Loan Amount": "50 lac",
+                        "Cibil Score": 846,
+                        "Number of Enquiries in the last 6 months": 2,
+                        "Eligible Status": "Eligible",
+                        "Eligible Loan Amount": "45 lac",
+                      }
+                    resolve(data)
+                    reject('Something went wrong')
+                }, 3000)
+            }, )
+        }
+    })
+
+    return mutate
+}
 
 export const getHomeScreenCarousel = () =>{
     const mutate = useMutation({

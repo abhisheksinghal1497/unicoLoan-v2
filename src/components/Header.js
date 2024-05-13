@@ -8,7 +8,8 @@ const Header = (props) => {
     const {leftImageProps = {}, rightImageProps={}, onPressRight, onPressLeft= () => {}} = props;
     const { fonts } = useTheme();
     return (
-        <View style={[styles.container,{ backgroundColor:props?.colour ? props?.colour : colors.bgColor,}]}>
+      
+        <View style={[styles.container,props.containerStyle,{ backgroundColor:props?.colour ? props?.colour : colors.bgColor,}]}>
             {props.left && <TouchableOpacity onPress={() => onPressLeft()}>
                 <Image source={props.left} style={[styles.backImage, props.leftStyle]} {...leftImageProps} />
             </TouchableOpacity>}
