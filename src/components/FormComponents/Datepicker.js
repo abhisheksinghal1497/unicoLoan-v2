@@ -10,6 +10,11 @@ import { colors } from "../../colors";
 import customTheme from "../../colors/theme";
 import CustomShadow from "./CustomShadow";
 import moment from "moment";
+import {
+  fieldContainerStyle,
+  fieldLabelViewStyle,
+  fieldLabelStyle,
+} from "../../constants/commonStyles";
 
 export default function CustomDatepicker({
   control,
@@ -53,7 +58,7 @@ export default function CustomDatepicker({
           return (
             <View style={styles.container}>
               <View style={styles.labelContainer}>
-                <Text style={styles.labelText}>
+                <Text style={styles.label}>
                   {isRequired && <Text style={styles.asterisk}>* </Text>}
                   {label}
                 </Text>
@@ -122,20 +127,13 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   container: {
-    marginHorizontal: horizontalScale(8),
-    marginVertical: verticalScale(6),
-    paddingBottom: 0,
+    ...fieldContainerStyle,
   },
   label: {
-    fontWeight: "400",
-    fontSize: 15,
-    marginHorizontal: 10,
-    marginBottom: -15,
+    ...fieldLabelStyle,
   },
   labelContainer: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    marginBottom: 2,
+    ...fieldLabelViewStyle,
   },
   datePickerStyle: {
     width: horizontalScale(200),

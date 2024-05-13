@@ -5,10 +5,29 @@ import { colors } from '../../colors';
 import customTheme from '../../colors/theme';
 import  CircularProgress  from "../../components/CircularProgress";
 import { screens } from '../../constants/screens';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = (props) => {
   const flatListRef = useRef(null);
   const screenWidth = Dimensions.get('window').width;
+  const [currentScreen, setCurrentScreen] = React.useState(false);
+
+  useEffect(() => {
+    async function fetchData() {
+      const savedData = await AsyncStorage.getItem('CurrentScreen');
+      const currentData = JSON.parse(savedData);
+      console.log(currentData,'current Screen');
+      setCurrentScreen(currentData)
+      
+
+    }
+    fetchData();
+  }, []);
+
+  const onResume = () =>{
+    console.log(currentScreen)
+    props?.navigation?.navigate(currentScreen)
+  }
 
   const data = [
     {
@@ -87,7 +106,7 @@ const HomeScreen = (props) => {
               <Text style={styles.seeDetailsresumeJourneyText}>See Details</Text>
             </TouchableOpacity>
           ) : (
-            <TouchableOpacity style={styles.seeDetailsresumeJourneyButton}>
+            <TouchableOpacity style={styles.seeDetailsresumeJourneyButton} onPress={() => onResume()}>
               <Text style={styles.seeDetailsresumeJourneyText}>Resume Journey</Text>
             </TouchableOpacity>
           )}

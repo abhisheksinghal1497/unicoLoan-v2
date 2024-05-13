@@ -17,7 +17,34 @@ import Header from "../../components/Header";
 import { assets } from "../../assets/assets";
 import HelpModal from "./component/HelpModal";
 
+import { storeData, getData } from '../../utils/asyncStorage'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const initialData = [
+  {
+    id: "applicationType",
+    value: 0
+  },
+  {
+    id: "customerProfile",
+    value: 0
+  },
+  {
+    id: "firstName",
+    value: 0
+  },
+  {
+    id: "lastName",
+    value: 0
+  },
+  {
+    id: "dob",
+    value: 0
+  }
+]
+
 export default function ApplicationDetails(props) {
+
   const [isVerified, setIsVerified] = useState(false);
   const [showModal, setShowModal] = useState(true);
   const {
@@ -33,6 +60,20 @@ export default function ApplicationDetails(props) {
   });
 
   const { colors } = useTheme();
+
+  useEffect(() => {
+    async function fetchData() {
+      await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.ApplicantDetails));
+      const savedData = await AsyncStorage.getItem('ApplicationDetails');
+      const currentData = JSON.parse(savedData);
+      console.log(currentData, 'current value');
+      {currentData?.map(item =>{
+        console.log(item)
+        setValue(item.id,item.value)
+      })}
+    }
+    fetchData();
+  }, []);
 
   const onSubmit = (data) => {
     console.log("njnjnjnb");
@@ -60,24 +101,33 @@ export default function ApplicationDetails(props) {
       isRequired: false,
       value: "",
     },
-    {
-      id: "customerProfile",
-      label: "Customer Profile",
-      type: component.dropdown,
-      placeHolder: "Customer Profile",
-      validations: validations.text,
-      isRequired: true,
-      data: [
-        { id: 1, label: "Salaried", value: "Salaried" },
-        { id: 2, label: "Self-Employed", value: "Self-Employed" },
-      ],
-      value: "",
-    },
+    { id: "customerProfile",
+    label: "Customer Profile",
+    type: component.dropdown,
+    placeHolder: "Select Customer Profile",
+    validations: validations.phone,
+    maxLength: 10,
+    keyboardtype: "numeric",
+    isRequired: true,
+    data: [
+      {
+        id: "cust_type_1",
+        label: "Salaried",
+        value: "salaried",
+      },
+
+      {
+        id: "cust_type_2",
+        label: "Self-Employed",
+        value: "self-employed",
+      },
+    ],
+    value: {},},
     {
       id: "firstName",
       label: "First Name",
       type: component.textInput,
-      placeHolder: "First Name",
+      placeHolder: "Enter first Name",
       validations: validations.text,
       isRequired: false,
       value: "",
@@ -86,16 +136,16 @@ export default function ApplicationDetails(props) {
       id: "lastName",
       label: "Last Name",
       type: component.textInput,
-      placeHolder: "Last Name",
+      placeHolder: "Enter last Name",
       validations: validations.text,
       isRequired: false,
       value: "",
     },
     {
-      id: "dateOfBirth",
+      id: "dob",
       label: "Date of Birth",
       type: component.datetime,
-      placeHolder: "Select date of birth",
+      placeHolder: "DD-MM-YYYY",
       validations: validations.text,
       isRequired: false,
       value: "",

@@ -13,6 +13,12 @@ import { colors } from "../../colors";
 import customTheme from "../../colors/theme";
 import CustomShadow from "./CustomShadow";
 import { getErrMsg } from "../../services/globalHelper";
+import CustomModal from "../CustomModal";
+import {
+  fieldContainerStyle,
+  fieldLabelViewStyle,
+  fieldLabelStyle,
+} from "../../constants/commonStyles";
 
 export default DropDown = ({
   control,
@@ -35,6 +41,23 @@ export default DropDown = ({
 
   const [valueText, setValueText] = useState("");
 
+  const renderOptions = ({ item }) => {
+    return (
+      <TouchableOpacity
+        style={styles.itemView}
+        onPress={() => {
+          if (setValue) {
+            setValue(name, item.value);
+            setValueText(item.label);
+          }
+          setModalVisible(false);
+        }}
+      >
+        <Text style={styles.itemText}>{item?.label}</Text>
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <>
       <Controller
@@ -47,7 +70,7 @@ export default DropDown = ({
           return (
             <View style={styles.container}>
               <View style={styles.labelContainer}>
-                <Text style={[fonts.regularText, styles.labelText]}>
+                <Text style={styles.label}>
                   {isRequired && <Text style={styles.asterisk}>* </Text>}
                   {label}
                 </Text>
@@ -87,44 +110,23 @@ export default DropDown = ({
         name={name}
       />
 
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(false);
-        }}
+      <CustomModal
+        type="bottom"
+        showModal={modalVisible}
+        setShowModal={setModalVisible}
       >
-        <TouchableOpacity
-          style={styles.modalContainer}
-          onPress={() => {
-            setModalVisible(false);
-          }}
-        >
-          <View style={styles.modal}>
-            <FlatList
-              data={data}
-              keyExtractor={(item) => item?.id?.toString()}
-              renderItem={({ item }) => {
-                return (
-                  <TouchableOpacity
-                    style={styles.itemView}
-                    onPress={() => {
-                      if (setValue) {
-                        setValue(name, item.value);
-                        setValueText(item.label);
-                      }
-                      setModalVisible(false);
-                    }}
-                  >
-                    <Text style={styles.itemText}>{item?.label}</Text>
-                  </TouchableOpacity>
-                );
-              }}
-            />
+        <View>
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalHeaderTxt}> Select {label}</Text>
           </View>
-        </TouchableOpacity>
-      </Modal>
+          <FlatList
+            data={data}
+            keyExtractor={(item) => item?.id?.toString()}
+            renderItem={renderOptions}
+            // ItemSeparatorComponent={<View style={styles.itemSeparator} />}
+          />
+        </View>
+      </CustomModal>
     </>
   );
 };
@@ -134,9 +136,7 @@ const styles = StyleSheet.create({
     color: colors.labelColor,
   },
   container: {
-    marginHorizontal: 5,
-    marginVertical: 10,
-    paddingBottom: 0,
+    ...fieldContainerStyle,
   },
   selectArr: {
     fontSize: 18,
@@ -150,15 +150,11 @@ const styles = StyleSheet.create({
     color: customTheme.colors.error,
     marginTop: 5,
   },
-  container: {
-    marginHorizontal: 5,
-    marginVertical: 10,
-    paddingBottom: 0,
-  },
   labelContainer: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    marginBottom: 8,
+    ...fieldLabelViewStyle,
+  },
+  label: {
+    ...fieldLabelStyle,
   },
   selectContainer: {
     backgroundColor: customTheme.colors.textInputBackground,
@@ -185,9 +181,20 @@ const styles = StyleSheet.create({
   },
   itemView: {
     padding: 10,
-    borderTopWidth: 0.5,
   },
   itemText: {
+    ...customTheme.fonts.regularText,
     color: colors.black,
+  },
+  modalHeader: {
+    paddingVertical: 10,
+  },
+  modalHeaderTxt: {
+    fontWeight: "bold",
+    fontSize: 18,
+  },
+  itemSeparator: {
+    borderTopWidth: 1,
+    borderTopColor: customTheme.colors.border,
   },
 });
