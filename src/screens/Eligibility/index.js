@@ -9,6 +9,12 @@ import { Text } from "react-native-paper";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import customTheme from "../../colors/theme";
 import { assets } from "../../assets/assets";
+import {
+  FormControl,
+  component,
+} from "../../components/FormComponents/FormControl";
+import Header from "../../components/Header";
+import { validations } from "../../constants/validations";
 
 const cardData = {
   Product: "Home Loan",
@@ -19,8 +25,100 @@ const cardData = {
   "Eligible Loan Amount": "45 lac",
 };
 
+const formData = [
+  {
+    id: "name",
+    label: "Co-Applicant Name",
+    type: component.textInput,
+    placeHolder: "Enter Co-Applicant Name",
+    value: "",
+    validations: {
+      required: true,
+      minLength: 2,
+    },
+  },
+  {
+    id: "dob",
+    label: "Co-Applicant DOB",
+    type: component.datetime,
+    placeHolder: "Enter Co-Applicant DOB",
+    value: "",
+    validations: validations.required,
+  },
+  {
+    id: "number",
+    label: "Co-Applicant Mobile Number",
+    type: component.number,
+    placeHolder: "Enter Co-Applicant Mobile Number",
+    value: "",
+    validations: validations.phone,
+  },
+  {
+    id: "relationship",
+    label: "Relationship with Applicant",
+    type: component.dropdown,
+    placeHolder: "Select Relationship",
+    data: [
+      {
+        id: "relationship-1",
+        label: "Mother",
+        value: "mother",
+      },
+      {
+        id: "relationship-2",
+        label: "Father",
+        value: "father",
+      },
+      {
+        id: "relationship-3",
+        label: "Brother",
+        value: "brother",
+      },
+      {
+        id: "relationship-4",
+        label: "Sister",
+        value: "sister",
+      },
+      {
+        id: "relationship-5",
+        label: "Son",
+        value: "son",
+      },
+      {
+        id: "relationship-6",
+        label: "Daughter",
+        value: "daughter",
+      },
+      {
+        id: "relationship-7",
+        label: "Husband",
+        value: "husband",
+      },
+      {
+        id: "relationship-8",
+        label: "Wife",
+        value: "wife",
+      },
+    ],
+    value: {},
+    validations: validations.required,
+  },
+  {
+    id: "income",
+    label: "Co-Applicant Income",
+    type: component.textInput,
+    placeHolder: "Enter Co-Applicant Income",
+    value: "",
+    validations: {
+      required: true,
+      minLength: 2,
+    },
+  },
+];
+
 const Eligibility = () => {
   const [showBottomModal, setShowBottomModal] = useState(false);
+  const [applicantData, setApplicantData] = useState([]);
 
   const {
     control,
@@ -35,12 +133,30 @@ const Eligibility = () => {
     mode: "all",
   });
 
-  const onSubmit=(data)=>{
-    console.log("data",data)
-  }
+  console.log("errprs",errors)
+
+  const onSubmit = (data) => {
+
+   if(applicantData?.length){
+     setApplicantData([...applicantData, { ...data }]);
+     
+    }else{
+     setApplicantData([ { ...data }]);
+
+   }
+    setShowBottomModal(false)
+  };
+
+  console.log("applicantData",applicantData)
+
 
   return (
     <ScrollView>
+        <Header
+        title="Eligibility"
+        left={true}
+        containerStyle={{ marginHorizontal: 20 }}
+      />
       <View style={styles.topCon}>
         <Card cardStyle={styles.cardCon}>
           <ImageBackground
@@ -55,25 +171,28 @@ const Eligibility = () => {
             </View>
           </ImageBackground>
         </Card>
-        <Card cardStyle={{ paddingHorizontal: 10, paddingTop: 10, marginBottom:20 }}>
+        <Card
+          cardStyle={{
+            paddingHorizontal: 10,
+            paddingTop: 10,
+            marginBottom: 20,
+          }}
+        >
           <TouchableOpacity
-            style={styles.btnStyle}
+            style={[styles.btnStyle,{borderColor: applicantData?.length >= 2 ? "#888888" : "#2E52A1"}]}
+            disabled={applicantData?.length >= 2 ? true : false}
             onPress={() => setShowBottomModal(!showBottomModal)}
           >
-            <Text style={styles.textStyle}>Add Co-Aplicant</Text>
+            <Text style={[styles.textStyle ,{color: applicantData?.length >= 2 ? "#888888" : "#2E52A1"}]}>Add Co-Aplicant</Text>
           </TouchableOpacity>
-
-          <CoApplicantCard/>
-          <CoApplicantCard/>
+          { applicantData?.length ? applicantData.map((el, i) => (
+            <CoApplicantCard data={el} key={i} />
+          )) : null}
           {Object.keys(cardData).map((el, i) => (
             <CustomComponent title={el} key={i} value={cardData[el]} />
           ))}
         </Card>
-        <CustomButton
-            type="primary"
-            label="Continue"
-            onPress={() =>{}}
-          />
+        <CustomButton type="primary" label="Continue" onPress={() => {}} />
       </View>
 
       <CustomModal
@@ -82,45 +201,24 @@ const Eligibility = () => {
         setShowModal={setShowBottomModal}
       >
         <ScrollView showsVerticalScrollIndicator={false}>
-          <InputField
-            control={control}
-            validations={{
-              required: true,
-              minLength: 2,
-            }}
-            setValue={setValue}
-            name="name"
-            label="Co-Applicant Name"
-          />
-          <InputField
-            control={control}
-            validations={{
-              required: true,
-              minLength: 2,
-            }}
-            setValue={setValue}
-            name="dob"
-            label="Co-Applicant DOB"
-          />
-          <InputField
-            control={control}
-            validations={{
-              required: true,
-              minLength: 2,
-            }}
-            setValue={setValue}
-            name="income"
-            label="Co-Applicant Income"
-          />
+          {formData.map((el, i) => (
+            <FormControl
+              key={i}
+              control={control}
+              compType={el.type}
+              validations={el.validations}
+              name={el.id}
+              setValue={setValue}
+              label={el.label}
+              placeHolder={el.placeHolder}
+              data={el?.data}
+            />
+          ))}
+        
           <CustomButton
             type="primary"
             label="Save"
             onPress={handleSubmit(onSubmit)}
-          />
-          <CustomButton
-            type="primary"
-            label="Cancel"
-            onPress={() => setShowBottomModal(!showBottomModal)}
             buttonContainer={{ marginTop: 20 }}
           />
         </ScrollView>
@@ -142,23 +240,27 @@ const CustomComponent = ({ title, value }) => {
   );
 };
 
-const CoApplicantCard = () => {
-  return <Card cardStyle={styles.coapplicantCard}>
-    <Text style={styles.applicantText1}>
-      Co-Applicant 1
-    </Text>
-    <View style={styles.con2}>
-      <Text style={styles.applicantText2}>Name : Himanshu Bajpai</Text>
-      <Text style={styles.applicantText2}>DOB : 19 Jul 1994</Text>
-    </View>
-    <Text style={styles.applicantText2}>Income : 14 Lakh</Text>
-  </Card>;
+const CoApplicantCard = ({ data }) => {
+  return (
+    <Card cardStyle={styles.coapplicantCard}>
+      <Text style={styles.applicantText1}>Co-Applicant</Text>
+      <View style={styles.con2}>
+        <Text style={styles.applicantText2}>Name : {data?.name}</Text>
+        <Text style={styles.applicantText2}>
+          DOB : {new Date(data?.dob).getDate() + "/" + new Date(data?.dob).getMonth() + "/" + new Date(data?.dob).getFullYear()}
+        </Text>
+      </View>
+      <Text style={styles.applicantText2}>Mobile Number : {data?.number}</Text>
+      <Text style={styles.applicantText2}>Relation : {data?.relationship}</Text>
+      <Text style={styles.applicantText2}>Income : {data?.income}</Text>
+    </Card>
+  );
 };
 
 const styles = StyleSheet.create({
   topCon: {
     marginHorizontal: 20,
-    marginBottom:20
+    marginBottom: 20,
   },
   cardCon: {
     paddingTop: 0,
@@ -223,32 +325,31 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 
-  coapplicantCard:{
-    paddingTop:15,
-    paddingHorizontal:10,
-    paddingVertical:15,
-    backgroundColor:"#F2F2F2",
-    borderWidth:.5,
-    borderColor:"#C8C8C8",
-    marginBottom:15
+  coapplicantCard: {
+    paddingTop: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 15,
+    backgroundColor: "#F2F2F2",
+    borderWidth: 0.5,
+    borderColor: "#C8C8C8",
+    marginBottom: 15,
   },
-  applicantText1:{
+  applicantText1: {
     ...customTheme.fonts.largeText,
-    fontSize:11,
-    color:"#2E52A1",
-    marginBottom:10
+    fontSize: 11,
+    color: "#2E52A1",
+    marginBottom: 10,
   },
-  con2:{
-    alignItems:"center",
-    justifyContent:'space-between',
-    flexDirection:"row"
+  con2: {
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexDirection: "row",
   },
-  applicantText2:{
+  applicantText2: {
     ...customTheme.fonts.mediumText,
-    fontSize:11,
-    marginBottom:10
-
-  }
+    fontSize: 11,
+    marginBottom: 10,
+  },
 });
 
 export default Eligibility;

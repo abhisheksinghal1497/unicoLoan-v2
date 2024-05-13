@@ -1,4 +1,5 @@
 import React from 'react'
+import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../screens/HomeScreen';
@@ -11,20 +12,27 @@ import CongratulationScreen from '../screens/Congratulation';
 import KYC from '../screens/KYC';
 import CaptureAdhaar from '../screens/CaptureAdhaar';
 import Eligibility from '../screens/Eligibility';
+import CaptureSelfie from '../screens/CaptureSelfie';
 import ApplicationDetails from '../screens/ApplicationDetails';
 import KYCDocuments from '../screens/KYCDocuments';
+import Sanction from '../screens/Sanction';
+import LoanDetails from '../screens/LoanDetails';
 
 const Stack = createStackNavigator();
 
 const Dashboard = () => {
   return (
 
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName={screens.Eligiblity}>
+    <NavigationContainer >
+       <StatusBar
+                backgroundColor="white"
+                barStyle="dark-content"
+            />
+      <Stack.Navigator initialRouteName={screens.Eligibility} >
         <Stack.Screen
           name={screens.Splash}
           component={Splash}
-          options={{ headerShown: false }}
+          options={{ headerShown: false, }}
         />
 
         <Stack.Screen
@@ -54,6 +62,11 @@ const Dashboard = () => {
           component={CaptureAdhaar}
           options={{ headerShown: false }}
         />
+         <Stack.Screen
+          name={screens.CaptureSelfie}
+          component={CaptureSelfie}
+          options={{ headerShown: false }}
+        />
 
         <Stack.Screen
           name={screens.HomeScreen}
@@ -79,6 +92,16 @@ const Dashboard = () => {
         <Stack.Screen
           name={screens.ApplicantDetails}
           component={ApplicationDetails}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={screens.Sanction}
+          component={Sanction}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={screens.LoanDetails}
+          component={LoanDetails}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

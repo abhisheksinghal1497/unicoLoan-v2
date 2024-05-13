@@ -9,10 +9,15 @@ import { horizontalScale, verticalScale } from "./../../utils/matrcis";
 import { colors } from "../../colors";
 import customTheme from "../../colors/theme";
 import CustomShadow from "./CustomShadow";
+import {
+  fieldContainerStyle,
+  fieldLabelViewStyle,
+  fieldLabelStyle,
+} from "../../constants/commonStyles";
 
 export default function CustomDatepicker({
   control,
-  validationProps,
+  validations,
   setValue,
   name,
   label,
@@ -51,7 +56,7 @@ export default function CustomDatepicker({
     <View>
       <Controller
         control={control}
-        // rules={validationProps}
+        rules={validations}
         render={({
           field: { onChange, onBlur, value },
           fieldState: { error },
@@ -59,7 +64,7 @@ export default function CustomDatepicker({
           return (
             <View style={styles.container}>
               <View style={styles.labelContainer}>
-                <Text>
+                <Text style={styles.label}>
                   {isRequired && <Text style={styles.asterisk}>* </Text>}
                   {label}
                 </Text>
@@ -129,20 +134,16 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   container: {
-    marginHorizontal: horizontalScale(8),
-    marginVertical: verticalScale(6),
-    paddingBottom: 0,
+    ...fieldContainerStyle,
+    // marginHorizontal: horizontalScale(8),
+    // marginVertical: verticalScale(6),
+    // paddingBottom: 0,
   },
   label: {
-    fontWeight: "400",
-    fontSize: 15,
-    marginHorizontal: 10,
-    marginBottom: -15,
+    ...fieldLabelStyle,
   },
   labelContainer: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    marginBottom: 2,
+    ...fieldLabelViewStyle,
   },
   datePickerStyle: {
     width: horizontalScale(200),

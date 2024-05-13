@@ -6,6 +6,7 @@ import protection from './protection.png';
 import aadhar_front from './aadhar_front.png';
 import aadhar_back from './aadhar_back.png';
 import tick from './tick.png'
+import Frame3 from './frame3.png';
 
 export const assets = {
     checkboxError,
@@ -15,5 +16,6 @@ export const assets = {
     protection,
     aadhar_front,
     aadhar_back,
-    tick
+    tick,
+    Frame3
 }

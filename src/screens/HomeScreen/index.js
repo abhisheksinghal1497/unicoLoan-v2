@@ -3,11 +3,31 @@ import { FlatList, Dimensions, View, StyleSheet, Text, Image, ScrollView, Toucha
 import CardComponent from './cardComponent';
 import { colors } from '../../colors';
 import customTheme from '../../colors/theme';
+import  CircularProgress  from "../../components/CircularProgress";
 import { screens } from '../../constants/screens';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = (props) => {
   const flatListRef = useRef(null);
   const screenWidth = Dimensions.get('window').width;
+  const [currentScreen, setCurrentScreen] = React.useState(false);
+
+  useEffect(() => {
+    async function fetchData() {
+      const savedData = await AsyncStorage.getItem('CurrentScreen');
+      const currentData = JSON.parse(savedData);
+      console.log(currentData,'current Screen');
+      setCurrentScreen(currentData)
+      
+
+    }
+    fetchData();
+  }, []);
+
+  const onResume = () =>{
+    console.log(currentScreen)
+    props?.navigation?.navigate(currentScreen)
+  }
 
   const data = [
     {
@@ -67,7 +87,8 @@ const HomeScreen = (props) => {
 
         </View>
         <View style={styles.belowCardView}>
-          <Image source={require('../../../assets/images/ProgressBar.png')} style={styles.ProgressCardImage} />
+
+          <CircularProgress size ={90} strokeWidth={15}  progressPercent={10} bgColor ={'#F2F2F2'} pgColor={'#2E52A1'} />
           <View style={{ marginLeft: 11.5 }}>
             {item.nextPayment && item.paymentDate && item.NextPaymentText && (
               <><Text style={styles.naxtPaymentKyc}>{item.NextPaymentText}</Text><Text style={styles.naxtPaymentKyc2}>{item.nextPayment}</Text><Text style={styles.paymentDate}>{item.paymentDate}</Text></>
@@ -85,7 +106,7 @@ const HomeScreen = (props) => {
               <Text style={styles.seeDetailsresumeJourneyText}>See Details</Text>
             </TouchableOpacity>
           ) : (
-            <TouchableOpacity style={styles.seeDetailsresumeJourneyButton}>
+            <TouchableOpacity style={styles.seeDetailsresumeJourneyButton} onPress={() => onResume()}>
               <Text style={styles.seeDetailsresumeJourneyText}>Resume Journey</Text>
             </TouchableOpacity>
           )}
@@ -307,3 +328,5 @@ const styles = StyleSheet.create({
 });
 
 export default HomeScreen;
+
+
