@@ -6,9 +6,9 @@ export const styles = (themeColor) =>
     container: {
       flex: 1,
       paddingHorizontal: horizontalScale(10),
-      backgroundColor: themeColor.textInputBackground,
     },
     scrollviewStyle: {
       flexGrow: 1,
+      backgroundColor: '#fff',
     },
   });

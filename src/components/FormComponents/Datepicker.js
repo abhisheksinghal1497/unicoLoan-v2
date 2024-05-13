@@ -9,6 +9,7 @@ import { horizontalScale, verticalScale } from "./../../utils/matrcis";
 import { colors } from "../../colors";
 import customTheme from "../../colors/theme";
 import CustomShadow from "./CustomShadow";
+import moment from "moment";
 
 export default function CustomDatepicker({
   control,
@@ -38,14 +39,7 @@ export default function CustomDatepicker({
   };
   const formatDate = (date) => {
     if (!date) return "";
-    let newdate;
-    newdate = jsCoreDateCreator(date);
-    const day = newdate && newdate?.getDate().toString().padStart(2, "0");
-    const month =
-      newdate && (newdate?.getMonth() + 1).toString().padStart(2, "0");
-    const year = newdate && newdate?.getFullYear();
-
-    return `${day}-${month}-${year}`;
+    return moment(date).format("DD-MM-YYYY");
   };
   return (
     <View>
@@ -91,7 +85,6 @@ export default function CustomDatepicker({
               )}
 
               <DatePicker
-                {...datepickerProps}
                 modal
                 date={value ? jsCoreDateCreator(value) : new Date()}
                 open={open}
@@ -110,6 +103,7 @@ export default function CustomDatepicker({
                 is24hourSource="device"
                 confirmBtnText="Confirm"
                 cancelBtnText="Cancel"
+                {...datepickerProps}
               />
             </View>
           );
