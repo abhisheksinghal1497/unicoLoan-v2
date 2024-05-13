@@ -391,7 +391,7 @@ const LoanDetails = (props) => {
           buttonContainer={styles.buttonContainer}
           // buttonContainer={{}}
           onPress={handleSubmit(onSubmit)}
-          isDisabled={!isValid}
+          disable={!isValid}
         />
       </ScrollView>
     </View>

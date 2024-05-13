@@ -1,5 +1,5 @@
 import { Alert } from 'react-native';
-import Toast from 'react-native-simple-toast';
+import Toast from 'react-native-toast-message';
 
 export const alert = (title, subTitle, onPressOK, onPressCancel) => {
     if (onPressCancel) {
@@ -29,12 +29,12 @@ export const alert = (title, subTitle, onPressOK, onPressCancel) => {
 
 }
 
-export const toast = (title) => {
-    Toast.showWithGravity(
-        title,
-        Toast.LONG,
-        Toast.BOTTOM,
-    );
+export const toast = (type, title, subTitle) => {
+    Toast.show({
+        type: type,
+        text1: title,
+        text2: subTitle
+    });
 }
 
 

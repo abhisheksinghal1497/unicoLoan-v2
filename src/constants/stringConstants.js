@@ -33,3 +33,19 @@ export const LOAN_DETAILS_KEYS = {
   resAddr: "resAddr",
   currAddr: "currAddr",
 };
+
+export const KycScreen = {
+    topLabel: "Let's verify your identity quickly",
+    recommended: 'Recommended',
+    eCardTitle: "Generate E-Aadhaar",
+    eCardSubTitle: "You will receive an OTP on your\nAadhaar\nlinked mobile number",
+    or: "OR",
+    frontCardTitle: "Upload Your\nAadhaar Front\nPhoto",
+    backCardTitle: "Upload Your\nAadhaar Back\nPhoto",
+    aadharLabel: "Aadhaar Number",
+    captchaLabel: 'Enter Captcha',
+    otpTitle: 'OTP Verification', 
+    otpSubTitle: 'One-Time Password has been sent to\nyour registered Mobile Number.',
+    resend: "Resend",
+
+}

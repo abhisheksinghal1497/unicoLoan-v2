@@ -123,7 +123,7 @@ const customTheme = {
       color: '#000000',
     },
     headerText: {
-      fontFamily: "Nunito-Bold",
+      fontFamily: "Nunito-Medium",
       fontSize: 18,
       letterSpacing: 0.4,
       lineHeight: 22,
