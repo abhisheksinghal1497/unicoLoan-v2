@@ -36,3 +36,8 @@ export const toast = (title) => {
         Toast.BOTTOM,
     );
 }
+
+
+export const isObjEmpty = (obj) => {
+  return Object.keys(obj).length === 0;
+};
