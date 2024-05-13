@@ -11,4 +11,17 @@ export const styles = (themeColor) =>
       flexGrow: 1,
       backgroundColor: '#fff',
     },
+    container: {
+      flex: 1,
+      padding: 15,
+    },
+    tickImage: {
+      width: 20,
+      height: 20,
+      resizeMode: "contain",
+      // marginTop: 10,
+    },
+    buttonContainer: {
+      marginTop: 20,
+    },
   });

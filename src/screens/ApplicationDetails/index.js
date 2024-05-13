@@ -1,5 +1,5 @@
 import { Image, ScrollView, StyleSheet, View } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   FormControl,
@@ -16,8 +16,6 @@ import moment from "moment";
 import Header from "../../components/Header";
 import { assets } from "../../assets/assets";
 import HelpModal from "./component/HelpModal";
-
-import { storeData, getData } from '../../utils/asyncStorage'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const initialData = [
@@ -46,7 +44,7 @@ const initialData = [
 export default function ApplicationDetails(props) {
 
   const [isVerified, setIsVerified] = useState(false);
-  const [showModal, setShowModal] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const {
     control,
     handleSubmit,
@@ -81,6 +79,13 @@ export default function ApplicationDetails(props) {
     props?.navigation?.navigate(screens.PancardNumber);
   };
 
+  const ChangeValue = async(value, id) => {
+    setValue(id, value)
+    objIndex = initialData.findIndex(obj => obj.id === id);
+    initialData[objIndex].value = value
+    await AsyncStorage.setItem('ApplicationDetails', JSON.stringify(initialData));
+  }
+
   // {
   //   id: "leadId", // unique id for field
   //   label: "SFDC Lead Id", // label to show to the user
@@ -105,7 +110,7 @@ export default function ApplicationDetails(props) {
     label: "Customer Profile",
     type: component.dropdown,
     placeHolder: "Select Customer Profile",
-    validations: validations.phone,
+    validations: validations.text,
     maxLength: 10,
     keyboardtype: "numeric",
     isRequired: true,
@@ -223,6 +228,21 @@ export default function ApplicationDetails(props) {
                 isMultiline={comp.isMultiline}
                 maxLength={comp.maxLength}
                 isDisabled={comp.isDisabled}
+                onChangeText={(value) => ChangeValue(value, comp.id)}
+                // showRightComp={true}
+                // rightComp={() =>
+                //   isVerified ? (
+                //     <Text>Verify</Text>
+                //   ) : (
+                //     <Image
+                //       source={require("../../images/tick.png")}
+                //       style={styles.tickImage}
+                //     />
+                //   )
+                // }
+                // rightCompPress={() => {
+                //   setIsVerified(!isVerified);
+                // }}
               />
             );
           })}
