@@ -2,6 +2,6 @@ module.exports = {
     presets: [
     ],
     plugins: [
-      'react-native-reanimated/plugin',
+      // 'react-native-reanimated/plugin',
     ],
   };

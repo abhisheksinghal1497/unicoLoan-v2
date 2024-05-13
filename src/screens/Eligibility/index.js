@@ -35,6 +35,10 @@ const Eligibility = () => {
     mode: "all",
   });
 
+  const onSubmit=(data)=>{
+    console.log("data",data)
+  }
+
   return (
     <ScrollView>
       <View style={styles.topCon}>
@@ -51,17 +55,25 @@ const Eligibility = () => {
             </View>
           </ImageBackground>
         </Card>
-        <Card>
+        <Card cardStyle={{ paddingHorizontal: 10, paddingTop: 10, marginBottom:20 }}>
           <TouchableOpacity
             style={styles.btnStyle}
             onPress={() => setShowBottomModal(!showBottomModal)}
           >
             <Text style={styles.textStyle}>Add Co-Aplicant</Text>
           </TouchableOpacity>
+
+          <CoApplicantCard/>
+          <CoApplicantCard/>
           {Object.keys(cardData).map((el, i) => (
-            <CustomComponent title={el} value={cardData[el]} />
+            <CustomComponent title={el} key={i} value={cardData[el]} />
           ))}
         </Card>
+        <CustomButton
+            type="primary"
+            label="Continue"
+            onPress={() =>{}}
+          />
       </View>
 
       <CustomModal
@@ -77,7 +89,7 @@ const Eligibility = () => {
               minLength: 2,
             }}
             setValue={setValue}
-            name=""
+            name="name"
             label="Co-Applicant Name"
           />
           <InputField
@@ -87,7 +99,7 @@ const Eligibility = () => {
               minLength: 2,
             }}
             setValue={setValue}
-            name=""
+            name="dob"
             label="Co-Applicant DOB"
           />
           <InputField
@@ -97,13 +109,13 @@ const Eligibility = () => {
               minLength: 2,
             }}
             setValue={setValue}
-            name=""
+            name="income"
             label="Co-Applicant Income"
           />
           <CustomButton
             type="primary"
             label="Save"
-            onPress={() => setShowBottomModal(!showBottomModal)}
+            onPress={handleSubmit(onSubmit)}
           />
           <CustomButton
             type="primary"
@@ -130,9 +142,23 @@ const CustomComponent = ({ title, value }) => {
   );
 };
 
+const CoApplicantCard = () => {
+  return <Card cardStyle={styles.coapplicantCard}>
+    <Text style={styles.applicantText1}>
+      Co-Applicant 1
+    </Text>
+    <View style={styles.con2}>
+      <Text style={styles.applicantText2}>Name : Himanshu Bajpai</Text>
+      <Text style={styles.applicantText2}>DOB : 19 Jul 1994</Text>
+    </View>
+    <Text style={styles.applicantText2}>Income : 14 Lakh</Text>
+  </Card>;
+};
+
 const styles = StyleSheet.create({
   topCon: {
     marginHorizontal: 20,
+    marginBottom:20
   },
   cardCon: {
     paddingTop: 0,
@@ -150,7 +176,7 @@ const styles = StyleSheet.create({
   btnStyle: {
     borderWidth: 1,
     borderColor: "#2E52A1",
-    alignSelf: "center",
+    alignSelf: "flex-end",
     justifyContent: "center",
     paddingHorizontal: 10,
     paddingVertical: 5,
@@ -162,6 +188,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 20,
+    paddingHorizontal: 10,
   },
   textStyle: {
     ...customTheme.fonts.smallText,
@@ -195,6 +222,33 @@ const styles = StyleSheet.create({
     fontSize: 9,
     marginBottom: 10,
   },
+
+  coapplicantCard:{
+    paddingTop:15,
+    paddingHorizontal:10,
+    paddingVertical:15,
+    backgroundColor:"#F2F2F2",
+    borderWidth:.5,
+    borderColor:"#C8C8C8",
+    marginBottom:15
+  },
+  applicantText1:{
+    ...customTheme.fonts.largeText,
+    fontSize:11,
+    color:"#2E52A1",
+    marginBottom:10
+  },
+  con2:{
+    alignItems:"center",
+    justifyContent:'space-between',
+    flexDirection:"row"
+  },
+  applicantText2:{
+    ...customTheme.fonts.mediumText,
+    fontSize:11,
+    marginBottom:10
+
+  }
 });
 
 export default Eligibility;

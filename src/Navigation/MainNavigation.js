@@ -12,6 +12,7 @@ import KYC from '../screens/KYC';
 import CaptureAdhaar from '../screens/CaptureAdhaar';
 import Eligibility from '../screens/Eligibility';
 import ApplicationDetails from '../screens/ApplicationDetails';
+import KYCDocuments from '../screens/KYCDocuments';
 
 const Stack = createStackNavigator();
 
@@ -19,7 +20,7 @@ const Dashboard = () => {
   return (
 
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={screens.HomeScreen}>
+      <Stack.Navigator initialRouteName={screens.Eligiblity}>
         <Stack.Screen
           name={screens.Splash}
           component={Splash}
@@ -68,6 +69,11 @@ const Dashboard = () => {
         <Stack.Screen
           name={screens.Eligibility}
           component={Eligibility}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={screens.KYCDocuments}
+          component={KYCDocuments}
           options={{ headerShown: false }}
         />
         <Stack.Screen

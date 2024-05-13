@@ -7,7 +7,7 @@ import { useTheme } from 'react-native-paper'
 const Header = (props) => {
     const { fonts } = useTheme();
     return (
-        <View style={styles.container}>
+        <View style={[styles.container,props.containerStyle]}>
             {props.left && <TouchableOpacity onPress={() => props.onPressLeft()}>
                 <Image source={props.left} style={styles.backImage} />
             </TouchableOpacity>}
