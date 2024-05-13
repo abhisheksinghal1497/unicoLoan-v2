@@ -132,6 +132,9 @@ export default DropDown = ({
 };
 
 const styles = StyleSheet.create({
+  labelText: {
+    color: colors.labelColor,
+  },
   container: {
     ...fieldContainerStyle,
   },

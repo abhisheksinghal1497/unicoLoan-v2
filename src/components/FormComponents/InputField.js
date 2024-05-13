@@ -137,6 +137,9 @@ const styles = StyleSheet.create({
   label: {
     ...fieldLabelStyle,
   },
+  labelText: {
+    color: colors.labelColor,
+  },
   asterisk: {
     color: colors.asteriskRequired,
   },
