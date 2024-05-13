@@ -248,10 +248,14 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   frontImage: {
-    width: 96,
-    height: 67,
-    marginTop: 5,
+    width: '100%',
+    height: '100%',
+    // marginTop: 5,
     marginLeft: -1,
+    borderWidth: 1,
+    borderColor: 'rgba(189, 197, 208, 0.5)',
+    marginTop: -1,
+    borderRadius: 20,
   },
   noteContainer: {
     backgroundColor: 'rgba(239, 244, 253, 1)',
