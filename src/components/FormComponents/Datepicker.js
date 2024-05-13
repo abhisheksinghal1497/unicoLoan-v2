@@ -2,13 +2,14 @@
 import React from "react";
 import { useState } from "react";
 import { Controller } from "react-hook-form";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import DatePicker from "react-native-date-picker";
 import { TextInput, Text, useTheme } from "react-native-paper";
 import { horizontalScale, verticalScale } from "./../../utils/matrcis";
 import { colors } from "../../colors";
 import customTheme from "../../colors/theme";
 import CustomShadow from "./CustomShadow";
+import moment from "moment";
 import {
   fieldContainerStyle,
   fieldLabelViewStyle,
@@ -43,14 +44,7 @@ export default function CustomDatepicker({
   };
   const formatDate = (date) => {
     if (!date) return "";
-    let newdate;
-    newdate = jsCoreDateCreator(date);
-    const day = newdate && newdate?.getDate().toString().padStart(2, "0");
-    const month =
-      newdate && (newdate?.getMonth() + 1).toString().padStart(2, "0");
-    const year = newdate && newdate?.getFullYear();
-
-    return `${day}-${month}-${year}`;
+    return moment(date).format("DD-MM-YYYY");
   };
   return (
     <View>
@@ -69,36 +63,33 @@ export default function CustomDatepicker({
                   {label}
                 </Text>
               </View>
-              <CustomShadow
-                shadowColor={error ? themeColor.error : themeColor.primary}
+              <TouchableOpacity
+                onPress={() => {
+                  !isDisabled && setOpen(true);
+                }}
               >
-                <TextInput
-                  value={value ? formatDate(value) : ""}
-                  editable={false}
-                  disabled={isDisabled}
-                  error={error?.message}
-                  style={styles.textInput}
-                  placeholder="MM/DD/YYYY"
-                  right={
-                    <TextInput.Icon
-                      icon="calendar-month"
-                      onPress={() => {
-                        !isDisabled && setOpen(true);
-                      }}
-                    />
-                  }
-                  mode="outlined"
-                  outlineColor={colors.border}
-                  outlineStyle={styles.inputOutline}
-                  {...rest}
-                />
-              </CustomShadow>
+                <CustomShadow
+                  shadowColor={error ? themeColor.error : themeColor.primary}
+                >
+                  <TextInput
+                    value={value ? formatDate(value) : ""}
+                    editable={false}
+                    disabled={isDisabled}
+                    error={error?.message}
+                    style={styles.textInput}
+                    placeholder="MM/DD/YYYY"
+                    mode="outlined"
+                    outlineColor={colors.border}
+                    outlineStyle={styles.inputOutline}
+                    {...rest}
+                  />
+                </CustomShadow>
+              </TouchableOpacity>
               {error?.message && (
                 <Text style={styles.errorMessage}>{error?.message}</Text>
               )}
 
               <DatePicker
-                {...datepickerProps}
                 modal
                 date={value ? jsCoreDateCreator(value) : new Date()}
                 open={open}
@@ -112,13 +103,12 @@ export default function CustomDatepicker({
                   setOpen(false);
                 }}
                 mode="date"
-                // locale="enGB"
                 placeholder="select Date"
                 format="DD-MM-YYYY"
                 is24hourSource="device"
-                // minDate="01-01-1916"
                 confirmBtnText="Confirm"
                 cancelBtnText="Cancel"
+                {...datepickerProps}
               />
             </View>
           );
@@ -129,15 +119,15 @@ export default function CustomDatepicker({
   );
 }
 const styles = StyleSheet.create({
+  labelText: {
+    color: colors.labelColor,
+  },
   inputOutline: {
-    borderWidth: 0.5,
+    borderWidth: 0,
     borderRadius: 30,
   },
   container: {
     ...fieldContainerStyle,
-    // marginHorizontal: horizontalScale(8),
-    // marginVertical: verticalScale(6),
-    // paddingBottom: 0,
   },
   label: {
     ...fieldLabelStyle,

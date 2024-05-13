@@ -12,6 +12,7 @@ import CongratulationScreen from '../screens/Congratulation';
 import KYC from '../screens/KYC';
 import CaptureAdhaar from '../screens/CaptureAdhaar';
 import Eligibility from '../screens/Eligibility';
+import ProfileImageScreen from '../screens/ProfileImage';
 import CaptureSelfie from '../screens/CaptureSelfie';
 import ApplicationDetails from '../screens/ApplicationDetails';
 import Sanction from '../screens/Sanction';
@@ -22,12 +23,13 @@ const Stack = createStackNavigator();
 const Dashboard = () => {
   return (
 
-    <NavigationContainer >
-       <StatusBar
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName={screens.HomeScreen}>
+    
+       {/* <StatusBar
                 backgroundColor="white"
                 barStyle="dark-content"
-            />
-      <Stack.Navigator initialRouteName={screens.HomeScreen} >
+            /> */}
         <Stack.Screen
           name={screens.Splash}
           component={Splash}
@@ -83,6 +85,10 @@ const Dashboard = () => {
           component={Eligibility}
           options={{ headerShown: false }}
         />
+         <Stack.Screen
+          name={screens.ProfileImageScreen}
+          component={ProfileImageScreen}
+          />
         <Stack.Screen
           name={screens.ApplicantDetails}
           component={ApplicationDetails}

@@ -4,7 +4,7 @@ import { colors } from '../colors';
 import { StyleSheet, Text, View } from 'react-native';
 import customTheme from '../colors/theme';
 
-export default function CustomButton(props) {
+export default function Button(props) {
     const { type, label, left, right, buttonContainer, labelStyle, icon, onPress, rippleColor } = props;
     const theme = useTheme();
     return type === "primary" ? (
