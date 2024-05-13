@@ -6,20 +6,56 @@ import customTheme from '../../colors/theme';
 import { verticalScale } from '../../utils/matrcis';
 import CircularProgress from '../../components/CircularProgress'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getHomeScreenDetails, getHomeScreenOurServices } from '../../services/ApiUtils';
 
 const HomeScreen = ({navigation}) => {
   const flatListRef = useRef(null);
   const screenWidth = Dimensions.get('window').width;
+  const getLoanCardData = getHomeScreenDetails()
+  const getOurServicesCardData = getHomeScreenOurServices()
+  const [data, setData] = useState([])
+  const [data2, setData2] = useState([])
+  console.log('datatt', data)
   const [currentScreen, setCurrentScreen] = React.useState(false);
 
+  useEffect(()=>{
+    getLoanCardData?.mutate()
+    getOurServicesCardData?.mutate()
+  },[])
+
+  useEffect(()=>{
+    if(getLoanCardData.data){
+      alert('Active Loan Success')
+      setData(getLoanCardData.data)
+    }
+  },[getLoanCardData.data])
+
+  useEffect(()=>{
+    if(getOurServicesCardData.data){
+      alert('Our Servies success')
+      setData2(getOurServicesCardData.data)
+    }
+  },[getOurServicesCardData.data])
+
+  useEffect(()=>{
+    if(getLoanCardData.error){
+      alert(getLoanCardData.error)
+    }
+  },[getLoanCardData.error])
+
+  useEffect(()=>{
+    if(getOurServicesCardData.error){
+      alert(getOurServicesCardData.error)
+    }
+  },[getOurServicesCardData.error])
+
+ 
   useEffect(() => {
     async function fetchData() {
       const savedData = await AsyncStorage.getItem('CurrentScreen');
       const currentData = JSON.parse(savedData);
       console.log(currentData,'current Screen');
       setCurrentScreen(currentData)
-      
-
     }
     fetchData();
   }, []);
@@ -28,44 +64,36 @@ const HomeScreen = ({navigation}) => {
     console.log(currentScreen)
     props?.navigation?.navigate(currentScreen)
   }
-
-  const data = [
-    {
-      loanTitle: 'Home Loan',
-      lan: 'H402HHL0622560',
-      loanAmount: '₹ 2,836,000',
-      roi: '9.25%',
-      tenure: '18/100',
-      nextPayment: '₹ 2,836',
-      paymentDate: '29th April 2024',
-      NextPaymentText: 'Next Payment'
-    },
-    {
-      loanTitle: 'Home Loan',
-      lan: 'H402HHL0622560',
-      loanAmount: '₹ 2,836,000',
-      roi: '9.25%',
-      tenure: '18/100',
-      nextPayment: '₹ 2,836',
-      paymentDate: '29th April 2024',
-      NextPaymentText: 'Next Payment'
-    },
-    {
-      loanTitle: 'Home Loan',
-      lan: 'H402HHL0622560',
-      loanAmount: '₹ 2,836,000',
-      roi: '9.25%',
-      kyc_Pan: 'PAN and KYC',
-    },
-  ];
+  //   {
+  //     loanTitle: 'Home Loan',
+  //     lan: 'H402HHL0622560',
+  //     loanAmount: '₹ 2,836,000',
+  //     roi: '9.25%',
+  //     tenure: '18/100',
+  //     nextPayment: '₹ 2,836',
+  //     paymentDate: '29th April 2024',
+  //     NextPaymentText: 'Next Payment'
+  //   },
+  //   {
+  //     loanTitle: 'Home Loan',
+  //     lan: 'H402HHL0622560',
+  //     loanAmount: '₹ 2,836,000',
+  //     roi: '9.25%',
+  //     tenure: '18/100',
+  //     nextPayment: '₹ 2,836',
+  //     paymentDate: '29th April 2024',
+  //     NextPaymentText: 'Next Payment'
+  //   },
+  //   {
+  //     loanTitle: 'Home Loan',
+  //     lan: 'H402HHL0622560',
+  //     loanAmount: '₹ 2,836,000',
+  //     roi: '9.25%',
+  //     kyc_Pan: 'PAN and KYC',
+  //   },
+  // ];
 
   const cardWidth = 350;
-
-  const data2 = [
-    { key: 'calculators', title: 'Calculators', image: require('../../../assets/images/Calculators.png') },
-    { key: 'applyForLoan', title: 'Apply For Loan', image: require('../../../assets/images/applyForLoan.png') },
-    { key: 'statusCheck', title: 'Status Check', image: require('../../../assets/images/StatusCheck.png') },
-  ];
   
   const renderItem = ({ item }) => (
     <TouchableOpacity style={styles.servicesCards}>
@@ -113,7 +141,7 @@ const HomeScreen = ({navigation}) => {
             }
           </View>
         </View>
-        <View style={[ styles.cardBottomBar,{ marginTop: !item.tenure ? verticalScale(45) : verticalScale(2),} ] }>
+        <View style={[ styles.cardBottomBar,{ marginTop: !item.tenure ? verticalScale(40) : verticalScale(2),} ] }>
         {item.nextPayment && item.paymentDate && item.NextPaymentText ? (
     <TouchableOpacity style={styles.seeDetailsresumeJourneyButton}>
       <Text style={styles.seeDetailsresumeJourneyText}>See Details</Text>
@@ -130,6 +158,7 @@ const HomeScreen = ({navigation}) => {
   return (
 
     <SafeAreaView style={styles.container}>
+            <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <View style={{ backgroundColor: colors.coreCream, height: '27.5%' }}>
         <View style={styles.profileImageView}>
           <TouchableOpacity onPress={()=>navigation.navigate('ProfileImageScreen')}>
@@ -184,6 +213,7 @@ const HomeScreen = ({navigation}) => {
       ))}
         </View>
       </View>
+      </ScrollView>
     </SafeAreaView>
 
 
@@ -193,6 +223,10 @@ const HomeScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+    flex:1
   },
   loanView:{ marginTop: verticalScale(13), flexDirection: 'row', justifyContent: 'space-between', paddingLeft: 21, paddingRight: 14, alignItems: 'center' },
   loanTitle:{color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelMedium.fontWeight},
@@ -298,7 +332,7 @@ const styles = StyleSheet.create({
   serviceText: { color: colors.coreBlue, fontSize: 12, fontWeight: customTheme.fonts.labelMedium.fontWeight, alignSelf: 'center', marginTop: verticalScale(9) },
   yourLoan: {
 
-    color: colors.black, fontSize: 18, lineHeight: 28, left: 20, bottom: 5
+    color: colors.black, fontSize: 18, lineHeight: 28, bottom: 5, marginLeft: verticalScale(22)
   },
   seeDetailsresumeJourneyButton: {
     justifyContent: 'center',
