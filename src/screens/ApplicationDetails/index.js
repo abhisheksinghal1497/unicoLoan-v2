@@ -76,7 +76,7 @@ export default function ApplicationDetails(props) {
   const onSubmit = (data) => {
     console.log("njnjnjnb");
     console.log(JSON.stringify(data, null, 2));
-    props?.navigation?.navigate(screens.PancardNumber);
+    props?.navigation?.navigate(screens.PandcardDetails);
   };
 
   const ChangeValue = async(value, id) => {

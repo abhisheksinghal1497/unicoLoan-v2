@@ -6,6 +6,7 @@ import customTheme from '../../colors/theme';
 import { verticalScale } from '../../utils/matrcis';
 import CircularProgress from '../../components/CircularProgress'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { screens } from "../../constants/screens";
 
 const HomeScreen = ({navigation}) => {
   const flatListRef = useRef(null);
@@ -63,7 +64,7 @@ const HomeScreen = ({navigation}) => {
 
   const data2 = [
     { key: 'calculators', title: 'Calculators', image: require('../../../assets/images/Calculators.png') },
-    { key: 'applyForLoan', title: 'Apply For Loan', image: require('../../../assets/images/applyForLoan.png') },
+    { key: 'applyForLoan', title: 'Apply For Loan', image: require('../../../assets/images/applyForLoan.png') ,screen :screens.PanDetails},
     { key: 'statusCheck', title: 'Status Check', image: require('../../../assets/images/StatusCheck.png') },
   ];
   
@@ -153,7 +154,7 @@ const HomeScreen = ({navigation}) => {
               style={styles.imgBackground}
               source={require('../../../assets/images/loanapply.png')}
             >
-              <Text style={styles.applyforloan} >Apply For Lo</Text>
+              <Text style={styles.applyforloan} >Apply For Loan</Text>
             </ImageBackground>
           </TouchableOpacity>
         ) :
@@ -179,7 +180,9 @@ const HomeScreen = ({navigation}) => {
         </Text>
         <View style={styles.ourSericesCards}>
         {data2.map(item => (
-        <TouchableOpacity key={item.key} style={styles.servicesCards}>
+        <TouchableOpacity key={item.key} style={styles.servicesCards} onPress={() => {
+          navigation?.navigate(item?.screen)
+        }}>
           <Image style={styles.serviceImage} source={item.image} />
           <Text style={styles.serviceText}>{item.title}</Text>
         </TouchableOpacity>

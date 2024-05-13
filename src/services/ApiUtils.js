@@ -45,3 +45,42 @@ export const getHomeScreenDetails = () =>{
 
     return mutate
 }
+
+
+export const getAdhaarDetails = (data) =>{
+    const mutate = useMutation({
+        networkMode:"always",
+        mutationFn:async()=>{
+           return new Promise((resolve, reject)=>{
+                 setTimeout(()=>{
+                    resolve(data)
+                }, 3000)
+            }, )
+        }
+    })
+
+    return mutate
+}
+
+
+const useAddPlanet = () => {
+    const queryClient = useQueryClient();
+    queryClient.setMutationDefaults(["add-planet"], {
+      mutationFn: (data) => addPlanet(data),
+      onMutate: async (variables) => {
+        const { successCb, errorCb } = variables;
+        return { successCb, errorCb };
+      },
+      onSuccess: (result, variables, context) => {
+        if (context.successCb) {
+          context.successCb(result);
+        }
+      },
+      onError: (error, variables, context) => {
+        if (context.errorCb) {
+          context.errorCb(error);
+        }
+      },
+    });
+    return useMutation(["add-planet"]);
+  };

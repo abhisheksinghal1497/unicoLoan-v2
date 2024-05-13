@@ -14,33 +14,28 @@ import customTheme from '../../colors/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { screens } from '../../constants/screens';
 import { useFocusEffect } from '@react-navigation/native';
+import {getAdhaarDetails} from '../../services/ApiUtils'
 
 const WIDTH = Dimensions.get('window').width;
 
 
 
 const KYC = (props) => {
+  // const { data, isLoading, isFetching } = getAdhaarDetails();
+const getData = getAdhaarDetails()
+
+  useEffect(() =>{
+       if(getData?.data){
+           alert('data her')
+       }
+  },[getData?.data])
+  // console.log(data)
   const [selectedImage, setSelectedImage] = useState('');
-  // useEffect(() => {
-    // async function fetchData() {
-    //   // await AsyncStorage.setItem('FrontAdhaar', JSON.stringify(screens.KYC));
-    //   const savedData = await AsyncStorage.getItem('FrontAdhaar');
-    //   const currentData = JSON.parse(savedData);
-    //   console.log(currentData, 'front adhaar');
-    // }
-    // fetchData();
-  // }, []);
+  const [selectedImageBack, setSelectedImageBack] = useState('');
+
   useFocusEffect(
     useCallback(() => {
-      // async function fetchData() {
-      //   await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.KYC));
-      //   const savedData = await AsyncStorage.getItem('FrontAdhaar');
-      //   const currentData = JSON.parse(savedData);
-      //   console.log(currentData, 'front adhaar');
-      //   // setSelectedImage(currentData)
-      // }
       fetchData();
-
     }, [])
   );
 
@@ -50,6 +45,10 @@ const fetchData = async() =>{
   const currentData = JSON.parse(savedData);
   console.log(currentData, 'front adhaar');
   setSelectedImage(currentData)
+  const savedDataBack = await AsyncStorage.getItem('BackAdhaar');
+  const currentDataBack = JSON.parse(savedDataBack);
+  console.log(currentData, 'front adhaar');
+  setSelectedImageBack(currentDataBack)
 }
 
   const { fonts } = useTheme();
@@ -124,13 +123,15 @@ const fetchData = async() =>{
             <View style={styles.cardContainerTwo}>
               <Image
                source={selectedImage ? {uri :  `data:${selectedImage.mime};base64,${selectedImage.data}` } : require('../../images/aadhar-front.png')}
-                style={[styles.frontImage, { marginTop: 20 }]} />
+                style={[styles.frontImage]} />
             </View>
             <Text style={[fonts.labelMedium, styles.titleText]}>Upload Your{'\n'}Aadhaar Front{'\n'}Photo</Text>
           </TouchableOpacity>
           <TouchableOpacity  onPress={() => props.navigation.navigate(screens.CaptureAdhaar, { method: "Back" }) } >
             <View style={styles.cardContainerTwo}>
-              <Image source={require('../../images/aadhar-back.png')} style={[styles.frontImage, { marginTop: 20 }]} />
+                <Image
+               source={selectedImageBack ? {uri :  `data:${selectedImageBack.mime};base64,${selectedImageBack.data}` } : require('../../images/aadhar-back.png')}
+                style={[styles.frontImage]} />
             </View>
             <Text style={[fonts.labelMedium, styles.titleText]}>Upload Your{'\n'}Aadhaar Back{'\n'}Photo</Text>
           </TouchableOpacity>
@@ -244,14 +245,15 @@ const styles = StyleSheet.create({
     height: 140,
     borderWidth: 1,
     borderColor: 'rgba(189, 197, 208, 0.5)',
-    marginTop: -1,
+    // marginTop: -1,
     borderRadius: 20,
   },
   frontImage: {
-    width: 96,
-    height: 67,
-    marginTop: 5,
+    width: '100%',
+    height: '100%',
+    // marginTop: 5,
     marginLeft: -1,
+    borderRadius: 10,
   },
   noteContainer: {
     backgroundColor: 'rgba(239, 244, 253, 1)',

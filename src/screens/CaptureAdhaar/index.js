@@ -11,8 +11,9 @@ import { AadharBasicDetails } from "../../constants/stringConstants";
 // import { useQuery,useMutation } from '@tanstack/react-query';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { screens } from "../../constants/screens";
+import {getAdhaarDetails} from '../../services/ApiUtils'
 const CaptureAdhaar = ({ navigation }) => {
-
+    const adhaarMutation = getAdhaarDetails();
     const { firstButtonName, lastButtonName, headerText, headerTextSecond, imageMethod, imageSide, imageSideSecond } = AadharBasicDetails
 
     const buttonLabels = [{ id: 0, name: firstButtonName, }, { id: 1, name: lastButtonName, }]
@@ -23,7 +24,7 @@ const CaptureAdhaar = ({ navigation }) => {
     const [selectedImage, setSelectedImage] = useState(null);
     // const [width, setWidth] = useState(100);
     // const [height, setHeight] = useState(300);
-    const onCameraPress = () => {
+    const onCameraPress = async() => {
         ImagePicker.openCamera({
             // width,
             // height,
@@ -35,6 +36,15 @@ const CaptureAdhaar = ({ navigation }) => {
                 console.log(image,'image value')
                 setSelectedImage(image);
                 console.log(method,'method')
+
+                const AdharData= [{
+                    id:0,
+                    font:JSON.stringify(image),
+                    back: JSON.stringify(image)
+                }]
+
+                 adhaarMutation.mutate(AdharData)
+            
                 if(method === 'Front'){
                     await AsyncStorage.setItem('FrontAdhaar', JSON.stringify(image));
                 }
