@@ -8,6 +8,24 @@ import { verticalScale } from '../../utils/matrcis';
 const HomeScreen = ({navigation}) => {
   const flatListRef = useRef(null);
   const screenWidth = Dimensions.get('window').width;
+  const [currentScreen, setCurrentScreen] = React.useState(false);
+
+  useEffect(() => {
+    async function fetchData() {
+      const savedData = await AsyncStorage.getItem('CurrentScreen');
+      const currentData = JSON.parse(savedData);
+      console.log(currentData,'current Screen');
+      setCurrentScreen(currentData)
+      
+
+    }
+    fetchData();
+  }, []);
+
+  const onResume = () =>{
+    console.log(currentScreen)
+    props?.navigation?.navigate(currentScreen)
+  }
 
   const data = [
     {
@@ -80,7 +98,8 @@ const HomeScreen = ({navigation}) => {
 
         </View>
         <View style={styles.belowCardView}>
-          <Image source={require('../../../assets/images/ProgressBar.png')} style={styles.ProgressCardImage} />
+
+          <CircularProgress size ={90} strokeWidth={15}  progressPercent={10} bgColor ={'#F2F2F2'} pgColor={'#2E52A1'} />
           <View style={{ marginLeft: 11.5 }}>
             {item.nextPayment && item.paymentDate && item.NextPaymentText && (
               <><Text style={styles.naxtPaymentKyc}>{item.NextPaymentText}</Text><Text style={styles.naxtPaymentKyc2}>{item.nextPayment}</Text><Text style={styles.paymentDate}>{item.paymentDate}</Text></>
@@ -107,7 +126,7 @@ const HomeScreen = ({navigation}) => {
     );
   };
   return (
-   
+
     <SafeAreaView style={styles.container}>
       <View style={{ backgroundColor: colors.coreCream, height: '27.5%' }}>
         <View style={styles.profileImageView}>
@@ -164,7 +183,7 @@ const HomeScreen = ({navigation}) => {
         </View>
       </View>
     </SafeAreaView>
-    
+
 
   );
 };
@@ -181,46 +200,47 @@ const styles = StyleSheet.create({
   lan:{
      color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelMedium.fontWeight 
   },
-  loanAmountText:{
-    color: colors.coreBlue, fontSize: 10, fontWeight: customTheme.fonts.labelMedium.fontWeight, paddingRight: 12  
+  loanAmountText: {
+    color: colors.coreBlue, fontSize: 10, fontWeight: customTheme.fonts.labelMedium.fontWeight, paddingRight: 12
   },
-  loanAmount:{
+  loanAmount: {
     alignSelf: 'flex-end', marginRight: 14, color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: 5
   },
-  bottomLine:{ borderBottomWidth: 1, borderColor: colors.coreBlue, width: '20%', alignSelf: 'flex-end', marginRight: 18 },
-  roiText:{
+  bottomLine: { borderBottomWidth: 1, borderColor: colors.coreBlue, width: '20%', alignSelf: 'flex-end', marginRight: 18 },
+  roiText: {
     alignSelf: 'flex-end', color: colors.coreBlue, fontSize: 10, fontWeight: customTheme.fonts.labelMedium.fontWeight, paddingRight: 72, marginTop: 4
   },
-  roi:{ 
-    alignSelf: 'flex-end', marginRight: 50, color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: 5 },
-  tenure:{
-     alignSelf: 'flex-end', marginRight: 45, color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: 5 
+  roi: {
+    alignSelf: 'flex-end', marginRight: 50, color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: 5
   },
-  tenuretext:{
-    alignSelf: 'flex-end', color: colors.coreBlue, fontSize: 10, fontWeight: customTheme.fonts.labelMedium.fontWeight, paddingRight: 58, marginTop: 4 
+  tenure: {
+    alignSelf: 'flex-end', marginRight: 45, color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: 5
   },
-  belowCardView:{
+  tenuretext: {
+    alignSelf: 'flex-end', color: colors.coreBlue, fontSize: 10, fontWeight: customTheme.fonts.labelMedium.fontWeight, paddingRight: 58, marginTop: 4
+  },
+  belowCardView: {
     position: 'absolute', top: 75, left: 20.5, flexDirection: 'row', alignItems: 'center'
   },
-  cardBottomBar:{
+  cardBottomBar: {
     height: 35, backgroundColor: colors.coreBlue, borderBottomRightRadius: 10, borderBottomLeftRadius: 10, justifyContent: 'center', width: '100%', alignSelf: 'center'
   },
-  paymentDate:{
-    color: colors.greylight, fontWeight: customTheme.fonts.labelMedium.fontWeight, fontSize: 10 
+  paymentDate: {
+    color: colors.greylight, fontWeight: customTheme.fonts.labelMedium.fontWeight, fontSize: 10
   },
-  naxtPaymentKyc:{
+  naxtPaymentKyc: {
     color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: 2
   },
-  naxtPaymentKyc2:{
+  naxtPaymentKyc2: {
     color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelMedium.fontWeight, marginBottom: 2
   },
-  loanapplyview:{
+  loanapplyview: {
     width: '80%', height: 168, borderRadius: 30, alignSelf: 'center',
   },
-  secondcards:{
+  secondcards: {
     justifyContent: 'center', alignItems: 'center'
   },
-  applyforloan:{
+  applyforloan: {
     alignSelf: 'center', top: 50, color: colors.white, fontWeight: customTheme.fonts.labelLarge.fontWeight, letterSpacing: 1.5, fontSize: 18
   },
   profileIcon: {
@@ -229,7 +249,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     marginRight: 4,
   },
-  imgBackground:{
+  imgBackground: {
     width: '100%', height: '100%', resizeMode: 'cover', justifyContent: 'center'
   },
   ProgressCardImage: {
@@ -295,3 +315,5 @@ const styles = StyleSheet.create({
 });
 
 export default HomeScreen;
+
+

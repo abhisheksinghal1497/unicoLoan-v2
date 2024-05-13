@@ -1,5 +1,5 @@
 import { Dimensions, Image, ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState,useEffect,useCallback } from 'react'
 import { colors } from '../../colors'
 import {
   FormControl,
@@ -11,13 +11,47 @@ import CustomButton from '../../components/Button'
 import Header from '../../components/Header'
 import { validations } from "../../constants/validations";
 import customTheme from '../../colors/theme';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { screens } from '../../constants/screens';
-
+import { useFocusEffect } from '@react-navigation/native';
 
 const WIDTH = Dimensions.get('window').width;
 
+
+
 const KYC = (props) => {
+  const [selectedImage, setSelectedImage] = useState('');
+  // useEffect(() => {
+    // async function fetchData() {
+    //   // await AsyncStorage.setItem('FrontAdhaar', JSON.stringify(screens.KYC));
+    //   const savedData = await AsyncStorage.getItem('FrontAdhaar');
+    //   const currentData = JSON.parse(savedData);
+    //   console.log(currentData, 'front adhaar');
+    // }
+    // fetchData();
+  // }, []);
+  useFocusEffect(
+    useCallback(() => {
+      // async function fetchData() {
+      //   await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.KYC));
+      //   const savedData = await AsyncStorage.getItem('FrontAdhaar');
+      //   const currentData = JSON.parse(savedData);
+      //   console.log(currentData, 'front adhaar');
+      //   // setSelectedImage(currentData)
+      // }
+      fetchData();
+
+    }, [])
+  );
+
+const fetchData = async() =>{
+  await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.KYC));
+  const savedData = await AsyncStorage.getItem('FrontAdhaar');
+  const currentData = JSON.parse(savedData);
+  console.log(currentData, 'front adhaar');
+  setSelectedImage(currentData)
+}
+
   const { fonts } = useTheme();
   const [visible, setVisible] = React.useState(false);
   const [type, setType] = React.useState(0);
@@ -28,6 +62,11 @@ const KYC = (props) => {
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
+
+
+  const onSubmit = async() =>{
+    props.navigation.navigate(screens.CaptureSelfie)
+  }
 
   // const startTimer = React.useCallback()
 
@@ -55,7 +94,7 @@ const KYC = (props) => {
       <Header
         title="Documents"
         left={require('../../images/back.png')}
-        onPressLeft={() => { props.navigation.goBack() }}
+        onPressLeft={() => { props?.navigation?.navigate(screens.PanDetails) }}
         right={require('../../images/question.png')}
         onPressRight={() => { }} />
       <View style={styles.subContainer}>
@@ -83,7 +122,9 @@ const KYC = (props) => {
         <View style={styles.rowContainer}>
           <TouchableOpacity  onPress={() => props.navigation.navigate(screens.CaptureAdhaar, { method: "Front" }) }>
             <View style={styles.cardContainerTwo}>
-              <Image source={require('../../images/aadhar-front.png')} style={[styles.frontImage, { marginTop: 20 }]} />
+              <Image
+               source={selectedImage ? {uri :  `data:${selectedImage.mime};base64,${selectedImage.data}` } : require('../../images/aadhar-front.png')}
+                style={[styles.frontImage, { marginTop: 20 }]} />
             </View>
             <Text style={[fonts.labelMedium, styles.titleText]}>Upload Your{'\n'}Aadhaar Front{'\n'}Photo</Text>
           </TouchableOpacity>
@@ -150,7 +191,7 @@ const KYC = (props) => {
               type="primary"
               label="Submit"
               buttonContainer={styles.modalButtonContainer}
-              onPress={() => { hideModal(); setType(0); }} />
+              onPress={() => { hideModal(); setType(0);onSubmit()}} />
           </View>}
       </Modal >
     </View >
