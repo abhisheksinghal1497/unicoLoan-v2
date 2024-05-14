@@ -26,4 +26,5 @@ export const screens = {
     ProfileImageScreen: "ProfileImageScreen",
     Sanction:"Sanction",
     LoanDetails:"LoanDetails",
+    FAQ:"FAQ",
   };

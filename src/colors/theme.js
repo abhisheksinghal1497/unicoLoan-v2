@@ -192,6 +192,14 @@ const customTheme = {
       lineHeight: 40,
       color: "#000000",
     },
+    accordianText: {
+      fontFamily: "Nunito-bold",
+      fontSize: 13,
+      fontWeight: "500",
+      letterSpacing: 0,
+      lineHeight: 17.25,
+      color: "#606060",
+    },
   },
 };
 

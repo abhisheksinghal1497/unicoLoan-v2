@@ -17,6 +17,7 @@ import CaptureSelfie from '../screens/CaptureSelfie';
 import ApplicationDetails from '../screens/ApplicationDetails';
 import Sanction from '../screens/Sanction';
 import LoanDetails from '../screens/LoanDetails';
+import FAQ from '../screens/FAQ';
 
 const Stack = createStackNavigator();
 
@@ -102,6 +103,11 @@ const Dashboard = () => {
         <Stack.Screen
           name={screens.LoanDetails}
           component={LoanDetails}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={screens.FAQ}
+          component={FAQ}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
