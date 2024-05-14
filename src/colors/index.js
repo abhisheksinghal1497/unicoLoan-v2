@@ -35,5 +35,6 @@ export const colors = {
   labelColor: "#787E97",
   coreBlue: "#2E52A1",
   coreCream: "#FEF9EB",
-  greylight: "7C7B7B"
+  greylight: "7C7B7B",
+  SeaGreen: "#6DA5A6"
 };

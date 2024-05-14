@@ -66,34 +66,6 @@ const HomeScreen = ({navigation}) => {
     console.log(currentScreen)
     props?.navigation?.navigate(currentScreen)
   }
-  //   {
-  //     loanTitle: 'Home Loan',
-  //     lan: 'H402HHL0622560',
-  //     loanAmount: '₹ 2,836,000',
-  //     roi: '9.25%',
-  //     tenure: '18/100',
-  //     nextPayment: '₹ 2,836',
-  //     paymentDate: '29th April 2024',
-  //     NextPaymentText: 'Next Payment'
-  //   },
-  //   {
-  //     loanTitle: 'Home Loan',
-  //     lan: 'H402HHL0622560',
-  //     loanAmount: '₹ 2,836,000',
-  //     roi: '9.25%',
-  //     tenure: '18/100',
-  //     nextPayment: '₹ 2,836',
-  //     paymentDate: '29th April 2024',
-  //     NextPaymentText: 'Next Payment'
-  //   },
-  //   {
-  //     loanTitle: 'Home Loan',
-  //     lan: 'H402HHL0622560',
-  //     loanAmount: '₹ 2,836,000',
-  //     roi: '9.25%',
-  //     kyc_Pan: 'PAN and KYC',
-  //   },
-  // ];
 
   const cardWidth = 350;
   
@@ -162,13 +134,22 @@ const HomeScreen = ({navigation}) => {
    
     switch (index) {
       case 0:
-        navigation.navigate('RaiseTicket');
+        console.log('Calculators')
         break;
       case 1:
-        navigation.navigate('RaiseTicket');
+        console.log('Apply For Loan')
         break;
+     case 2:
+      console.log('Status Check')
+     break;
      case 3:
-     navigation.navigate('RaiseTicket')
+      navigation.navigate('RaiseTicket')
+     break;
+     case 4:
+      console.log('My Tickets')
+     break;
+     case 5:
+    console.log('FAQ')
      break;
       default:
         break;
@@ -349,7 +330,7 @@ const styles = StyleSheet.create({
     color: colors.black, fontSize: 18, lineHeight: 28, left: 20, bottom: 5
   },
   servicesCards: {
-    width: 105.5, height: 104.5, backgroundColor: colors.white, borderRadius: 6, shadowColor: colors.black, marginBottom: 5,
+    width: 105.5, height: 104.5, backgroundColor: colors.white, borderRadius: 6, shadowColor: colors.black, marginBottom: verticalScale(10),
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 1,
     shadowRadius: 3.84,
