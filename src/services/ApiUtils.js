@@ -96,6 +96,9 @@ export const getHomeScreenOurServices = () =>{
                         { key: 'calculators', title: 'Calculators', image: require('../../assets/images/Calculators.png') },
                         { key: 'applyForLoan', title: 'Apply For Loan', image: require('../../assets/images/applyForLoan.png') },
                         { key: 'statusCheck', title: 'Status Check', image: require('../../assets/images/StatusCheck.png') },
+                        { key: 'statusCheck', title: 'Raise Ticket', image: require('../../assets/images/StatusCheck.png') },
+                        { key: 'statusCheck', title: 'My ticket', image: require('../../assets/images/StatusCheck.png') },
+                        { key: 'statusCheck', title: 'FAQs', image: require('../../assets/images/StatusCheck.png') },
                       ];
                     resolve(data)
                     reject('Something went wrong')
