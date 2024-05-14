@@ -9,7 +9,8 @@ const Header = (props) => {
     const {leftImageProps = {}, rightImageProps={}, onPressRight, onPressLeft= () => {}} = props;
     const { fonts } = useTheme();
     return (
-        <View style={[styles.container,{ backgroundColor:props?.colour ? props?.colour : colors.bgColor,}]}>
+      
+        <View style={[styles.container,props.containerStyle,{ backgroundColor:props?.colour ? props?.colour : colors.bgColor,}]}>
             {props.left && <TouchableOpacity onPress={() => onPressLeft()}>
                 <Image source={props.left} style={[styles.backImage, props.leftStyle]} {...leftImageProps} />
             </TouchableOpacity>}
@@ -25,7 +26,7 @@ export default Header
 
 const styles = StyleSheet.create({
     container: {
-      
+        backgroundColor: colors.white,
         flexDirection: 'row',
         alignItems: 'center',
         marginVertical: verticalScale(10),
@@ -33,12 +34,12 @@ const styles = StyleSheet.create({
     backImage: {
         width: 20,
         height: 18,
-        marginRight: 10,
+        marginRight: 20,
         tintColor: colors.black,
     },
     questionImage: {
-        width: 20,
-        height: 20,
+        width: 25,
+        height: 25,
         resizeMode: 'contain',
     },
     titleText: {
