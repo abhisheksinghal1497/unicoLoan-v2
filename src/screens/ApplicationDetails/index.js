@@ -1,22 +1,22 @@
-import { Image, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import React, { useState, useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
   FormControl,
   component,
 } from "../../components/FormComponents/FormControl";
-import { useTheme, Text } from "react-native-paper";
+import { useTheme } from "react-native-paper";
 import { validations } from "../../constants/validations";
 import { screens } from "../../constants/screens";
 import Button from "././../../components/Button";
 import { horizontalScale, verticalScale } from "../../utils/matrcis";
 import ApplicationCard from "./component/ApplicationCard";
 import { styles } from "./styles/ApplicationDetailStyle";
-import moment from "moment";
 import Header from "../../components/Header";
 import { assets } from "../../assets/assets";
 import HelpModal from "./component/HelpModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getDateYearsBack } from "../../utils/dateUtil";
 
 const initialData = [
   {
@@ -272,7 +272,7 @@ export default function ApplicationDetails(props) {
     {
       id: "presentAccommodation",
       label: "Present Accommodation",
-      type: component.dropdown, 
+      type: component.dropdown,
       placeHolder: "Select Present Accommodation",
       validations: validations.text,
       maxLength: 10,
@@ -397,7 +397,6 @@ export default function ApplicationDetails(props) {
       value: "",
     },
 
-
     {
       id: "address",
       label: "Address",
@@ -417,17 +416,7 @@ export default function ApplicationDetails(props) {
       isRequired: true,
       value: "",
     },
-
-
-
   ];
-
-  function getDateYearsBack(year) {
-    const currentDate = moment();
-    const date18YearsBack = currentDate.subtract(18, "years");
-    date18YearsBack.year(year);
-    return new Date(date18YearsBack.format("YYYY-MM-DD"));
-  }
 
   const toggleModal = () => setShowModal(!showModal);
   const style = styles(colors);
