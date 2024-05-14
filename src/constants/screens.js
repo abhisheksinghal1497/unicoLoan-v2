@@ -17,7 +17,6 @@ export const screens = {
     SelfPicture: 'SelfPicture',
     Eligiblity: 'Eligiblity',
     InPrincipleSection: 'InPrincipleSection',
-    LoanDetail: 'LoanDetail',
     PancardNumber: 'PancardNumber',
     PandcardDetails: 'PandcardDetails',
     NoInternet: 'NoInternet',

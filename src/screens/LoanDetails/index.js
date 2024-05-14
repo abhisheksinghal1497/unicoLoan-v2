@@ -1,5 +1,5 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "../../components/Header";
 import { useForm } from "react-hook-form";
 import customTheme from "../../colors/theme";
@@ -11,6 +11,8 @@ import { validations } from "../../constants/validations";
 import CustomButton from "../../components/Button";
 import { screens } from "../../constants/screens";
 import { LOAN_DETAILS_KEYS } from "../../constants/stringConstants";
+import ApplicationCard from "../ApplicationDetails/component/ApplicationCard";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoanDetails = (props) => {
   const {
@@ -18,33 +20,20 @@ const LoanDetails = (props) => {
     handleSubmit,
     formState: { errors, isValid },
     getValues,
-    getFieldState,
     setValue,
+    clearErrors,
     watch,
   } = useForm({
     mode: "onChange",
-    defaultValues: {
-      // [LOAN_DETAILS_KEYS.bankBalance]: 0,
-      // [LOAN_DETAILS_KEYS.currPF]: 0,
-      // [LOAN_DETAILS_KEYS.valShareSecr]: 0,
-      // [LOAN_DETAILS_KEYS.fd]: 0,
-      // [LOAN_DETAILS_KEYS.invPlantMachVehi]: 0,
-      // [LOAN_DETAILS_KEYS.ownContri]: 0,
-      // [LOAN_DETAILS_KEYS.assetVal]: 0,
-    },
+    defaultValues: {},
   });
 
-  const onSubmit = (data) => {
-    // console.log("njnjnjnb");
-    console.log(JSON.stringify(data, null, 2));
+  const onSubmit = async (data) => {
+    // console.log("Form values: ", JSON.stringify(data, null, 2));
+    await AsyncStorage.setItem("LoanDetails", JSON.stringify(data));
     props?.navigation?.navigate(screens.Eligibility);
   };
 
-  const getIntVal = (val) => {
-    return !val || Number.isNaN(val) ? 0 : Number(val);
-  };
-
-  // const firstName = useWatch('FirstName');
   const bankBalance = watch(LOAN_DETAILS_KEYS.bankBalance);
   const currPF = watch(LOAN_DETAILS_KEYS.currPF);
   const valShareSecr = watch(LOAN_DETAILS_KEYS.valShareSecr);
@@ -52,23 +41,69 @@ const LoanDetails = (props) => {
   const invPlantMachVehi = watch(LOAN_DETAILS_KEYS.invPlantMachVehi);
   const ownContri = watch(LOAN_DETAILS_KEYS.ownContri);
   const assetVal = watch(LOAN_DETAILS_KEYS.assetVal);
-  const totalAssets =
-    getIntVal(bankBalance) +
-    getIntVal(currPF) +
-    getIntVal(valShareSecr) +
-    getIntVal(fd) +
-    getIntVal(invPlantMachVehi) +
-    getIntVal(ownContri) +
-    getIntVal(assetVal);
 
-  console.log(ownContri);
-  console.log(assetVal);
-  console.log(totalAssets);
+  const calcTotalAssetCost = () => {
+    try {
+      const getIntVal = (val) => {
+        return !val || Number.isNaN(val) ? 0 : Number(val);
+      };
 
-  setValue(
-    LOAN_DETAILS_KEYS.totalAsset,
-    Number.isNaN(totalAssets) ? 0 : totalAssets
-  );
+      const totalAssets =
+        getIntVal(bankBalance) +
+        getIntVal(currPF) +
+        getIntVal(valShareSecr) +
+        getIntVal(fd) +
+        getIntVal(invPlantMachVehi) +
+        getIntVal(ownContri) +
+        getIntVal(assetVal);
+
+      setTimeout(() => {
+        setValue(
+          LOAN_DETAILS_KEYS.totalAsset,
+          Number.isNaN(totalAssets) ? 0 : totalAssets
+        );
+      }, 10);
+    } catch (err) {
+      console.log("Error while calculating TotalAsset value");
+    }
+  };
+
+  useEffect(() => {
+    calcTotalAssetCost();
+  }, [
+    bankBalance,
+    currPF,
+    valShareSecr,
+    fd,
+    invPlantMachVehi,
+    ownContri,
+    assetVal,
+  ]);
+
+  calcTotalAssetCost();
+
+  useEffect(() => {
+    (async () => {
+      await AsyncStorage.setItem(
+        "CurrentScreen",
+        JSON.stringify(screens.LoanDetails)
+      );
+      const savedData = await AsyncStorage.getItem("LoanDetails");
+      const currentData = JSON.parse(savedData);
+
+      if (currentData) {
+        //! showLoader
+        // console.log(currentData, "current value");
+
+        for (const key in currentData) {
+          setValue(key, currentData[key]);
+          // console.log(`${key}: ${_data[key]} | ${typeof _data[key]}`);
+        }
+
+        //! hide Loader
+      }
+    })();
+  }, []);
 
   const mock_loan_details_data = [
     {
@@ -353,16 +388,15 @@ const LoanDetails = (props) => {
         colour="transparent"
       />
 
-      {/* <Text> Is Wrong => {!isObjEmpty(errors) ? "true" : "false"}</Text>
-      <Text>isValid: {JSON.stringify(isValid, null, 2)}</Text>
-    <Text>{JSON.stringify(errors, null, 2)}</Text> */}
-
       <ScrollView
         contentContainerStyle={{
           paddingBottom: 120,
         }}
         showsVerticalScrollIndicator={false}
       >
+        <View style={styles.applCard}>
+          <ApplicationCard />
+        </View>
         {mock_loan_details_data.map((comp) => {
           return (
             <FormControl
@@ -377,6 +411,7 @@ const LoanDetails = (props) => {
               data={comp.data}
               key={comp.id}
               setValue={setValue}
+              // clearErrors={clearErrors(comp.id)}
               showRightComp={true}
               isMultiline={comp.isMultiline}
               maxLength={comp.maxLength}
@@ -407,5 +442,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 40,
+  },
+  applCard: {
+    flex: 1,
+    padding: 15,
   },
 });

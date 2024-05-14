@@ -10,6 +10,8 @@ export const fieldLabelViewStyle = {
   flexDirection: "row",
   alignItems: "flex-end",
   marginBottom: 6,
+  marginTop: 5,
+  // borderWidth: 1
 };
 
 export const fieldLabelStyle = {
