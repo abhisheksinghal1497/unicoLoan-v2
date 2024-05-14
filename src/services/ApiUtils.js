@@ -121,7 +121,56 @@ export const getHomeScreenOurServices = () =>{
                         { key: 'calculators', title: 'Calculators', image: require('../../assets/images/Calculators.png') },
                         { key: 'applyForLoan', title: 'Apply For Loan', image: require('../../assets/images/applyForLoan.png') },
                         { key: 'statusCheck', title: 'Status Check', image: require('../../assets/images/StatusCheck.png') },
+                        { key: 'RaiseTicket', title: 'Raise Ticket', image: require('../../assets/images/RaiseTicket.png') },
+                        { key: 'Myticket', title: 'My ticket', image: require('../../assets/images/MyTickett.png') },
+                        { key: 'FAQs', title: 'FAQs', image: require('../../assets/images/FAQ.png') },
                       ];
+                    resolve(data)
+                    reject('Something went wrong')
+                }, 3000)
+            }, )
+        }
+    })
+
+    return mutate
+}
+
+export const getRaiseTicketsScreenCategory = () => {
+    const mutate = useMutation({
+        networkMode:"always",
+        mutationFn:async()=>{
+        
+           return new Promise((resolve, reject)=>{
+              
+                 setTimeout(()=>{
+                    const data = [
+                        { key: 'Query', title: 'Query', image: require('../../assets/images/warning.png') },
+                        { key: 'Request', title: 'Request', image: require('../../assets/images/chat.png') },
+                        { key: 'Complaint', title: 'Complaint', image: require('../../assets/images/query.png') },
+                    ]
+                    resolve(data)
+                    reject('Something went wrong')
+                }, 3000)
+            }, )
+        }
+    })
+
+    return mutate
+}
+
+export const getRaiseTicketsListScreen = () => {
+    const mutate = useMutation({
+        networkMode:"always",
+        mutationFn:async()=>{
+        
+           return new Promise((resolve, reject)=>{
+              
+                 setTimeout(()=>{
+                    const data = [
+                        { title: 'QUERY', options: ['Query 1', 'Query 2', 'Query 3'] },
+        { title: 'REQUEST', options: ['Request 1', 'Request 2', 'Request 3'] },
+        { title: 'COMPLAINT', options: ['Complaint 1', 'Complaint 2', 'Complaint 3'] },
+                    ]
                     resolve(data)
                     reject('Something went wrong')
                 }, 3000)

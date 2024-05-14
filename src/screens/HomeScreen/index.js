@@ -66,34 +66,6 @@ const HomeScreen = ({navigation}) => {
     console.log(currentScreen)
     props?.navigation?.navigate(currentScreen)
   }
-  //   {
-  //     loanTitle: 'Home Loan',
-  //     lan: 'H402HHL0622560',
-  //     loanAmount: '₹ 2,836,000',
-  //     roi: '9.25%',
-  //     tenure: '18/100',
-  //     nextPayment: '₹ 2,836',
-  //     paymentDate: '29th April 2024',
-  //     NextPaymentText: 'Next Payment'
-  //   },
-  //   {
-  //     loanTitle: 'Home Loan',
-  //     lan: 'H402HHL0622560',
-  //     loanAmount: '₹ 2,836,000',
-  //     roi: '9.25%',
-  //     tenure: '18/100',
-  //     nextPayment: '₹ 2,836',
-  //     paymentDate: '29th April 2024',
-  //     NextPaymentText: 'Next Payment'
-  //   },
-  //   {
-  //     loanTitle: 'Home Loan',
-  //     lan: 'H402HHL0622560',
-  //     loanAmount: '₹ 2,836,000',
-  //     roi: '9.25%',
-  //     kyc_Pan: 'PAN and KYC',
-  //   },
-  // ];
 
   const cardWidth = 350;
   
@@ -157,74 +129,102 @@ const HomeScreen = ({navigation}) => {
       </View>
     );
   };
-  return (
 
-    <SafeAreaView style={styles.container}>
+  const handleNavigation = (index) => {
+   
+    switch (index) {
+      case 0:
+        console.log('Calculators')
+        break;
+      case 1:
+        console.log('Apply For Loan')
+        break;
+     case 2:
+      console.log('Status Check')
+     break;
+     case 3:
+      navigation.navigate('RaiseTicket')
+     break;
+     case 4:
+      console.log('My Tickets')
+     break;
+     case 5:
+    console.log('FAQ')
+     break;
+      default:
+        break;
+    }
+  };
+
+  return (
+    <View style={{ flex:1}}>
+    <ScrollView>
+    {/* <SafeAreaView style={styles.container}> */}
         {isLoading ? (
           <View style={styles.ActivityStyle}>
  <ActivityIndicator size="large" color="#0000ff" />
           </View>
       ) : (
-        <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <View style={{ backgroundColor: colors.coreCream, height: '27.5%' }}>
-          <View style={styles.profileImageView}>
-            <TouchableOpacity onPress={()=>navigation.navigate('ProfileImageScreen')}>
-            <Image source={require('../../../assets/images/profileIcon.png')} style={styles.profileIcon} />
-            </TouchableOpacity>
-            <Text style={styles.profileName}>Bhavesh Rao</Text>
-          </View>
-          <View style={{ position: 'absolute', top: 70 }}>
-            <CardComponent />
-          </View>
-        </View>
-        <View style={{ marginTop: verticalScale(30), top: 65 }}>
-          <Text style={styles.yourLoan}>
-            Your Loans
-          </Text>
-          {data.length === 0 ? (
-            <View style={styles.loanapplyview}>
-              <ImageBackground
-                style={styles.imgBackground}
-                source={require('../../../assets/images/loanapply.png')}
-              >
-                <Text style={styles.applyforloan} >Apply For Loan</Text>
-              </ImageBackground>
-            </View>
-          ) :
-            <View style={styles.secondcards}>
-              <FlatList
-                ref={flatListRef}
-                data={data}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={renderItems}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{
-                  paddingHorizontal: (screenWidth - cardWidth) / 2,
-                }}
-              />
-            </View>
-          }
-        </View>
-  
-        <View style={{ marginTop: verticalScale(80) }}>
-          <Text style={styles.ourSerices}>
-            Our Services
-          </Text>
-          <View style={styles.ourSericesCards}>
-          {data2.map(item => (
-          <TouchableOpacity key={item.key} style={styles.servicesCards}>
-            <Image style={styles.serviceImage} source={item.image} />
-            <Text style={styles.serviceText}>{item.title}</Text>
-          </TouchableOpacity>
-        ))}
-          </View>
-        </View>
-        </ScrollView>
+       
+        <><View style={{ backgroundColor: colors.coreCream, }}>
+              <View style={styles.profileImageView}>
+                <TouchableOpacity onPress={() => navigation.navigate('ProfileImageScreen')}>
+                  <Image source={require('../../../assets/images/profileIcon.png')} style={styles.profileIcon} />
+                </TouchableOpacity>
+                <Text style={styles.profileName}>Bhavesh Rao</Text>
+              </View>
+              <View style={{marginBottom: verticalScale(-60) }}>
+                <CardComponent />
+              </View>
+            </View><View style={{ marginTop: verticalScale(78) }}>
+                <Text style={styles.yourLoan}>
+                  Your Loans
+                </Text>
+                {data.length === 0 ? (
+                  <View style={styles.loanapplyview}>
+                    <ImageBackground
+                      style={styles.imgBackground}
+                      source={require('../../../assets/images/loanapply.png')}
+                    >
+                      <Text style={styles.applyforloan}>Apply For Loan</Text>
+                    </ImageBackground>
+                  </View>
+                ) :
+                  <View style={styles.secondcards}>
+                    <FlatList
+                      ref={flatListRef}
+                      data={data}
+                      keyExtractor={(item, index) => index.toString()}
+                      renderItem={renderItems}
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                      contentContainerStyle={{
+                        paddingHorizontal: (screenWidth - cardWidth) / 2,
+                      }} />
+                  </View>}
+              </View><View style={{ marginTop: verticalScale(25) }}>
+                <Text style={styles.ourSerices}>
+                  Our Services
+                </Text>
+                <View style={styles.ourSericesCards}>
+                  {data2.map((item, index) => (
+                    <TouchableOpacity
+                      key={item.key}
+                      style={styles.servicesCards}
+                      onPress={() => handleNavigation(index)}
+                    >
+                      <Image style={styles.serviceImage} source={item.image} />
+                      <Text style={styles.serviceText}>{item.title}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View></>
+      
       )}
             
-    </SafeAreaView>
-
+    {/* </SafeAreaView> */}
+    </ScrollView>
+    </View>
 
   );
 };
@@ -238,10 +238,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  scrollViewContent: {
-    flexGrow: 1,
-    flex:1
-  },
+
   loanView:{ marginTop: verticalScale(13), flexDirection: 'row', justifyContent: 'space-between', paddingLeft: 21, paddingRight: 14, alignItems: 'center' },
   loanTitle:{color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelMedium.fontWeight},
   uhfl:{ color: colors.coreBlue, fontSize: 8, fontWeight: customTheme.fonts.labelMedium.fontWeight },
@@ -333,7 +330,7 @@ const styles = StyleSheet.create({
     color: colors.black, fontSize: 18, lineHeight: 28, left: 20, bottom: 5
   },
   servicesCards: {
-    width: 105.5, height: 104.5, backgroundColor: colors.white, borderRadius: 6, shadowColor: colors.black, marginBottom: 5,
+    width: 105.5, height: 104.5, backgroundColor: colors.white, borderRadius: 6, shadowColor: colors.black, marginBottom: verticalScale(10),
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 1,
     shadowRadius: 3.84,
@@ -346,7 +343,7 @@ const styles = StyleSheet.create({
   serviceText: { color: colors.coreBlue, fontSize: 12, fontWeight: customTheme.fonts.labelMedium.fontWeight, alignSelf: 'center', marginTop: verticalScale(9) },
   yourLoan: {
 
-    color: colors.black, fontSize: 18, lineHeight: 28, bottom: 5, marginLeft: verticalScale(22)
+    color: colors.black, fontSize: 18, lineHeight: 28, bottom: 5, marginLeft: verticalScale(22),
   },
   seeDetailsresumeJourneyButton: {
     justifyContent: 'center',
