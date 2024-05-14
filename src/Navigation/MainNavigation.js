@@ -15,9 +15,11 @@ import Eligibility from '../screens/Eligibility';
 import ProfileImageScreen from '../screens/ProfileImage';
 import CaptureSelfie from '../screens/CaptureSelfie';
 import ApplicationDetails from '../screens/ApplicationDetails';
+import KYCDocuments from '../screens/KYCDocuments';
 import Sanction from '../screens/Sanction';
 import LoanDetails from '../screens/LoanDetails';
 import FAQ from '../screens/FAQ';
+import RaiseTicket from '../screens/RaiseTicket';
 
 const Stack = createStackNavigator();
 
@@ -26,10 +28,12 @@ const Dashboard = () => {
 
     <NavigationContainer>
       <Stack.Navigator initialRouteName={screens.HomeScreen}>
-    
-       {/* <StatusBar
+
+        {/* <StatusBar
                 backgroundColor="white"
                 barStyle="dark-content"
+            />
+      <Stack.Navigator initialRouteName={screens.Eligibility} >
             /> */}
         <Stack.Screen
           name={screens.Splash}
@@ -64,7 +68,7 @@ const Dashboard = () => {
           component={CaptureAdhaar}
           options={{ headerShown: false }}
         />
-         <Stack.Screen
+        <Stack.Screen
           name={screens.CaptureSelfie}
           component={CaptureSelfie}
           options={{ headerShown: false }}
@@ -86,10 +90,15 @@ const Dashboard = () => {
           component={Eligibility}
           options={{ headerShown: false }}
         />
-         <Stack.Screen
+        <Stack.Screen
           name={screens.ProfileImageScreen}
           component={ProfileImageScreen}
-          />
+        />
+        <Stack.Screen
+          name={screens.KYCDocuments}
+          component={KYCDocuments}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name={screens.ApplicantDetails}
           component={ApplicationDetails}
@@ -108,6 +117,12 @@ const Dashboard = () => {
         <Stack.Screen
           name={screens.FAQ}
           component={FAQ}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name={screens.RaiseTicket}
+          component={RaiseTicket}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

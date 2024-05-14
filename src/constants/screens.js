@@ -23,8 +23,10 @@ export const screens = {
     ErrorScreen:'ErrorScreen',
     CongratulationScreen:'CongratulationScreen',
     Eligibility:"Eligibility",
+    KYCDocuments:"KYCDocuments",
     ProfileImageScreen: "ProfileImageScreen",
     Sanction:"Sanction",
     LoanDetails:"LoanDetails",
     FAQ:"FAQ",
+    RaiseTicket: "RaiseTicket"
   };
