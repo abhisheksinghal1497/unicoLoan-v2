@@ -1,77 +1,102 @@
-import { Image, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import React, { useState, useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
   FormControl,
   component,
 } from "../../components/FormComponents/FormControl";
-import { useTheme, Text } from "react-native-paper";
+import { useTheme } from "react-native-paper";
 import { validations } from "../../constants/validations";
 import { screens } from "../../constants/screens";
 import Button from "././../../components/Button";
 import { horizontalScale, verticalScale } from "../../utils/matrcis";
 import ApplicationCard from "./component/ApplicationCard";
 import { styles } from "./styles/ApplicationDetailStyle";
-import moment from "moment";
 import Header from "../../components/Header";
 import { assets } from "../../assets/assets";
 import HelpModal from "./component/HelpModal";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getDateYearsBack } from "../../utils/dateUtil";
+import {getApplicationDetailQuery} from './../../services/ApiUtils'
 
 const initialData = [
   {
     id: "applicationType",
-    value: 0
+    value: 0,
   },
   {
     id: "customerProfile",
-    value: 0
+    value: 0,
   },
   {
     id: "firstName",
-    value: 0
+    value: 0,
   },
   {
     id: "lastName",
-    value: 0
+    value: 0,
   },
   {
     id: "dob",
-    value: 0
-  }
-]
+    value: 0,
+  },
+];
 
 export default function ApplicationDetails(props) {
-
   const [isVerified, setIsVerified] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [{data = {}}]= getApplicationDetailQuery();
+  console.log(data, '----------- DATA HERE -----------')
   const {
     control,
     handleSubmit,
     formState: { errors, isValid },
     getValues,
+    watch,
     getFieldState,
     setValue,
   } = useForm({
     mode: "onBlur",
-    defaultValues: { mobile: 9876543210, otp: "", checkbox: false },
+    defaultValues: {  LeadSource: "Customer Mobile App" },
   });
 
   const { colors } = useTheme();
 
   useEffect(() => {
     async function fetchData() {
-      await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.ApplicantDetails));
-      const savedData = await AsyncStorage.getItem('ApplicationDetails');
+      await AsyncStorage.setItem(
+        "CurrentScreen",
+        JSON.stringify(screens.ApplicantDetails)
+      );
+      const savedData = await AsyncStorage.getItem("ApplicationDetails");
       const currentData = JSON.parse(savedData);
-      console.log(currentData, 'current value');
-      {currentData?.map(item =>{
-        console.log(item)
-        setValue(item.id,item.value)
-      })}
+      console.log(currentData, "current value");
+      {
+        currentData?.map((item) => {
+          console.log(item);
+          setValue(item.id, item.value);
+        });
+      }
     }
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if(data){
+      const {mobileNumber, email, userId} = data;
+      if(mobileNumber){
+        setValue('mobileNumber', mobileNumber)
+      }
+
+      if(email){
+        setValue('email', email)
+      }
+
+      if(userId){
+        setValue('rmName', userId)
+      }
+    }
+  }, [data]);
 
   const onSubmit = (data) => {
     console.log("njnjnjnb");
@@ -79,23 +104,19 @@ export default function ApplicationDetails(props) {
     props?.navigation?.navigate(screens.PanDetails);
   };
 
-  const ChangeValue = async(value, id) => {
-    setValue(id, value)
-    objIndex = initialData.findIndex(obj => obj.id === id);
-    initialData[objIndex].value = value
-    await AsyncStorage.setItem('ApplicationDetails', JSON.stringify(initialData));
-  }
+  const ChangeValue = async (value, id) => {
+    setValue(id, value);
+    objIndex = initialData.findIndex((obj) => obj.id === id);
+    initialData[objIndex].value = value;
+    await AsyncStorage.setItem(
+      "ApplicationDetails",
+      JSON.stringify(initialData)
+    );
+  };
 
-  // {
-  //   id: "leadId", // unique id for field
-  //   label: "SFDC Lead Id", // label to show to the user
-  //   type: component.textInput, // type of field
-  //   placeHolder: "Enter Lead Id12", // placeholder to show to the user when there is no value is entered
-  //   validations: validations.text, // validations for field (smme as we pass to the rule prop in 'Controller' comp from react-hook-form)
-  //   isRequired: true, // whether the filed is mandatory or not
-  //   data: [], // data need for the filed e.g. options for select/dropdown
-  //   value: "", // current value of the filed. can be use directly to send to API
-  // },
+  // DATA THAT IS GOING TO BE POPULATED
+  // Lead source, branch name by pincode, mobile number, email
+
   const mock_data = [
     {
       id: "applicationType",
@@ -106,34 +127,45 @@ export default function ApplicationDetails(props) {
       isRequired: false,
       value: "",
     },
-    { id: "customerProfile",
-    label: "Customer Profile",
-    type: component.dropdown,
-    placeHolder: "Select Customer Profile",
-    validations: validations.text,
-    maxLength: 10,
-    keyboardtype: "numeric",
-    isRequired: true,
-    data: [
-      {
-        id: "cust_type_1",
-        label: "Salaried",
-        value: "salaried",
-      },
+    {
+      id: "customerProfile",
+      label: "Customer Profile",
+      type: component.dropdown,
+      placeHolder: "Select Customer Profile",
+      validations: validations.text,
+      maxLength: 10,
+      keyboardtype: "numeric",
+      isRequired: true,
+      data: [
+        {
+          id: "cust_type_1",
+          label: "Salaried",
+          value: "salaried",
+        },
 
-      {
-        id: "cust_type_2",
-        label: "Self-Employed",
-        value: "self-employed",
-      },
-    ],
-    value: {},},
+        {
+          id: "cust_type_2",
+          label: "Self-Employed",
+          value: "self-employed",
+        },
+      ],
+      value: {},
+    },
     {
       id: "firstName",
       label: "First Name",
       type: component.textInput,
       placeHolder: "Enter first Name",
-      validations: validations.text,
+      validations: validations.name,
+      isRequired: true,
+      value: "",
+    },
+    {
+      id: "middleName",
+      label: "Middle Name",
+      type: component.textInput,
+      placeHolder: "Enter middle Name",
+      validations: validations.nameWithoutRequired,
       isRequired: false,
       value: "",
     },
@@ -142,8 +174,8 @@ export default function ApplicationDetails(props) {
       label: "Last Name",
       type: component.textInput,
       placeHolder: "Enter last Name",
-      validations: validations.text,
-      isRequired: false,
+      validations: validations.name,
+      isRequired: true,
       value: "",
     },
     {
@@ -159,22 +191,279 @@ export default function ApplicationDetails(props) {
         maximumDate: getDateYearsBack(100),
       },
     },
+    {
+      id: "mobileNumber",
+      label: "Mobile number",
+      type: component.textInput,
+      placeHolder: "Enter mobile number",
+      validations: validations.numberOnly,
+      isRequired: true,
+      value: "",
+    },
+    {
+      id: "alternateMobileNumber",
+      label: "Alternate mobile number",
+      type: component.textInput,
+      placeHolder: "Enter alternate mobile number",
+      validations: validations.numberOnly,
+      isRequired: false,
+      value: "",
+      keyboardtype: "numeric",
+    },
+
+    {
+      id: "email",
+      label: "Email",
+      type: component.textInput,
+      placeHolder: "Enter email",
+      validations: validations.email,
+      isRequired: false,
+      value: "",
+    },
+
+    {
+      id: "product",
+      label: "Product",
+      type: component.dropdown,
+      placeHolder: "Select product",
+      validations: validations.text,
+      maxLength: 10,
+      // keyboardtype: "numeric",
+      isRequired: true,
+      data: [
+        {
+          id: "product_type_1",
+          label: "Housing Loan",
+          value: "Housing Loan",
+        },
+
+        {
+          id: "product_type_2",
+          label: "Non Housing Loan",
+          value: "Non Housing Loan",
+        },
+      ],
+      value: {},
+    },
+
+    {
+      id: "tenure",
+      label: "Tenure",
+      type: component.textInput,
+      placeHolder: "Enter requested tenure in months",
+      validations: validations.numberOnly,
+      isRequired: false,
+      keyboardtype: "numeric",
+      value: "",
+    },
+
+    {
+      id: "loanAmount",
+      label: "Loan Amount",
+      type: component.textInput,
+      placeHolder: "Enter required loan amount",
+      validations: validations.numberOnly,
+      keyboardtype: "numeric",
+      isRequired: true,
+      value: "",
+    },
+
+    {
+      id: "propertyIdentified",
+      label: "Property Identified",
+      type: component.dropdown,
+      placeHolder: "Select answer",
+      validations: validations.text,
+      isRequired: false,
+      data: [
+        {
+          id: "propertyIdentified_type_1",
+          label: "Yes",
+          value: "Yes",
+        },
+
+        {
+          id: "propertyIdentified_type_1",
+          label: "No",
+          value: "No",
+        },
+      ],
+      value: {},
+    },
+
+    {
+      id: "presentAccommodation",
+      label: "Present Accommodation",
+      type: component.dropdown,
+      placeHolder: "Select Present Accommodation",
+      validations: validations.text,
+      isRequired: false,
+      data: [
+        {
+          id: "presentAccommodation_type_1",
+          label: "own",
+          value: "own",
+        },
+
+        {
+          id: "presentAccommodation_type_2",
+          label: "family",
+          value: "family",
+        },
+        {
+          id: "presentAccommodation_type_3",
+          label: "rented",
+          value: "rented",
+        },
+        {
+          id: "presentAccommodation_type_4",
+          label: "employer",
+          value: "employer",
+        },
+      ],
+      value: {},
+    },
+
+    {
+      id: "periodOfStay",
+      label: "Period of stay",
+      type: component.datetime,
+      placeHolder: "YY-MM",
+      validations: validations.text,
+      isRequired: true,
+      value: "",
+    },
+    {
+      id: "rentPerMonth",
+      label: "Rent per month",
+      type: component.textInput,
+      placeHolder: "Applicant Type",
+      validations: validations.numberOnly,
+      isRequired: true,
+      keyboardtype: "numeric",
+      value: "",
+    },
+    {
+      id: "employmentExperience",
+      label: "Employment experience",
+      type: component.datetime,
+      placeHolder: "YY-MM",
+      validations: validations.text,
+      isRequired: true,
+      value: "",
+    },
+    {
+      id: "totalWorkExperience",
+      label: "Total Work experience",
+      type: component.datetime,
+      placeHolder: "YY-MM",
+      validations: validations.text,
+      isRequired: true,
+      value: "",
+    },
+    {
+      id: "familyDependant",
+      label: "Family Dependant",
+      type: component.textInput,
+      placeHolder: "Enter Family Dependant",
+      validations: validations.numberOnly,
+      isRequired: true,
+      keyboardtype: "numeric",
+      value: "",
+    },
+
+    {
+      id: "familyDependantChildren",
+      label: "Family Dependant Children",
+      type: component.textInput,
+      placeHolder: "Enter Family Dependant Children",
+      validations: validations.numberOnly,
+      isRequired: true,
+      keyboardtype: "numeric",
+      value: "",
+    },
+
+    {
+      id: "familyDependantOther",
+      label: "Family Dependant Other",
+      type: component.textInput,
+      placeHolder: "Enter Family Dependant Other",
+      validations: validations.numberOnly,
+      isRequired: true,
+      keyboardtype: "numeric",
+      value: "",
+    },
+
+    {
+      id: "totalBusinessExperience",
+      label: "Total Business experience",
+      type: component.datetime,
+      placeHolder: "YY-MM",
+      validations: validations.text,
+      isRequired: true,
+      value: "",
+    },
+
+    {
+      id: "address",
+      label: "Address",
+      type: component.textInput,
+      placeHolder: "Enter address",
+      validations: validations.text,
+      isRequired: true,
+      value: "",
+    },
+
+    {
+      id: "pincode",
+      label: "Pincode",
+      type: component.textInput,
+      placeHolder: "Enter Pincode",
+      validations: validations.numberOnly,
+      isRequired: true,
+      value: "",
+      keyboardtype: "numeric",
+    },
   ];
 
-  function getDateYearsBack(year) {
-    const currentDate = moment();
-    const date18YearsBack = currentDate.subtract(18, "years");
-    date18YearsBack.year(year);
-    return new Date(date18YearsBack.format("YYYY-MM-DD"));
-  }
+  const checkFormCondition = (id) => {
+    if (
+      id !== "rentPerMonth" &&
+      id !== "employmentExperience" &&
+      id !== "totalWorkExperience" &&
+      id !== "totalBusinessExperience"
+    ) {
+      return true;
+    }
 
-  const toggleModal = () => setShowModal(!showModal)
+    if (id === "rentPerMonth" && watch("presentAccommodation") === "rented") {
+      return true;
+    } else if (
+      watch("customerProfile") === "salaried" &&
+      (id === "employmentExperience" || id === "totalWorkExperience")
+    ) {
+      return true;
+    } else if (
+      id === "totalBusinessExperience" &&
+      watch("customerProfile") === "self-employed"
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const toggleModal = () => setShowModal(!showModal);
   const style = styles(colors);
   const goBack = () => props.navigation.goBack();
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
-      <HelpModal toggleModal={toggleModal} showModal={showModal} setShowModal={setShowModal} />
+      <HelpModal
+        toggleModal={toggleModal}
+        showModal={showModal}
+        setShowModal={setShowModal}
+      />
       <View
         style={{
           paddingHorizontal: horizontalScale(15),
@@ -214,6 +503,9 @@ export default function ApplicationDetails(props) {
 
         <View>
           {mock_data.map((comp) => {
+            if (!checkFormCondition(comp.id)) {
+              return <></>;
+            }
             return (
               <FormControl
                 compType={comp.type}
@@ -231,6 +523,7 @@ export default function ApplicationDetails(props) {
                 maxLength={comp.maxLength}
                 isDisabled={comp.isDisabled}
                 onChangeText={(value) => ChangeValue(value, comp.id)}
+                type={comp.keyboardtype}
                 // showRightComp={true}
                 // rightComp={() =>
                 //   isVerified ? (
