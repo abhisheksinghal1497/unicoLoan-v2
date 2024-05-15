@@ -9,11 +9,12 @@ import { Button } from "react-native-paper";
 import { styles } from './style/style';
 import { AadharBasicDetails } from "../../constants/stringConstants";
 // import { useQuery,useMutation } from '@tanstack/react-query';
+import {  toast } from "../../utils/functions";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { screens } from "../../constants/screens";
-import {getAdhaarDetails} from '../../services/ApiUtils'
+// import {getAdhaarDetails} from '../../services/ApiUtils'
 const CaptureAdhaar = ({ navigation }) => {
-    const adhaarMutation = getAdhaarDetails();
+    // const adhaarMutation = getAdhaarDetails();
     const { firstButtonName, lastButtonName, headerText, headerTextSecond, imageMethod, imageSide, imageSideSecond } = AadharBasicDetails
 
     const buttonLabels = [{ id: 0, name: firstButtonName, }, { id: 1, name: lastButtonName, }]
@@ -37,19 +38,21 @@ const CaptureAdhaar = ({ navigation }) => {
                 setSelectedImage(image);
                 console.log(method,'method')
 
-                const AdharData= [{
-                    id:0,
-                    font:JSON.stringify(image),
-                    back: JSON.stringify(image)
-                }]
+                // const AdharData= [{
+                //     id:0,
+                //     font:JSON.stringify(image),
+                //     back: JSON.stringify(image)
+                // }]
 
-                 adhaarMutation.mutate(AdharData)
+                //  adhaarMutation.mutate(AdharData)
             
                 if(method === 'Front'){
                     await AsyncStorage.setItem('FrontAdhaar', JSON.stringify(image));
+                    toast('success', "Aadhar Front Successfully Uploaded");
                 }
                 else{
                     await AsyncStorage.setItem('BackAdhaar', JSON.stringify(image));
+                    toast('success', "Aadhar Back Successfully Uploaded");
                 }  
             })
             .catch((error) => {

@@ -5,7 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import customTheme from '../colors/theme';
 
 export default function CustomButton(props) {
-    const { type, label, left, right, buttonContainer, labelStyle, icon, onPress, rippleColor, disable = false } = props;
+    const { type, label, left, right, buttonContainer, labelStyle, icon, onPress, rippleColor, disable = false ,isDisabled} = props;
     const theme = useTheme();
     return type === "primary" ? (
         <TouchableRipple
@@ -15,7 +15,7 @@ export default function CustomButton(props) {
             onPress={onPress} >
             <View style={styles.rowContainer}>
                 {left}
-                <Text style={[theme.fonts.buttonText, labelStyle]} numberOfLines={1}>{label}</Text>
+                <Text style={[theme.fonts.buttonText, labelStyle, isDisabled ? {color: colors.black}: {}]} numberOfLines={1}>{label}</Text>
                 {right}
             </View>
         </TouchableRipple>

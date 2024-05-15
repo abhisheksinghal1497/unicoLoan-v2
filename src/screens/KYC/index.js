@@ -14,22 +14,14 @@ import customTheme from '../../colors/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { screens } from '../../constants/screens';
 import { useFocusEffect } from '@react-navigation/native';
-import {getAdhaarDetails} from '../../services/ApiUtils'
+
 
 const WIDTH = Dimensions.get('window').width;
 
 
 
 const KYC = (props) => {
-  // const { data, isLoading, isFetching } = getAdhaarDetails();
-const getData = getAdhaarDetails()
 
-  useEffect(() =>{
-       if(getData?.data){
-           alert('data her')
-       }
-  },[getData?.data])
-  // console.log(data)
   const [selectedImage, setSelectedImage] = useState('');
   const [selectedImageBack, setSelectedImageBack] = useState('');
 
@@ -141,7 +133,9 @@ const fetchData = async() =>{
         type="primary"
         label="Continue"
         buttonContainer={styles.buttonContainer}
-        onPress={() => { showModal() }} />
+        onPress={() => { showModal() }}
+        disable ={selectedImage === '' && selectedImageBack === '' ? true : false}
+        />
       <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.modalContainer}>
         {type === 0 ? <View>
           <Text style={[fonts.labelMedium, styles.labelText]}>Aadhaar Number</Text>
@@ -193,7 +187,8 @@ const fetchData = async() =>{
               label="Submit"
               buttonContainer={styles.modalButtonContainer}
               onPress={() => { hideModal(); setType(0);onSubmit()}} />
-          </View>}
+          </View>
+          }
       </Modal >
     </View >
   )

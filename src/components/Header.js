@@ -2,13 +2,15 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { colors } from '../colors'
 import { useTheme } from 'react-native-paper'
+import { verticalScale } from '../utils/matrcis'
 
 
 const Header = (props) => {
     const {leftImageProps = {}, rightImageProps={}, onPressRight, onPressLeft= () => {}} = props;
     const { fonts } = useTheme();
     return (
-        <View style={[styles.container,{ backgroundColor:props?.colour ? props?.colour : colors.bgColor,}]}>
+      
+        <View style={[styles.container,props.containerStyle,{ backgroundColor:props?.colour ? props?.colour : colors.bgColor,}]}>
             {props.left && <TouchableOpacity onPress={() => onPressLeft()}>
                 <Image source={props.left} style={[styles.backImage, props.leftStyle]} {...leftImageProps} />
             </TouchableOpacity>}
@@ -27,7 +29,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
         flexDirection: 'row',
         alignItems: 'center',
-        marginVertical: 15,
+        marginVertical: verticalScale(10),
     },
     backImage: {
         width: 20,

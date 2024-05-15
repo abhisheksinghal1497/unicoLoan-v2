@@ -41,7 +41,7 @@ const initialData = [
   }
 ]
 
-export default function ApplicationDetails(props) {
+const HomeScreen = ({navigation}) => {
 
   const [isVerified, setIsVerified] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -76,7 +76,7 @@ export default function ApplicationDetails(props) {
   const onSubmit = (data) => {
     console.log("njnjnjnb");
     console.log(JSON.stringify(data, null, 2));
-    props?.navigation?.navigate(screens.PandcardDetails);
+    navigation?.navigate(screens.PanDetails);
   };
 
   const ChangeValue = async(value, id) => {
@@ -170,7 +170,7 @@ export default function ApplicationDetails(props) {
 
   const toggleModal = () => setShowModal(!showModal)
   const style = styles(colors);
-  const goBack = () => props.navigation.goBack();
+  const goBack = () => navigation.goBack();
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
@@ -261,3 +261,5 @@ export default function ApplicationDetails(props) {
     </View>
   );
 }
+
+export default HomeScreen;
