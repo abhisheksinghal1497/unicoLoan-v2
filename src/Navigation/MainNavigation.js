@@ -21,6 +21,7 @@ import LoanDetails from '../screens/LoanDetails';
 import FAQ from '../screens/FAQ';
 import MyTickets from '../screens/MyTickets';
 import RaiseTicket from '../screens/RaiseTicket';
+import RaiseTicketInput from '../screens/RaiseTicketInput';
 
 const Stack = createStackNavigator();
 
@@ -28,9 +29,9 @@ const Dashboard = () => {
   return (
 
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={screens.FAQ}>
-
-        {/* <StatusBar
+      <Stack.Navigator initialRouteName={screens.RaiseTicketInput}>
+    
+       {/* <StatusBar
                 backgroundColor="white"
                 barStyle="dark-content"
             />
@@ -128,8 +129,8 @@ const Dashboard = () => {
         />
 
         <Stack.Screen
-          name={screens.RaiseTicket}
-          component={RaiseTicket}
+          name={screens.RaiseTicketInput}
+          component={RaiseTicketInput}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

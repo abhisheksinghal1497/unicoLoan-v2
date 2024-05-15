@@ -95,6 +95,7 @@ export default InputField = ({
                     styles.textInput,
                     style,
                     isDisabled ? styles.disabledInput : {},
+                    {height:isMultiline ? 100 : 0}
                   ]}
                   mode="outlined"
                   outlineColor={colors.border}
@@ -168,12 +169,13 @@ const styles = StyleSheet.create({
     backgroundColor: customTheme.colors.textInputBackground,
     paddingHorizontal: 5,
     padding: 5,
+
   },
   disabledInput: {
     backgroundColor: customTheme.colors.disableBg,
   },
   disabledContent: {
-    color: customTheme.colors.black,
+    color: customTheme.colors.primaryText
   },
   inputOutline: {
     borderWidth: 0.5,
