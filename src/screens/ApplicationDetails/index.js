@@ -49,6 +49,7 @@ export default function ApplicationDetails(props) {
     handleSubmit,
     formState: { errors, isValid },
     getValues,
+    watch,
     getFieldState,
     setValue,
   } = useForm({
@@ -95,7 +96,7 @@ export default function ApplicationDetails(props) {
 
   // DATA THAT IS GOING TO BE POPULATED
   // Lead source, branch name by pincode, mobile number, email
-
+ 
   const mock_data = [
     {
       id: "applicationType",
@@ -135,7 +136,7 @@ export default function ApplicationDetails(props) {
       label: "First Name",
       type: component.textInput,
       placeHolder: "Enter first Name",
-      validations: validations.text,
+      validations: validations.name,
       isRequired: true,
       value: "",
     },
@@ -144,7 +145,7 @@ export default function ApplicationDetails(props) {
       label: "Middle Name",
       type: component.textInput,
       placeHolder: "Enter middle Name",
-      validations: validations.text,
+      validations: validations.nameWithoutRequired,
       isRequired: true,
       value: "",
     },
@@ -153,7 +154,7 @@ export default function ApplicationDetails(props) {
       label: "Last Name",
       type: component.textInput,
       placeHolder: "Enter last Name",
-      validations: validations.text,
+      validations: validations.name,
       isRequired: true,
       value: "",
     },
@@ -175,7 +176,7 @@ export default function ApplicationDetails(props) {
       label: "Mobile number",
       type: component.textInput,
       placeHolder: "Enter mobile number",
-      validations: validations.text,
+      validations: validations.numberOnly,
       isRequired: true,
       value: "",
     },
@@ -184,7 +185,7 @@ export default function ApplicationDetails(props) {
       label: "Alternate mobile number",
       type: component.textInput,
       placeHolder: "Enter alternate mobile number",
-      validations: validations.text,
+      validations: validations.phone,
       isRequired: false,
       value: "",
     },
@@ -193,8 +194,8 @@ export default function ApplicationDetails(props) {
       id: "email",
       label: "Email",
       type: component.textInput,
-      placeHolder: "Enter alternate mobile number",
-      validations: validations.text,
+      placeHolder: "Enter email",
+      validations: validations.email,
       isRequired: false,
       value: "",
     },
@@ -229,8 +230,9 @@ export default function ApplicationDetails(props) {
       label: "Tenure",
       type: component.textInput,
       placeHolder: "Enter requested tenure in months",
-      validations: validations.text,
+      validations: validations.numberOnly,
       isRequired: false,
+      keyboardtype: "numeric",
       value: "",
     },
 
@@ -239,7 +241,8 @@ export default function ApplicationDetails(props) {
       label: "Loan Amount",
       type: component.textInput,
       placeHolder: "Enter required loan amount",
-      validations: validations.text,
+      validations: validations.numberOnly,
+      keyboardtype: "numeric",
       isRequired: true,
       value: "",
     },
@@ -250,8 +253,6 @@ export default function ApplicationDetails(props) {
       type: component.dropdown,
       placeHolder: "Select answer",
       validations: validations.text,
-      maxLength: 10,
-      // keyboardtype: "numeric",
       isRequired: false,
       data: [
         {
@@ -275,8 +276,6 @@ export default function ApplicationDetails(props) {
       type: component.dropdown,
       placeHolder: "Select Present Accommodation",
       validations: validations.text,
-      maxLength: 10,
-      // keyboardtype: "numeric",
       isRequired: false,
       data: [
         {
@@ -318,12 +317,11 @@ export default function ApplicationDetails(props) {
       label: "Rent per month",
       type: component.textInput,
       placeHolder: "Applicant Type",
-      validations: validations.text,
+      validations: validations.numberOnly,
       isRequired: true,
       keyboardtype: "numeric",
       value: "",
     },
-
     {
       id: "employmentExperience",
       label: "Employment experience",
@@ -333,33 +331,21 @@ export default function ApplicationDetails(props) {
       isRequired: true,
       value: "",
     },
-
     {
-      id: "employmentExperience",
-      label: "Employment experience",
+      id: "totalWorkExperience",
+      label: "Total Work experience",
       type: component.datetime,
       placeHolder: "YY-MM",
       validations: validations.text,
       isRequired: true,
       value: "",
     },
-
-    {
-      id: "totalEmploymentExperience",
-      label: "Total Employment experience",
-      type: component.datetime,
-      placeHolder: "YY-MM",
-      validations: validations.text,
-      isRequired: true,
-      value: "",
-    },
-
     {
       id: "familyDependant",
       label: "Family Dependant",
       type: component.textInput,
-      placeHolder: "Applicant Type",
-      validations: validations.text,
+      placeHolder: "Enter Family Dependant",
+      validations: validations.numberOnly,
       isRequired: true,
       keyboardtype: "numeric",
       value: "",
@@ -370,7 +356,7 @@ export default function ApplicationDetails(props) {
       label: "Family Dependant Children",
       type: component.textInput,
       placeHolder: "Enter Family Dependant Children",
-      validations: validations.text,
+      validations: validations.numberOnly,
       isRequired: true,
       keyboardtype: "numeric",
       value: "",
@@ -381,7 +367,7 @@ export default function ApplicationDetails(props) {
       label: "Family Dependant Other",
       type: component.textInput,
       placeHolder: "Enter Family Dependant Other",
-      validations: validations.text,
+      validations: validations.numberOnly,
       isRequired: true,
       keyboardtype: "numeric",
       value: "",
@@ -417,6 +403,24 @@ export default function ApplicationDetails(props) {
       value: "",
     },
   ];
+
+  const checkFormCondition = (id) => {
+
+    if(id !== 'rentPerMonth' && id !== 'employmentExperience' && id !== 'totalWorkExperience' && id !== 'totalBusinessExperience'){
+      return true;
+    }
+
+    if(id === 'rentPerMonth' && watch('presentAccommodation') === 'rented'){
+      return true
+    }
+    else if(watch('customerProfile') === 'salaried' &&( id === 'employmentExperience' || id === 'totalWorkExperience')){
+      return true
+    }else if(id === 'totalBusinessExperience' && watch('customerProfile') === 'self-employed'){
+      return true
+    }else {
+      return false
+    }
+  }
 
   const toggleModal = () => setShowModal(!showModal);
   const style = styles(colors);
@@ -468,6 +472,9 @@ export default function ApplicationDetails(props) {
 
         <View>
           {mock_data.map((comp) => {
+            if(!checkFormCondition(comp.id)){
+              return <></>
+            }
             return (
               <FormControl
                 compType={comp.type}
@@ -485,6 +492,7 @@ export default function ApplicationDetails(props) {
                 maxLength={comp.maxLength}
                 isDisabled={comp.isDisabled}
                 onChangeText={(value) => ChangeValue(value, comp.id)}
+                type={comp.keyboardtype}
                 // showRightComp={true}
                 // rightComp={() =>
                 //   isVerified ? (
