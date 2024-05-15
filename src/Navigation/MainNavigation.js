@@ -18,7 +18,10 @@ import ApplicationDetails from '../screens/ApplicationDetails';
 import KYCDocuments from '../screens/KYCDocuments';
 import Sanction from '../screens/Sanction';
 import LoanDetails from '../screens/LoanDetails';
+import FAQ from '../screens/FAQ';
+import MyTickets from '../screens/MyTickets';
 import RaiseTicket from '../screens/RaiseTicket';
+import RaiseTicketInput from '../screens/RaiseTicketInput';
 
 const Stack = createStackNavigator();
 
@@ -26,14 +29,7 @@ const Dashboard = () => {
   return (
 
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={screens.HomeScreen}>
-
-        {/* <StatusBar
-                backgroundColor="white"
-                barStyle="dark-content"
-            />
-      <Stack.Navigator initialRouteName={screens.Eligibility} >
-            /> */}
+      <Stack.Navigator initialRouteName={screens.KYC}>
         <Stack.Screen
           name={screens.Splash}
           component={Splash}
@@ -50,8 +46,18 @@ const Dashboard = () => {
           component={ErrorScreen}
           options={{ headerShown: false }}
         />
+  <Stack.Screen
+          name={screens.HomeScreen}
+          component={HomeScreen}
+          options={{ headerShown: false }}
+        />
 
 
+        <Stack.Screen
+          name={screens.MyTickets}
+          component={MyTickets}
+          options={{ headerShown: false }}
+        />
 
         <Stack.Screen
           name={screens.KYC}
@@ -69,11 +75,7 @@ const Dashboard = () => {
           options={{ headerShown: false }}
         />
 
-        <Stack.Screen
-          name={screens.HomeScreen}
-          component={HomeScreen}
-          options={{ headerShown: false }}
-        />
+      
 
         <Stack.Screen
           name={screens.CongratulationScreen}
@@ -114,10 +116,15 @@ const Dashboard = () => {
           component={LoanDetails}
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name={screens.FAQ}
+          component={FAQ}
+          options={{ headerShown: false }}
+        />
 
         <Stack.Screen
-          name={screens.RaiseTicket}
-          component={RaiseTicket}
+          name={screens.RaiseTicketInput}
+          component={RaiseTicketInput}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

@@ -28,6 +28,7 @@ const customTheme = {
     },
     border: "#D2D2D2",
     disableBg: "#D3D3D3",
+    black: "#000000",
   },
   shape: {
     ...DefaultTheme.shape,
@@ -39,7 +40,7 @@ const customTheme = {
       fontFamily: "Nunito-Regular",
       fontWeight: "normal",
       fontSize: 11,
-      color: '#000000',
+      color: "#000000",
     },
     smallLightText: {
       fontFamily: "Nunito-Regular",
@@ -63,7 +64,7 @@ const customTheme = {
       fontFamily: "Nunito-Bold",
       fontWeight: "bold",
       fontSize: 14,
-      color: '#000000',
+      color: "#000000",
     },
     largeText: {
       fontFamily: "Nunito-ExtraBold",
@@ -120,7 +121,7 @@ const customTheme = {
       fontWeight: "600",
       letterSpacing: 0.4,
       lineHeight: 20,
-      color: '#000000',
+      color: "#000000",
     },
     headerText: {
       fontFamily: "Nunito-Medium",
@@ -190,6 +191,14 @@ const customTheme = {
       letterSpacing: 0,
       lineHeight: 40,
       color: "#000000",
+    },
+    accordianText: {
+      fontFamily: "Nunito-bold",
+      fontSize: 13,
+      fontWeight: "500",
+      letterSpacing: 0,
+      lineHeight: 17.25,
+      color: "#606060",
     },
   },
 };

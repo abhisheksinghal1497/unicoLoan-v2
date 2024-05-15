@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { screens } from "../../constants/screens";
 import { getHomeScreenDetails, getHomeScreenOurServices } from '../../services/ApiUtils';
 
+
 const HomeScreen = ({navigation}) => {
   const flatListRef = useRef(null);
   const screenWidth = Dimensions.get('window').width;
@@ -138,7 +139,6 @@ const HomeScreen = ({navigation}) => {
         console.log('Calculators')
         break;
       case 1:
-        // console.log('Apply For Loan')
         navigation.navigate(screens.ApplicantDetails)
         break;
      case 2:
