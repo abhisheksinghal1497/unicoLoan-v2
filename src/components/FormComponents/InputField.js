@@ -59,17 +59,34 @@ export default InputField = ({
                 <TextInput
                   onBlur={onBlur}
                   keyboardType={type}
+                  inputMode={type}
                   returnKeyType="done"
                   error={error?.message}
                   scrollEnabled={false}
                   onChangeText={(value) => {
-                    if(onChangeText){
-                      onChangeText(value)
+                    if (onChangeText) {
+                      onChangeText(value);
+                    } else {
+                      if (type === "numeric") {
+                        try {
+                          let isValid = !Number.isNaN(Number(value));
+                          if (isValid) {
+                            onChange(Number(value));
+                          } else {
+                            onChange(0);
+                          }
+                        } catch (error) {
+                          console.log(
+                            "unable to convret to number: ",
+                            value,
+                            error
+                          );
+                          onChange(value);
+                        }
+                      } else {
+                        onChange(value);
+                      }
                     }
-                    else{
-                      onChange(value);
-                    }
-                    
                   }}
                   value={value?.toString()}
                   disabled={isDisabled}
@@ -78,6 +95,7 @@ export default InputField = ({
                     styles.textInput,
                     style,
                     isDisabled ? styles.disabledInput : {},
+                    {height:isMultiline ? 100 : 0}
                   ]}
                   mode="outlined"
                   outlineColor={colors.border}
@@ -151,12 +169,13 @@ const styles = StyleSheet.create({
     backgroundColor: customTheme.colors.textInputBackground,
     paddingHorizontal: 5,
     padding: 5,
+
   },
   disabledInput: {
     backgroundColor: customTheme.colors.disableBg,
   },
   disabledContent: {
-    color: customTheme.colors.black,
+    color: customTheme.colors.primaryText
   },
   inputOutline: {
     borderWidth: 0.5,
