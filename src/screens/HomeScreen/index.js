@@ -6,8 +6,9 @@ import customTheme from '../../colors/theme';
 import { verticalScale } from '../../utils/matrcis';
 import CircularProgress from '../../components/CircularProgress'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { screens } from "../../constants/screens";
 import { getHomeScreenDetails, getHomeScreenOurServices } from '../../services/ApiUtils';
-import { screens } from '../../constants/screens';
+
 
 const HomeScreen = ({navigation}) => {
   const flatListRef = useRef(null);
@@ -65,7 +66,7 @@ const HomeScreen = ({navigation}) => {
 
   const onResume = () =>{
     console.log(currentScreen)
-    props?.navigation?.navigate(currentScreen)
+    navigation?.navigate(currentScreen)
   }
 
   const cardWidth = 350;
@@ -122,7 +123,7 @@ const HomeScreen = ({navigation}) => {
       <Text style={styles.seeDetailsresumeJourneyText}>See Details</Text>
     </TouchableOpacity>
   ) : (
-    <TouchableOpacity style={styles.seeDetailsresumeJourneyButton}>
+    <TouchableOpacity style={styles.seeDetailsresumeJourneyButton} onPress={() => onResume()}>
       <Text style={styles.seeDetailsresumeJourneyText}>Resume Journey</Text>
     </TouchableOpacity>
   )}

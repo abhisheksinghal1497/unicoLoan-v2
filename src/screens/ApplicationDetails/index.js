@@ -455,7 +455,7 @@ export default function ApplicationDetails(props) {
 
   const toggleModal = () => setShowModal(!showModal);
   const style = styles(colors);
-  const goBack = () => props.navigation.goBack();
+  const goBack = () => navigation.goBack();
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
@@ -554,3 +554,5 @@ export default function ApplicationDetails(props) {
     </View>
   );
 }
+
+
