@@ -170,7 +170,7 @@ export const getFAQDetails = () => {
           ];
           resolve(data);
           //   reject("Something went wrong");
-        }, 500);
+        }, 1000);
       });
     },
   });

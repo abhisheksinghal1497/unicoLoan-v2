@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { List } from "react-native-paper";
 import customTheme from "../../colors/theme";
 import { getFAQDetails } from "../../services/ApiUtils";
@@ -8,6 +8,7 @@ import Header from "../../components/Header";
 const FAQ = () => {
   const [FAQData, setFAQData] = useState([]);
   const [activeFaq, setActiveFaq] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const getFAQData = getFAQDetails();
   useEffect(() => {
@@ -17,8 +18,15 @@ const FAQ = () => {
   useEffect(() => {
     if (getFAQData.data) {
       setFAQData(getFAQData.data);
+      setIsLoading(false);
     }
   }, [getFAQData.data]);
+
+  // useEffect(() => {
+  //   if (getFAQData.data) {
+  //     setFAQData(getFAQData.data);
+  //   }
+  // }, [getFAQData.]);
 
   return (
     <View style={styles.container}>
@@ -32,41 +40,49 @@ const FAQ = () => {
         colour="white"
       />
 
-      <List.AccordionGroup
-        onAccordionPress={(data) => {
-          setActiveFaq(data);
-          //   console.log("data111", JSON.stringify(data, null, 2));
-        }}
-        expandedId={activeFaq}
-      >
-        {FAQData.map((faq) => {
-          return (
-            <View
-              key={faq.id}
-              style={[
-                styles.accordCard,
-                {
-                  backgroundColor: activeFaq === faq.id ? "#F2F2F2" : "#FEF9EB",
-                },
-              ]}
-            >
-              <List.Accordion
-                title={faq.title}
-                id={faq.id}
-                titleNumberOfLines={3}
-                titleStyle={styles.accordTitle}
-                style={{
-                  backgroundColor: activeFaq === faq.id ? "#F2F2F2" : "#FEF9EB",
-                }}
+      {isLoading ? (
+        <View style={styles.loader}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      ) : (
+        <List.AccordionGroup
+          onAccordionPress={(data) => {
+            setActiveFaq(data);
+            //   console.log("data111", JSON.stringify(data, null, 2));
+          }}
+          expandedId={activeFaq}
+        >
+          {FAQData.map((faq) => {
+            return (
+              <View
+                key={faq.id}
+                style={[
+                  styles.accordCard,
+                  {
+                    backgroundColor:
+                      activeFaq === faq.id ? "#F2F2F2" : "#FEF9EB",
+                  },
+                ]}
               >
-                <View style={styles.accordDetailsView}>
-                  <Text style={styles.accordText}>{faq.value}</Text>
-                </View>
-              </List.Accordion>
-            </View>
-          );
-        })}
-      </List.AccordionGroup>
+                <List.Accordion
+                  title={faq.title}
+                  id={faq.id}
+                  titleNumberOfLines={3}
+                  titleStyle={styles.accordTitle}
+                  style={{
+                    backgroundColor:
+                      activeFaq === faq.id ? "#F2F2F2" : "#FEF9EB",
+                  }}
+                >
+                  <View style={styles.accordDetailsView}>
+                    <Text style={styles.accordText}>{faq.value}</Text>
+                  </View>
+                </List.Accordion>
+              </View>
+            );
+          })}
+        </List.AccordionGroup>
+      )}
     </View>
   );
 };
@@ -100,5 +116,10 @@ const styles = StyleSheet.create({
   accordDetailsView: {
     padding: 15,
     paddingTop: 0,
+  },
+  loader: {
+    flexGrow: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
