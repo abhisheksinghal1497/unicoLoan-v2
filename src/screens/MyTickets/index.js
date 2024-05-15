@@ -6,37 +6,30 @@ import Header from '../../components/Header'
 import { screens } from '../../constants/screens'
 import CustomButton from '../../components/Button'
 import moment from 'moment'
+import { getListOfTickets } from '../../services/ApiUtils'
 
 const WIDTH = Dimensions.get('window').width;
 const screenName = "My Tickets"
 
 const MyTickets = (props) => {
   const { fonts } = useTheme();
+  const getTicketsData = getListOfTickets();
+  const [data, setData] = useState([]);
 
-  const data = [
-    {
-      status: 0,
-      ticket_no: 210,
-      title: 'RM Not Responding',
-      description: 'RM is not attending my concerns and queries.',
-      image_url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFHsQQrrFRJ9nccLjDbT8OSLsbXzeLe3rQrEHn1FPzrA&s'
-    },
-    {
-      status: 1,
-      ticket_no: 214,
-      title: 'Query',
-      description: 'Subject to be placed on the case.',
-      image_url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFHsQQrrFRJ9nccLjDbT8OSLsbXzeLe3rQrEHn1FPzrA&s',
-      resolvedBy: 'Dixit Ukani',
-      resolvedAt: 1684855139,
-      rating: 4,
+  useEffect(()=>{
+    getTicketsData?.mutate()
+  },[])
+
+  useEffect(()=>{
+    if(getTicketsData?.data){
+      setData(getTicketsData?.data)
     }
-  ]
+  },[getTicketsData?.data])
 
   const Card = ({ item, index }) => {
     const [rating, setRating] = useState(item?.rating - 1 || 0);
     return (
-      <View style={[styles.cardContainer, { marginTop: index !== 0 ? 10 : 0 }]}>
+      <View key={index.toString()} style={[styles.cardContainer, { marginTop: index !== 0 ? 10 : 0 }]}>
         <View style={styles.rowContainer}>
           <View style={[styles.circleContainer, {
             backgroundColor: item.status === 0 ? '#2012F9' : '#1EC239',
@@ -92,10 +85,10 @@ const MyTickets = (props) => {
           <View style={[styles.rowContainer, styles.buttonMainContainer]}>
             <Text style={[fonts.bodyBold, { color: '#888888' }]}>Rate the Service</Text>
             <View style={styles.rowContainer}>
-              {Array(5).fill(null)?.map((e, index) => {
+              {Array(5).fill(null)?.map((e, i) => {
                 return (
-                  <TouchableOpacity onPress={() => setRating(index)}>
-                    <Image source={rating >= index ?
+                  <TouchableOpacity key={i.toString()} onPress={() => setRating(i)}>
+                    <Image source={rating >= i ?
                       require('../../assets/filled_star.png') :
                       require('../../assets/empty_star.png')} style={styles.starImage} />
                   </TouchableOpacity>
@@ -125,7 +118,7 @@ const MyTickets = (props) => {
       <FlatList
         data={data}
         renderItem={renderItem}
-        keyExtractor={(item) => item.ticket_no}
+        keyExtractor={(item) => item.ticket_no.toString()}
       />
     </View>
   )
