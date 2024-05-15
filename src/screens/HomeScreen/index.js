@@ -6,7 +6,9 @@ import customTheme from '../../colors/theme';
 import { horizontalScale, verticalScale } from '../../utils/matrcis';
 import CircularProgress from '../../components/CircularProgress'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { screens } from "../../constants/screens";
 import { getHomeScreenDetails, getHomeScreenOurServices } from '../../services/ApiUtils';
+
 
 const HomeScreen = ({navigation}) => {
   const flatListRef = useRef(null);
@@ -65,7 +67,7 @@ const HomeScreen = ({navigation}) => {
 
   const onResume = () =>{
     console.log(currentScreen)
-    props?.navigation?.navigate(currentScreen)
+    navigation?.navigate(currentScreen)
   }
 
   const cardWidth = 350;
@@ -122,7 +124,7 @@ const HomeScreen = ({navigation}) => {
       <Text style={styles.seeDetailsresumeJourneyText}>See Details</Text>
     </TouchableOpacity>
   ) : (
-    <TouchableOpacity style={styles.seeDetailsresumeJourneyButton}>
+    <TouchableOpacity style={styles.seeDetailsresumeJourneyButton} onPress={() => onResume()}>
       <Text style={styles.seeDetailsresumeJourneyText}>Resume Journey</Text>
     </TouchableOpacity>
   )}
@@ -138,7 +140,7 @@ const HomeScreen = ({navigation}) => {
         console.log('Calculators')
         break;
       case 1:
-        console.log('Apply For Loan')
+        navigation.navigate(screens.ApplicantDetails)
         break;
      case 2:
       console.log('Status Check')
