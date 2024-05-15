@@ -3,11 +3,12 @@ import { FlatList, Dimensions, View, StyleSheet, Text, Image, ScrollView, Toucha
 import CardComponent from './cardComponent';
 import { colors } from '../../colors';
 import customTheme from '../../colors/theme';
-import { verticalScale } from '../../utils/matrcis';
+import { horizontalScale, verticalScale } from '../../utils/matrcis';
 import CircularProgress from '../../components/CircularProgress'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { screens } from "../../constants/screens";
 import { getHomeScreenDetails, getHomeScreenOurServices } from '../../services/ApiUtils';
-import { screens } from '../../constants/screens';
+
 
 const HomeScreen = ({navigation}) => {
   const flatListRef = useRef(null);
@@ -17,6 +18,7 @@ const HomeScreen = ({navigation}) => {
   const [data, setData] = useState([])
   const [data2, setData2] = useState([])
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedDotIndex, setSelectedDotIndex] = useState(0); 
 
   console.log('datatt', data)
   const [currentScreen, setCurrentScreen] = React.useState(false);
@@ -65,7 +67,7 @@ const HomeScreen = ({navigation}) => {
 
   const onResume = () =>{
     console.log(currentScreen)
-    props?.navigation?.navigate(currentScreen)
+    navigation?.navigate(currentScreen)
   }
 
   const cardWidth = 350;
@@ -122,7 +124,7 @@ const HomeScreen = ({navigation}) => {
       <Text style={styles.seeDetailsresumeJourneyText}>See Details</Text>
     </TouchableOpacity>
   ) : (
-    <TouchableOpacity style={styles.seeDetailsresumeJourneyButton}>
+    <TouchableOpacity style={styles.seeDetailsresumeJourneyButton} onPress={() => onResume()}>
       <Text style={styles.seeDetailsresumeJourneyText}>Resume Journey</Text>
     </TouchableOpacity>
   )}
@@ -158,23 +160,35 @@ const HomeScreen = ({navigation}) => {
     }
   };
 
+  const scrollToIndex = (index) => {
+    flatListRef.current.scrollToIndex({ animated: true, index });
+    setSelectedDotIndex(index);
+  }
+
+  const handleScroll = (event) => {
+    const { contentOffset } = event.nativeEvent;
+    const index = Math.round(contentOffset.x / screenWidth);
+    setSelectedDotIndex(index);
+  };
+
   return (
     <View style={{ flex:1}}>
     <ScrollView>
     {/* <SafeAreaView style={styles.container}> */}
         {isLoading ? (
           <View style={styles.ActivityStyle}>
- <ActivityIndicator size="large" color="#0000ff" />
+ <ActivityIndicator size="large" color={colors.coreBlue} />
           </View>
       ) : (
-       
-        <><View style={{ backgroundColor: colors.coreCream, }}>
-              <View style={styles.profileImageView}>
-                <TouchableOpacity onPress={() => navigation.navigate('ProfileImageScreen')}>
+        <>
+        <View style={{ backgroundColor: colors.coreCream, }}>
+              {/* <View style={styles.profileImageView}> */}
+                <TouchableOpacity style={styles.profileImageView} onPress={() => navigation.navigate('ProfileImageScreen')}>
                   <Image source={require('../../../assets/images/profileIcon.png')} style={styles.profileIcon} />
-                </TouchableOpacity>
+              
                 <Text style={styles.profileName}>Bhavesh Rao</Text>
-              </View>
+                </TouchableOpacity>
+              {/* </View> */}
               <View style={{marginBottom: verticalScale(-60) }}>
                 <CardComponent />
               </View>
@@ -192,7 +206,7 @@ const HomeScreen = ({navigation}) => {
                     </ImageBackground>
                   </View>
                 ) :
-                  <View style={styles.secondcards}>
+                  <><View style={styles.secondcards}>
                     <FlatList
                       ref={flatListRef}
                       data={data}
@@ -202,9 +216,22 @@ const HomeScreen = ({navigation}) => {
                       showsHorizontalScrollIndicator={false}
                       contentContainerStyle={{
                         paddingHorizontal: (screenWidth - cardWidth) / 2,
-                      }} />
-                  </View>}
-              </View><View style={{ marginTop: verticalScale(25) }}>
+                        
+            // scrollEventThrottle={16} 
+                      }} 
+                      onScroll={handleScroll}
+                      scrollEventThrottle={16}
+                      />
+                  </View><View style={styles.dotsContainer}>
+                      {data.map((_, index) => (
+                        <TouchableOpacity
+                          key={index}
+                          style={[styles.dot, selectedDotIndex === index && styles.selectedDot]}
+                          onPress={() => scrollToIndex(index)} />
+                      ))}
+                    </View></>
+                  }
+              </View><View style={{ marginTop: verticalScale(20) }}>
                 <Text style={styles.ourSerices}>
                   Our Services
                 </Text>
@@ -220,10 +247,9 @@ const HomeScreen = ({navigation}) => {
                     </TouchableOpacity>
                   ))}
                 </View>
-              </View></>
-      
+              </View>
+              </>
       )}
-            
     {/* </SafeAreaView> */}
     </ScrollView>
     </View>
@@ -235,16 +261,36 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  dotsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: verticalScale(15),
+    alignItems:'center'
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.grey,
+    marginHorizontal: 5,
+  },
+  selectedDot: {
+    backgroundColor: colors.coreBlue,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+  },
   ActivityStyle:{
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignSelf:'center',
+    marginTop: verticalScale(325)
   },
 
-  loanView:{ marginTop: verticalScale(13), flexDirection: 'row', justifyContent: 'space-between', paddingLeft: 21, paddingRight: 14, alignItems: 'center' },
+  loanView:{ marginTop: verticalScale(13), flexDirection: 'row', justifyContent: 'space-between', paddingLeft: horizontalScale(21), paddingRight: horizontalScale(14), alignItems: 'center' },
   loanTitle:{color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelMedium.fontWeight},
   uhfl:{ color: colors.coreBlue, fontSize: 8, fontWeight: customTheme.fonts.labelMedium.fontWeight },
-  profileImageView:{ flexDirection: 'row', alignItems: 'center', left: 40, marginBottom: verticalScale(10), marginTop: verticalScale(21) },
+  profileImageView:{ flexDirection: 'row', alignItems: 'center', left: horizontalScale(40), marginBottom: verticalScale(10), marginTop: verticalScale(21) },
   lanloanview:{ marginTop: verticalScale(6), flexDirection: 'row', justifyContent: 'space-between', paddingLeft: 21, paddingRight: 14, alignItems: 'center' },
   lan:{
      color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelMedium.fontWeight 
@@ -253,20 +299,20 @@ const styles = StyleSheet.create({
     color: colors.coreBlue, fontSize: 10, fontWeight: customTheme.fonts.labelMedium.fontWeight, paddingRight: 12
   },
   loanAmount: {
-    alignSelf: 'flex-end', marginRight: 14, color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: 5
+    alignSelf: 'flex-end', marginRight: horizontalScale(14), color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: 5
   },
-  bottomLine: { borderBottomWidth: 1, borderColor: colors.coreBlue, width: '20%', alignSelf: 'flex-end', marginRight: 18 },
+  bottomLine: { borderBottomWidth: 1, borderColor: colors.coreBlue, width: '20%', alignSelf: 'flex-end', marginRight: horizontalScale(18) },
   roiText: {
-    alignSelf: 'flex-end', color: colors.coreBlue, fontSize: 10, fontWeight: customTheme.fonts.labelMedium.fontWeight, paddingRight: 72, marginTop: 4
+    alignSelf: 'flex-end', color: colors.coreBlue, fontSize: 10, fontWeight: customTheme.fonts.labelMedium.fontWeight, paddingRight: horizontalScale(75), marginTop: 4
   },
   roi: {
-    alignSelf: 'flex-end', marginRight: 50, color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: 5
+    alignSelf: 'flex-end', marginRight: horizontalScale(51), color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: 5
   },
   tenure: {
-    alignSelf: 'flex-end', marginRight: 45, color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: 5
+    alignSelf: 'flex-end', marginRight: horizontalScale(44), color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: 5
   },
   tenuretext: {
-    alignSelf: 'flex-end', color: colors.coreBlue, fontSize: 10, fontWeight: customTheme.fonts.labelMedium.fontWeight, paddingRight: 58, marginTop: 4
+    alignSelf: 'flex-end', color: colors.coreBlue, fontSize: 10, fontWeight: customTheme.fonts.labelMedium.fontWeight, paddingRight: horizontalScale(58), marginTop: 4
   },
   belowCardView: {
     position: 'absolute', top: 75, left: 20.5, flexDirection: 'row', alignItems: 'center'
@@ -329,7 +375,7 @@ const styles = StyleSheet.create({
   },
 
   ourSerices: {
-    color: colors.black, fontSize: 18, lineHeight: 28, left: 20, bottom: 5
+    color: colors.black, fontSize: 18, lineHeight: 28, left: horizontalScale(28), bottom: 5
   },
   servicesCards: {
     width: 105.5, height: 104.5, backgroundColor: colors.white, borderRadius: 6, shadowColor: colors.black, marginBottom: verticalScale(10),
@@ -339,13 +385,13 @@ const styles = StyleSheet.create({
     elevation: 5, justifyContent: 'center', 
   },
   ourSericesCards:
-    { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, flexWrap: 'wrap', },
+    { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: horizontalScale(28), flexWrap: 'wrap', },
   serviceImage:
     { width: 39, height: 39, resizeMode: 'contain', alignSelf: 'center' },
   serviceText: { color: colors.coreBlue, fontSize: 12, fontWeight: customTheme.fonts.labelMedium.fontWeight, alignSelf: 'center', marginTop: verticalScale(9) },
   yourLoan: {
 
-    color: colors.black, fontSize: 18, lineHeight: 28, bottom: 5, marginLeft: verticalScale(22),
+    color: colors.black, fontSize: 18, lineHeight: 28, bottom: verticalScale(5), marginLeft: verticalScale(18),
   },
   seeDetailsresumeJourneyButton: {
     justifyContent: 'center',
