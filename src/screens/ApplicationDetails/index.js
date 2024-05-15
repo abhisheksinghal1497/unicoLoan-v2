@@ -199,6 +199,7 @@ export default function ApplicationDetails(props) {
       validations: validations.numberOnly,
       isRequired: true,
       value: "",
+      isDisabled: true
     },
     {
       id: "alternateMobileNumber",
@@ -219,6 +220,7 @@ export default function ApplicationDetails(props) {
       validations: validations.email,
       isRequired: false,
       value: "",
+      isDisabled: true
     },
 
     {
