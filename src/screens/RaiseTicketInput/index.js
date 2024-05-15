@@ -11,7 +11,7 @@ import { validations } from "../../constants/validations";
 import CustomButton from "../../components/Button";
 import { assets } from "../../assets/assets";
 
-const RaiseTicket = (props) => {
+const RaiseTicketInput = (props) => {
   const {
     control,
     handleSubmit,
@@ -153,6 +153,7 @@ const RaiseTicket = (props) => {
         <CustomButton
           type="primary"
           label="Continue"
+          isDisabled={false}
           buttonContainer={styles.buttonContainer}
           // buttonContainer={{}}
           onPress={handleSubmit(onSubmit)
@@ -163,7 +164,7 @@ const RaiseTicket = (props) => {
   );
 };
 
-export default RaiseTicket;
+export default RaiseTicketInput;
 
 const styles = StyleSheet.create({
   container: {

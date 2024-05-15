@@ -2,6 +2,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { colors } from '../colors'
 import { useTheme } from 'react-native-paper'
+import { verticalScale } from '../utils/matrcis'
 
 
 const Header = (props) => {
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
         flexDirection: 'row',
         alignItems: 'center',
-        marginVertical: 15,
+        marginVertical: verticalScale(10),
     },
     backImage: {
         width: 20,

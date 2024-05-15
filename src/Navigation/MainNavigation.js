@@ -18,7 +18,9 @@ import ApplicationDetails from '../screens/ApplicationDetails';
 import KYCDocuments from '../screens/KYCDocuments';
 import Sanction from '../screens/Sanction';
 import LoanDetails from '../screens/LoanDetails';
-import RaiseTicket from '../screens/RaiseTicketInput';
+import MyTickets from '../screens/MyTickets';
+import RaiseTicket from '../screens/RaiseTicket';
+import RaiseTicketInput from '../screens/RaiseTicketInput';
 
 const Stack = createStackNavigator();
 
@@ -26,7 +28,7 @@ const Dashboard = () => {
   return (
 
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={screens.RaiseTicket}>
+      <Stack.Navigator initialRouteName={screens.RaiseTicketInput}>
     
        {/* <StatusBar
                 backgroundColor="white"
@@ -58,6 +60,12 @@ const Dashboard = () => {
         />
 
         <Stack.Screen
+          name={screens.MyTickets}
+          component={MyTickets}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
           name={screens.KYC}
           component={KYC}
           options={{ headerShown: false }}
@@ -67,7 +75,7 @@ const Dashboard = () => {
           component={CaptureAdhaar}
           options={{ headerShown: false }}
         />
-         <Stack.Screen
+        <Stack.Screen
           name={screens.CaptureSelfie}
           component={CaptureSelfie}
           options={{ headerShown: false }}
@@ -89,10 +97,10 @@ const Dashboard = () => {
           component={Eligibility}
           options={{ headerShown: false }}
         />
-         <Stack.Screen
+        <Stack.Screen
           name={screens.ProfileImageScreen}
           component={ProfileImageScreen}
-          />
+        />
         <Stack.Screen
           name={screens.KYCDocuments}
           component={KYCDocuments}
@@ -114,8 +122,8 @@ const Dashboard = () => {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name={screens.RaiseTicket}
-          component={RaiseTicket}
+          name={screens.RaiseTicketInput}
+          component={RaiseTicketInput}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

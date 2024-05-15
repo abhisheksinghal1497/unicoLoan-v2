@@ -1,6 +1,7 @@
 export const screens = {
     Splash: 'Splash',
     PanDetails: 'PanDetails',
+    MyTickets: 'My Tickets',
     KYC: 'KYC',
     CaptureAdhaar: 'CaptureAdhaar',
     CaptureSelfie: 'CaptureSelfie',
@@ -28,5 +29,6 @@ export const screens = {
     ProfileImageScreen: "ProfileImageScreen",
     Sanction:"Sanction",
     LoanDetails:"LoanDetails",
-    RaiseTicket:'RaiseTicket'
+    RaiseTicket:'RaiseTicket',
+    RaiseTicketInput: "RaiseTicketInput"
   };
