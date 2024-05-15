@@ -4,13 +4,14 @@ import { colors } from '../colors';
 import { StyleSheet, Text, View } from 'react-native';
 import customTheme from '../colors/theme';
 
-export default function Button(props) {
-    const { type, label, left, right, buttonContainer, labelStyle, icon, onPress, rippleColor } = props;
+export default function CustomButton(props) {
+    const { type, label, left, right, buttonContainer, labelStyle, icon, onPress, rippleColor, disable = false } = props;
     const theme = useTheme();
     return type === "primary" ? (
         <TouchableRipple
             rippleColor={rippleColor || "rgba(255, 255, 255, .32)"}
-            style={[styles.buttonContainer, buttonContainer]}
+            style={[styles.buttonContainer, buttonContainer, {opacity: disable ? 0.5 : 1}]}
+            disabled={disable}
             onPress={onPress} >
             <View style={styles.rowContainer}>
                 {left}
@@ -44,7 +45,7 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         backgroundColor: customTheme.colors.primary,
-        paddingVertical: 8,
+        paddingVertical: 12,
         justifyContent: "center",
         alignItems: "center",
         elevation: 5,
