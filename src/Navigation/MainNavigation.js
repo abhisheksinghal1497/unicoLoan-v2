@@ -18,6 +18,7 @@ import ApplicationDetails from '../screens/ApplicationDetails';
 import KYCDocuments from '../screens/KYCDocuments';
 import Sanction from '../screens/Sanction';
 import LoanDetails from '../screens/LoanDetails';
+import FAQ from '../screens/FAQ';
 import MyTickets from '../screens/MyTickets';
 import RaiseTicket from '../screens/RaiseTicket';
 
@@ -27,7 +28,7 @@ const Dashboard = () => {
   return (
 
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={screens.HomeScreen}>
+      <Stack.Navigator initialRouteName={screens.FAQ}>
 
         {/* <StatusBar
                 backgroundColor="white"
@@ -118,6 +119,11 @@ const Dashboard = () => {
         <Stack.Screen
           name={screens.LoanDetails}
           component={LoanDetails}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={screens.FAQ}
+          component={FAQ}
           options={{ headerShown: false }}
         />
 

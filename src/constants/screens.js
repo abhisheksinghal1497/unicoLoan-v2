@@ -18,7 +18,6 @@ export const screens = {
     SelfPicture: 'SelfPicture',
     Eligiblity: 'Eligiblity',
     InPrincipleSection: 'InPrincipleSection',
-    LoanDetail: 'LoanDetail',
     PancardNumber: 'PancardNumber',
     PandcardDetails: 'PandcardDetails',
     NoInternet: 'NoInternet',
@@ -29,5 +28,6 @@ export const screens = {
     ProfileImageScreen: "ProfileImageScreen",
     Sanction:"Sanction",
     LoanDetails:"LoanDetails",
+    FAQ:"FAQ",
     RaiseTicket: "RaiseTicket"
   };
