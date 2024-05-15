@@ -7,6 +7,7 @@ import { verticalScale } from '../../utils/matrcis';
 import CircularProgress from '../../components/CircularProgress'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getHomeScreenDetails, getHomeScreenOurServices } from '../../services/ApiUtils';
+import { screens } from '../../constants/screens';
 
 const HomeScreen = ({navigation}) => {
   const flatListRef = useRef(null);
@@ -137,7 +138,7 @@ const HomeScreen = ({navigation}) => {
         console.log('Calculators')
         break;
       case 1:
-        console.log('Apply For Loan')
+        navigation.navigate(screens.ApplicantDetails)
         break;
      case 2:
       console.log('Status Check')

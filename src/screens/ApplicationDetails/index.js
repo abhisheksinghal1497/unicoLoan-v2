@@ -146,7 +146,7 @@ export default function ApplicationDetails(props) {
       type: component.textInput,
       placeHolder: "Enter middle Name",
       validations: validations.nameWithoutRequired,
-      isRequired: true,
+      isRequired: false,
       value: "",
     },
     {
@@ -185,9 +185,10 @@ export default function ApplicationDetails(props) {
       label: "Alternate mobile number",
       type: component.textInput,
       placeHolder: "Enter alternate mobile number",
-      validations: validations.phone,
+      validations: validations.numberOnly,
       isRequired: false,
       value: "",
+      keyboardtype: "numeric",
     },
 
     {
@@ -398,9 +399,10 @@ export default function ApplicationDetails(props) {
       label: "Pincode",
       type: component.textInput,
       placeHolder: "Enter Pincode",
-      validations: validations.text,
+      validations: validations.numberOnly,
       isRequired: true,
       value: "",
+      keyboardtype: "numeric",
     },
   ];
 
