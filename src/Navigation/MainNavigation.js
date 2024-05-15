@@ -18,7 +18,7 @@ import ApplicationDetails from '../screens/ApplicationDetails';
 import KYCDocuments from '../screens/KYCDocuments';
 import Sanction from '../screens/Sanction';
 import LoanDetails from '../screens/LoanDetails';
-import RaiseTicket from '../screens/RaiseTicket';
+import RaiseTicket from '../screens/RaiseTicketInput';
 
 const Stack = createStackNavigator();
 
