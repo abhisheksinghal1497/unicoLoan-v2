@@ -18,6 +18,7 @@ import ApplicationDetails from '../screens/ApplicationDetails';
 import KYCDocuments from '../screens/KYCDocuments';
 import Sanction from '../screens/Sanction';
 import LoanDetails from '../screens/LoanDetails';
+import MyTickets from '../screens/MyTickets';
 import RaiseTicket from '../screens/RaiseTicket';
 
 const Stack = createStackNavigator();
@@ -54,6 +55,12 @@ const Dashboard = () => {
         <Stack.Screen
           name={screens.PanDetails}
           component={PanDetails}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name={screens.MyTickets}
+          component={MyTickets}
           options={{ headerShown: false }}
         />
 
