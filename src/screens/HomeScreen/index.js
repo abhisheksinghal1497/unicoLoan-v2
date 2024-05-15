@@ -16,8 +16,7 @@ const HomeScreen = ({navigation}) => {
   const [data, setData] = useState([])
   const [data2, setData2] = useState([])
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedDotIndex, setSelectedDotIndex] = useState(0); // State for the currently selected dot
-
+  const [selectedDotIndex, setSelectedDotIndex] = useState(0); 
 
   console.log('datatt', data)
   const [currentScreen, setCurrentScreen] = React.useState(false);
@@ -169,7 +168,7 @@ const HomeScreen = ({navigation}) => {
     {/* <SafeAreaView style={styles.container}> */}
         {isLoading ? (
           <View style={styles.ActivityStyle}>
- <ActivityIndicator size="large" color="#0000ff" />
+ <ActivityIndicator size="large" color={colors.coreBlue} />
           </View>
       ) : (
         <>
@@ -270,13 +269,14 @@ const styles = StyleSheet.create({
   ActivityStyle:{
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignSelf:'center',
+    marginTop: verticalScale(325)
   },
 
-  loanView:{ marginTop: verticalScale(13), flexDirection: 'row', justifyContent: 'space-between', paddingLeft: 21, paddingRight: 14, alignItems: 'center' },
+  loanView:{ marginTop: verticalScale(13), flexDirection: 'row', justifyContent: 'space-between', paddingLeft: horizontalScale(21), paddingRight: horizontalScale(14), alignItems: 'center' },
   loanTitle:{color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelMedium.fontWeight},
   uhfl:{ color: colors.coreBlue, fontSize: 8, fontWeight: customTheme.fonts.labelMedium.fontWeight },
-  profileImageView:{ flexDirection: 'row', alignItems: 'center', left: 40, marginBottom: verticalScale(10), marginTop: verticalScale(21) },
+  profileImageView:{ flexDirection: 'row', alignItems: 'center', left: horizontalScale(40), marginBottom: verticalScale(10), marginTop: verticalScale(21) },
   lanloanview:{ marginTop: verticalScale(6), flexDirection: 'row', justifyContent: 'space-between', paddingLeft: 21, paddingRight: 14, alignItems: 'center' },
   lan:{
      color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelMedium.fontWeight 
@@ -285,20 +285,20 @@ const styles = StyleSheet.create({
     color: colors.coreBlue, fontSize: 10, fontWeight: customTheme.fonts.labelMedium.fontWeight, paddingRight: 12
   },
   loanAmount: {
-    alignSelf: 'flex-end', marginRight: 14, color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: 5
+    alignSelf: 'flex-end', marginRight: horizontalScale(14), color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: 5
   },
-  bottomLine: { borderBottomWidth: 1, borderColor: colors.coreBlue, width: '20%', alignSelf: 'flex-end', marginRight: 18 },
+  bottomLine: { borderBottomWidth: 1, borderColor: colors.coreBlue, width: '20%', alignSelf: 'flex-end', marginRight: horizontalScale(18) },
   roiText: {
-    alignSelf: 'flex-end', color: colors.coreBlue, fontSize: 10, fontWeight: customTheme.fonts.labelMedium.fontWeight, paddingRight: 72, marginTop: 4
+    alignSelf: 'flex-end', color: colors.coreBlue, fontSize: 10, fontWeight: customTheme.fonts.labelMedium.fontWeight, paddingRight: horizontalScale(75), marginTop: 4
   },
   roi: {
-    alignSelf: 'flex-end', marginRight: 50, color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: 5
+    alignSelf: 'flex-end', marginRight: horizontalScale(51), color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: 5
   },
   tenure: {
-    alignSelf: 'flex-end', marginRight: 45, color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: 5
+    alignSelf: 'flex-end', marginRight: horizontalScale(44), color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: 5
   },
   tenuretext: {
-    alignSelf: 'flex-end', color: colors.coreBlue, fontSize: 10, fontWeight: customTheme.fonts.labelMedium.fontWeight, paddingRight: 58, marginTop: 4
+    alignSelf: 'flex-end', color: colors.coreBlue, fontSize: 10, fontWeight: customTheme.fonts.labelMedium.fontWeight, paddingRight: horizontalScale(58), marginTop: 4
   },
   belowCardView: {
     position: 'absolute', top: 75, left: 20.5, flexDirection: 'row', alignItems: 'center'

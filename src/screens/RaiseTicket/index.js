@@ -7,6 +7,7 @@ import customTheme from '../../colors/theme'
 import { Image } from 'react-native'
 import Button from '../../components/Button'
 import { getRaiseTicketsListScreen, getRaiseTicketsScreenCategory } from '../../services/ApiUtils'
+import { Colors } from 'react-native/Libraries/NewAppScreen'
 
 const RaiseTicket = ({ navigation }) => {
     const getCateogoryData = getRaiseTicketsScreenCategory()
@@ -16,7 +17,7 @@ const RaiseTicket = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [data, setData] = useState([])
     const [data2, setData2] = useState([])
-console.log('selectedIndex---',selectedIndex)
+    console.log('selectedIndex---', selectedIndex)
     useEffect(() => {
         getCateogoryData?.mutate()
         getTicketListData?.mutate()
@@ -60,19 +61,19 @@ console.log('selectedIndex---',selectedIndex)
     );
 
 
-    
+
     return (
         <View style={{ flex: 1 }}>
             {
                 isLoading ? (<View style={styles.ActivityStyle}>
-                    <ActivityIndicator size="large" color="#0000ff" />
+                    <ActivityIndicator size="large" color={colors.coreBlue} />
                 </View>) :
                     <><ScrollView>
                         <View style={{ marginHorizontal: horizontalScale(10) }}>
                             <Header
-                            titleStyle={{marginRight: horizontalScale(10)}}
+                                titleStyle={{ marginRight: horizontalScale(10) }}
                                 onPressLeft={() => navigation.goBack()}
-                                colour="Transparent"
+                                colour={colors.transparent}
                                 rightStyle={{ width: 32, height: 32 }}
                                 right={require('../../../assets/images/ChatsCircle.png')}
                                 left={require('../../../assets/images/Back.png')}
@@ -80,7 +81,7 @@ console.log('selectedIndex---',selectedIndex)
                                 onPressRight={() => alert("Faq")} />
                         </View>
                         <View>
-                            <Text style={{ marginLeft: horizontalScale(22), fontWeight: '500', fontSize: 16, maxWidth: '80%', color: '#342222', lineHeight: 28 }}>
+                            <Text style={styles.choose}>
                                 Choose the category under which your compaint falls
                             </Text>
                             <FlatList
@@ -90,40 +91,40 @@ console.log('selectedIndex---',selectedIndex)
                                 contentContainerStyle={styles.ourSericesCards} />
 
                             {selectedCategory !== null && (
-                                <View style={{ marginHorizontal: horizontalScale(20), marginTop: verticalScale(20), marginBottom: verticalScale(20) }}>
+                                <View style={styles.selectedItem}>
                                     <FlatList
                                         data={data2[selectedCategory].options}
                                         renderItem={({ item, index }) => (
                                             <TouchableOpacity onPress={() => { setSelectedIndex(index) }} style={[styles.optionItem, { flexDirection: 'row' }]}>
                                                 <Image
-                                                    style={{ width: 20, height: 20, resizeMode: 'contain' }}
+                                                    style={styles.radio}
                                                     source={index === selectedIndex
                                                         ? require('../../../assets/images/filledRadio.png')
                                                         : require('../../../assets/images/unfilledRadio.png')} />
-                                                <Text style={{ marginLeft: horizontalScale(16), fontSize: 16, fontWeight: '500', color: '#342222' }}>{item}</Text>
+                                                <Text style={styles.item}>{item}</Text>
                                             </TouchableOpacity>
                                         )}
                                         keyExtractor={(item, index) => index.toString()} />
                                 </View>
                             )}
                         </View>
-                        <View style={{ marginHorizontal: horizontalScale(20), marginTop: verticalScale(240) }}>
+                        <View style={styles.buttonview}>
                             <Button
-                               onPress={() => {
-                                if (selectedIndex !== null) {
-                                    const selectedCategoryTitle = data[selectedCategory].title;
-                                    const selectedItem = data2[selectedCategory].options[selectedIndex];
-                                    navigation.navigate('RaiseTicketInput', { selectedCategoryTitle, selectedItem });
-                                }
-                            }}
+                                onPress={() => {
+                                    if (selectedIndex !== null) {
+                                        const selectedCategoryTitle = data[selectedCategory].title;
+                                        const selectedItem = data2[selectedCategory].options[selectedIndex];
+                                        navigation.navigate('RaiseTicketInput', { selectedCategoryTitle, selectedItem });
+                                    }
+                                }}
                                 type="primary"
                                 label="Next"
-                                disable={ selectedIndex == null ? true : false}
-                                style={{ marginBottom: verticalScale(5),}}
+                                disable={selectedIndex == null ? true : false}
+                                style={{ marginBottom: verticalScale(5), }}
                             />
                         </View>
                     </ScrollView>
-                        </>
+                    </>
             }
         </View>
     )
@@ -147,6 +148,18 @@ const styles = StyleSheet.create({
         margin: 5,
         marginTop: verticalScale(25)
     },
+    buttonview: {
+        marginHorizontal: horizontalScale(20),
+        marginTop: verticalScale(240)
+    },
+    radio: { width: 20, height: 20, resizeMode: 'contain' },
+    item: { marginLeft: horizontalScale(16), fontSize: 16, fontWeight: '500', color: colors.Brown },
+    choose: { marginLeft: horizontalScale(22), fontWeight: '500', fontSize: 16, maxWidth: '80%', color: '#342222', lineHeight: 28 },
+    selectedItem: {
+        marginHorizontal: horizontalScale(20),
+        marginTop: verticalScale(20),
+        marginBottom: verticalScale(20)
+    },
     ActivityStyle: {
         flex: 1,
         justifyContent: 'center',
@@ -169,7 +182,7 @@ const styles = StyleSheet.create({
     serviceText: {
 
         fontSize: 16,
-        fontWeight: customTheme.fonts.labelMedium.fontWeight,
+        fontWeight:'500',
         alignSelf: 'center',
         marginTop: verticalScale(4),
     },
