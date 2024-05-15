@@ -23,7 +23,7 @@ const FAQ = () => {
   return (
     <View style={styles.container}>
       <Header
-        title="Frequently Asked Questions:"
+        title="Frequently Asked Questions"
         left={require("../../images/back.png")}
         onPressLeft={() => {
           navigation.goBack();

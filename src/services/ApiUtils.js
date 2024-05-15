@@ -222,3 +222,40 @@ export const getRaiseTicketsListScreen = () => {
 
     return mutate
 }
+
+export const getListOfTickets = () =>{
+    const mutate = useMutation({
+        networkMode:"always",
+        mutationFn:async()=>{
+        
+           return new Promise((resolve, reject)=>{
+              
+                 setTimeout(()=>{
+                    const data = [
+                        {
+                          status: 0, // 0 for in process and 1 for resolved
+                          ticket_no: 210,
+                          title: 'RM Not Responding',
+                          description: 'RM is not attending my concerns and queries.',
+                          image_url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFHsQQrrFRJ9nccLjDbT8OSLsbXzeLe3rQrEHn1FPzrA&s'
+                        },
+                        {
+                          status: 1,
+                          ticket_no: 214,
+                          title: 'Query',
+                          description: 'Subject to be placed on the case.',
+                          image_url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFHsQQrrFRJ9nccLjDbT8OSLsbXzeLe3rQrEHn1FPzrA&s',
+                          resolvedBy: 'Dixit Ukani',
+                          resolvedAt: 1684855139, // date in epoch time
+                          rating: 4,
+                        }
+                      ]
+                    resolve(data)
+                    reject('Something went wrong')
+                }, 3000)
+            }, )
+        }
+    })
+
+    return mutate
+}
