@@ -164,6 +164,12 @@ const HomeScreen = ({navigation}) => {
     setSelectedDotIndex(index);
   }
 
+  const handleScroll = (event) => {
+    const { contentOffset } = event.nativeEvent;
+    const index = Math.round(contentOffset.x / screenWidth);
+    setSelectedDotIndex(index);
+  };
+
   return (
     <View style={{ flex:1}}>
     <ScrollView>
@@ -209,7 +215,12 @@ const HomeScreen = ({navigation}) => {
                       showsHorizontalScrollIndicator={false}
                       contentContainerStyle={{
                         paddingHorizontal: (screenWidth - cardWidth) / 2,
-                      }} />
+                        
+            // scrollEventThrottle={16} 
+                      }} 
+                      onScroll={handleScroll}
+                      scrollEventThrottle={16}
+                      />
                   </View><View style={styles.dotsContainer}>
                       {data.map((_, index) => (
                         <TouchableOpacity
