@@ -17,6 +17,7 @@ import { assets } from "../../assets/assets";
 import HelpModal from "./component/HelpModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getDateYearsBack } from "../../utils/dateUtil";
+import {getApplicationDetailQuery} from './../../services/ApiUtils'
 
 const initialData = [
   {
@@ -44,6 +45,8 @@ const initialData = [
 export default function ApplicationDetails(props) {
   const [isVerified, setIsVerified] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [{data = {}}]= getApplicationDetailQuery();
+  console.log(data, '----------- DATA HERE -----------')
   const {
     control,
     handleSubmit,
@@ -54,7 +57,7 @@ export default function ApplicationDetails(props) {
     setValue,
   } = useForm({
     mode: "onBlur",
-    defaultValues: { mobile: 9876543210, otp: "", checkbox: false },
+    defaultValues: {  LeadSource: "Customer Mobile App" },
   });
 
   const { colors } = useTheme();
@@ -78,6 +81,23 @@ export default function ApplicationDetails(props) {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if(data){
+      const {mobileNumber, email, userId} = data;
+      if(mobileNumber){
+        setValue('mobileNumber', mobileNumber)
+      }
+
+      if(email){
+        setValue('email', email)
+      }
+
+      if(userId){
+        setValue('rmName', userId)
+      }
+    }
+  }, [data]);
+
   const onSubmit = (data) => {
     console.log("njnjnjnb");
     console.log(JSON.stringify(data, null, 2));
@@ -96,7 +116,7 @@ export default function ApplicationDetails(props) {
 
   // DATA THAT IS GOING TO BE POPULATED
   // Lead source, branch name by pincode, mobile number, email
- 
+
   const mock_data = [
     {
       id: "applicationType",
@@ -407,22 +427,31 @@ export default function ApplicationDetails(props) {
   ];
 
   const checkFormCondition = (id) => {
-
-    if(id !== 'rentPerMonth' && id !== 'employmentExperience' && id !== 'totalWorkExperience' && id !== 'totalBusinessExperience'){
+    if (
+      id !== "rentPerMonth" &&
+      id !== "employmentExperience" &&
+      id !== "totalWorkExperience" &&
+      id !== "totalBusinessExperience"
+    ) {
       return true;
     }
 
-    if(id === 'rentPerMonth' && watch('presentAccommodation') === 'rented'){
-      return true
+    if (id === "rentPerMonth" && watch("presentAccommodation") === "rented") {
+      return true;
+    } else if (
+      watch("customerProfile") === "salaried" &&
+      (id === "employmentExperience" || id === "totalWorkExperience")
+    ) {
+      return true;
+    } else if (
+      id === "totalBusinessExperience" &&
+      watch("customerProfile") === "self-employed"
+    ) {
+      return true;
+    } else {
+      return false;
     }
-    else if(watch('customerProfile') === 'salaried' &&( id === 'employmentExperience' || id === 'totalWorkExperience')){
-      return true
-    }else if(id === 'totalBusinessExperience' && watch('customerProfile') === 'self-employed'){
-      return true
-    }else {
-      return false
-    }
-  }
+  };
 
   const toggleModal = () => setShowModal(!showModal);
   const style = styles(colors);
@@ -474,8 +503,8 @@ export default function ApplicationDetails(props) {
 
         <View>
           {mock_data.map((comp) => {
-            if(!checkFormCondition(comp.id)){
-              return <></>
+            if (!checkFormCondition(comp.id)) {
+              return <></>;
             }
             return (
               <FormControl
