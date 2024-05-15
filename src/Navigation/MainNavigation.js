@@ -29,7 +29,7 @@ const Dashboard = () => {
   return (
 
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={screens.KYC}>
+      <Stack.Navigator initialRouteName={screens.HomeScreen}>
         <Stack.Screen
           name={screens.Splash}
           component={Splash}
@@ -125,6 +125,11 @@ const Dashboard = () => {
         <Stack.Screen
           name={screens.RaiseTicketInput}
           component={RaiseTicketInput}
+          options={{ headerShown: false }}
+        />
+         <Stack.Screen
+          name={screens.RaiseTicket}
+          component={RaiseTicket}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
