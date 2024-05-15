@@ -18,7 +18,6 @@ export const screens = {
     SelfPicture: 'SelfPicture',
     Eligiblity: 'Eligiblity',
     InPrincipleSection: 'InPrincipleSection',
-    LoanDetail: 'LoanDetail',
     PancardNumber: 'PancardNumber',
     PandcardDetails: 'PandcardDetails',
     NoInternet: 'NoInternet',
@@ -30,5 +29,6 @@ export const screens = {
     Sanction:"Sanction",
     LoanDetails:"LoanDetails",
     RaiseTicket:'RaiseTicket',
-    RaiseTicketInput: "RaiseTicketInput"
+    RaiseTicketInput: "RaiseTicketInput",
+    FAQ:"FAQ",
   };

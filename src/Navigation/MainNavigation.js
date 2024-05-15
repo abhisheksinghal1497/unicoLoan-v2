@@ -18,6 +18,7 @@ import ApplicationDetails from '../screens/ApplicationDetails';
 import KYCDocuments from '../screens/KYCDocuments';
 import Sanction from '../screens/Sanction';
 import LoanDetails from '../screens/LoanDetails';
+import FAQ from '../screens/FAQ';
 import MyTickets from '../screens/MyTickets';
 import RaiseTicket from '../screens/RaiseTicket';
 import RaiseTicketInput from '../screens/RaiseTicketInput';
@@ -121,6 +122,12 @@ const Dashboard = () => {
           component={LoanDetails}
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name={screens.FAQ}
+          component={FAQ}
+          options={{ headerShown: false }}
+        />
+
         <Stack.Screen
           name={screens.RaiseTicketInput}
           component={RaiseTicketInput}

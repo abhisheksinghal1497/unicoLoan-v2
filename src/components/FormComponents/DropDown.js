@@ -62,6 +62,16 @@ export default DropDown = ({
     );
   };
 
+  const getTextFromVal = (value) => {
+    if (value && valueText === "") {
+      let valText = data.filter((el) => el.value === value);
+      if (valText.length > 0) {
+        return valText[0].label;
+      }
+    }
+    return "";
+  };
+
   return (
     <>
       <Controller
@@ -95,8 +105,9 @@ export default DropDown = ({
                       error && { borderColor: colors.error },
                     ]}
                   >
-                    <Text style={[value ? { color: isDisabled ? "#000" :colors.grey } : {}]}>
-                      {valueText || placeholder}
+                    
+                    <Text style={[value ? {color: isDisabled ? "#000" :colors.grey  } : {}]}>
+                      {valueText || getTextFromVal(value) || placeholder}
                     </Text>
                     <Text style={styles.selectArr}>&#9013;</Text>
                   </View>
