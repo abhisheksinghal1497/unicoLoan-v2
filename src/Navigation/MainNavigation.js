@@ -18,6 +18,7 @@ import ApplicationDetails from '../screens/ApplicationDetails';
 import KYCDocuments from '../screens/KYCDocuments';
 import Sanction from '../screens/Sanction';
 import LoanDetails from '../screens/LoanDetails';
+import RaiseTicket from '../screens/RaiseTicket';
 
 const Stack = createStackNavigator();
 
@@ -25,7 +26,7 @@ const Dashboard = () => {
   return (
 
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={screens.Eligibility}>
+      <Stack.Navigator initialRouteName={screens.RaiseTicket}>
     
        {/* <StatusBar
                 backgroundColor="white"
@@ -110,6 +111,11 @@ const Dashboard = () => {
         <Stack.Screen
           name={screens.LoanDetails}
           component={LoanDetails}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={screens.RaiseTicket}
+          component={RaiseTicket}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

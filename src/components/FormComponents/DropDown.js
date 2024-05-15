@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -28,6 +28,7 @@ export default DropDown = ({
   label,
   type,
   right,
+  value="",
   isDisabled = false,
   isRequired = false,
   tooltipText = "",
@@ -39,7 +40,10 @@ export default DropDown = ({
   const { colors, fonts } = useTheme();
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [valueText, setValueText] = useState("");
+  const [valueText, setValueText] = useState( "");
+
+
+  
 
   const renderOptions = ({ item }) => {
     return (
@@ -78,7 +82,8 @@ export default DropDown = ({
 
               <CustomShadow shadowColor={error ? colors.error : colors.primary}>
                 <TouchableOpacity
-                  style={[styles.selectContainer, style]}
+                  style={[styles.selectContainer, style,{backgroundColor : isDisabled ? customTheme.colors.disableBg : "transparent" }]}
+                  disabled={isDisabled}
                   activeOpacity={1}
                   onPress={() => {
                     setModalVisible(true);
@@ -90,7 +95,7 @@ export default DropDown = ({
                       error && { borderColor: colors.error },
                     ]}
                   >
-                    <Text style={[value ? { color: colors.grey } : {}]}>
+                    <Text style={[value ? { color: isDisabled ? "#000" :colors.grey } : {}]}>
                       {valueText || placeholder}
                     </Text>
                     <Text style={styles.selectArr}>&#9013;</Text>
