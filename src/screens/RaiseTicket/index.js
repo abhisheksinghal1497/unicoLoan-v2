@@ -67,7 +67,8 @@ const RaiseTicket = ({navigation}) => {
                 </View>) :
                     <><ScrollView>
                         <View style={{ marginHorizontal: horizontalScale(10) }}>
-                            <Header onPressLeft={()=>navigation.goBack()} colour="Transparent" rightStyle={{ width: 32, height: 32 }} right={require('../../../assets/images/ChatsCircle.png')} left={require('../../../assets/images/Back.png')} title="Raise Tickets" />
+                            <Header onPressLeft={()=>navigation.goBack()} colour="Transparent" rightStyle={{ width: 32, height: 32 }} right={require('../../../assets/images/ChatsCircle.png')} left={require('../../../assets/images/Back.png')} title="Raise Tickets" 
+                                onPressRight = {()=>alert("Faq")}/>
                         </View>
                         <View>
                             <Text style={{ marginLeft: horizontalScale(40), fontWeight: '500', fontSize: 16, maxWidth: '80%', color: '#342222', lineHeight: 28 }}>
