@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, Text, View } from "react-native";
 import { List } from "react-native-paper";
 import customTheme from "../../colors/theme";
 import { getFAQDetails } from "../../services/ApiUtils";
 import Header from "../../components/Header";
+import { HeaderTexts } from "../../constants/stringConstants";
 
-const FAQ = () => {
+const FAQ = (props) => {
+  const { navigation } = props;
   const [FAQData, setFAQData] = useState([]);
   const [activeFaq, setActiveFaq] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -22,19 +24,28 @@ const FAQ = () => {
     }
   }, [getFAQData.data]);
 
-  // useEffect(() => {
-  //   if (getFAQData.data) {
-  //     setFAQData(getFAQData.data);
-  //   }
-  // }, [getFAQData.]);
+  useEffect(() => {
+    if (getFAQData.error) {
+      Alert.alert("Error", getFAQData.error, [
+        {
+          text: "Ok",
+          onPress: () => {
+            navigation?.goBack();
+          },
+        },
+      ]);
+    }
+  }, [getFAQData.error]);
 
   return (
     <View style={styles.container}>
       <Header
-        title="Frequently Asked Questions"
-        left={require("../../images/back.png")}
+        title={HeaderTexts.FAQ}
+        titleStyle={styles.headerTitle}
+        left={require("../../../assets/images/Back.png")}
+        leftImageProps={styles.backImg}
         onPressLeft={() => {
-          navigation.goBack();
+          navigation?.goBack();
         }}
         onPressRight={() => {}}
         colour="white"
@@ -47,8 +58,11 @@ const FAQ = () => {
       ) : (
         <List.AccordionGroup
           onAccordionPress={(data) => {
-            setActiveFaq(data);
-            //   console.log("data111", JSON.stringify(data, null, 2));
+            if (data !== activeFaq) {
+              setActiveFaq(data);
+            } else {
+              setActiveFaq(null);
+            }
           }}
           expandedId={activeFaq}
         >
@@ -69,10 +83,14 @@ const FAQ = () => {
                   id={faq.id}
                   titleNumberOfLines={3}
                   titleStyle={styles.accordTitle}
-                  style={{
-                    backgroundColor:
-                      activeFaq === faq.id ? "#F2F2F2" : "#FEF9EB",
-                  }}
+                  style={
+                    activeFaq === faq.id
+                      ? {
+                          paddingBottom: 0,
+                          backgroundColor: "#F2F2F2",
+                        }
+                      : { backgroundColor: "#FEF9EB" }
+                  }
                 >
                   <View style={styles.accordDetailsView}>
                     <Text style={styles.accordText}>{faq.value}</Text>
@@ -95,6 +113,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
   },
+  backImg: {
+    height: 30,
+    borderWidth: 1,
+    marginRight: 8,
+  },
+  headerTitle: {
+    ...customTheme.fonts.titleMedium,
+    fontWeight: "700",
+  },
   accordTitle: {
     ...customTheme.fonts.accordianText,
     fontSize: 16,
@@ -111,6 +138,7 @@ const styles = StyleSheet.create({
   accordCard: {
     margin: 5,
     borderRadius: 16,
+    overflow: "hidden",
     // borderWidth: 1,
   },
   accordDetailsView: {

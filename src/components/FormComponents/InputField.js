@@ -125,6 +125,7 @@ export default InputField = ({
                       />
                     ) : null
                   }
+                  cursorColor={colors.primary}
                   multiline={isMultiline}
                   {...rest}
                 />
