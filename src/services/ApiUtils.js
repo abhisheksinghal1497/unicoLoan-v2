@@ -195,7 +195,7 @@ export const getFAQDetails = () => {
             },
           ];
           resolve(data);
-          //   reject("Something went wrong");
+          // reject("Something went wrong");
         }, 1000);
       });
     },

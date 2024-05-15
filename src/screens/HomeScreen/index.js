@@ -150,8 +150,9 @@ const HomeScreen = ({navigation}) => {
       console.log('My Tickets')
      break;
      case 5:
-    console.log('FAQ')
-     break;
+      //  console.log("FAQ");
+       navigation.navigate(screens.FAQ);
+       break;
       default:
         break;
     }

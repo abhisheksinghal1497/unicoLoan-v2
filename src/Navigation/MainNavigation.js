@@ -29,7 +29,7 @@ const Dashboard = () => {
   return (
 
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={screens.RaiseTicketInput}>
+      <Stack.Navigator initialRouteName={screens.HomeScreen}>
     
        {/* <StatusBar
                 backgroundColor="white"
