@@ -31,9 +31,9 @@ const CardComponent = () => {
     }
   },[getCarouselCardData.error])
 
-  const cardWidth = Dimensions.get('window').width - 100; 
-  const cardMarginHorizontal = 12; 
-  const padding = (Dimensions.get('window').width - cardWidth - 2 * cardMarginHorizontal) / 2;
+  const cardWidth = Dimensions.get('window').width - 80; 
+  const cardMarginHorizontal = 10; 
+  const padding = (Dimensions.get('window').width - cardWidth - 3.5 * cardMarginHorizontal) / 1.5;
 
   const renderItems = ({ item, index }) => {
     return (
@@ -47,14 +47,6 @@ const CardComponent = () => {
     );
   };
 
-  if (data.length === 0) {
-    return (
-      <View >
-        <Text style={{fontSize:20,}}>No images available</Text>
-      </View>
-    );
-  }
-  
   return (
    
       <FlatList

@@ -3,7 +3,7 @@ import { FlatList, Dimensions, View, StyleSheet, Text, Image, ScrollView, Toucha
 import CardComponent from './cardComponent';
 import { colors } from '../../colors';
 import customTheme from '../../colors/theme';
-import { verticalScale } from '../../utils/matrcis';
+import { horizontalScale, verticalScale } from '../../utils/matrcis';
 import CircularProgress from '../../components/CircularProgress'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getHomeScreenDetails, getHomeScreenOurServices } from '../../services/ApiUtils';
@@ -16,6 +16,8 @@ const HomeScreen = ({navigation}) => {
   const [data, setData] = useState([])
   const [data2, setData2] = useState([])
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedDotIndex, setSelectedDotIndex] = useState(0); // State for the currently selected dot
+
 
   console.log('datatt', data)
   const [currentScreen, setCurrentScreen] = React.useState(false);
@@ -156,6 +158,11 @@ const HomeScreen = ({navigation}) => {
     }
   };
 
+  const scrollToIndex = (index) => {
+    flatListRef.current.scrollToIndex({ animated: true, index });
+    setSelectedDotIndex(index);
+  }
+
   return (
     <View style={{ flex:1}}>
     <ScrollView>
@@ -165,14 +172,15 @@ const HomeScreen = ({navigation}) => {
  <ActivityIndicator size="large" color="#0000ff" />
           </View>
       ) : (
-       
-        <><View style={{ backgroundColor: colors.coreCream, }}>
-              <View style={styles.profileImageView}>
-                <TouchableOpacity onPress={() => navigation.navigate('ProfileImageScreen')}>
+        <>
+        <View style={{ backgroundColor: colors.coreCream, }}>
+              {/* <View style={styles.profileImageView}> */}
+                <TouchableOpacity style={styles.profileImageView} onPress={() => navigation.navigate('ProfileImageScreen')}>
                   <Image source={require('../../../assets/images/profileIcon.png')} style={styles.profileIcon} />
-                </TouchableOpacity>
+              
                 <Text style={styles.profileName}>Bhavesh Rao</Text>
-              </View>
+                </TouchableOpacity>
+              {/* </View> */}
               <View style={{marginBottom: verticalScale(-60) }}>
                 <CardComponent />
               </View>
@@ -190,7 +198,7 @@ const HomeScreen = ({navigation}) => {
                     </ImageBackground>
                   </View>
                 ) :
-                  <View style={styles.secondcards}>
+                  <><View style={styles.secondcards}>
                     <FlatList
                       ref={flatListRef}
                       data={data}
@@ -201,8 +209,16 @@ const HomeScreen = ({navigation}) => {
                       contentContainerStyle={{
                         paddingHorizontal: (screenWidth - cardWidth) / 2,
                       }} />
-                  </View>}
-              </View><View style={{ marginTop: verticalScale(25) }}>
+                  </View><View style={styles.dotsContainer}>
+                      {data.map((_, index) => (
+                        <TouchableOpacity
+                          key={index}
+                          style={[styles.dot, selectedDotIndex === index && styles.selectedDot]}
+                          onPress={() => scrollToIndex(index)} />
+                      ))}
+                    </View></>
+                  }
+              </View><View style={{ marginTop: verticalScale(20) }}>
                 <Text style={styles.ourSerices}>
                   Our Services
                 </Text>
@@ -218,10 +234,9 @@ const HomeScreen = ({navigation}) => {
                     </TouchableOpacity>
                   ))}
                 </View>
-              </View></>
-      
+              </View>
+              </>
       )}
-            
     {/* </SafeAreaView> */}
     </ScrollView>
     </View>
@@ -232,6 +247,25 @@ const HomeScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  dotsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: verticalScale(15),
+    alignItems:'center'
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.grey,
+    marginHorizontal: 5,
+  },
+  selectedDot: {
+    backgroundColor: colors.coreBlue,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
   },
   ActivityStyle:{
     flex: 1,
@@ -327,7 +361,7 @@ const styles = StyleSheet.create({
   },
 
   ourSerices: {
-    color: colors.black, fontSize: 18, lineHeight: 28, left: 20, bottom: 5
+    color: colors.black, fontSize: 18, lineHeight: 28, left: horizontalScale(28), bottom: 5
   },
   servicesCards: {
     width: 105.5, height: 104.5, backgroundColor: colors.white, borderRadius: 6, shadowColor: colors.black, marginBottom: verticalScale(10),
@@ -337,13 +371,13 @@ const styles = StyleSheet.create({
     elevation: 5, justifyContent: 'center', 
   },
   ourSericesCards:
-    { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, flexWrap: 'wrap', },
+    { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: horizontalScale(28), flexWrap: 'wrap', },
   serviceImage:
     { width: 39, height: 39, resizeMode: 'contain', alignSelf: 'center' },
   serviceText: { color: colors.coreBlue, fontSize: 12, fontWeight: customTheme.fonts.labelMedium.fontWeight, alignSelf: 'center', marginTop: verticalScale(9) },
   yourLoan: {
 
-    color: colors.black, fontSize: 18, lineHeight: 28, bottom: 5, marginLeft: verticalScale(22),
+    color: colors.black, fontSize: 18, lineHeight: 28, bottom: verticalScale(5), marginLeft: verticalScale(18),
   },
   seeDetailsresumeJourneyButton: {
     justifyContent: 'center',

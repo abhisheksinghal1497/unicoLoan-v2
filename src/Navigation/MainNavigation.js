@@ -28,7 +28,7 @@ const Dashboard = () => {
   return (
 
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={screens.FAQ}>
+      <Stack.Navigator initialRouteName={screens.HomeScreen}>
 
         {/* <StatusBar
                 backgroundColor="white"

@@ -8,15 +8,15 @@ import { Image } from 'react-native'
 import Button from '../../components/Button'
 import { getRaiseTicketsListScreen, getRaiseTicketsScreenCategory } from '../../services/ApiUtils'
 
-const RaiseTicket = ({navigation}) => {
+const RaiseTicket = ({ navigation }) => {
     const getCateogoryData = getRaiseTicketsScreenCategory()
     const getTicketListData = getRaiseTicketsListScreen()
-    const [selectedCategory, setSelectedCategory] = useState(null);
-    const [selecetedIndex, setSelectedIndex] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState(0);
+    const [selectedIndex, setSelectedIndex] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [data, setData] = useState([])
     const [data2, setData2] = useState([])
-
+console.log('selectedIndex---',selectedIndex)
     useEffect(() => {
         getCateogoryData?.mutate()
         getTicketListData?.mutate()
@@ -59,6 +59,8 @@ const RaiseTicket = ({navigation}) => {
         </TouchableOpacity>
     );
 
+
+    
     return (
         <View style={{ flex: 1 }}>
             {
@@ -67,11 +69,18 @@ const RaiseTicket = ({navigation}) => {
                 </View>) :
                     <><ScrollView>
                         <View style={{ marginHorizontal: horizontalScale(10) }}>
-                            <Header onPressLeft={()=>navigation.goBack()} colour="Transparent" rightStyle={{ width: 32, height: 32 }} right={require('../../../assets/images/ChatsCircle.png')} left={require('../../../assets/images/Back.png')} title="Raise Tickets" 
-                                onPressRight = {()=>alert("Faq")}/>
+                            <Header
+                            titleStyle={{marginRight: horizontalScale(10)}}
+                                onPressLeft={() => navigation.goBack()}
+                                colour="Transparent"
+                                rightStyle={{ width: 32, height: 32 }}
+                                right={require('../../../assets/images/ChatsCircle.png')}
+                                left={require('../../../assets/images/Back.png')}
+                                leftStyle={{ width: 30, height: 30 }} title="Raise Tickets"
+                                onPressRight={() => alert("Faq")} />
                         </View>
                         <View>
-                            <Text style={{ marginLeft: horizontalScale(40), fontWeight: '500', fontSize: 16, maxWidth: '80%', color: '#342222', lineHeight: 28 }}>
+                            <Text style={{ marginLeft: horizontalScale(22), fontWeight: '500', fontSize: 16, maxWidth: '80%', color: '#342222', lineHeight: 28 }}>
                                 Choose the category under which your compaint falls
                             </Text>
                             <FlatList
@@ -88,7 +97,7 @@ const RaiseTicket = ({navigation}) => {
                                             <TouchableOpacity onPress={() => { setSelectedIndex(index) }} style={[styles.optionItem, { flexDirection: 'row' }]}>
                                                 <Image
                                                     style={{ width: 20, height: 20, resizeMode: 'contain' }}
-                                                    source={index === selecetedIndex
+                                                    source={index === selectedIndex
                                                         ? require('../../../assets/images/filledRadio.png')
                                                         : require('../../../assets/images/unfilledRadio.png')} />
                                                 <Text style={{ marginLeft: horizontalScale(16), fontSize: 16, fontWeight: '500', color: '#342222' }}>{item}</Text>
@@ -98,12 +107,23 @@ const RaiseTicket = ({navigation}) => {
                                 </View>
                             )}
                         </View>
-                    </ScrollView><View style={{ marginHorizontal: horizontalScale(20), marginBottom: verticalScale(20) }}>
+                        <View style={{ marginHorizontal: horizontalScale(20), marginTop: verticalScale(240) }}>
                             <Button
+                               onPress={() => {
+                                if (selectedIndex !== null) {
+                                    const selectedCategoryTitle = data[selectedCategory].title;
+                                    const selectedItem = data2[selectedCategory].options[selectedIndex];
+                                    navigation.navigate('RaiseTicketInput', { selectedCategoryTitle, selectedItem });
+                                }
+                            }}
                                 type="primary"
                                 label="Next"
-                                buttonContainer={{ opacity: selecetedIndex !== null ? null : 0.5, }} />
-                        </View></>
+                                disable={ selectedIndex == null ? true : false}
+                                style={{ marginBottom: verticalScale(5),}}
+                            />
+                        </View>
+                    </ScrollView>
+                        </>
             }
         </View>
     )
@@ -113,8 +133,8 @@ export default RaiseTicket
 
 const styles = StyleSheet.create({
     servicesCards: {
-        width: 101.5,
-        height: 101.5,
+        width: 106.5,
+        height: 106.5,
         borderRadius: 12,
         shadowColor: colors.black,
         marginBottom: 5,
@@ -135,7 +155,7 @@ const styles = StyleSheet.create({
     ourSericesCards: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingHorizontal: horizontalScale(18),
+        paddingHorizontal: horizontalScale(12),
 
     },
     serviceImage: {
