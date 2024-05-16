@@ -1,5 +1,5 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "../../components/Header";
 import { useForm } from "react-hook-form";
 import customTheme from "../../colors/theme";
@@ -10,8 +10,12 @@ import {
 import { validations } from "../../constants/validations";
 import CustomButton from "../../components/Button";
 import { assets } from "../../assets/assets";
+import { createTicketMethod } from "../../services/ApiUtils";
 
-const RaiseTicketInput = (props) => {
+const CreateTicket = (props) => {
+
+
+  const {selectedCategoryTitle,selectedItem}=props.route.params;
   const {
     control,
     handleSubmit,
@@ -21,17 +25,43 @@ const RaiseTicketInput = (props) => {
     setValue,
   } = useForm({
     mode: "onBlur",
-    defaultValues: { applicationNumber: "LX108209029900",caseSubType:"Query Complaint 2",caseType:"Query Complaint"},
+    defaultValues: {caseSubType:selectedCategoryTitle,caseType:selectedItem},
   });
+
+  const createTicketFn=createTicketMethod();
+
+  useEffect(() => {
+    if (createTicketFn?.data) {
+      alert('Success')
+    }
+  }, [createTicketFn?.data]);
+
+  useEffect(() => {
+    if (createTicketFn?.error) {
+      alert("error");
+    }
+  }, [createTicketFn?.error]);
 
   const raise_ticket_data = [
     {
       id: "applicationNumber",
       label: "Loan Application Number",
-      type: component.textInput,
-      isDisabled:true,
+      type: component.dropdown,
       placeHolder: "Loan Application Number",
-      value: "LX108209029900",
+      value: "",
+      validations:validations.text,
+      data: [
+        {
+          id: "loanNumber-1",
+          label: "LX108209029900",
+          value: "LX108209029900",
+        },
+        {
+          id: "loanNumber-2",
+          label: "LX108209029911",
+          value: "LX108209029911",
+        },
+      ],
     },
     {
         id: "firstName",
@@ -62,13 +92,13 @@ const RaiseTicketInput = (props) => {
       data: [
         {
           id: "caseType-1",
-          label: "Query Complaint",
-          value: "Query Complaint",
+          label: "Query 1",
+          value: "Query 1",
         },
         {
           id: "caseType-2",
-          label: "Query Complaint 2",
-          value: "Query Complaint 2",
+          label: "Query 2",
+          value: "Query 2",
         },
       ],
       value:""
@@ -112,7 +142,15 @@ const RaiseTicketInput = (props) => {
 
   const onSubmit=(data)=>{
     console.log("data",data)
+    createTicketFn.mutate(data);
   }
+
+
+
+
+
+
+
   return (
     <View style={styles.container}>
       <Header
@@ -164,7 +202,7 @@ const RaiseTicketInput = (props) => {
   );
 };
 
-export default RaiseTicketInput;
+export default CreateTicket;
 
 const styles = StyleSheet.create({
   container: {

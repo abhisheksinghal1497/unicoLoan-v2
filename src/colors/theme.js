@@ -18,6 +18,7 @@ const customTheme = {
     success: "rgba(15, 157, 88, 1)",
     primaryText: "#000000",
     seconderyText: "rgba(124, 126, 139, 1)",
+    darkGrayText: '#7C7B7B',
     elevation: {
       level3: "rgba(0, 0, 0, 0.25)",
       // level0: "#E6F4FF",

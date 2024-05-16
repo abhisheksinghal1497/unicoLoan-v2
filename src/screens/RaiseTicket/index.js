@@ -8,6 +8,7 @@ import { Image } from 'react-native'
 import Button from '../../components/Button'
 import { getRaiseTicketsListScreen, getRaiseTicketsScreenCategory } from '../../services/ApiUtils'
 import { Colors } from 'react-native/Libraries/NewAppScreen'
+import { screens } from '../../constants/screens'
 
 const RaiseTicket = ({ navigation }) => {
     const getCateogoryData = getRaiseTicketsScreenCategory()
@@ -114,7 +115,7 @@ const RaiseTicket = ({ navigation }) => {
                                     if (selectedIndex !== null) {
                                         const selectedCategoryTitle = data[selectedCategory].title;
                                         const selectedItem = data2[selectedCategory].options[selectedIndex];
-                                        navigation.navigate('RaiseTicketInput', { selectedCategoryTitle, selectedItem });
+                                        navigation.navigate(screens.CreateTicket, { selectedCategoryTitle, selectedItem });
                                     }
                                 }}
                                 type="primary"
