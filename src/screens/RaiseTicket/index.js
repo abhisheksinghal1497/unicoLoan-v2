@@ -7,16 +7,17 @@ import customTheme from '../../colors/theme'
 import { Image } from 'react-native'
 import Button from '../../components/Button'
 import { getRaiseTicketsListScreen, getRaiseTicketsScreenCategory } from '../../services/ApiUtils'
+import { Colors } from 'react-native/Libraries/NewAppScreen'
 
-const RaiseTicket = ({navigation}) => {
+const RaiseTicket = ({ navigation }) => {
     const getCateogoryData = getRaiseTicketsScreenCategory()
     const getTicketListData = getRaiseTicketsListScreen()
-    const [selectedCategory, setSelectedCategory] = useState(null);
-    const [selecetedIndex, setSelectedIndex] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState(0);
+    const [selectedIndex, setSelectedIndex] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [data, setData] = useState([])
     const [data2, setData2] = useState([])
-
+    console.log('selectedIndex---', selectedIndex)
     useEffect(() => {
         getCateogoryData?.mutate()
         getTicketListData?.mutate()
@@ -59,18 +60,28 @@ const RaiseTicket = ({navigation}) => {
         </TouchableOpacity>
     );
 
+
+
     return (
         <View style={{ flex: 1 }}>
             {
                 isLoading ? (<View style={styles.ActivityStyle}>
-                    <ActivityIndicator size="large" color="#0000ff" />
+                    <ActivityIndicator size="large" color={colors.coreBlue} />
                 </View>) :
                     <><ScrollView>
                         <View style={{ marginHorizontal: horizontalScale(10) }}>
-                            <Header onPressLeft={()=>navigation.goBack()} colour="Transparent" rightStyle={{ width: 32, height: 32 }} right={require('../../../assets/images/ChatsCircle.png')} left={require('../../../assets/images/Back.png')} title="Raise Tickets" />
+                            <Header
+                                titleStyle={{ marginRight: horizontalScale(10) }}
+                                onPressLeft={() => navigation.goBack()}
+                                colour={colors.transparent}
+                                rightStyle={{ width: 32, height: 32 }}
+                                right={require('../../../assets/images/ChatsCircle.png')}
+                                left={require('../../../assets/images/Back.png')}
+                                leftStyle={{ width: 30, height: 30 }} title="Raise Tickets"
+                                onPressRight={() => alert("Faq")} />
                         </View>
                         <View>
-                            <Text style={{ marginLeft: horizontalScale(40), fontWeight: '500', fontSize: 16, maxWidth: '80%', color: '#342222', lineHeight: 28 }}>
+                            <Text style={styles.choose}>
                                 Choose the category under which your compaint falls
                             </Text>
                             <FlatList
@@ -80,29 +91,40 @@ const RaiseTicket = ({navigation}) => {
                                 contentContainerStyle={styles.ourSericesCards} />
 
                             {selectedCategory !== null && (
-                                <View style={{ marginHorizontal: horizontalScale(20), marginTop: verticalScale(20), marginBottom: verticalScale(20) }}>
+                                <View style={styles.selectedItem}>
                                     <FlatList
                                         data={data2[selectedCategory].options}
                                         renderItem={({ item, index }) => (
                                             <TouchableOpacity onPress={() => { setSelectedIndex(index) }} style={[styles.optionItem, { flexDirection: 'row' }]}>
                                                 <Image
-                                                    style={{ width: 20, height: 20, resizeMode: 'contain' }}
-                                                    source={index === selecetedIndex
+                                                    style={styles.radio}
+                                                    source={index === selectedIndex
                                                         ? require('../../../assets/images/filledRadio.png')
                                                         : require('../../../assets/images/unfilledRadio.png')} />
-                                                <Text style={{ marginLeft: horizontalScale(16), fontSize: 16, fontWeight: '500', color: '#342222' }}>{item}</Text>
+                                                <Text style={styles.item}>{item}</Text>
                                             </TouchableOpacity>
                                         )}
                                         keyExtractor={(item, index) => index.toString()} />
                                 </View>
                             )}
                         </View>
-                    </ScrollView><View style={{ marginHorizontal: horizontalScale(20), marginBottom: verticalScale(20) }}>
+                        <View style={styles.buttonview}>
                             <Button
+                                onPress={() => {
+                                    if (selectedIndex !== null) {
+                                        const selectedCategoryTitle = data[selectedCategory].title;
+                                        const selectedItem = data2[selectedCategory].options[selectedIndex];
+                                        navigation.navigate('RaiseTicketInput', { selectedCategoryTitle, selectedItem });
+                                    }
+                                }}
                                 type="primary"
                                 label="Next"
-                                buttonContainer={{ opacity: selecetedIndex !== null ? null : 0.5, }} />
-                        </View></>
+                                disable={selectedIndex == null ? true : false}
+                                style={{ marginBottom: verticalScale(5), }}
+                            />
+                        </View>
+                    </ScrollView>
+                    </>
             }
         </View>
     )
@@ -112,8 +134,8 @@ export default RaiseTicket
 
 const styles = StyleSheet.create({
     servicesCards: {
-        width: 101.5,
-        height: 101.5,
+        width: 106.5,
+        height: 106.5,
         borderRadius: 12,
         shadowColor: colors.black,
         marginBottom: 5,
@@ -126,6 +148,18 @@ const styles = StyleSheet.create({
         margin: 5,
         marginTop: verticalScale(25)
     },
+    buttonview: {
+        marginHorizontal: horizontalScale(20),
+        marginTop: verticalScale(240)
+    },
+    radio: { width: 20, height: 20, resizeMode: 'contain' },
+    item: { marginLeft: horizontalScale(16), fontSize: 16, fontWeight: '500', color: colors.Brown },
+    choose: { marginLeft: horizontalScale(22), fontWeight: '500', fontSize: 16, maxWidth: '80%', color: '#342222', lineHeight: 28 },
+    selectedItem: {
+        marginHorizontal: horizontalScale(20),
+        marginTop: verticalScale(20),
+        marginBottom: verticalScale(20)
+    },
     ActivityStyle: {
         flex: 1,
         justifyContent: 'center',
@@ -134,7 +168,7 @@ const styles = StyleSheet.create({
     ourSericesCards: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingHorizontal: horizontalScale(18),
+        paddingHorizontal: horizontalScale(12),
 
     },
     serviceImage: {
@@ -148,7 +182,7 @@ const styles = StyleSheet.create({
     serviceText: {
 
         fontSize: 16,
-        fontWeight: customTheme.fonts.labelMedium.fontWeight,
+        fontWeight:'500',
         alignSelf: 'center',
         marginTop: verticalScale(4),
     },

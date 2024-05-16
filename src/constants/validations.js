@@ -18,6 +18,10 @@ export const validations = {
     minLength: 2,
     pattern: /[a-zA-Z]+/,
   },
+  nameWithoutRequired: {
+    minLength: 2,
+    pattern: /[a-zA-Z]+/,
+  },
   pan: {
     required: true,
     maxLength: 10,
@@ -26,5 +30,8 @@ export const validations = {
   aadhar: {
     required: true,
     pattern: /[0-9]{4}[0-9]{4}[0-9]{4}/,
+  }, 
+  email: {
+    pattern: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
   }
 };

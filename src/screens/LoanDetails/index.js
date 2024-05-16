@@ -10,7 +10,7 @@ import {
 import { validations } from "../../constants/validations";
 import CustomButton from "../../components/Button";
 import { screens } from "../../constants/screens";
-import { LOAN_DETAILS_KEYS } from "../../constants/stringConstants";
+import { HeaderTexts, LOAN_DETAILS_KEYS } from "../../constants/stringConstants";
 import ApplicationCard from "../ApplicationDetails/component/ApplicationCard";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -378,7 +378,7 @@ const LoanDetails = (props) => {
   return (
     <View style={styles.container}>
       <Header
-        title={"Loan Details " + isValid}
+        title={HeaderTexts.loanDetails}
         left={require("../../images/back.png")}
         onPressLeft={() => {
           props?.navigation.goBack();

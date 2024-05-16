@@ -3,6 +3,7 @@ import React from 'react'
 import { colors } from '../colors'
 import { useTheme } from 'react-native-paper'
 import { verticalScale } from '../utils/matrcis'
+import { debounce } from '../utils/functions'
 
 
 const Header = (props) => {
@@ -11,11 +12,11 @@ const Header = (props) => {
     return (
       
         <View style={[styles.container,props.containerStyle,{ backgroundColor:props?.colour ? props?.colour : colors.bgColor,}]}>
-            {props.left && <TouchableOpacity onPress={() => onPressLeft()}>
+            {props.left && <TouchableOpacity onPress={() => debounce(onPressLeft())}>
                 <Image source={props.left} style={[styles.backImage, props.leftStyle]} {...leftImageProps} />
             </TouchableOpacity>}
             <Text style={[fonts.headerText, styles.titleText, props.titleStyle]}>{props.title}</Text>
-            {props.right && <TouchableOpacity onPress={() => onPressRight()}>
+            {props?.right && <TouchableOpacity onPress={() => debounce(onPressRight())}>
                 <Image source={props.right} style={[styles.questionImage, props.rightStyle]} {...rightImageProps} />
             </TouchableOpacity>}
         </View>

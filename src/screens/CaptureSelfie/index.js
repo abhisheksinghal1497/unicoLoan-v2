@@ -6,6 +6,8 @@ import CameraSection from '../../components/CameraSection'
 import ImagePicker from 'react-native-image-crop-picker';
 import { styles } from './style/style';
 import { useTheme } from 'react-native-paper'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { screens } from '../../constants/screens';
 
 const CaptureSelfie = ({ navigation }) => {
     const { fonts } = useTheme();
@@ -17,6 +19,7 @@ const CaptureSelfie = ({ navigation }) => {
         })
             .then((image) => {
                 setSelectedImage(image.path);
+                 AsyncStorage.setItem('selfieCapture', JSON.stringify(image));
             })
             .catch((error) => {
                 console.log(error);
@@ -25,6 +28,10 @@ const CaptureSelfie = ({ navigation }) => {
 
     const cameraCross = () => {
         setSelectedImage(null)
+    }
+
+    const onCameraReload = async() => {
+        navigation?.navigate(screens.KYCDocuments)
     }
 
     return (
@@ -37,7 +44,7 @@ const CaptureSelfie = ({ navigation }) => {
                     onPressRight={() => { }}
                     colour="white" />
                 <SelfieSection uri={selectedImage} />
-                <CameraSection onCameraPress={onCameraPress} onCameraCross={cameraCross} onCameraReload={cameraCross} reload={true} cross={true} />
+                <CameraSection onCameraPress={onCameraPress} onCameraCross={cameraCross} onCameraReload={onCameraReload} reload={true} cross={true} />
                 <View style={styles.noteContainer}>
                     <Image source={require('../../images/bulb.png')} style={styles.bulbImage} />
                     <Text style={fonts.bodySmall}>Place <Text style={fonts.bodyBold}>your</Text>Face within Circle</Text>

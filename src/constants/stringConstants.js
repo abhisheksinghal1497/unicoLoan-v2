@@ -49,3 +49,9 @@ export const KycScreen = {
     resend: "Resend",
 
 }
+
+
+export const HeaderTexts = {
+  FAQ: "Frequently Asked Questions",
+  loanDetails: "Loan Details",
+};

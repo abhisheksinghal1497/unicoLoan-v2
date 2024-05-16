@@ -1,11 +1,40 @@
 import { View, Text, ScrollView, Image, StyleSheet } from "react-native";
-import React from "react";
+import React, { useState,useEffect,useCallback } from "react";
 import { assets } from "../../assets/assets";
 import customTheme from "../../colors/theme";
 import CustomButton from "../../components/Button";
 import Header from "../../components/Header";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { screens } from '../../constants/screens';
+import { useFocusEffect } from '@react-navigation/native';
 
-const KYCDocuments = () => {
+const KYCDocuments = ({navigation}) => {
+
+  const [selectedImage, setSelectedImage] = useState('');
+  const [selectedImageBack, setSelectedImageBack] = useState('');
+  const [selectedImageSelfie, setSelectedImageSelfie] = useState('');
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [])
+  );
+
+const fetchData = async() =>{
+  await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.KYC));
+  const savedData = await AsyncStorage.getItem('FrontAdhaar');
+  const currentData = JSON.parse(savedData);
+  console.log(currentData, 'front adhaar');
+  setSelectedImage(currentData)
+  const savedDataBack = await AsyncStorage.getItem('BackAdhaar');
+  const currentDataBack = JSON.parse(savedDataBack);
+  console.log(currentData, 'front adhaar');
+  setSelectedImageBack(currentDataBack)
+  const savedSelfie = await AsyncStorage.getItem('selfieCapture')
+  const currentDataSelfie = JSON.parse(savedSelfie)
+  setSelectedImageSelfie(currentDataSelfie)
+}
+
   return (
     <ScrollView>
       <Header
@@ -22,18 +51,18 @@ const KYCDocuments = () => {
       </View>
 
       <View style={styles.con2}>
-        <CustomImageContainer />
-        <CustomImageContainer />
+      <CustomImageContainer selectedImage={selectedImage} />
+      <CustomImageContainer selectedImage={selectedImageBack} />
       </View>
       <SuccessText />
       <View style={styles.con3} />
       <View style={styles.con4}>
-        <CustomImageContainer />
+        <CustomImageContainer selectedImage={selectedImageSelfie} />
         <SuccessText />
         <CustomButton
           type="primary"
           label="Confirm and Continue"
-          onPress={() => {}}
+          onPress={() => {navigation.navigate(screens.CongratulationScreen)}}
           buttonContainer={{ width: "100%", marginTop: 20 }}
         />
       </View>
@@ -41,13 +70,18 @@ const KYCDocuments = () => {
   );
 };
 
-const CustomImageContainer = () => {
+const CustomImageContainer = ({selectedImage}) => {
   return (
     <View style={styles.customCon}>
       <View
         style={styles.customInnCon}
       >
-        <Image source={assets.aadhar_front} />
+        <Image
+        source={selectedImage ? {uri :  `data:${selectedImage?.mime};base64,${selectedImage?.data}` } : require('../../images/aadhar-front.png')}
+        style={{height:100,width:100}}
+        resizeMode="cover"
+        //  source={assets.aadhar_front}
+         />
       </View>
       <Text style={styles.conText1}>Upload Your Aadhaar Front Photo</Text>
     </View>
@@ -101,6 +135,7 @@ const styles = StyleSheet.create({
     paddingVertical: 50,
     width: "100%",
     borderRadius: 20,
+
   },
   successCon: {
     flexDirection: "row",
