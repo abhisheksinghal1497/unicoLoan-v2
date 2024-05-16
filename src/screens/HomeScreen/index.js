@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { FlatList, Dimensions, View, StyleSheet, Text, Image, ScrollView, TouchableOpacity, ImageBackground, SafeAreaView, ActivityIndicator } from 'react-native';
+import { FlatList, Dimensions, View, StyleSheet, Text, Image, ScrollView, TouchableOpacity, ImageBackground, SafeAreaView, ActivityIndicator, Alert } from 'react-native';
 import CardComponent from './cardComponent';
 import { colors } from '../../colors';
 import customTheme from '../../colors/theme';
@@ -44,13 +44,13 @@ const HomeScreen = ({navigation}) => {
 
   useEffect(()=>{
     if(getLoanCardData.error){
-      alert(getLoanCardData.error)
+      Alert.alert(getLoanCardData.error)
     }
   },[getLoanCardData.error])
 
   useEffect(()=>{
     if(getOurServicesCardData.error){
-      alert(getOurServicesCardData.error)
+      Alert.alert(getOurServicesCardData.error)
     }
   },[getOurServicesCardData.error])
 
@@ -107,7 +107,7 @@ const HomeScreen = ({navigation}) => {
         <View style={styles.belowCardView}>
 
           <CircularProgress size ={90} strokeWidth={12}  progressPercent={item.ProgressBarPercent} bgColor ={'#F2F2F2'} pgColor={'#2E52A1'} />
-          <View style={{ marginLeft: 11.5 }}>
+          <View style={{ marginLeft: horizontalScale(11.5) }}>
             {item.nextPayment && item.paymentDate && item.NextPaymentText && (
               <><Text style={styles.naxtPaymentKyc}>{item.NextPaymentText}</Text><Text style={styles.naxtPaymentKyc2}>{item.nextPayment}</Text><Text style={styles.paymentDate}>{item.paymentDate}</Text></>
             )}
@@ -120,7 +120,7 @@ const HomeScreen = ({navigation}) => {
         </View>
         <View style={[ styles.cardBottomBar,{ marginTop: !item.tenure ? verticalScale(40) : verticalScale(2),} ] }>
         {item.nextPayment && item.paymentDate && item.NextPaymentText ? (
-    <TouchableOpacity style={styles.seeDetailsresumeJourneyButton}>
+    <TouchableOpacity onPress={()=> navigation.navigate(screens.ApplicantDetails)} style={styles.seeDetailsresumeJourneyButton}>
       <Text style={styles.seeDetailsresumeJourneyText}>See Details</Text>
     </TouchableOpacity>
   ) : (
@@ -146,13 +146,12 @@ const HomeScreen = ({navigation}) => {
       console.log('Status Check')
      break;
      case 3:
-      navigation.navigate('RaiseTicket')
+      navigation.navigate(screens.RaiseTicket)
      break;
      case 4:
-      console.log('My Tickets')
+      navigation.navigate(screens.MyTickets)
      break;
      case 5:
-      //  console.log("FAQ");
        navigation.navigate(screens.FAQ);
        break;
       default:
@@ -183,7 +182,7 @@ const HomeScreen = ({navigation}) => {
         <>
         <View style={{ backgroundColor: colors.coreCream, }}>
               {/* <View style={styles.profileImageView}> */}
-                <TouchableOpacity style={styles.profileImageView} onPress={() => navigation.navigate('ProfileImageScreen')}>
+                <TouchableOpacity style={styles.profileImageView} onPress={() => navigation.navigate(screens.ApplicantDetails)}>
                   <Image source={require('../../../assets/images/profileIcon.png')} style={styles.profileIcon} />
               
                 <Text style={styles.profileName}>Bhavesh Rao</Text>
@@ -197,14 +196,14 @@ const HomeScreen = ({navigation}) => {
                   Your Loans
                 </Text>
                 {data.length === 0 ? (
-                  <View style={styles.loanapplyview}>
+                  <TouchableOpacity onPress={()=> navigation.navigate(screens.ApplicantDetails)} style={styles.loanapplyview}>
                     <ImageBackground
                       style={styles.imgBackground}
                       source={require('../../../assets/images/loanapply.png')}
                     >
                       <Text style={styles.applyforloan}>Apply For Loan</Text>
                     </ImageBackground>
-                  </View>
+                  </TouchableOpacity>
                 ) :
                   <><View style={styles.secondcards}>
                     <FlatList
@@ -303,10 +302,10 @@ const styles = StyleSheet.create({
   },
   bottomLine: { borderBottomWidth: 1, borderColor: colors.coreBlue, width: '20%', alignSelf: 'flex-end', marginRight: horizontalScale(18) },
   roiText: {
-    alignSelf: 'flex-end', color: colors.coreBlue, fontSize: 10, fontWeight: customTheme.fonts.labelMedium.fontWeight, paddingRight: horizontalScale(75), marginTop: 4
+    alignSelf: 'flex-end', color: colors.coreBlue, fontSize: 10, fontWeight: customTheme.fonts.labelMedium.fontWeight, paddingRight: horizontalScale(73.5), marginTop: 4
   },
   roi: {
-    alignSelf: 'flex-end', marginRight: horizontalScale(51), color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: 5
+    alignSelf: 'flex-end', marginRight: horizontalScale(50), color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: 5
   },
   tenure: {
     alignSelf: 'flex-end', marginRight: horizontalScale(44), color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: 5

@@ -47,6 +47,16 @@ const CardComponent = () => {
     );
   };
 
+  if (data.length === 0) {
+    return (
+      <Image
+          style={{width: 100, height: 100, alignSelf:'center', }}
+          source={require('../../../assets/images/22.gif')}
+          resizeMode="contain"
+        />
+    );
+  }
+
   return (
    
       <FlatList
