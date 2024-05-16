@@ -6,6 +6,7 @@ import { assets } from "../../../assets/assets";
 import { Text } from "react-native-paper";
 
 const QueryCard = () => {
+  //
   return (
     <View style={styles.containerStyle}>
       <View style={styles.contentContainer}>
