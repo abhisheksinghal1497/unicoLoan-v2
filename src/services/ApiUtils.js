@@ -299,6 +299,24 @@ export const getListOfTickets = () =>{
 
     return mutate
 }
+export const createTicketMethod = () =>{
+    const mutate = useMutation({
+        networkMode:"always",
+        mutationFn:async(ticketData)=>{
+        
+           return new Promise((resolve, reject)=>{
+              
+                 setTimeout(()=>{
+                    const data = {success:true,response:ticketData}
+                    resolve(data)
+                    // reject('Something went wrong')
+                }, 3000)
+            }, )
+        }
+    })
+
+    return mutate
+}
 
 export const getApplicationDetailQuery = () => {
 const query = useQueries({
