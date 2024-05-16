@@ -72,7 +72,7 @@ const MyTickets = (props) => {
             label="TRACK"
             buttonContainer={styles.buttonContainer}
             labelStyle={[fonts.smallText, styles.buttonLabel]}
-            onPress={() => { }} />
+            onPress={() => {props?.navigation?.navigate(screens.TrackTicket)}} />
         </View> :
           <CustomButton
             type="secondery"
