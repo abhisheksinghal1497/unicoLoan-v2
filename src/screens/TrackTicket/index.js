@@ -8,7 +8,7 @@ import BasicTimeline from "./component/StepperStatus/Stepper";
 import Rating from "../../components/Rating/Rating";
 import CustomButton from "../../components/Button";
 
-const TrackTicket = () => {
+const TrackTicket = (props) => {
   const { colors } = useTheme();
   const styles = stylesFn(colors);
 

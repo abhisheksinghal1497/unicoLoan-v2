@@ -149,7 +149,7 @@ const HomeScreen = ({navigation}) => {
       navigation.navigate('RaiseTicket')
      break;
      case 4:
-      console.log('My Tickets')
+      navigation.navigate(screens.MyTickets)
      break;
      case 5:
       //  console.log("FAQ");
