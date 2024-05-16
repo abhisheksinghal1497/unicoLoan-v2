@@ -21,7 +21,7 @@ import LoanDetails from '../screens/LoanDetails';
 import FAQ from '../screens/FAQ';
 import MyTickets from '../screens/MyTickets';
 import RaiseTicket from '../screens/RaiseTicket';
-import RaiseTicketInput from '../screens/RaiseTicketInput';
+import CreateTicket from '../screens/CreateTicket';
 
 const Stack = createStackNavigator();
 
@@ -123,8 +123,8 @@ const Dashboard = () => {
         />
 
         <Stack.Screen
-          name={screens.RaiseTicketInput}
-          component={RaiseTicketInput}
+          name={screens.CreateTicket}
+          component={CreateTicket}
           options={{ headerShown: false }}
         />
          <Stack.Screen
