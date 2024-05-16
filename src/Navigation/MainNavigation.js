@@ -1,28 +1,28 @@
-import React from "react";
-import { StatusBar } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import HomeScreen from "../screens/HomeScreen";
-import { screens } from "../constants/screens";
-import Splash from "../screens/Splash";
-import PanDetails from "../screens/PanDetails";
-import NoInternet from "../screens/NoInternet";
-import ErrorScreen from "../screens/ErrorScreen";
-import CongratulationScreen from "../screens/Congratulation";
-import KYC from "../screens/KYC";
-import CaptureAdhaar from "../screens/CaptureAdhaar";
-import Eligibility from "../screens/Eligibility";
-import ProfileImageScreen from "../screens/ProfileImage";
-import CaptureSelfie from "../screens/CaptureSelfie";
-import ApplicationDetails from "../screens/ApplicationDetails";
-import KYCDocuments from "../screens/KYCDocuments";
-import Sanction from "../screens/Sanction";
-import LoanDetails from "../screens/LoanDetails";
-import FAQ from "../screens/FAQ";
-import MyTickets from "../screens/MyTickets";
-import RaiseTicket from "../screens/RaiseTicket";
-import RaiseTicketInput from "../screens/RaiseTicketInput";
-import TrackTicket from "../screens/TrackTicket";
+import React from 'react'
+import { StatusBar } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import HomeScreen from '../screens/HomeScreen';
+import { screens } from '../constants/screens';
+import Splash from '../screens/Splash';
+import PanDetails from '../screens/PanDetails';
+import NoInternet from '../screens/NoInternet';
+import ErrorScreen from '../screens/ErrorScreen';
+import CongratulationScreen from '../screens/Congratulation';
+import KYC from '../screens/KYC';
+import CaptureAdhaar from '../screens/CaptureAdhaar';
+import Eligibility from '../screens/Eligibility';
+import ProfileImageScreen from '../screens/ProfileImage';
+import CaptureSelfie from '../screens/CaptureSelfie';
+import ApplicationDetails from '../screens/ApplicationDetails';
+import KYCDocuments from '../screens/KYCDocuments';
+import Sanction from '../screens/Sanction';
+import LoanDetails from '../screens/LoanDetails';
+import FAQ from '../screens/FAQ';
+import MyTickets from '../screens/MyTickets';
+import RaiseTicket from '../screens/RaiseTicket';
+import CreateTicket from '../screens/CreateTicket';
+import TrackTicket from '../screens/TrackTicket/index'
 
 const Stack = createStackNavigator();
 
@@ -123,8 +123,8 @@ const Dashboard = () => {
         />
 
         <Stack.Screen
-          name={screens.RaiseTicketInput}
-          component={RaiseTicketInput}
+          name={screens.CreateTicket}
+          component={CreateTicket}
           options={{ headerShown: false }}
         />
          <Stack.Screen

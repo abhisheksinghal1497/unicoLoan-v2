@@ -152,6 +152,7 @@ const styles = StyleSheet.create({
   },
   labelContainer: {
     ...fieldLabelViewStyle,
+    marginBottom:10
   },
   label: {
     ...fieldLabelStyle,
