@@ -5,7 +5,7 @@ import { StyleSheet, Text, View } from "react-native";
 import customTheme from "../colors/theme";
 
 export default function CustomButton(props) {
-    const { type, label, left, right, buttonContainer, labelStyle, icon, onPress, rippleColor, disable = false } = props;
+    const { type, label, left, right, buttonContainer, labelStyle, icon, onPress, rippleColor, disable = false ,isDisabled} = props;
     const theme = useTheme();
     return type === "primary" ? (
         <TouchableRipple

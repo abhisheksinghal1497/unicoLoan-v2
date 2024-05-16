@@ -29,13 +29,7 @@ const Stack = createStackNavigator();
 const Dashboard = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={screens.RaiseTicketInput}>
-        {/* <StatusBar
-                backgroundColor="white"
-                barStyle="dark-content"
-            />
-      <Stack.Navigator initialRouteName={screens.Eligibility} >
-            /> */}
+      <Stack.Navigator initialRouteName={screens.HomeScreen}>
         <Stack.Screen
           name={screens.Splash}
           component={Splash}
@@ -52,12 +46,12 @@ const Dashboard = () => {
           component={ErrorScreen}
           options={{ headerShown: false }}
         />
-
-        <Stack.Screen
-          name={screens.PanDetails}
-          component={PanDetails}
+  <Stack.Screen
+          name={screens.HomeScreen}
+          component={HomeScreen}
           options={{ headerShown: false }}
         />
+
 
         <Stack.Screen
           name={screens.MyTickets}
@@ -81,11 +75,7 @@ const Dashboard = () => {
           options={{ headerShown: false }}
         />
 
-        <Stack.Screen
-          name={screens.HomeScreen}
-          component={HomeScreen}
-          options={{ headerShown: false }}
-        />
+      
 
         <Stack.Screen
           name={screens.CongratulationScreen}
@@ -111,6 +101,11 @@ const Dashboard = () => {
           component={ApplicationDetails}
           options={{ headerShown: false }}
         />
+          <Stack.Screen
+          name={screens.PanDetails}
+          component={PanDetails}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name={screens.Sanction}
           component={Sanction}
@@ -132,8 +127,12 @@ const Dashboard = () => {
           component={RaiseTicketInput}
           options={{ headerShown: false }}
         />
-
-        <Stack.Screen
+         <Stack.Screen
+          name={screens.RaiseTicket}
+          component={RaiseTicket}
+          options={{ headerShown: false }}
+        />
+         <Stack.Screen
           name={screens.TrackTicket}
           component={TrackTicket}
           options={{ headerShown: false }}
