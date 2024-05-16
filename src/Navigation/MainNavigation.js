@@ -22,18 +22,18 @@ import FAQ from '../screens/FAQ';
 import MyTickets from '../screens/MyTickets';
 import RaiseTicket from '../screens/RaiseTicket';
 import CreateTicket from '../screens/CreateTicket';
+import TrackTicket from '../screens/TrackTicket/index'
 
 const Stack = createStackNavigator();
 
 const Dashboard = () => {
   return (
-
     <NavigationContainer>
       <Stack.Navigator initialRouteName={screens.HomeScreen}>
         <Stack.Screen
           name={screens.Splash}
           component={Splash}
-          options={{ headerShown: false, }}
+          options={{ headerShown: false }}
         />
 
         <Stack.Screen
@@ -132,10 +132,14 @@ const Dashboard = () => {
           component={RaiseTicket}
           options={{ headerShown: false }}
         />
+         <Stack.Screen
+          name={screens.TrackTicket}
+          component={TrackTicket}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
+  );
+};
 
-  )
-}
-
-export default Dashboard
+export default Dashboard;

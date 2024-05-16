@@ -31,4 +31,5 @@ export const screens = {
     RaiseTicket:'RaiseTicket',
     CreateTicket: "CreateTicket",
     FAQ:"FAQ",
+    TrackTicket: 'TrackTicket'
   };

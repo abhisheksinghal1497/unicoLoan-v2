@@ -11,6 +11,7 @@ import Frame3 from "./frame3.png";
 import ChatsCircle from "./ChatsCircle.png";
 import questionRound from "./icons/questionRound.png";
 import back from "./icons/back.png";
+import homeIconPerson from './homeIconPerson.png'
 
 export const assets = {
   checkboxError,
@@ -26,4 +27,5 @@ export const assets = {
   back,
   Frame3,
   ChatsCircle,
+  homeIconPerson
 };
