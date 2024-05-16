@@ -31,4 +31,5 @@ export const screens = {
     RaiseTicket:'RaiseTicket',
     RaiseTicketInput: "RaiseTicketInput",
     FAQ:"FAQ",
+    TrackTicket: 'TrackTicket'
   };
