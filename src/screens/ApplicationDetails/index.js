@@ -17,7 +17,7 @@ import { assets } from "../../assets/assets";
 import HelpModal from "./component/HelpModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getDateYearsBack } from "../../utils/dateUtil";
-import {getApplicationDetailQuery} from './../../services/ApiUtils'
+import { getApplicationDetailQuery } from "./../../services/ApiUtils";
 
 const initialData = [
   {
@@ -45,19 +45,16 @@ const initialData = [
 export default function ApplicationDetails(props) {
   const [isVerified, setIsVerified] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [{data = {}}]= getApplicationDetailQuery();
-  console.log(data, '----------- DATA HERE -----------')
+  const [{ data = {} }] = getApplicationDetailQuery();
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
-    getValues,
+    formState: { errors },
     watch,
-    getFieldState,
     setValue,
   } = useForm({
     mode: "onBlur",
-    defaultValues: {  LeadSource: "Customer Mobile App" },
+    defaultValues: { LeadSource: "Customer Mobile App" },
   });
 
   const { colors } = useTheme();
@@ -82,18 +79,18 @@ export default function ApplicationDetails(props) {
   }, []);
 
   useEffect(() => {
-    if(data){
-      const {mobileNumber, email, userId} = data;
-      if(mobileNumber){
-        setValue('mobileNumber', mobileNumber)
+    if (data) {
+      const { mobileNumber, email, userId } = data;
+      if (mobileNumber) {
+        setValue("mobileNumber", mobileNumber);
       }
 
-      if(email){
-        setValue('email', email)
+      if (email) {
+        setValue("email", email);
       }
 
-      if(userId){
-        setValue('rmName', userId)
+      if (userId) {
+        setValue("rmName", userId);
       }
     }
   }, [data]);
@@ -199,6 +196,7 @@ export default function ApplicationDetails(props) {
       validations: validations.numberOnly,
       isRequired: true,
       value: "",
+      isDisabled: true,
     },
     {
       id: "alternateMobileNumber",
@@ -219,6 +217,7 @@ export default function ApplicationDetails(props) {
       validations: validations.email,
       isRequired: false,
       value: "",
+      isDisabled: true,
     },
 
     {
@@ -455,7 +454,7 @@ export default function ApplicationDetails(props) {
 
   const toggleModal = () => setShowModal(!showModal);
   const style = styles(colors);
-  const goBack = () => navigation.goBack();
+  const goBack = () => props.navigation.goBack();
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>

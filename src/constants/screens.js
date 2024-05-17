@@ -29,6 +29,7 @@ export const screens = {
     Sanction:"Sanction",
     LoanDetails:"LoanDetails",
     RaiseTicket:'RaiseTicket',
-    RaiseTicketInput: "RaiseTicketInput",
+    CreateTicket: "CreateTicket",
     FAQ:"FAQ",
+    TrackTicket: 'TrackTicket'
   };
