@@ -1,5 +1,5 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import { useForm } from "react-hook-form";
 import customTheme from "../../colors/theme";
@@ -10,11 +10,17 @@ import {
 import { validations } from "../../constants/validations";
 import CustomButton from "../../components/Button";
 import { screens } from "../../constants/screens";
-import { HeaderTexts, LOAN_DETAILS_KEYS } from "../../constants/stringConstants";
+import {
+  HeaderTexts,
+  LOAN_DETAILS_KEYS,
+} from "../../constants/stringConstants";
 import ApplicationCard from "../ApplicationDetails/component/ApplicationCard";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import HelpModal from "../ApplicationDetails/component/HelpModal";
 
 const LoanDetails = (props) => {
+  const [showModal, setShowModal] = useState(false);
+
   const {
     control,
     handleSubmit,
@@ -375,16 +381,24 @@ const LoanDetails = (props) => {
     },
   ];
 
+  const toggleModal = () => {
+    setShowModal(!showModal);
+  };
+
   return (
     <View style={styles.container}>
       <Header
         title={HeaderTexts.loanDetails}
-        left={require("../../images/back.png")}
+        titleStyle={styles.headerTitle}
+        left={require("../../../assets/images/Back.png")}
+        leftImageProps={styles.backImg}
         onPressLeft={() => {
           props?.navigation.goBack();
         }}
         right={require("../../images/question.png")}
-        onPressRight={() => {}}
+        onPressRight={() => {
+          toggleModal();
+        }}
         colour="transparent"
       />
 
@@ -429,6 +443,13 @@ const LoanDetails = (props) => {
           disable={!isValid}
         />
       </ScrollView>
+
+      <HelpModal
+        toggleModal={toggleModal}
+        showModal={showModal}
+        setShowModal={setShowModal}
+        modalStyle={styles.modalStyle}
+      />
     </View>
   );
 };
@@ -447,4 +468,14 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 15,
   },
+  backImg: {
+    height: 30,
+    borderWidth: 1,
+    marginRight: 8,
+  },
+  headerTitle: {
+    ...customTheme.fonts.titleMedium,
+    fontWeight: "700",
+  },
+  modalStyle: { margin: 15, padding: 25 },
 });
