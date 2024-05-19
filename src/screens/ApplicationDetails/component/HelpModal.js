@@ -6,7 +6,7 @@ import EvilIcons from "react-native-vector-icons/EvilIcons";
 import { verticalScale } from "../../../utils/matrcis";
 import Button from "../../../components/Button";
 
-const HelpModal = ({ showModal, setShowModal, toggleModal }) => {
+const HelpModal = ({ showModal, setShowModal, toggleModal, modalStyle }) => {
   const closeModal = () => setShowModal(false);
 
   return (
@@ -14,6 +14,7 @@ const HelpModal = ({ showModal, setShowModal, toggleModal }) => {
       type="center"
       showModal={showModal}
       setShowModal={setShowModal}
+      modalStyle={modalStyle}
     >
       <View>
         <View
