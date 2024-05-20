@@ -25,6 +25,8 @@ const KYC = (props) => {
   const [selectedImage, setSelectedImage] = useState('');
   const [selectedImageBack, setSelectedImageBack] = useState('');
 
+  console.log(Boolean(selectedImage)  && Boolean(selectedImageBack),'Vaue here')
+
   useFocusEffect(
     useCallback(() => {
       fetchData();
@@ -134,7 +136,7 @@ const fetchData = async() =>{
         label="Continue"
         buttonContainer={styles.buttonContainer}
         onPress={() => { showModal() }}
-        disable ={selectedImage === '' && selectedImageBack === '' ? true : false}
+        disable ={Boolean(selectedImage)  && Boolean(selectedImageBack)  ? false : true}
         />
       <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.modalContainer}>
         {type === 0 ? <View>

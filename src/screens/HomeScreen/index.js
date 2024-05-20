@@ -140,7 +140,7 @@ const HomeScreen = ({navigation}) => {
         console.log('Calculators')
         break;
       case 1:
-        navigation.navigate(screens.ApplicantDetails)
+        navigation.navigate(screens.KYC)
         break;
      case 2:
       console.log('Status Check')

@@ -318,6 +318,26 @@ export const createTicketMethod = () =>{
     return mutate
 }
 
+
+export const uploadAdhaarMethod = () =>{
+  const mutate = useMutation({
+      networkMode:"always",
+      mutationFn:async(AdhaarData)=>{
+      
+         return new Promise((resolve, reject)=>{
+            
+               setTimeout(()=>{
+                  const data = {success:true,response:AdhaarData}
+                  resolve(data)
+                  // reject('Something went wrong')
+              }, 3000)
+          }, )
+      }
+  })
+
+  return mutate
+}
+
 export const getApplicationDetailQuery = () => {
 const query = useQueries({
     queries: [

@@ -7,6 +7,7 @@ import Header from "../../components/Header";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { screens } from '../../constants/screens';
 import { useFocusEffect } from '@react-navigation/native';
+import { colors } from '../../colors'
 
 const KYCDocuments = ({navigation}) => {
 
@@ -36,12 +37,13 @@ const fetchData = async() =>{
 }
 
   return (
-    <ScrollView>
-      <Header
+    <ScrollView style={styles.container}>
+        <Header
         title="KYC Documents"
-        left={true}
-        containerStyle={{ marginHorizontal: 20 }}
-      />
+        left={require('../../images/back.png')}
+        onPressLeft={() => { navigation?.navigate(screens.PanDetails) }}
+        right={require('../../images/question.png')}
+        onPressRight={() => { }} />
       <View style={styles.topCon}>
         <Image source={assets.protection} />
         <Text>
@@ -98,6 +100,11 @@ const SuccessText = () => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.bgColor,
+    paddingHorizontal: 16,
+  },
   topCon: {
     flexDirection: "row",
     backgroundColor: "#EEF4FD",
