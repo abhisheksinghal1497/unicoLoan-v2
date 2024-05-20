@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 
-const CustomModal = ({type="center",showModal = true, setShowModal = () => {}, children}) => {
+const CustomModal = ({type="center",showModal = true, setShowModal = () => {}, children, centeredViewStyle ={}}) => {
 
   
   return (
@@ -16,7 +16,7 @@ const CustomModal = ({type="center",showModal = true, setShowModal = () => {}, c
         }}
       >
          <TouchableWithoutFeedback style={{zIndex:0}} onPress={() => setShowModal(!showModal)}>
-        <View style={[styles.centeredView, {justifyContent:type==="center" ? "center" : "flex-end",}]}>
+        <View style={[styles.centeredView, {justifyContent:type==="center" ? "center" : "flex-end",}, centeredViewStyle]}>
           <View style={styles.modalView}>{children}</View>
         </View>
         </TouchableWithoutFeedback>

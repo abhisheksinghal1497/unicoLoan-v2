@@ -130,6 +130,7 @@ export default DropDown = ({
         type="bottom"
         showModal={modalVisible}
         setShowModal={setModalVisible}
+        centeredViewStyle={{backgroundColor: 'rgba(0, 0, 0, 0.1)'}}
       >
         <View>
           <View style={styles.modalHeader}>

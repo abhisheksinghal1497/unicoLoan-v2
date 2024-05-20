@@ -18,6 +18,7 @@ import HelpModal from "./component/HelpModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getDateYearsBack } from "../../utils/dateUtil";
 import { getApplicationDetailQuery } from "./../../services/ApiUtils";
+import DimensionUtils from "../../utils/DimensionUtils";
 
 const initialData = [
   {
@@ -282,7 +283,7 @@ export default function ApplicationDetails(props) {
         },
 
         {
-          id: "propertyIdentified_type_1",
+          id: "propertyIdentified_type_2",
           label: "No",
           value: "No",
         },
@@ -411,6 +412,7 @@ export default function ApplicationDetails(props) {
       validations: validations.text,
       isRequired: true,
       value: "",
+      isMultiline: true
     },
 
     {
@@ -418,7 +420,7 @@ export default function ApplicationDetails(props) {
       label: "Pincode",
       type: component.textInput,
       placeHolder: "Enter Pincode",
-      validations: validations.numberOnly,
+      validations: validations.numberOnlyRequired,
       isRequired: true,
       value: "",
       keyboardtype: "numeric",
@@ -455,7 +457,7 @@ export default function ApplicationDetails(props) {
   const toggleModal = () => setShowModal(!showModal);
   const style = styles(colors);
   const goBack = () => props.navigation.goBack();
-
+  console.log('HERE ARE THE ERRORS--------', errors.pincode)
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <HelpModal
@@ -500,7 +502,7 @@ export default function ApplicationDetails(props) {
           <ApplicationCard />
         </View>
 
-        <View>
+        <View style={{marginHorizontal:DimensionUtils.pixelSizeHorizontal(15)}}>
           {mock_data.map((comp) => {
             if (!checkFormCondition(comp.id)) {
               return <></>;

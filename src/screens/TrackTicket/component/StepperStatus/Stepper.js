@@ -2,58 +2,32 @@ import Timeline from "./Timeline";
 import moment from "moment";
 import { View } from "react-native";
 import DimensionUtils from "../../../../utils/DimensionUtils";
+import { formatDateDayMonthYear } from "../../../../utils/dateUtil";
 
-const BasicTimeline = () => {
-  const data = [
-    // First row in the Timeline
-    {
-      title: {
-        content: "on Tue 30th April 24",
-        status: "Complaint Raised"
-      },
-      description: {
-        content: "Your Complaint has been raised at 2:32 PM",
-      },
-    },
+const BasicTimeline = ({data=[]}) => {
+  const lastIndex = data.length - 1;
 
-    // Second row in the Timeline
-    {
-      title: {
-        content: "on Wed 1st April 24",
-        status: "Task Assigned"
-      },
-      description: {
-        content:
-          "Admin has assigned the task to Bhavesh Rao who will attend your complaint around 3:00 PM",
-      },
+  const dataMuted = data.map((el,i) => (lastIndex !== i ? {
+    title: {
+      content: `on ${formatDateDayMonthYear(el.createdAt)}`,
+      status: el.title
     },
-
-    {
-      title: {
-        content: "on Fri 3rd March 24",
-        status: "Process started"
-      },
-      description: {
-        content:
-          "Mr. Bhavesh Rao has started attending your complaint at 3:00 PM",
-      },
+    description: {
+      content: el.description,
     },
-
-    // You got the idea..
-    {
-      title: {
-        content: "on Mon 6th March 24",
-        status: "Complaint Resolved"
-      },
-      description: {
-        content: "Complaint was successfully attended and resolved at 6:32 PM",
-      },
-      icon: {
-        content: "check",
-        size: 20,
-      },
+  } : {
+    title: {
+      content: `on ${formatDateDayMonthYear(el.createdAt)}`,
+      status: el.title
     },
-  ];
+    description: {
+      content: el.description,
+    },
+    icon: {
+      content: "check",
+      size: 20,
+    },
+  }))
 
   return (
     <View
@@ -66,7 +40,7 @@ const BasicTimeline = () => {
         paddingBottom: DimensionUtils.pixelSizeVertical(15)
       }}
     >
-      <Timeline data={data} />
+      <Timeline data={dataMuted} />
     </View>
   );
 };

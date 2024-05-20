@@ -46,7 +46,7 @@ export default InputField = ({
         return (
           <View style={styles.container}>
             <View style={styles.labelContainer}>
-              <Text style={styles.label}>
+              <Text style={[styles.label]}>
                 {isRequired && <Text style={styles.asterisk}>* </Text>}
                 {label}
               </Text>

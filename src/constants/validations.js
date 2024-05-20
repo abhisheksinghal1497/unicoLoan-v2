@@ -13,6 +13,10 @@ export const validations = {
   numberOnly: {
     pattern: /\d*/,
   },
+  numberOnlyRequired: {
+    required: true,
+    pattern: /\d*/,
+  },
   name: {
     required: true,
     minLength: 2,
