@@ -32,5 +32,6 @@ export const screens = {
     CreateTicket: "CreateTicket",
     FAQ:"FAQ",
     TrackTicket: 'TrackTicket',
-    PayNow: 'PayNow'
+    PayNow: 'PayNow',
+    StatusCheck: "StatusCheck"
   };

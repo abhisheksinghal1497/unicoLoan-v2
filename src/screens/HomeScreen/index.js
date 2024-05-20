@@ -8,6 +8,7 @@ import CircularProgress from '../../components/CircularProgress'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { screens } from "../../constants/screens";
 import { getHomeScreenDetails, getHomeScreenOurServices } from '../../services/ApiUtils';
+import CustomModal from '../../components/CustomModal';
 
 
 const HomeScreen = ({navigation}) => {
@@ -19,6 +20,7 @@ const HomeScreen = ({navigation}) => {
   const [data2, setData2] = useState([])
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDotIndex, setSelectedDotIndex] = useState(0); 
+  const [showModal, setShowModal] = useState(false);
 
   console.log('datatt', data)
   const [currentScreen, setCurrentScreen] = React.useState(false);
@@ -132,7 +134,10 @@ const HomeScreen = ({navigation}) => {
             </View>
     
   ) : (
-    <TouchableOpacity style={styles.seeDetailsresumeJourneyButton} onPress={() => onResume()}>
+    <TouchableOpacity style={styles.seeDetailsresumeJourneyButton}   onPress={() => {
+      const ProgressBarPercent = item.ProgressBarPercent || 0;
+      navigation.navigate(screens.ApplicantDetails, { ProgressBarPercent });
+    }}>
       <Text style={styles.seeDetailsresumeJourneyText}>Resume Journey</Text>
     </TouchableOpacity>
   )}
@@ -145,13 +150,14 @@ const HomeScreen = ({navigation}) => {
    
     switch (index) {
       case 0:
-        console.log('Calculators')
+        setShowModal(true);
         break;
       case 1:
-        navigation.navigate(screens.ApplicantDetails)
+        const ProgressBarPercent =  0;
+        navigation.navigate(screens.ApplicantDetails, { ProgressBarPercent })
         break;
      case 2:
-      console.log('Status Check')
+      navigation.navigate(screens.StatusCheck)
      break;
      case 3:
       navigation.navigate(screens.RaiseTicket)
@@ -188,6 +194,26 @@ const HomeScreen = ({navigation}) => {
           </View>
       ) : (
         <>
+        <CustomModal
+        showModal={showModal}
+        setShowModal={setShowModal}
+        // You can pass any necessary props to your modal component here
+      >
+ <TouchableOpacity style={{}} onPress={() => setShowModal(!showModal)}>
+        <View style={[ { justifyContent:  "center",  }]}>
+          <View>
+            <Text style={styles.titleText}>EMI Calculator</Text>
+           
+             
+              <TouchableOpacity onPress={() => setShowModal(!showModal)} style={styles.cancelButton}>
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            
+          </View>
+        </View>
+      </TouchableOpacity>
+
+      </CustomModal>
         <View style={{ backgroundColor: colors.coreCream, }}>
               {/* <View style={styles.profileImageView}> */}
                 <TouchableOpacity style={styles.profileImageView} onPress={() => navigation.navigate(screens.ProfileImageScreen)}>
@@ -204,7 +230,10 @@ const HomeScreen = ({navigation}) => {
                   Your Loans
                 </Text>
                 {data.length === 0 ? (
-                  <TouchableOpacity onPress={()=> navigation.navigate(screens.ApplicantDetails)} style={styles.loanapplyview}>
+                  <TouchableOpacity  onPress={() => {
+                    const ProgressBarPercent = item.ProgressBarPercent || 0;
+                    navigation.navigate(screens.ApplicantDetails, { ProgressBarPercent });
+                  }} style={styles.loanapplyview}>
                     <ImageBackground
                       style={styles.imgBackground}
                       source={require('../../../assets/images/loanapply.png')}
@@ -267,6 +296,25 @@ const HomeScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+
+  cancelButton: {
+    alignSelf: "center",
+    marginTop: verticalScale(15),
+    padding: 10,
+    borderRadius: 10,
+    backgroundColor: colors.coreBlue,
+  },
+  cancelButtonText: {
+    color: colors.white,
+    fontSize: 18,
+    textAlign: "center",
+  },
+  titleText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 10,
   },
   dotsContainer: {
     flexDirection: 'row',
