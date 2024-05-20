@@ -8,7 +8,7 @@ import { Controller } from "react-hook-form";
 
 export default function OtpInput({
   control,
-  validations,
+  validations = {},
   validationProps,
   setValue,
   name,
@@ -16,6 +16,7 @@ export default function OtpInput({
   isVisible = true,
   isDisabled = false,
   otpLimit = 6,
+  isRequired = false,
   // otp,
   // setOtp,
   ...rest
@@ -46,7 +47,7 @@ export default function OtpInput({
   return (
     <Controller
       control={control}
-      rules={validations}
+      rules={{ required: isRequired, ...validations }}
       name={name}
       render={({
         field: { onChange, onBlur, value },
@@ -69,7 +70,7 @@ export default function OtpInput({
                   onKeyPress={(e) => handleKeyPress(e, index, value)}
                   value={value?.charAt(index) || ""}
                   style={[styles.textInput, index !== 0 && styles.otpInput]}
-                  contentStyle={{borderBottomWidth: 0}}
+                  contentStyle={{ borderBottomWidth: 0 }}
                   maxLength={1}
                   {...rest}
                 />

@@ -14,7 +14,7 @@ import {
 
 export default InputField = ({
   control,
-  validations,
+  validations = {},
   setValue,
   name,
   label,
@@ -38,7 +38,7 @@ export default InputField = ({
   return (
     <Controller
       control={control}
-      rules={validations}
+      rules={{required: isRequired, ...validations}}
       render={({
         field: { onChange, onBlur, value },
         fieldState: { error, invalid },

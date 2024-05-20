@@ -7,7 +7,7 @@ import DimensionUtils from "./../../../utils/DimensionUtils";
 const horizontalScale = DimensionUtils.pixelSizeHorizontal;
 const verticalScale = DimensionUtils.pixelSizeVertical;
 
-const ApplicationCard = () => {
+const ApplicationCard = ({percentage}) => {
   const { colors } = useTheme();
   const styles = style(colors);
   return (
@@ -38,7 +38,7 @@ const ApplicationCard = () => {
           <CircularProgress
             size={100}
             strokeWidth={8}
-            progressPercent={0}
+            progressPercent={percentage}
           />
           <View
             style={styles.homeIconContainer}

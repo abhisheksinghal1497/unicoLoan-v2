@@ -369,7 +369,7 @@ export default function ApplicationDetails(props) {
       validations: validations.text,
       isRequired: true,
       value: "",
-      isMultiline: true
+      isMultiline: true,
     },
 
     {
@@ -394,10 +394,12 @@ export default function ApplicationDetails(props) {
     setValue,
   } = useForm({
     mode: "onBlur",
-    defaultValues: { LeadSource: "Customer Mobile App", branchName: '' },
+    defaultValues: { LeadSource: "Customer Mobile App", branchName: "" },
   });
 
   const { colors } = useTheme();
+
+  console.log("All form data---------", watch());
 
   useEffect(() => {
     async function fetchData() {
@@ -407,12 +409,11 @@ export default function ApplicationDetails(props) {
       );
       const savedData = await AsyncStorage.getItem("ApplicationDetails");
       const currentData = JSON.parse(savedData);
-      console.log(currentData, "current value");
-      // {
-      //   currentData?.map((item) => {
-      //     console.log(item);
-      //     setValue(item.id, item.value);
-      //   });
+
+      // if (currentData) {
+      //   Object.keys(currentData).forEach((item) =>
+      //     setValue(item, currentData[item])
+      //   );
       // }
     }
     fetchData();
@@ -443,20 +444,16 @@ export default function ApplicationDetails(props) {
   const ChangeValue = async (value, id) => {
     setValue(id, value);
 
-    // if(id === 'pincode'){}
-
-    // objIndex = initialData.findIndex((obj) => obj.id === id);
-    // initialData[objIndex].value = value;
-    // await AsyncStorage.setItem(
-    //   "ApplicationDetails",
-    //   JSON.stringify(initialData)
-    // );
+    if (id === "pincode") {
+    }
+    const prevValue = { ...watch() };
+    console.log("PREV VALUE---------", prevValue);
+    prevValue[id] = value;
+    await AsyncStorage.setItem("ApplicationDetails", JSON.stringify(prevValue));
   };
 
   // DATA THAT IS GOING TO BE POPULATED
   // Lead source, branch name by pincode, mobile number, email
-
-
 
   const checkFormCondition = (id) => {
     if (
@@ -488,7 +485,52 @@ export default function ApplicationDetails(props) {
   const toggleModal = () => setShowModal(!showModal);
   const style = styles(colors);
   const goBack = () => props.navigation.goBack();
-  console.log('HERE ARE THE ERRORS--------', errors.pincode)
+
+  const getPercentage = () => {
+    const customerProfile = watch("customerProfile");
+    const isRented = watch("presentAccommodation") === "rented";
+
+    const { totalRequiredFields, filledRequiredFields } = mock_data.reduce(
+      (acc, field) => {
+        if (field.isRequired) {
+          if (!isRented && field.id === "rentPerMonth") {
+            return acc;
+          }
+
+          if (
+            customerProfile !== "salaried" &&
+            (field.id === "employmentExperience" || field.id === "totalWorkExperience")
+          ) {
+            return acc;
+          }
+
+          if (
+            field.id === "totalBusinessExperience" &&
+            customerProfile !== "self-employed"
+          ) {
+            return acc;
+          }
+
+          acc.totalRequiredFields++;
+          if (watch(field.id) !== "") {
+            acc.filledRequiredFields++;
+          }
+        }
+        return acc;
+      },
+      { totalRequiredFields: 0, filledRequiredFields: 0 }
+    );
+
+    let completionPercentage = 0;
+    if (totalRequiredFields > 0) {
+        completionPercentage = (filledRequiredFields / totalRequiredFields) * 100;
+    }
+
+    return completionPercentage;
+  };
+
+  const percentage= getPercentage();
+
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <HelpModal
@@ -530,10 +572,12 @@ export default function ApplicationDetails(props) {
       </View>
       <ScrollView contentContainerStyle={style.scrollviewStyle}>
         <View style={style.container}>
-          <ApplicationCard />
+          <ApplicationCard percentage={percentage}  />
         </View>
 
-        <View style={{marginHorizontal:DimensionUtils.pixelSizeHorizontal(15)}}>
+        <View
+          style={{ marginHorizontal: DimensionUtils.pixelSizeHorizontal(15) }}
+        >
           {mock_data.map((comp, index) => {
             if (!checkFormCondition(comp.id)) {
               return <></>;
@@ -578,13 +622,12 @@ export default function ApplicationDetails(props) {
           <Button
             type="primary"
             label="Continue"
+            disable={percentage !== 100}
             onPress={handleSubmit(onSubmit)}
-            buttonContainer={{ marginVertical: verticalScale(20) }}
+            buttonContainer={{ marginVertical: verticalScale(20)}}
           />
         </View>
       </ScrollView>
     </View>
   );
 }
-
-
