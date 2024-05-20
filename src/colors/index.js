@@ -38,5 +38,6 @@ export const colors = {
   greylight: "7C7B7B",
   SeaGreen: "#6DA5A6",
   Brown: "#342222",
-  transparent: "Transparent"
+  transparent: "Transparent",
+  progressBg: "#F2F2F2"
 };

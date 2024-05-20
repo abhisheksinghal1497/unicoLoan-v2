@@ -23,6 +23,7 @@ import MyTickets from '../screens/MyTickets';
 import RaiseTicket from '../screens/RaiseTicket';
 import CreateTicket from '../screens/CreateTicket';
 import TrackTicket from '../screens/TrackTicket/index'
+import PayNow from '../screens/PayNow';
 
 const Stack = createStackNavigator();
 
@@ -74,6 +75,8 @@ const Dashboard = () => {
         <Stack.Screen
           name={screens.ProfileImageScreen}
           component={ProfileImageScreen}
+          options={{
+            headerShown: true,}}
         />
         <Stack.Screen
           name={screens.KYCDocuments}
@@ -110,6 +113,12 @@ const Dashboard = () => {
         <Stack.Screen
           name={screens.TrackTicket}
           component={TrackTicket}
+        />
+         <Stack.Screen
+          name={screens.PayNow}
+          component={PayNow}
+          options={{
+            headerShown: true,}}
         />
       </Stack.Navigator>
     </NavigationContainer>

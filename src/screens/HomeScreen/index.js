@@ -106,7 +106,7 @@ const HomeScreen = ({navigation}) => {
         </View>
         <View style={styles.belowCardView}>
 
-          <CircularProgress size ={90} strokeWidth={12}  progressPercent={item.ProgressBarPercent} bgColor ={'#F2F2F2'} pgColor={'#2E52A1'} />
+          <CircularProgress  imageStyle={{ width: 40, height: 33 }} ImageData={require('../../../assets/images/Home2.png')} size ={90} strokeWidth={12}  progressPercent={item.ProgressBarPercent} bgColor ={colors.progressBg} pgColor={colors.coreBlue} />
           <View style={{ marginLeft: horizontalScale(11.5) }}>
             {item.nextPayment && item.paymentDate && item.NextPaymentText && (
               <><Text style={styles.naxtPaymentKyc}>{item.NextPaymentText}</Text><Text style={styles.naxtPaymentKyc2}>{item.nextPayment}</Text><Text style={styles.paymentDate}>{item.paymentDate}</Text></>
@@ -120,9 +120,17 @@ const HomeScreen = ({navigation}) => {
         </View>
         <View style={[ styles.cardBottomBar,{ marginTop: !item.tenure ? verticalScale(40) : verticalScale(2),} ] }>
         {item.nextPayment && item.paymentDate && item.NextPaymentText ? (
-    <TouchableOpacity onPress={()=> navigation.navigate(screens.ApplicantDetails)} style={styles.seeDetailsresumeJourneyButton}>
+          <View style={{flexDirection:'row', justifyContent:'space-between', marginHorizontal: horizontalScale(105)}}>
+            <TouchableOpacity onPress={()=> navigation.navigate(screens.ApplicantDetails,{
+      ProgressBarPercent: item.ProgressBarPercent,
+    })} style={styles.seeDetailsresumeJourneyButton}>
       <Text style={styles.seeDetailsresumeJourneyText}>See Details</Text>
     </TouchableOpacity>
+    <TouchableOpacity onPress={()=> navigation.navigate(screens.PayNow)} style={styles.PayNowButton}>
+      <Text style={styles.PayNowText}>Pay Now</Text>
+    </TouchableOpacity>
+            </View>
+    
   ) : (
     <TouchableOpacity style={styles.seeDetailsresumeJourneyButton} onPress={() => onResume()}>
       <Text style={styles.seeDetailsresumeJourneyText}>Resume Journey</Text>
@@ -182,7 +190,7 @@ const HomeScreen = ({navigation}) => {
         <>
         <View style={{ backgroundColor: colors.coreCream, }}>
               {/* <View style={styles.profileImageView}> */}
-                <TouchableOpacity style={styles.profileImageView} onPress={() => navigation.navigate(screens.ApplicantDetails)}>
+                <TouchableOpacity style={styles.profileImageView} onPress={() => navigation.navigate(screens.ProfileImageScreen)}>
                   <Image source={require('../../../assets/images/profileIcon.png')} style={styles.profileIcon} />
               
                 <Text style={styles.profileName}>Bhavesh Rao</Text>
@@ -401,9 +409,24 @@ const styles = StyleSheet.create({
     borderColor: colors.coreCream,
     borderRadius: 4,
   },
+
+  PayNowButton: {
+    justifyContent: 'center',
+    alignSelf: 'center',
+  
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    backgroundColor:colors.coreCream,
+    borderRadius: 4,
+  },
+
   seeDetailsresumeJourneyText: {
     fontSize: 10,
     color: colors.coreCream,
+  },
+  PayNowText: {
+    fontSize: 10,
+    color: colors.coreBlue,
   },
 
 });

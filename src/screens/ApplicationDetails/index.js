@@ -19,6 +19,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getDateYearsBack } from "../../utils/dateUtil";
 import { getApplicationDetailQuery } from "./../../services/ApiUtils";
 
+
 const initialData = [
   {
     id: "applicationType",
@@ -43,6 +44,7 @@ const initialData = [
 ];
 
 export default function ApplicationDetails(props) {
+
   const [isVerified, setIsVerified] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [{ data = {} }] = getApplicationDetailQuery();
@@ -497,7 +499,7 @@ export default function ApplicationDetails(props) {
       </View>
       <ScrollView contentContainerStyle={style.scrollviewStyle}>
         <View style={style.container}>
-          <ApplicationCard />
+          <ApplicationCard navigation={props?.navigation}/>
         </View>
 
         <View>
