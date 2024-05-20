@@ -106,7 +106,7 @@ export default DropDown = ({
                     ]}
                   >
                     
-                    <Text style={[value ? {color: isDisabled ? "#000" :colors.grey  } : {}]}>
+                    <Text style={[value ? {color: isDisabled ? "#000" : colors.grey  } : {}]}>
                       {valueText || getTextFromVal(value) || placeholder}
                     </Text>
                     <Text style={styles.selectArr}>&#9013;</Text>

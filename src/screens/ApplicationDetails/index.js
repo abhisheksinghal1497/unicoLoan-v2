@@ -47,75 +47,32 @@ export default function ApplicationDetails(props) {
   const [isVerified, setIsVerified] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [{ data = {} }] = getApplicationDetailQuery();
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    watch,
-    setValue,
-  } = useForm({
-    mode: "onBlur",
-    defaultValues: { LeadSource: "Customer Mobile App" },
-  });
-
-  const { colors } = useTheme();
-
-  useEffect(() => {
-    async function fetchData() {
-      await AsyncStorage.setItem(
-        "CurrentScreen",
-        JSON.stringify(screens.ApplicantDetails)
-      );
-      const savedData = await AsyncStorage.getItem("ApplicationDetails");
-      const currentData = JSON.parse(savedData);
-      console.log(currentData, "current value");
-      {
-        currentData?.map((item) => {
-          console.log(item);
-          setValue(item.id, item.value);
-        });
-      }
-    }
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (data) {
-      const { mobileNumber, email, userId } = data;
-      if (mobileNumber) {
-        setValue("mobileNumber", mobileNumber);
-      }
-
-      if (email) {
-        setValue("email", email);
-      }
-
-      if (userId) {
-        setValue("rmName", userId);
-      }
-    }
-  }, [data]);
-
-  const onSubmit = (data) => {
-    console.log("njnjnjnb");
-    console.log(JSON.stringify(data, null, 2));
-    props?.navigation?.navigate(screens.PanDetails);
-  };
-
-  const ChangeValue = async (value, id) => {
-    setValue(id, value);
-    objIndex = initialData.findIndex((obj) => obj.id === id);
-    initialData[objIndex].value = value;
-    await AsyncStorage.setItem(
-      "ApplicationDetails",
-      JSON.stringify(initialData)
-    );
-  };
-
-  // DATA THAT IS GOING TO BE POPULATED
-  // Lead source, branch name by pincode, mobile number, email
 
   const mock_data = [
+    {
+      id: "rmUser",
+      label: "RM USER",
+      type: component.dropdown,
+      placeHolder: "Select User",
+      validations: validations.required,
+      maxLength: 10,
+      // keyboardtype: "numeric",
+      isRequired: true,
+      data: [
+        {
+          id: "rm_user_1",
+          label: "User 1",
+          value: "user1",
+        },
+
+        {
+          id: "rm_user_2",
+          label: "User 2",
+          value: "user2",
+        },
+      ],
+      value: {},
+    },
     {
       id: "applicationType",
       label: "Applicant Type",
@@ -194,7 +151,7 @@ export default function ApplicationDetails(props) {
       label: "Mobile number",
       type: component.textInput,
       placeHolder: "Enter mobile number",
-      validations: validations.numberOnly,
+      validations: validations.phone,
       isRequired: true,
       value: "",
       isDisabled: true,
@@ -204,7 +161,7 @@ export default function ApplicationDetails(props) {
       label: "Alternate mobile number",
       type: component.textInput,
       placeHolder: "Enter alternate mobile number",
-      validations: validations.numberOnly,
+      validations: validations.phoneWithoutRequired,
       isRequired: false,
       value: "",
       keyboardtype: "numeric",
@@ -262,7 +219,7 @@ export default function ApplicationDetails(props) {
       label: "Loan Amount",
       type: component.textInput,
       placeHolder: "Enter required loan amount",
-      validations: validations.numberOnly,
+      validations: validations.numberOnlyRequired,
       keyboardtype: "numeric",
       isRequired: true,
       value: "",
@@ -297,7 +254,7 @@ export default function ApplicationDetails(props) {
       type: component.dropdown,
       placeHolder: "Select Present Accommodation",
       validations: validations.text,
-      isRequired: false,
+      isRequired: true,
       data: [
         {
           id: "presentAccommodation_type_1",
@@ -327,9 +284,9 @@ export default function ApplicationDetails(props) {
     {
       id: "periodOfStay",
       label: "Period of stay",
-      type: component.datetime,
+      type: component.textInput,
       placeHolder: "YY-MM",
-      validations: validations.text,
+      validations: validations.yyMMDate,
       isRequired: true,
       value: "",
     },
@@ -346,18 +303,18 @@ export default function ApplicationDetails(props) {
     {
       id: "employmentExperience",
       label: "Employment experience",
-      type: component.datetime,
+      type: component.textInput,
       placeHolder: "YY-MM",
-      validations: validations.text,
+      validations: validations.yyMMDate,
       isRequired: true,
       value: "",
     },
     {
       id: "totalWorkExperience",
       label: "Total Work experience",
-      type: component.datetime,
+      type: component.textInput,
       placeHolder: "YY-MM",
-      validations: validations.text,
+      validations: validations.yyMMDate,
       isRequired: true,
       value: "",
     },
@@ -366,7 +323,7 @@ export default function ApplicationDetails(props) {
       label: "Family Dependant",
       type: component.textInput,
       placeHolder: "Enter Family Dependant",
-      validations: validations.numberOnly,
+      validations: validations.numberOnlyRequired,
       isRequired: true,
       keyboardtype: "numeric",
       value: "",
@@ -377,7 +334,7 @@ export default function ApplicationDetails(props) {
       label: "Family Dependant Children",
       type: component.textInput,
       placeHolder: "Enter Family Dependant Children",
-      validations: validations.numberOnly,
+      validations: validations.numberOnlyRequired,
       isRequired: true,
       keyboardtype: "numeric",
       value: "",
@@ -388,7 +345,7 @@ export default function ApplicationDetails(props) {
       label: "Family Dependant Other",
       type: component.textInput,
       placeHolder: "Enter Family Dependant Other",
-      validations: validations.numberOnly,
+      validations: validations.numberOnlyRequired,
       isRequired: true,
       keyboardtype: "numeric",
       value: "",
@@ -397,9 +354,9 @@ export default function ApplicationDetails(props) {
     {
       id: "totalBusinessExperience",
       label: "Total Business experience",
-      type: component.datetime,
+      type: component.textInput,
       placeHolder: "YY-MM",
-      validations: validations.text,
+      validations: validations.yyMMDate,
       isRequired: true,
       value: "",
     },
@@ -426,6 +383,80 @@ export default function ApplicationDetails(props) {
       keyboardtype: "numeric",
     },
   ];
+
+  // const allFields = mock_data.map
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    watch,
+    setValue,
+  } = useForm({
+    mode: "onBlur",
+    defaultValues: { LeadSource: "Customer Mobile App", branchName: '' },
+  });
+
+  const { colors } = useTheme();
+
+  useEffect(() => {
+    async function fetchData() {
+      await AsyncStorage.setItem(
+        "CurrentScreen",
+        JSON.stringify(screens.ApplicantDetails)
+      );
+      const savedData = await AsyncStorage.getItem("ApplicationDetails");
+      const currentData = JSON.parse(savedData);
+      console.log(currentData, "current value");
+      // {
+      //   currentData?.map((item) => {
+      //     console.log(item);
+      //     setValue(item.id, item.value);
+      //   });
+      // }
+    }
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (data) {
+      const { mobileNumber, email, userId } = data;
+      if (mobileNumber) {
+        setValue("mobileNumber", mobileNumber);
+      }
+
+      if (email) {
+        setValue("email", email);
+      }
+
+      if (userId) {
+        setValue("rmName", userId);
+      }
+    }
+  }, [data]);
+
+  const onSubmit = (data) => {
+    console.log(JSON.stringify(data, null, 2));
+    props?.navigation?.navigate(screens.PanDetails);
+  };
+
+  const ChangeValue = async (value, id) => {
+    setValue(id, value);
+
+    // if(id === 'pincode'){}
+
+    // objIndex = initialData.findIndex((obj) => obj.id === id);
+    // initialData[objIndex].value = value;
+    // await AsyncStorage.setItem(
+    //   "ApplicationDetails",
+    //   JSON.stringify(initialData)
+    // );
+  };
+
+  // DATA THAT IS GOING TO BE POPULATED
+  // Lead source, branch name by pincode, mobile number, email
+
+
 
   const checkFormCondition = (id) => {
     if (
@@ -503,7 +534,7 @@ export default function ApplicationDetails(props) {
         </View>
 
         <View style={{marginHorizontal:DimensionUtils.pixelSizeHorizontal(15)}}>
-          {mock_data.map((comp) => {
+          {mock_data.map((comp, index) => {
             if (!checkFormCondition(comp.id)) {
               return <></>;
             }
@@ -518,7 +549,7 @@ export default function ApplicationDetails(props) {
                 isRequired={comp.isRequired}
                 placeholder={comp.placeHolder}
                 data={comp.data}
-                key={comp.id}
+                keyIndex={comp.id}
                 setValue={setValue}
                 isMultiline={comp.isMultiline}
                 maxLength={comp.maxLength}

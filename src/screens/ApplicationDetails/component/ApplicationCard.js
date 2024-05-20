@@ -38,9 +38,7 @@ const ApplicationCard = () => {
           <CircularProgress
             size={100}
             strokeWidth={8}
-            progressPercent={80}
-            bgColor={"#FFFFFF"}
-            pgColor={"#2E52A1"}
+            progressPercent={0}
           />
           <View
             style={styles.homeIconContainer}

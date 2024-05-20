@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, FlatList, TouchableOpacity, ActivityIndicator, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Header from '../../components/Header'
 import { horizontalScale, verticalScale } from '../../utils/matrcis'
@@ -40,13 +40,13 @@ const RaiseTicket = ({ navigation }) => {
 
     useEffect(() => {
         if (getCateogoryData.error) {
-            alert(getCateogoryData.error)
+            Alert.alert(getCateogoryData.error)
         }
     }, [getCateogoryData.error])
 
     useEffect(() => {
         if (getTicketListData.error) {
-            alert(getTicketListData.error)
+            Alert.alert(getTicketListData.error)
         }
     }, [getTicketListData.error])
 

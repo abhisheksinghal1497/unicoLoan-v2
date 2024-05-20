@@ -10,6 +10,9 @@ export const validations = {
     required: true,
     pattern: /[6-9]\d{9}/,
   },
+  phoneWithoutRequired: {
+    pattern: /[6-9]\d{9}/,
+  },
   numberOnly: {
     pattern: /\d*/,
   },
@@ -37,5 +40,9 @@ export const validations = {
   }, 
   email: {
     pattern: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
+  },
+  yyMMDate: {
+    pattern: /^\d{2}-\d{2}$/,
+    required: true,
   }
 };
