@@ -14,7 +14,7 @@ import {
 
 export default InputField = ({
   control,
-  validations,
+  validations = {},
   setValue,
   name,
   label,
@@ -38,7 +38,7 @@ export default InputField = ({
   return (
     <Controller
       control={control}
-      rules={validations}
+      rules={{required: isRequired, ...validations}}
       render={({
         field: { onChange, onBlur, value },
         fieldState: { error, invalid },
@@ -46,7 +46,7 @@ export default InputField = ({
         return (
           <View style={styles.container}>
             <View style={styles.labelContainer}>
-              <Text style={styles.label}>
+              <Text style={[styles.label]}>
                 {isRequired && <Text style={styles.asterisk}>* </Text>}
                 {label}
               </Text>

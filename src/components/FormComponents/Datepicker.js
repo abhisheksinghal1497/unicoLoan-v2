@@ -18,7 +18,7 @@ import {
 
 export default function CustomDatepicker({
   control,
-  validations,
+  validations={},
   setValue,
   name,
   label,
@@ -50,7 +50,7 @@ export default function CustomDatepicker({
     <View>
       <Controller
         control={control}
-        rules={validations}
+        rules={{required: isRequired, ...validations}}
         render={({
           field: { onChange, onBlur, value },
           fieldState: { error },

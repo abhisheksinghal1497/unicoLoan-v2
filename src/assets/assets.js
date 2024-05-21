@@ -1,7 +1,6 @@
 import checkboxError from "./checkbox/checkbox-error.png";
 import checkboxOff from "./checkbox/checkbox-off.png";
 import checkboxOn from "./checkbox/checkbox-on.png";
-import homeCircle from "./icons/home.png";
 import Frame2 from "./frame2.png";
 import protection from "./protection.png";
 import aadhar_front from "./aadhar_front.png";
@@ -11,14 +10,14 @@ import Frame3 from "./frame3.png";
 import ChatsCircle from "./ChatsCircle.png";
 import questionRound from "./icons/questionRound.png";
 import back from "./icons/back.png";
-import homeIconPerson from './homeIconPerson.png'
+import homeIconPerson from './homeIconPerson.png';
+import homeIcon from './home_icon.png'
 
 export const assets = {
   checkboxError,
   checkboxOff,
   checkboxOn,
   Frame2,
-  homeCircle,
   protection,
   aadhar_front,
   aadhar_back,
@@ -27,5 +26,6 @@ export const assets = {
   back,
   Frame3,
   ChatsCircle,
-  homeIconPerson
+  homeIconPerson,
+  homeIcon
 };

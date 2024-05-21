@@ -16,41 +16,21 @@ const ApplicationCard = ({navigation}) => {
   console.log('ProgressBarPercent',ProgressBarPercent)
   return (
     <View
-      style={{
-        backgroundColor: colors.primaryContainer,
-        flexDirection: "row",
-        alignItems: "center",
-        borderRadius: horizontalScale(8),
-        marginVertical: verticalScale(18),
-        paddingLeft: horizontalScale(23),
-        paddingVertical: verticalScale(13),
-        paddingRight: horizontalScale(12),
-      }}
+      style={styles.applicationContainer}
     >
-      <View style={{ flex: 1 }}>
+      <View style={styles.loanContentContainer}>
         <Text
-          style={{
-            color: "#2E52A1",
-            fontSize: verticalScale(14),
-            marginBottom: verticalScale(10),
-          }}
+          style={styles.applicationContentText}
         >
           Applicant Details
         </Text>
         <Text
-          style={{
-            color: "#2E52A1",
-            fontSize: verticalScale(14),
-            marginBottom: verticalScale(10),
-          }}
+           style={styles.applicationContentText}
         >
           LXC537676727
         </Text>
         <Text
-          style={{
-            color: "#2E52A1",
-            fontSize: verticalScale(14),
-          }}
+           style={[styles.applicationContentText, { marginBottom: verticalScale(0)}]}
         >
           Housing Loan
         </Text>
