@@ -32,7 +32,7 @@ const Dashboard = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}
-        initialRouteName={screens.HomeScreen}>
+        initialRouteName={screens.KYCDocuments}>
         <Stack.Screen
           name={screens.Splash}
           component={Splash}
