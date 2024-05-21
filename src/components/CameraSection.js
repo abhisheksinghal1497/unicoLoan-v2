@@ -1,4 +1,4 @@
-import { StyleSheet, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, View, TouchableOpacity ,Image} from 'react-native'
 import React from 'react'
 import Icon from 'react-native-vector-icons/Feather';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
@@ -9,7 +9,7 @@ export default function CameraSection({ onCameraPress,onCameraCross,onCameraRelo
     <View style={cross  ? styles.container : styles.containerSecond}>
        {cross &&(
           <TouchableOpacity onPress={onCameraCross} style={styles.crossButton}>
-          <EntypoIcon name="cross" size={30} color="#2E52A1" />
+          <Image source={require('../../assets/images/cross.png')} style={styles.crossImage} />
         </TouchableOpacity>
         )}
       
@@ -18,7 +18,8 @@ export default function CameraSection({ onCameraPress,onCameraCross,onCameraRelo
       </TouchableOpacity>
       {reload &&(
         <TouchableOpacity onPress={onCameraReload} style={styles.reloadButton}>
-        <AntDesignIcon name="reload1" size={30} color="#2E52A1" />
+        {/* <AntDesignIcon name="reload1" size={30} color="#2E52A1" /> */}
+        <Image source={require('../../assets/images/retry.png')} style={styles.crossImage} />
       </TouchableOpacity>
       )}
       
@@ -31,5 +32,6 @@ const styles = StyleSheet.create({
   containerSecond: { marginTop: 10, height: '20%', width: '100%', justifyContent: 'center', alignItems: 'center' },
   cameraButton: { height: 90, width: 90, borderRadius: 45, backgroundColor: '#2E52A1', justifyContent: 'center', alignItems: 'center' },
   crossButton:{height: 90, width: 90, borderRadius: 45, justifyContent: 'center', alignItems: 'center'},
+  crossImage:{height:40,width:40, resizeMode: 'contain',},
   reloadButton:{height: 90, width: 90, borderRadius: 45, justifyContent: 'center', alignItems: 'center'}
 })

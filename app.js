@@ -25,7 +25,7 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, FlatList } from "react-native";
+import { StyleSheet, Text, View, FlatList,StatusBar } from "react-native";
 import {
     MD3LightTheme as DefaultTheme,
     PaperProvider,
@@ -155,6 +155,11 @@ export const App = function () {
 
     return (
         <PaperProvider theme={customTheme}>
+            <StatusBar
+                barStyle="dark-content"
+                hidden={false}
+                backgroundColor="#FFFFFF"
+            />
             <ErrorBoundary FallbackComponent={ErrorScreen}>
                 <QueryClientProvider client={queryClient}>
                     <Reduxprovider store={store}>
