@@ -512,7 +512,8 @@ export default function ApplicationDetails(props) {
           }
 
           acc.totalRequiredFields++;
-          if (watch(field.id) !== "") {
+          if (!!watch(field.id)) {
+
             acc.filledRequiredFields++;
           }
         }
@@ -525,6 +526,8 @@ export default function ApplicationDetails(props) {
     if (totalRequiredFields > 0) {
         completionPercentage = (filledRequiredFields / totalRequiredFields) * 100;
     }
+
+    console.log({totalRequiredFields, completionPercentage,filledRequiredFields})
 
     return completionPercentage;
   };

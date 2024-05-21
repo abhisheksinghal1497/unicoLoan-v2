@@ -5,7 +5,7 @@ import Image from "react-native-fast-image";
 import { assets } from "../../../assets/assets";
 import { Text } from "react-native-paper";
 
-const QueryCard = (data) => {
+const QueryCard = ({data}) => {
   return (
     <View style={styles.containerStyle}>
       <View style={styles.contentContainer}>
@@ -22,7 +22,7 @@ const QueryCard = (data) => {
             <Text
               style={styles.ticketIdText}
             >
-              Ticket no. #{data.description}
+              Ticket no. #{data.ticketId}
             </Text>
           </View>
 

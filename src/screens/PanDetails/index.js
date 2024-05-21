@@ -12,7 +12,8 @@ import {
 import { validations } from "../../constants/validations";
 import { Controller, useForm } from "react-hook-form";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import ProgressCard from '../../components/ProgressCard'
+import ProgressCard from '../../components/ProgressCard';
+import CircularProgress from '../../components/CircularProgress'
 
 const WIDTH = Dimensions.get('window').width;
 const screenName = "PAN Details"
@@ -137,7 +138,7 @@ const PanDetails = (props) => {
         onPressLeft={() => { props?.navigation?.navigate(screens.ApplicantDetails) }}
         onPressRight={() => { }} />
       <ScrollView>
-        <ProgressCard screenName={screenName} percentage={10} />
+        <CircularProgress ImageData={require('./../../../assets/images/Home2.png')} screenName={screenName} percentage={10} />
         {mock_data.map((comp, index) => {
           return (index === 0 || (!errors[comp.id] && getValues('panNumber')?.length === 10 && !isVerified)) && (
             <FormControl

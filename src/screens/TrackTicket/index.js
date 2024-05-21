@@ -76,7 +76,7 @@ const TrackTicket = (props) => {
     >
       <View style={styles.container}>
         <TicketHeader />
-        <QueryCard />
+        <QueryCard data={data} />
         <ComplaintTime />
         <BasicTimeline data={data.status} />
         <ServiceRating />
