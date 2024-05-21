@@ -11,6 +11,7 @@ const customTheme = {
     surfaceVariant: "#D7E7F4",
     surface: "#0076C7",
     background: "#EFEFED",
+    greyShadow: '#E8E8EA',
     seconderyBackground: "rgba(254, 249, 235, 1)",
     textInputBackground: "#FFFFFF",
     error: "rgba(232, 41, 45, 1)",
