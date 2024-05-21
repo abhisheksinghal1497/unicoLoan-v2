@@ -1,13 +1,14 @@
-import { useState } from "react";
 import CustomModal from "../../../components/CustomModal";
 import { Text } from "react-native-paper";
 import { View } from "react-native";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import { verticalScale } from "../../../utils/matrcis";
 import Button from "../../../components/Button";
+import { toast } from "../../../utils/functions";
 
 const HelpModal = ({ showModal, setShowModal, toggleModal, modalStyle }) => {
   const closeModal = () => setShowModal(false);
+  const onPressOk = () => toast('info', 'Info', 'Details')
 
   return (
     <CustomModal
@@ -60,7 +61,7 @@ const HelpModal = ({ showModal, setShowModal, toggleModal, modalStyle }) => {
         </View>
 
         <View>
-          <Button label="Ok" type="primary" onPress={toggleModal} />
+          <Button label="Ok" type="primary" onPress={onPressOk} />
           <Button
             onPress={toggleModal}
             label="Cancel"

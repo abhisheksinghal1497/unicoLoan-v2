@@ -10,11 +10,12 @@ const Rating = ({ rating = 0, numberOfStart = 5 }) => {
       {Array(numberOfStart)
         .fill(null)
         ?.map((e, i) => {
+          const currentIndex = i+1
           return (
-            <TouchableOpacity key={i.toString()} onPress={() => setStarts(i)}>
+            <TouchableOpacity key={i.toString()} onPress={() => setStarts(currentIndex)}>
               <Image
                 source={
-                  stars >= i
+                  stars >= currentIndex
                     ? require("../../assets/filled_star.png")
                     : require("../../assets/empty_star.png")
                 }

@@ -161,7 +161,6 @@ export const getHomeScreenOurServices = () => {
   return mutate;
 };
 
-
 export const getFAQDetails = () => {
   const mutate = useMutation({
     networkMode: "always",
@@ -260,63 +259,61 @@ export const getRaiseTicketsListScreen = () => {
     },
   });
 
-    return mutate
-}
+  return mutate;
+};
 
-export const getListOfTickets = () =>{
-    const mutate = useMutation({
-        networkMode:"always",
-        mutationFn:async()=>{
-        
-           return new Promise((resolve, reject)=>{
-              
-                 setTimeout(()=>{
-                    const data = [
-                        {
-                          status: 0, // 0 for in process and 1 for resolved
-                          ticket_no: 210,
-                          title: 'RM Not Responding',
-                          description: 'RM is not attending my concerns and queries.',
-                          image_url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFHsQQrrFRJ9nccLjDbT8OSLsbXzeLe3rQrEHn1FPzrA&s'
-                        },
-                        {
-                          status: 1,
-                          ticket_no: 214,
-                          title: 'Query',
-                          description: 'Subject to be placed on the case.',
-                          image_url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFHsQQrrFRJ9nccLjDbT8OSLsbXzeLe3rQrEHn1FPzrA&s',
-                          resolvedBy: 'Dixit Ukani',
-                          resolvedAt: 1684855139, // date in epoch time
-                          rating: 4,
-                        }
-                      ]
-                    resolve(data)
-                    reject('Something went wrong')
-                }, 3000)
-            }, )
-        }
-    })
+export const getListOfTickets = () => {
+  const mutate = useMutation({
+    networkMode: "always",
+    mutationFn: async () => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          const data = [
+            {
+              status: 0, // 0 for in process and 1 for resolved
+              ticket_no: 210,
+              title: "RM Not Responding",
+              description: "RM is not attending my concerns and queries.",
+              image_url:
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFHsQQrrFRJ9nccLjDbT8OSLsbXzeLe3rQrEHn1FPzrA&s",
+            },
+            {
+              status: 1,
+              ticket_no: 214,
+              title: "Query",
+              description: "Subject to be placed on the case.",
+              image_url:
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFHsQQrrFRJ9nccLjDbT8OSLsbXzeLe3rQrEHn1FPzrA&s",
+              resolvedBy: "Dixit Ukani",
+              resolvedAt: 1684855139, // date in epoch time
+              rating: 4,
+            },
+          ];
+          resolve(data);
+          reject("Something went wrong");
+        }, 3000);
+      });
+    },
+  });
 
-    return mutate
-}
-export const createTicketMethod = () =>{
-    const mutate = useMutation({
-        networkMode:"always",
-        mutationFn:async(ticketData)=>{
-        
-           return new Promise((resolve, reject)=>{
-              
-                 setTimeout(()=>{
-                    const data = {success:true,response:ticketData}
-                    resolve(data)
-                    // reject('Something went wrong')
-                }, 3000)
-            }, )
-        }
-    })
+  return mutate;
+};
+export const createTicketMethod = () => {
+  const mutate = useMutation({
+    networkMode: "always",
+    mutationFn: async (ticketData) => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          const data = { success: true, response: ticketData };
+          resolve(data);
+          // reject('Something went wrong')
+        }, 3000);
+      });
+    },
+  });
 
-    return mutate
-}
+  return mutate;
+};
 
 
 export const uploadAdhaarMethod = () =>{
@@ -339,19 +336,74 @@ export const uploadAdhaarMethod = () =>{
 }
 
 export const getApplicationDetailQuery = () => {
-const query = useQueries({
+  const query = useQueries({
     queries: [
       {
         queryKey: ["applicationDetailsQuery"],
-        queryFn: () => new Promise((resolve) => {
+        queryFn: () =>
+          new Promise((resolve) => {
             setTimeout(() => {
+              resolve({
+                userId: "USER-12",
+                mobileNumber: "7007863331",
+                email: "azeez@yopmail.com",
+              });
+            }, 2000);
+          }),
+      },
+    ],
+  });
+
+  return query;
+};
+
+export const getQueryDetailsById = (id, isSuccess = true) => {
+  const query = useQueries({
+    queries: [
+      {
+        queryKey: ["queryDetails" + id],
+        queryFn: () =>
+          new Promise((resolve, reject) => {
+            setTimeout(() => {
+              if (isSuccess) {
                 resolve({
-                    userId:'USER-12',
-                    mobileNumber: '7007863331',
-                    email: 'azeez@yopmail.com'
-                })
-            }, 2000)
-        }),
+                  queryId: id,
+                  title: "Home Loan",
+                  description:
+                    "Home loan has not been processed yet, submitted all the details on 23rd April 2024",
+                  ticketId: 214,
+                  status: [
+                    {
+                      title: "Complaint Raised",
+                      createdAt: "2024-03-30T00:00:00.000Z",
+                      description: "Your Complaint has been raised at 2:32 PM",
+                    },
+                    {
+                      title: "Task Assigned",
+                      createdAt: "2024-04-01T00:00:00.000Z",
+                      description:
+                        "Admin has assigned the task to Bhavesh Rao who will attend your complaint around 3:00 PM",
+                    },
+                    {
+                      title: "Process started",
+                      createdAt: "2024-04-03T00:00:00.000Z",
+                      description:
+                        "Mr. Bhavesh Rao has started attending your complaint at 3:00 PM",
+                    },
+                    {
+                      title: "Complaint Resolved",
+                      createdAt: "2024-04-06T00:00:00.000Z",
+                      description:
+                        "Complaint was successfully attended and resolved at 6:32 PM",
+                    },
+                  ],
+                  rating: 3
+                });
+              } else {
+                reject({ error: "Some error occured" });
+              }
+            }, 2000);
+          }),
       },
     ],
   });

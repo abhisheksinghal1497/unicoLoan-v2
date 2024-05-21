@@ -17,4 +17,5 @@ export const fieldLabelViewStyle = {
 export const fieldLabelStyle = {
   //   ...customTheme.fonts.regularText,
   ...customTheme.fonts.regularText,
+  color:customTheme.colors.labelColor
 };
