@@ -335,6 +335,25 @@ export const uploadAdhaarMethod = () =>{
   return mutate
 }
 
+export const uploadOtpMethod = () =>{
+  const mutate = useMutation({
+      networkMode:"always",
+      mutationFn:async(OtpData)=>{
+      
+         return new Promise((resolve, reject)=>{
+            
+               setTimeout(()=>{
+                  const data = {success:true,response:OtpDataData}
+                  resolve(data)
+                  // reject('Something went wrong')
+              }, 3000)
+          }, )
+      }
+  })
+
+  return mutate
+}
+
 export const getApplicationDetailQuery = () => {
   const query = useQueries({
     queries: [

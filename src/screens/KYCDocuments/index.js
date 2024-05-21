@@ -56,11 +56,34 @@ const fetchData = async() =>{
       <CustomImageContainer selectedImage={selectedImage} />
       <CustomImageContainer selectedImage={selectedImageBack} />
       </View>
-      <SuccessText />
+      <SuccessText Successtext ={"E-Addhaar Successfully Verified"} />
       <View style={styles.con3} />
       <View style={styles.con4}>
-        <CustomImageContainer selectedImage={selectedImageSelfie} />
-        <SuccessText />
+        {/* <CustomImageContainer selectedImage={selectedImageSelfie} /> */}
+        {/* <SuccessText /> */}
+          <View style={styles.customCon}>
+      <View
+        style={{
+          borderColor: "#e1e3e8",
+          alignItems: "center",
+          borderWidth: 1,
+          paddingVertical: 50,
+          width: "100%",
+          borderRadius: 20,
+          backgroundColor:'#E6E6E6',borderRadius:10
+        }}
+      >
+        <Image
+        source={selectedImage ? {uri :  `data:${selectedImage?.mime};base64,${selectedImage?.data}` } : require('../../images/aadhar-front.png')}
+        style={{height:100,width:100}}
+        resizeMode="cover"
+        //  source={assets.aadhar_front}
+         />
+      </View>
+      <Text style={styles.conText1}>Upload Your Selfie</Text>
+      
+    </View>
+    <SuccessText Successtext ={"Verified"} /> 
         <CustomButton
           type="primary"
           label="Confirm and Continue"
@@ -90,11 +113,11 @@ const CustomImageContainer = ({selectedImage}) => {
   );
 };
 
-const SuccessText = () => {
+const SuccessText = ({Successtext}) => {
   return (
     <View style={styles.successCon}>
       <Image source={assets.tick} />
-      <Text style={styles.successText}>E-Addhaar Successfully Verified</Text>
+      <Text style={styles.successText}>{Successtext}</Text>
     </View>
   );
 };
@@ -142,6 +165,7 @@ const styles = StyleSheet.create({
     paddingVertical: 50,
     width: "100%",
     borderRadius: 20,
+    
 
   },
   successCon: {

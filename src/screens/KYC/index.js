@@ -16,6 +16,7 @@ import { screens } from '../../constants/screens';
 import { useFocusEffect } from '@react-navigation/native';
 import ProgressCard from '../../components/ProgressCard'
 import { ScrollView } from 'react-native-gesture-handler';
+import { uploadOtpMethod } from "../../services/ApiUtils";
 
 const WIDTH = Dimensions.get('window').width;
 const screenName = "Documents"
@@ -25,6 +26,20 @@ const KYC = (props) => {
 
   const [selectedImage, setSelectedImage] = useState('');
   const [selectedImageBack, setSelectedImageBack] = useState('');
+
+  const uploadOtpMethodFn=uploadOtpMethod();
+
+  useEffect(() => {
+    if (uploadOtpMethodFn?.data) {
+      alert('Success')
+    }
+  }, [uploadOtpMethodFn?.data]);
+
+  useEffect(() => {
+    if (uploadOtpMethodFn?.error) {
+      alert("error");
+    }
+  }, [uploadOtpMethodFn?.error]);
 
   console.log(Boolean(selectedImage)  && Boolean(selectedImageBack),'Vaue here')
 
@@ -58,15 +73,13 @@ const fetchData = async() =>{
   const hideModal = () => setVisible(false);
 
 
-  const onSubmit = async() =>{
-    props.navigation.navigate(screens.CaptureSelfie)
-  }
+
 
   // const startTimer = React.useCallback()
 
   const TimerContent = () => {
-    const [counter, setCounter] = React.useState(60);
-    React.useEffect(() => {
+    const [counter, setCounter] = useState(60);
+    useEffect(() => {
       counter > 0 && setTimeout(() => setCounter(counter - 1), 1000);
     }, [counter]);
     return counter !== 0 ? (
@@ -81,6 +94,12 @@ const fetchData = async() =>{
           style={[fonts.bodyRegular, { color: 'rgba(46, 82, 161, 1)', marginTop: 3 }]}>Resend</Text>
       </TouchableOpacity>
     )
+  }
+
+  const onSubmitOtp = () =>{
+    hideModal(); setType(0);
+    uploadOtpMethodFn.mutate({"otp": 1234});
+    props.navigation.navigate(screens.CaptureSelfie)
   }
 
   return (
@@ -189,7 +208,9 @@ const fetchData = async() =>{
               type="primary"
               label="Submit"
               buttonContainer={styles.modalButtonContainer}
-              onPress={() => { hideModal(); setType(0);onSubmit()}} />
+              onPress={()  => onSubmitOtp()}
+              // onPress={() => { hideModal(); setType(0);onSubmit()}}
+               />
           </View>
           }
       </Modal >
