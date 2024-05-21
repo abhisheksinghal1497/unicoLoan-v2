@@ -7,10 +7,23 @@ import { Text, useTheme } from "react-native-paper";
 import BasicTimeline from "./component/StepperStatus/Stepper";
 import Rating from "../../components/Rating/Rating";
 import CustomButton from "../../components/Button";
+import { getQueryDetailsById } from "../../services/ApiUtils";
+import { formatDateDayMonthYear } from "../../utils/dateUtil";
 
 const TrackTicket = (props) => {
   const { colors } = useTheme();
+  const queryId = 1;
+  const [{data, isError, isLoading}] = getQueryDetailsById(queryId);
+  console.log({data})
   const styles = stylesFn(colors);
+
+  if(isLoading){
+    return <></>
+  }
+
+  if(isError){
+    return <></>
+  }
 
   const TicketHeader = () => {
     return (
@@ -35,7 +48,7 @@ const TrackTicket = (props) => {
         <Text style={styles.complainStatusTimeText}>
           Complaint Resolved{" "}
           <Text style={styles.complainStatusTimeTextDescription}>
-            on Mon 6th March 24
+            on {formatDateDayMonthYear(data.status[data.status.length -1].createdAt)}
           </Text>
         </Text>
       </View>
@@ -52,7 +65,7 @@ const TrackTicket = (props) => {
         >
           Rate the Service
         </Text>
-        <Rating rating={4} />
+        <Rating rating={data.rating} />
       </View>
     );
   };
@@ -65,7 +78,7 @@ const TrackTicket = (props) => {
         <TicketHeader />
         <QueryCard />
         <ComplaintTime />
-        <BasicTimeline />
+        <BasicTimeline data={data.status} />
         <ServiceRating />
       </View>
       <View>

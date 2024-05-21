@@ -1,8 +1,9 @@
 import React from "react";
 import { View, Image, Text } from "react-native";
-import { Svg, Circle, Path } from 'react-native-svg'
+import { Svg, Circle, Path } from 'react-native-svg';
+import { colors } from "../colors";
 
-const CircularProgress = ({ size, strokeWidth, bgColor, pgColor, progressPercent, ImageData, TextData }) => {
+const CircularProgress = ({ size, strokeWidth, bgColor = colors.white, pgColor = colors.coreBlue, progressPercent, ImageData, TextData }) => {
   const radius = (size - strokeWidth) / 2;
   const circum = radius * 2 * Math.PI;
   const svgProgress = 100 - progressPercent;

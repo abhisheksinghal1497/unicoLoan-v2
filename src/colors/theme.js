@@ -30,6 +30,7 @@ const customTheme = {
     border: "#D2D2D2",
     disableBg: "#D3D3D3",
     black: "#000000",
+    labelColor:'rgba(136, 136, 136, 1)'
   },
   shape: {
     ...DefaultTheme.shape,

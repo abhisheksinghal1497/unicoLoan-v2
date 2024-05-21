@@ -5,8 +5,7 @@ import Image from "react-native-fast-image";
 import { assets } from "../../../assets/assets";
 import { Text } from "react-native-paper";
 
-const QueryCard = () => {
-  //
+const QueryCard = (data) => {
   return (
     <View style={styles.containerStyle}>
       <View style={styles.contentContainer}>
@@ -19,16 +18,16 @@ const QueryCard = () => {
           <View
             style={styles.queryContainer}
           >
-            <Text style={styles.queryTitle}>Query</Text>
+            <Text style={styles.queryTitle}>{data.title}</Text>
             <Text
               style={styles.ticketIdText}
             >
-              Ticket no. #214
+              Ticket no. #{data.description}
             </Text>
           </View>
 
           <Text style={styles.queryDescription}>
-            Subject to be placed on the case.
+           {data.description}
           </Text>
         </View>
       </View>

@@ -22,13 +22,13 @@ import {
 
 export default DropDown = ({
   control,
-  validations,
+  validations={},
   setValue,
   name,
   label,
   type,
   right,
-  value="",
+  value = "",
   isDisabled = false,
   isRequired = false,
   tooltipText = "",
@@ -40,10 +40,7 @@ export default DropDown = ({
   const { colors, fonts } = useTheme();
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [valueText, setValueText] = useState( "");
-
-
-  
+  const [valueText, setValueText] = useState("");
 
   const renderOptions = ({ item }) => {
     return (
@@ -76,7 +73,7 @@ export default DropDown = ({
     <>
       <Controller
         control={control}
-        rules={validations}
+        rules={{ required: isRequired, ...validations }}
         render={({
           field: { onChange, onBlur, value },
           fieldState: { error, invalid },
@@ -92,7 +89,15 @@ export default DropDown = ({
 
               <CustomShadow shadowColor={error ? colors.error : colors.primary}>
                 <TouchableOpacity
-                  style={[styles.selectContainer, style,{backgroundColor : isDisabled ? customTheme.colors.disableBg : "transparent" }]}
+                  style={[
+                    styles.selectContainer,
+                    style,
+                    {
+                      backgroundColor: isDisabled
+                        ? customTheme.colors.disableBg
+                        : "transparent",
+                    },
+                  ]}
                   disabled={isDisabled}
                   activeOpacity={1}
                   onPress={() => {
@@ -105,8 +110,13 @@ export default DropDown = ({
                       error && { borderColor: colors.error },
                     ]}
                   >
-                    
-                    <Text style={[value ? {color: isDisabled ? "#000" :colors.grey  } : {}]}>
+                    <Text
+                      style={[
+                        value
+                          ? { color: isDisabled ? "#000" : colors.grey }
+                          : {},
+                      ]}
+                    >
                       {valueText || getTextFromVal(value) || placeholder}
                     </Text>
                     <Text style={styles.selectArr}>&#9013;</Text>
@@ -130,6 +140,7 @@ export default DropDown = ({
         type="bottom"
         showModal={modalVisible}
         setShowModal={setModalVisible}
+        centeredViewStyle={{ backgroundColor: "rgba(0, 0, 0, 0.1)" }}
       >
         <View>
           <View style={styles.modalHeader}>
