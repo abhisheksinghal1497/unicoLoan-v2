@@ -20,6 +20,7 @@ import { getDateYearsBack } from "../../utils/dateUtil";
 import { getApplicationDetailQuery } from "./../../services/ApiUtils";
 import DimensionUtils from "../../utils/DimensionUtils";
 
+
 const initialData = [
   {
     id: "applicationType",
@@ -44,6 +45,7 @@ const initialData = [
 ];
 
 export default function ApplicationDetails(props) {
+
   const [isVerified, setIsVerified] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [{ data = {} }] = getApplicationDetailQuery();
@@ -572,7 +574,7 @@ export default function ApplicationDetails(props) {
       </View>
       <ScrollView contentContainerStyle={style.scrollviewStyle}>
         <View style={style.container}>
-          <ApplicationCard percentage={percentage}  />
+          <ApplicationCard navigation={props?.navigation}/>
         </View>
 
         <View

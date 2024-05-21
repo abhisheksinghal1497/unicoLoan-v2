@@ -23,6 +23,8 @@ import MyTickets from '../screens/MyTickets';
 import RaiseTicket from '../screens/RaiseTicket';
 import CreateTicket from '../screens/CreateTicket';
 import TrackTicket from '../screens/TrackTicket/index'
+import PayNow from '../screens/PayNow';
+import StatusCheck from '../screens/StatusCheck';
 
 const Stack = createStackNavigator();
 
@@ -30,7 +32,7 @@ const Dashboard = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}
-       initialRouteName={screens.HomeScreen}>
+        initialRouteName={screens.HomeScreen}>
         <Stack.Screen
           name={screens.Splash}
           component={Splash}
@@ -74,6 +76,9 @@ const Dashboard = () => {
         <Stack.Screen
           name={screens.ProfileImageScreen}
           component={ProfileImageScreen}
+          options={{
+            headerShown: true,
+          }}
         />
         <Stack.Screen
           name={screens.KYCDocuments}
@@ -110,6 +115,20 @@ const Dashboard = () => {
         <Stack.Screen
           name={screens.TrackTicket}
           component={TrackTicket}
+        />
+        <Stack.Screen
+          name={screens.PayNow}
+          component={PayNow}
+          options={{
+            headerShown: true,
+          }}
+        />
+        <Stack.Screen
+          name={screens.StatusCheck}
+          component={StatusCheck}
+          options={{
+            headerShown: true,
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>
