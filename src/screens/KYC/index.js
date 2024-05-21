@@ -14,10 +14,11 @@ import customTheme from '../../colors/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { screens } from '../../constants/screens';
 import { useFocusEffect } from '@react-navigation/native';
-
+import ProgressCard from '../../components/ProgressCard'
+import { ScrollView } from 'react-native-gesture-handler';
 
 const WIDTH = Dimensions.get('window').width;
-
+const screenName = "Documents"
 
 
 const KYC = (props) => {
@@ -83,23 +84,24 @@ const fetchData = async() =>{
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Header
         title="Documents"
         left={require('../../images/back.png')}
         onPressLeft={() => { props?.navigation?.navigate(screens.PanDetails) }}
         right={require('../../images/question.png')}
         onPressRight={() => { }} />
+         <ProgressCard screenName={screenName} percentage={10} />
       <View style={styles.subContainer}>
         <Text style={[fonts.labelSmall, { width: '100%' }]}>Let's verify your identity quickly</Text>
-        <View style={{ alignSelf: 'center', marginTop: 15 }}>
+        <TouchableOpacity  onPress={() => { showModal() }} style={{ alignSelf: 'center', marginTop: 15, }}>
           <View style={styles.recommendedContainer}>
             <Text style={[fonts.smallLightText, { color: colors.white }]}>Recommended</Text>
           </View>
           <View style={styles.cardContainer}>
             <Image source={require('../../images/aadhar-front.png')} style={styles.frontImage} />
           </View>
-        </View>
+        </TouchableOpacity>
         <Text style={[fonts.labelMedium, { marginTop: 10, color: 'rgba(68, 70, 91, 1)' }]}>Generate E-Aadhaar</Text>
         <Text style={[fonts.labelSmall, { marginTop: 5, lineHeight: 22, textAlign: 'center' }]}>You will receive an OTP on your{'\n'}Aadhaar
           {'\n'}linked mobile number</Text>
@@ -180,7 +182,6 @@ const fetchData = async() =>{
               label="Enter otp"
               errors={errors.leadId}
               isRequired
-              // placeholder="Enter Lead Id"
               style={styles.otpInputContainer}
             />
             <TimerContent />
@@ -192,7 +193,7 @@ const fetchData = async() =>{
           </View>
           }
       </Modal >
-    </View >
+    </ScrollView >
   )
 }
 
@@ -210,10 +211,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonContainer: {
-    position: 'absolute',
+    // position: 'absolute',
     alignSelf: 'center',
     width: '100%',
-    bottom: 10
+    marginTop:30,
+    marginBottom:30
+    // bottom: 10
   },
   modalButtonContainer: {
     alignSelf: 'center',
@@ -294,7 +297,7 @@ const styles = StyleSheet.create({
     paddingTop: 30,
     backgroundColor: colors.white,
     position: 'absolute',
-    bottom: 0,
+    bottom: 30,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
   },
@@ -348,12 +351,14 @@ const styles = StyleSheet.create({
     flex: 1,
     // borderWidth: 1,
     // borderColor: 'rgba(232, 232, 234, 1)',
-    backgroundColor: customTheme.colors.textInputBackground,
+    backgroundColor: customTheme.colors.greyShadow,
     marginLeft: 10,
-    height: 40,
-    borderRadius: 10,
+    height: 60,
+    // borderRadius: 10,
     marginVertical: 20,
-    marginTop: 40,
+    // marginTop: 40,
+    borderWidth:2,
+    borderColor:'#E8E8EA'
   },
   timerImage: {
     width: 15,
