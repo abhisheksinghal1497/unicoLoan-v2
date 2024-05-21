@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { horizontalScale } from "../utils/matrcis";
 
 const CustomModal = ({type="center",showModal = true, setShowModal = () => {}, children, modalStyle, centeredViewStyle ={}}) => {
 
@@ -32,6 +33,7 @@ const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    // alignSelf:'center'
   },
   modalView: {
     backgroundColor: "white",
@@ -45,6 +47,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    maxHeight:'70%'
+    maxHeight:'70%',
+    marginHorizontal: horizontalScale(15)   
   },
 });

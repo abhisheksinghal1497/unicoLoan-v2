@@ -574,7 +574,9 @@ export default function ApplicationDetails(props) {
       </View>
       <ScrollView contentContainerStyle={style.scrollviewStyle}>
         <View style={style.container}>
-          <ApplicationCard navigation={props?.navigation}/>
+          <ApplicationCard 
+          navigation={props?.navigation}
+          />
         </View>
 
         <View
