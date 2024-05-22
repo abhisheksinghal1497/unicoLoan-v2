@@ -262,6 +262,70 @@ export const getRaiseTicketsListScreen = () => {
   return mutate;
 };
 
+export const getOtherKycList = () => {
+  const mutate = useMutation({
+    networkMode: "always",
+    mutationFn: async () => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          const data = [
+            {
+              id: '1',
+              title: "Driving License"
+            },
+            {
+              id: '2',
+              title: "Passport"
+            },
+            {
+              id: '3',
+              title: "Voter ID"
+            },
+            {
+              id: '4',
+              title: "NREGA Card"
+            }
+          ];
+          resolve(data);
+          reject("Something went wrong");
+        }, 3000);
+      });
+    },
+  });
+
+  return mutate;
+};
+
+export const getTempAddressKycList = () => {
+  const mutate = useMutation({
+    networkMode: "always",
+    mutationFn: async () => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          const data = [
+            {
+              id: '1',
+              title: "Electricity Bill"
+            },
+            {
+              id: '2',
+              title: "Gas Bill"
+            },
+            {
+              id: '3',
+              title: "Mobile Bill"
+            },
+          ];
+          resolve(data);
+          reject("Something went wrong");
+        }, 3000);
+      });
+    },
+  });
+
+  return mutate;
+};
+
 export const getListOfTickets = () => {
   const mutate = useMutation({
     networkMode: "always",

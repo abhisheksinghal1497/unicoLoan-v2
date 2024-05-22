@@ -25,6 +25,7 @@ import CreateTicket from '../screens/CreateTicket';
 import TrackTicket from '../screens/TrackTicket/index'
 import PayNow from '../screens/PayNow';
 import StatusCheck from '../screens/StatusCheck';
+import EmiCalculator from '../screens/EmiCalculator';
 
 const Stack = createStackNavigator();
 
@@ -32,7 +33,7 @@ const Dashboard = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}
-        initialRouteName={screens.HomeScreen}>
+        initialRouteName={screens.EmiCalculator}>
         <Stack.Screen
           name={screens.Splash}
           component={Splash}
@@ -115,6 +116,10 @@ const Dashboard = () => {
         <Stack.Screen
           name={screens.TrackTicket}
           component={TrackTicket}
+        />
+        <Stack.Screen
+          name={screens.EmiCalculator}
+          component={EmiCalculator}
         />
         <Stack.Screen
           name={screens.PayNow}

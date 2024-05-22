@@ -33,5 +33,6 @@ export const screens = {
     FAQ:"FAQ",
     TrackTicket: 'TrackTicket',
     PayNow: 'PayNow',
-    StatusCheck: "StatusCheck"
+    StatusCheck: "StatusCheck",
+    EmiCalculator: "EmiCalculator"
   };

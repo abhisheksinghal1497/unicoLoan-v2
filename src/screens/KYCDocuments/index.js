@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, Image, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import React, { useState, useEffect, useCallback } from "react";
 import { assets } from "../../assets/assets";
 import customTheme from "../../colors/theme";
@@ -13,6 +13,7 @@ import { colors } from "../../colors";
 import CustomShadow from "../../components/FormComponents/CustomShadow";
 import { FlatList } from "react-native";
 import ImagePicker from "react-native-image-crop-picker";
+import { getOtherKycList, getTempAddressKycList } from "../../services/ApiUtils";
 
 const KYCDocuments = ({ navigation }) => {
 
@@ -26,43 +27,46 @@ const KYCDocuments = ({ navigation }) => {
   const [modalVisible3, setModalVisible3] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [imageSelected, setImageSelected] = useState(false);
+  const [data, setData] = useState([])
+  const [data2, setData2] = useState([])
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  const otherkyc = getOtherKycList()
+  const TempKyc = getTempAddressKycList()
+
+  useEffect(()=>{
+    otherkyc?.mutate()
+    TempKyc?.mutate()
+  },[])
+
+  useEffect(()=>{
+    if(otherkyc.data){
+      setIsLoading(false)
+      setData(otherkyc.data)
+    }
+  },[otherkyc.data])
+
+  useEffect(()=>{
+    if(TempKyc.data){
+      setIsLoading(false)
+      setData2(TempKyc.data)
+    }
+  },[TempKyc.data])
+
+  useEffect(()=>{
+    if(otherkyc.error){
+      Alert.alert(otherkyc.error)
+    }
+  },[otherkyc.error])
+
+  useEffect(()=>{
+    if(TempKyc.error){
+      Alert.alert(TempKyc.error)
+    }
+  },[TempKyc.error])
 
   console.log('selectedItem', selectedItem?.title)
-  const OtherKycData = [
-    {
-      id: '1',
-      title: "Driving License"
-    },
-    {
-      id: '2',
-      title: "Passport"
-    },
-    {
-      id: '3',
-      title: "Voter ID"
-    },
-    {
-      id: '4',
-      title: "NREGA Card"
-    }
-  ]
-
-  const TempAddressData = [
-    {
-      id: '1',
-      title: "Electricity Bill"
-    },
-    {
-      id: '2',
-      title: "Gas Bill"
-    },
-    {
-      id: '3',
-      title: "Mobile Bill"
-    },
-
-  ]
-
   const handleGalleryUpload = () => {
 
     if (selectedItem) {
@@ -315,7 +319,7 @@ const KYCDocuments = ({ navigation }) => {
             <Text style={styles.modalHeaderTxt}> Select one</Text>
           </View>
           <FlatList
-            data={OtherKycData}
+            data={data}
             keyExtractor={(item) => item?.id?.toString()}
             renderItem={renderOptions}
           // ItemSeparatorComponent={<View style={styles.itemSeparator} />}
@@ -335,13 +339,14 @@ const KYCDocuments = ({ navigation }) => {
             <Text style={styles.modalHeaderTxt}> Select one</Text>
           </View>
           <FlatList
-            data={TempAddressData}
+            data={data2}
             keyExtractor={(item) => item?.id?.toString()}
             renderItem={renderOptions2}
           />
         </View>
       </CustomModal>
 
+{/* select Gallery or Camera to uplaod Document Dropdown*/}
       <CustomModal
         type="bottom"
         showModal={modalVisible3}
