@@ -315,19 +315,30 @@ export const createTicketMethod = () => {
   return mutate;
 };
 
-export const getApplicationDetailQuery = () => {
+export const getUserDetailQuery = (error = false) => {
   const query = useQueries({
     queries: [
       {
         queryKey: ["applicationDetailsQuery"],
         queryFn: () =>
-          new Promise((resolve) => {
+          new Promise((resolve, reject) => {
             setTimeout(() => {
-              resolve({
-                userId: "USER-12",
-                mobileNumber: "7007863331",
-                email: "azeez@yopmail.com",
-              });
+              if (error) {
+                reject({ message: "Some error occured" });
+              } else {
+                resolve({
+                  userId: "USER-12",
+                  mobileNumber: "7007863331",
+                  email: "vaibhav@gmail.com",
+                  dob: "19/08/1992",
+                  phone: "+91-9768787667",
+                  pan: "CHIPA7867J",
+                  firstName: "Vaibhav",
+                  lastName: "Sharma",
+                  profile:
+                    "https://images.unsplash.com/photo-1633332755192-727a05c4013d",
+                });
+              }
             }, 2000);
           }),
       },
@@ -377,7 +388,7 @@ export const getQueryDetailsById = (id, isSuccess = true) => {
                         "Complaint was successfully attended and resolved at 6:32 PM",
                     },
                   ],
-                  rating: 3
+                  rating: 3,
                 });
               } else {
                 reject({ error: "Some error occured" });
@@ -389,4 +400,25 @@ export const getQueryDetailsById = (id, isSuccess = true) => {
   });
 
   return query;
+};
+
+export const verifyPanApi = () => {
+  const mutate = useMutation({
+    networkMode: "always",
+    mutationFn: async (data) => {
+      console.log({data})
+      const {panNumber, success = true} = data
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          if (success) {
+            resolve({ valid: true, message: "Pan is valid", panNumber });
+          } else {
+            reject({ message: "Pan is not valid", panNumber });
+          }
+        }, 3000);
+      });
+    },
+  });
+
+  return mutate;
 };

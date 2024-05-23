@@ -17,7 +17,7 @@ import { assets } from "../../assets/assets";
 import HelpModal from "./component/HelpModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getDateYearsBack } from "../../utils/dateUtil";
-import { getApplicationDetailQuery } from "./../../services/ApiUtils";
+import { getUserDetailQuery } from "./../../services/ApiUtils";
 import DimensionUtils from "../../utils/DimensionUtils";
 
 
@@ -48,7 +48,7 @@ export default function ApplicationDetails(props) {
 
   const [isVerified, setIsVerified] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [{ data = {} }] = getApplicationDetailQuery();
+  const [{ data = {} }] = getUserDetailQuery();
 
   const mock_data = [
     {
@@ -577,7 +577,7 @@ export default function ApplicationDetails(props) {
       </View>
       <ScrollView contentContainerStyle={style.scrollviewStyle}>
         <View style={style.container}>
-          <ApplicationCard navigation={props?.navigation}/>
+          <ApplicationCard percentage={percentage} navigation={props?.navigation}/>
         </View>
 
         <View
