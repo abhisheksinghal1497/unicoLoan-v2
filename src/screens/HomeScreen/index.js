@@ -150,7 +150,8 @@ const HomeScreen = ({navigation}) => {
    
     switch (index) {
       case 0:
-        setShowModal(true);
+        // setShowModal(true);
+        navigation.navigate(screens.EmiCalculator)
         break;
       case 1:
         const ProgressBarPercent =  0;
@@ -194,7 +195,7 @@ const HomeScreen = ({navigation}) => {
           </View>
       ) : (
         <>
-        <CustomModal
+        {/* <CustomModal
         showModal={showModal}
         setShowModal={setShowModal}
         // You can pass any necessary props to your modal component here
@@ -213,7 +214,7 @@ const HomeScreen = ({navigation}) => {
         </View>
       </TouchableOpacity>
 
-      </CustomModal>
+      </CustomModal> */}
         <View style={{ backgroundColor: colors.coreCream, }}>
               {/* <View style={styles.profileImageView}> */}
                 <TouchableOpacity style={styles.profileImageView} onPress={() => navigation.navigate(screens.ProfileImageScreen)}>
