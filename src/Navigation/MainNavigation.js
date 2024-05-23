@@ -33,7 +33,7 @@ const Dashboard = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}
-        initialRouteName={screens.PanDetails}>
+        initialRouteName={screens.ApplicantDetails}>
         <Stack.Screen
           name={screens.Splash}
           component={Splash}

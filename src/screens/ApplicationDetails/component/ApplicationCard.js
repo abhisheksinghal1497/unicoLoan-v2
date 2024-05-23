@@ -4,12 +4,17 @@ import { useTheme, Text } from "react-native-paper";
 import { assets } from "../../../assets/assets";
 import CircularProgress from "../../../components/CircularProgress";
 import DimensionUtils from "./../../../utils/DimensionUtils";
+import { useRoute } from '@react-navigation/native';
 const horizontalScale = DimensionUtils.pixelSizeHorizontal;
 const verticalScale = DimensionUtils.pixelSizeVertical;
-
+ 
 const ApplicationCard = ({percentage}) => {
   const { colors } = useTheme();
   const styles = style(colors);
+  const route = useRoute();
+  // const ProgressBarPercent = route.params.ProgressBarPercent;
+  // console.log('ProgressBarPercent',ProgressBarPercent)
+
   return (
     <View
       style={styles.applicationContainer}
@@ -35,16 +40,18 @@ const ApplicationCard = ({percentage}) => {
         <View
           style={styles.circularProgressBarContainer}
         >
-          <CircularProgress
+          {/* <CircularProgress
             size={100}
             strokeWidth={8}
             progressPercent={percentage}
-          />
-          <View
+          /> */}
+          {/* <View
             style={styles.homeIconContainer}
           >
             <Image source={assets.homeIcon} />
-          </View>
+          </View> */}
+          <CircularProgress   imageStyle={{ width: 47, height: 39 }}
+ ImageData={require('../../../../assets/images/Home2.png')} size ={105} strokeWidth={12} progressPercent={percentage} bgColor ={'#F2F2F2'} pgColor={'#2E52A1'} />
         </View>
         <Text
           style={styles.loaderText}
@@ -55,7 +62,7 @@ const ApplicationCard = ({percentage}) => {
     </View>
   );
 };
-
+ 
 const style = (colors) => StyleSheet.create({
   applicationContainer:{
     backgroundColor: colors.primaryContainer,
@@ -89,5 +96,5 @@ const style = (colors) => StyleSheet.create({
   },
   loaderText: { fontSize: DimensionUtils.fontPixel(11), color: "#2E52A1" }
 })
-
+ 
 export default ApplicationCard;

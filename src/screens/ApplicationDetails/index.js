@@ -20,7 +20,6 @@ import { getDateYearsBack } from "../../utils/dateUtil";
 import { getUserDetailQuery } from "./../../services/ApiUtils";
 import DimensionUtils from "../../utils/DimensionUtils";
 
-
 const initialData = [
   {
     id: "applicationType",
@@ -45,11 +44,10 @@ const initialData = [
 ];
 
 export default function ApplicationDetails(props) {
-
   const [isVerified, setIsVerified] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [{ data = {} }] = getUserDetailQuery();
-
+  const [{ data = {}, error }] = getUserDetailQuery();
+  console.log("DATA HERE-----", { data, error });
   const mock_data = [
     {
       id: "rmUser",
@@ -296,7 +294,7 @@ export default function ApplicationDetails(props) {
       id: "rentPerMonth",
       label: "Rent per month",
       type: component.textInput,
-      placeHolder: "Applicant Type",
+      placeHolder: "Rent per month",
       validations: validations.numberOnly,
       isRequired: true,
       keyboardtype: "numeric",
@@ -394,6 +392,7 @@ export default function ApplicationDetails(props) {
     formState: { errors },
     watch,
     setValue,
+    trigger,
   } = useForm({
     mode: "onBlur",
     defaultValues: { LeadSource: "Customer Mobile App", branchName: "" },
@@ -438,9 +437,15 @@ export default function ApplicationDetails(props) {
     }
   }, [data]);
 
-  const onSubmit = (data) => {
-    console.log(JSON.stringify(data, null, 2));
-    props?.navigation?.navigate(screens.PanDetails);
+  const onSubmit = async () => {
+    try {
+      const isValid = await trigger();
+      if (isValid) {
+        props?.navigation?.navigate(screens.PanDetails);
+      }
+    } catch (error) {
+      console.log("IN ERROR");
+    }
   };
 
   const ChangeValue = async (value, id) => {
@@ -501,7 +506,8 @@ export default function ApplicationDetails(props) {
 
           if (
             customerProfile !== "salaried" &&
-            (field.id === "employmentExperience" || field.id === "totalWorkExperience")
+            (field.id === "employmentExperience" ||
+              field.id === "totalWorkExperience")
           ) {
             return acc;
           }
@@ -515,7 +521,6 @@ export default function ApplicationDetails(props) {
 
           acc.totalRequiredFields++;
           if (!!watch(field.id)) {
-
             acc.filledRequiredFields++;
           }
         }
@@ -526,16 +531,20 @@ export default function ApplicationDetails(props) {
 
     let completionPercentage = 0;
     if (totalRequiredFields > 0) {
-        completionPercentage = (filledRequiredFields / totalRequiredFields) * 100;
+      completionPercentage = (filledRequiredFields / totalRequiredFields) * 100;
     }
 
-    console.log({totalRequiredFields, completionPercentage,filledRequiredFields})
+    console.log({
+      totalRequiredFields,
+      completionPercentage,
+      filledRequiredFields,
+    });
 
     return completionPercentage;
   };
 
-  const percentage= getPercentage();
-
+  const percentage = getPercentage();
+  console.log({ percentage });
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <HelpModal
@@ -577,7 +586,10 @@ export default function ApplicationDetails(props) {
       </View>
       <ScrollView contentContainerStyle={style.scrollviewStyle}>
         <View style={style.container}>
-          <ApplicationCard percentage={percentage} navigation={props?.navigation}/>
+          <ApplicationCard
+            navigation={props?.navigation}
+            percentage={percentage}
+          />
         </View>
 
         <View
@@ -628,8 +640,8 @@ export default function ApplicationDetails(props) {
             type="primary"
             label="Continue"
             disable={percentage !== 100}
-            onPress={handleSubmit(onSubmit)}
-            buttonContainer={{ marginVertical: verticalScale(20)}}
+            onPress={onSubmit}
+            buttonContainer={{ marginVertical: verticalScale(20) }}
           />
         </View>
       </ScrollView>

@@ -1,5 +1,5 @@
 import { Text, View, SafeAreaView } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { useRoute } from '@react-navigation/native';
 import Header from '../../components/Header'
 import AdhaarSection from '../../components/AdhaarSection'
@@ -12,9 +12,24 @@ import { AadharBasicDetails } from "../../constants/stringConstants";
 import {  toast } from "../../utils/functions";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { screens } from "../../constants/screens";
-// import {getAdhaarDetails} from '../../services/ApiUtils'
+import { uploadAdhaarMethod } from "../../services/ApiUtils";
 const CaptureAdhaar = ({ navigation }) => {
-    // const adhaarMutation = getAdhaarDetails();
+
+    const uploadAdhaarMethodFn=uploadAdhaarMethod();
+
+    useEffect(() => {
+      if (uploadAdhaarMethodFn?.data) {
+        alert('Success')
+      }
+    }, [uploadAdhaarMethodFn?.data]);
+  
+    useEffect(() => {
+      if (uploadAdhaarMethodFn?.error) {
+        alert("error");
+      }
+    }, [uploadAdhaarMethodFn?.error]);
+
+
     const { firstButtonName, lastButtonName, headerText, headerTextSecond, imageMethod, imageSide, imageSideSecond } = AadharBasicDetails
 
     const buttonLabels = [{ id: 0, name: firstButtonName, }, { id: 1, name: lastButtonName, }]
@@ -23,12 +38,8 @@ const CaptureAdhaar = ({ navigation }) => {
     const { method } = route.params || {};
     console.log(method)
     const [selectedImage, setSelectedImage] = useState(null);
-    // const [width, setWidth] = useState(100);
-    // const [height, setHeight] = useState(300);
     const onCameraPress = async() => {
         ImagePicker.openCamera({
-            // width,
-            // height,
             cropping: true,
             compressImageQuality: 0.6,
             includeBase64: true
@@ -36,23 +47,12 @@ const CaptureAdhaar = ({ navigation }) => {
             .then(async(image) => {
                 console.log(image,'image value')
                 setSelectedImage(image);
-                console.log(method,'method')
-
-                // const AdharData= [{
-                //     id:0,
-                //     font:JSON.stringify(image),
-                //     back: JSON.stringify(image)
-                // }]
-
-                //  adhaarMutation.mutate(AdharData)
-            
+                console.log(method,'method')        
                 if(method === 'Front'){
                     await AsyncStorage.setItem('FrontAdhaar', JSON.stringify(image));
-                    toast('success', "Aadhar Front Successfully Uploaded");
                 }
                 else{
                     await AsyncStorage.setItem('BackAdhaar', JSON.stringify(image));
-                    toast('success', "Aadhar Back Successfully Uploaded");
                 }  
             })
             .catch((error) => {
@@ -61,11 +61,21 @@ const CaptureAdhaar = ({ navigation }) => {
     };
     const ButtonActions = async (value) => {
         if (value === firstButtonName) {
-            // setSelectedImage(null)
             onCameraPress()
         }
         else {
-            console.log('here')
+            const data= [{
+                id:0,
+                font:selectedImage,
+                back:selectedImage
+            }]
+            if(method === 'Front'){
+                toast('success', "Aadhar Front Successfully Uploaded");
+            }
+            else{
+                toast('success', "Aadhar Back Successfully Uploaded");
+            }  
+            uploadAdhaarMethodFn.mutate(data);
             navigation?.navigate(screens.KYC)
         }
     }
