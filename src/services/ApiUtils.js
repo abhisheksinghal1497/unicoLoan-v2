@@ -461,3 +461,25 @@ export const verifyPanApi = () => {
 
   return mutate;
 };
+
+
+export const submitPanApi = () => {
+  const mutate = useMutation({
+    networkMode: "always",
+    mutationFn: async (data) => {
+      console.log('DATA 2',{data})
+      const {panNumber, success = true} = data
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          if (success) {
+            resolve({ valid: true, message: "Pan is valid", panNumber });
+          } else {
+            reject({ message: "Pan is not valid", panNumber });
+          }
+        }, 3000);
+      });
+    },
+  });
+
+  return mutate;
+};

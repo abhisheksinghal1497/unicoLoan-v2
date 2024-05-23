@@ -3,10 +3,8 @@ import {
   Image,
   StyleSheet,
   Text,
-  TextInput,
   View,
   ScrollView,
-  Alert,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { colors } from "../../colors";
@@ -19,11 +17,10 @@ import {
   component,
 } from "../../components/FormComponents/FormControl";
 import { validations } from "../../constants/validations";
-import { Controller, useForm } from "react-hook-form";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useForm } from "react-hook-form";
 import ProgressCard from "../../components/ProgressCard";
 import HelpModal from "../ApplicationDetails/component/HelpModal";
-import { verifyPanApi } from "../../services/ApiUtils";
+import { verifyPanApi, submitPanApi } from "../../services/ApiUtils";
 import { toast } from "../../utils/functions";
 
 const WIDTH = Dimensions.get("window").width;
@@ -36,7 +33,7 @@ const PanDetails = (props) => {
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid, },
+    formState: { errors, isValid },
     getValues,
     setError,
     watch,
@@ -47,6 +44,8 @@ const PanDetails = (props) => {
     defaultValues: {},
   });
   const { mutateAsync, isPending } = verifyPanApi();
+  const { mutateAsync: mutateAsyncSubmit, isPending: isPendingSubmit } =
+    submitPanApi();
 
   const toggleModal = () => setShowModal(!showModal);
 
@@ -85,21 +84,39 @@ const PanDetails = (props) => {
         return;
       }
       const isValid = await trigger();
-      if(!isValid){
-        toast('error', 'Value is invalid');
+      if (!isValid) {
+        toast("error", "Value is invalid");
         return;
       }
       const { panNumber } = watch();
-      await mutateAsync({panNumber, success:true});
-      toast('success', 'Pan verified successfully');
-      setIsVerified(true)
+      await mutateAsync({ panNumber, success: true });
+      toast("success", "Pan verified successfully");
+      setIsVerified(true);
     } catch (error) {
-      const {message} = error
-      const errorMsg = message || 'Pan is not valid'
-      toast('error', errorMsg);
-      setError('panNumbRr', errorMsg)
+      const { message } = error;
+      const errorMsg = message || "Pan is not valid";
+      toast("error", errorMsg);
+      setError("panNumbRr", errorMsg);
     }
   };
+
+  const submitPan = async () => {
+    try {
+      if(isPendingSubmit){
+        return;
+      }
+      const isValid = await trigger();
+      if(!isValid){
+        toast('error', "Some error occurred");
+      }
+      const data = watch();
+      const response = await mutateAsyncSubmit(data);
+      console.log('RESPONSE---', response)
+      props?.navigation?.navigate(screens.KYC);
+    } catch (error) {
+      toast('error', "Some error occurred");
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -141,7 +158,11 @@ const PanDetails = (props) => {
                 rightComp={() =>
                   !errors[comp.id] && isValid ? (
                     !isVerified ? (
-                     isPending? <ActivityIndicator size={'small'} /> : <Text>Verify</Text>
+                      isPending ? (
+                        <ActivityIndicator size={"small"} />
+                      ) : (
+                        <Text>Verify</Text>
+                      )
                     ) : (
                       <Image
                         source={require("../../images/tick.png")}
@@ -166,9 +187,8 @@ const PanDetails = (props) => {
         label="Continue"
         disable={!isVerified}
         buttonContainer={styles.buttonContainer}
-        onPress={() => {
-          props?.navigation?.navigate(screens.KYC);
-        }}
+        onPress={submitPan}
+        isLoading={isPendingSubmit}
       />
     </View>
   );
