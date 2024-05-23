@@ -147,10 +147,9 @@ const styles = StyleSheet.create({
 
   card2: {
     borderRadius: 35,
-    marginBottom: 10,
-    marginTop: 10,
+    marginTop: verticalScale(5),
     width: Dimensions.get('window').width - 100, 
-    height: 200,
+    height: verticalScale(185),
     shadowColor: colors.black,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,

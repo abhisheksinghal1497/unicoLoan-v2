@@ -26,6 +26,7 @@ import TrackTicket from '../screens/TrackTicket/index'
 import PayNow from '../screens/PayNow';
 import StatusCheck from '../screens/StatusCheck';
 import Profile from '../screens/Profile';
+import EmiCalculator from '../screens/EmiCalculator';
 
 const Stack = createStackNavigator();
 
@@ -116,6 +117,10 @@ const Dashboard = () => {
         <Stack.Screen
           name={screens.TrackTicket}
           component={TrackTicket}
+        />
+        <Stack.Screen
+          name={screens.EmiCalculator}
+          component={EmiCalculator}
         />
         <Stack.Screen
           name={screens.PayNow}
