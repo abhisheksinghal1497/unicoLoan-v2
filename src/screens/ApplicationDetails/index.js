@@ -588,7 +588,7 @@ export default function ApplicationDetails(props) {
         <View style={style.container}>
           <ApplicationCard
             navigation={props?.navigation}
-            percentage={percentage}
+            // percentage={10}
           />
         </View>
 
