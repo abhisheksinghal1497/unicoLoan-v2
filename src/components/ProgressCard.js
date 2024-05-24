@@ -5,7 +5,7 @@ import { colors } from '../colors';
 import { useTheme } from 'react-native-paper';
 import CircularProgress from './CircularProgress'
 
-const ProgressCard = ({ screenName, percentage }) => {
+const ProgressCard = ({ screenName, percentage ,ImageData}) => {
   const { fonts } = useTheme();
   return (
     <View style={styles.cardContainer}>
@@ -18,7 +18,7 @@ const ProgressCard = ({ screenName, percentage }) => {
         justifyContent: 'center',
         alignItems: 'center'
       }}>
-        <CircularProgress size={90} strokeWidth={8} progressPercent={percentage} bgColor={'#FFFFFF'} pgColor={'#2E52A1'} />
+        <CircularProgress size={90} strokeWidth={8} progressPercent={percentage} bgColor={'#FFFFFF'} pgColor={'#2E52A1'} ImageData ={ImageData} />
         <Text style={[fonts.smallText, { color: 'rgba(46, 82, 161, 1)', fontSize: 7, marginTop: 10 }]}>UNICO HOUSING FINANCE LIMITED</Text>
       </View>
     </View>

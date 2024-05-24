@@ -6,6 +6,10 @@ export const validations = {
     required: true,
     minLength: 2,
   },
+  otp: {
+    required: true,
+    minLength: 6,
+  },
   phone: {
     required: true,
     pattern: /[6-9]\d{9}/,

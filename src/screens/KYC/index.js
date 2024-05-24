@@ -1,5 +1,5 @@
 import { Dimensions, Image, ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useState,useEffect,useCallback } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { colors } from '../../colors'
 import {
   FormControl,
@@ -16,18 +16,26 @@ import { screens } from '../../constants/screens';
 import { useFocusEffect } from '@react-navigation/native';
 import ProgressCard from '../../components/ProgressCard'
 import { ScrollView } from 'react-native-gesture-handler';
-import { uploadOtpMethod } from "../../services/ApiUtils";
+import { uploadOtpMethod ,uploadAdhaarMethod} from "../../services/ApiUtils";
+
+
 
 const WIDTH = Dimensions.get('window').width;
 const screenName = "Documents"
 
 
+
+
+
 const KYC = (props) => {
 
   const [selectedImage, setSelectedImage] = useState('');
+  const [captcha, setCaptcha] = useState('');
   const [selectedImageBack, setSelectedImageBack] = useState('');
+  const [isVerified, setIsVerified] = useState(false);
 
-  const uploadOtpMethodFn=uploadOtpMethod();
+  const uploadOtpMethodFn = uploadOtpMethod();
+  const uploadAdhaarMethodFn = uploadAdhaarMethod();
 
   useEffect(() => {
     if (uploadOtpMethodFn?.data) {
@@ -36,12 +44,24 @@ const KYC = (props) => {
   }, [uploadOtpMethodFn?.data]);
 
   useEffect(() => {
-    if (uploadOtpMethodFn?.error) {
+    if (uploadAdhaarMethodFn?.error) {
       alert("error");
     }
-  }, [uploadOtpMethodFn?.error]);
+  }, [uploadAdhaarMethodFn?.error]);
 
-  console.log(Boolean(selectedImage)  && Boolean(selectedImageBack),'Vaue here')
+  useEffect(() => {
+    if (uploadAdhaarMethodFn?.data) {
+      alert('Success')
+    }
+  }, [uploadAdhaarMethodFn?.data]);
+
+  useEffect(() => {
+    if (uploadAdhaarMethodFn?.error) {
+      alert("error");
+    }
+  }, [uploadAdhaarMethodFn?.error]);
+
+  console.log(Boolean(selectedImage) && Boolean(selectedImageBack), 'Vaue here')
 
   useFocusEffect(
     useCallback(() => {
@@ -49,28 +69,63 @@ const KYC = (props) => {
     }, [])
   );
 
-const fetchData = async() =>{
-  await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.KYC));
-  const savedData = await AsyncStorage.getItem('FrontAdhaar');
-  const currentData = JSON.parse(savedData);
-  console.log(currentData, 'front adhaar');
-  setSelectedImage(currentData)
-  const savedDataBack = await AsyncStorage.getItem('BackAdhaar');
-  const currentDataBack = JSON.parse(savedDataBack);
-  console.log(currentData, 'front adhaar');
-  setSelectedImageBack(currentDataBack)
-}
+  const fetchData = async () => {
+    await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.KYC));
+    const savedData = await AsyncStorage.getItem('FrontAdhaar');
+    const currentData = JSON.parse(savedData);
+    console.log(currentData, 'front adhaar');
+    setSelectedImage(currentData)
+    const savedDataBack = await AsyncStorage.getItem('BackAdhaar');
+    const currentDataBack = JSON.parse(savedDataBack);
+    console.log(currentData, 'front adhaar');
+    setSelectedImageBack(currentDataBack)
+  }
 
   const { fonts } = useTheme();
   const [visible, setVisible] = React.useState(false);
   const [type, setType] = React.useState(0);
+  // const {
+  //   control,
+  //   formState: { errors, isValid },
+  // } = useForm({ mode: "onBlur", defaultValues: { otp: "", checkbox: false } });
   const {
     control,
+    handleSubmit,
     formState: { errors, isValid },
-  } = useForm({ mode: "onBlur", defaultValues: { otp: "", checkbox: false } });
+    getValues,
+    getFieldState,
+    setValue,
+  } = useForm({
+    mode: "onBlur",
+    defaultValues: {},
+  });
 
-  const showModal = () => setVisible(true);
+  const mock_data = [
+    {
+      id: "adhaarNumber",
+      label: "Adhaar Number",
+      type: component.textInput,
+      placeHolder: "Enter Adhaar Card Number",
+      validations: validations.aadhar,
+      isRequired: true,
+      data: [],
+      value: "",
+      showRightComp: true,
+      maxLength: 12
+    },
+  ];
+
+
+  const showModal = () => {
+    setValue("adhaarNumber", "")
+    setValue("otp", "")
+    setCaptcha("")
+    setVisible(true)
+    setType(0)
+  };
   const hideModal = () => setVisible(false);
+
+  console.log(getValues('otp')?.length,"Otp values here-->")
 
 
 
@@ -96,13 +151,19 @@ const fetchData = async() =>{
     )
   }
 
-  const onSubmitOtp = () =>{
+  const onSubmitOtp = () => {
     hideModal(); setType(0);
-    uploadOtpMethodFn.mutate({"otp": 1234});
+    uploadOtpMethodFn.mutate({ "otp": 1234 });
     props.navigation.navigate(screens.CaptureSelfie)
+  }
+  const onSubmitAdhaar = () => {
+    setType(1);
+    const AdhaarDetails = getValues('adhaarNumber');
+    uploadOtpMethodFn.mutate({ "AdharNumber": AdhaarDetails,"captcha": captcha });
   }
 
   return (
+    <View style={{flex:1}}>
     <ScrollView style={styles.container}>
       <Header
         title="Documents"
@@ -110,10 +171,10 @@ const fetchData = async() =>{
         onPressLeft={() => { props?.navigation?.navigate(screens.PanDetails) }}
         right={require('../../images/question.png')}
         onPressRight={() => { }} />
-         <ProgressCard screenName={screenName} percentage={10} />
+      <ProgressCard screenName={screenName} percentage={10} ImageData={require('../../images/Home.png')} />
       <View style={styles.subContainer}>
         <Text style={[fonts.labelSmall, { width: '100%' }]}>Let's verify your identity quickly</Text>
-        <TouchableOpacity  onPress={() => { showModal() }} style={{ alignSelf: 'center', marginTop: 15, }}>
+        <TouchableOpacity onPress={() => { showModal() }} style={{ alignSelf: 'center', marginTop: 15, }}>
           <View style={styles.recommendedContainer}>
             <Text style={[fonts.smallLightText, { color: colors.white }]}>Recommended</Text>
           </View>
@@ -134,18 +195,18 @@ const fetchData = async() =>{
           <View style={styles.horizonalDivider} />
         </View>
         <View style={styles.rowContainer}>
-          <TouchableOpacity  onPress={() => props.navigation.navigate(screens.CaptureAdhaar, { method: "Front" }) }>
+          <TouchableOpacity onPress={() => props.navigation.navigate(screens.CaptureAdhaar, { method: "Front" })}>
             <View style={styles.cardContainerTwo}>
               <Image
-               source={selectedImage ? {uri :  `data:${selectedImage.mime};base64,${selectedImage.data}` } : require('../../images/aadhar-front.png')}
+                source={selectedImage ? { uri: `data:${selectedImage.mime};base64,${selectedImage.data}` } : require('../../images/aadhar-front.png')}
                 style={[styles.frontImage]} />
             </View>
             <Text style={[fonts.labelMedium, styles.titleText]}>Upload Your{'\n'}Aadhaar Front{'\n'}Photo</Text>
           </TouchableOpacity>
-          <TouchableOpacity  onPress={() => props.navigation.navigate(screens.CaptureAdhaar, { method: "Back" }) } >
+          <TouchableOpacity onPress={() => props.navigation.navigate(screens.CaptureAdhaar, { method: "Back" })} >
             <View style={styles.cardContainerTwo}>
-                <Image
-               source={selectedImageBack ? {uri :  `data:${selectedImageBack.mime};base64,${selectedImageBack.data}` } : require('../../images/aadhar-back.png')}
+              <Image
+                source={selectedImageBack ? { uri: `data:${selectedImageBack.mime};base64,${selectedImageBack.data}` } : require('../../images/aadhar-back.png')}
                 style={[styles.frontImage]} />
             </View>
             <Text style={[fonts.labelMedium, styles.titleText]}>Upload Your{'\n'}Aadhaar Back{'\n'}Photo</Text>
@@ -157,64 +218,108 @@ const fetchData = async() =>{
         label="Continue"
         buttonContainer={styles.buttonContainer}
         onPress={() => { showModal() }}
-        disable ={Boolean(selectedImage)  && Boolean(selectedImageBack)  ? false : true}
-        />
-      <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.modalContainer}>
-        {type === 0 ? <View>
-          <Text style={[fonts.labelMedium, styles.labelText]}>Aadhaar Number</Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              placeholder='XXXX-XXXX-XXXX'
-              style={[fonts.inputText, styles.input]}
-              onChangeText={(text) => setPhone(text)} />
-            <Image source={require('../../images/tick.png')} style={styles.tickImage} />
+        disable={Boolean(selectedImage) && Boolean(selectedImageBack) ? false : true}
+      />
+
+      
+    </ScrollView >
+    <Modal 
+      withHandle={false}
+        statusBarTranslucent={true}
+        visible={visible}
+        onDismiss={hideModal}
+        contentContainerStyle={styles.modalContainer}
+         >
+        {type === 0 ?
+          <View>
+             <TouchableOpacity onPress={hideModal} style={{ height: 20, width: '100%', justifyContent: 'flex-end', alignItems: 'flex-end' }}>    
+            <Image source={require('../../images/cross.png')} style={{ height: 20, width: 20 }} />
+           </TouchableOpacity>
+            {mock_data.map((comp, index) => {
+              return (index === 0 || (!errors[comp.id] && getValues('adhaarNumber')?.length === 12 && !isVerified)) && (
+                <FormControl
+                  compType={comp.type}
+                  control={control}
+                  validations={comp.validations}
+                  name={comp.id}
+                  label={comp.label}
+                  errors={errors[comp.id]}
+                  isRequired={comp.isRequired}
+                  placeholder={comp.placeHolder}
+                  data={comp.data}
+                  key={comp.id}
+                  setValue={setValue}
+                  showRightComp={comp.showRightComp || false}
+                  rightComp={() =>
+                    !errors[comp.id] && getValues('adhaarNumber')?.length === 12 ? isVerified ? (
+                      <Text>Verify</Text>
+                    ) : (
+                      <Image
+                        source={require("../../images/tick.png")}
+                        style={styles.tickImage}
+                      />
+                    ) : setIsVerified(true)
+                  }
+                  rightCompPress={() => {
+                    setIsVerified(!isVerified);
+                  }}
+                  isMultiline={comp.isMultiline}
+                  maxLength={comp.maxLength}
+                  isDisabled={comp.isDisabled}
+                />
+              );
+            })}
+
+            <Text style={[fonts.labelMedium, styles.labelText]}>Enter Captcha</Text>
+            <View style={styles.inputContainer}>
+              <TextInput
+                placeholder='Captcha'
+                style={[fonts.inputText, styles.input]}
+                onChangeText={(text) => setCaptcha(text)} />
+            </View>
+            <View style={[styles.rowContainer, { marginBottom: 20, maxWidth: '90%', alignSelf: 'center' }]}>
+              <ImageBackground source={require('../../images/captcha-bg.png')} style={styles.captchaContainer}>
+                <Text style={[fonts.labelLarge, styles.captchaText]}>iWXn11</Text>
+              </ImageBackground>
+              <TouchableOpacity style={styles.refreshContiner}>
+                <Image source={require('../../images/refresh.png')} style={styles.refreshImage} />
+              </TouchableOpacity>
+            </View>
+            <CustomButton
+              type="primary"
+              label="Continue"
+              buttonContainer={styles.modalButtonContainer}
+              disable={getValues('adhaarNumber')?.length !== 12 || isVerified}
+              onPress={() => { onSubmitAdhaar() }} />
           </View>
-          <Text style={[fonts.labelMedium, styles.labelText]}>Enter Captcha</Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              placeholder='Captcha'
-              style={[fonts.inputText, styles.input]}
-              onChangeText={(text) => setPhone(text)} />
-          </View>
-          <View style={[styles.rowContainer, { marginBottom: 20, maxWidth: '90%', alignSelf: 'center' }]}>
-            <ImageBackground source={require('../../images/captcha-bg.png')} style={styles.captchaContainer}>
-              <Text style={[fonts.labelLarge, styles.captchaText]}>iWXn11</Text>
-            </ImageBackground>
-            <TouchableOpacity style={styles.refreshContiner}>
-              <Image source={require('../../images/refresh.png')} style={styles.refreshImage} />
-            </TouchableOpacity>
-          </View>
-          <CustomButton
-            type="primary"
-            label="Continue"
-            buttonContainer={styles.modalButtonContainer}
-            onPress={() => { setType(1) }} />
-        </View>
-          : <View>
+          :
+           <View>
             <Text style={[fonts.labelMedium, { marginTop: 10, color: 'rgba(68, 70, 91, 1)', textAlign: 'center' }]}>OTP Verification</Text>
             <Text style={[fonts.labelSmall, { marginTop: 5, lineHeight: 18, textAlign: 'center' }]}>One-Time Password has been sent to{'\n'}your registered Mobile Number.</Text>
             <FormControl
               compType={component.otpInput}
               control={control}
-              validations={validations.text}
+              validations={validations.otp}
               name="otp"
               label="Enter otp"
               errors={errors.leadId}
               isRequired
+              setValue={setValue}
               style={styles.otpInputContainer}
+              maxLength={6}
             />
             <TimerContent />
             <CustomButton
               type="primary"
               label="Submit"
               buttonContainer={styles.modalButtonContainer}
-              onPress={()  => onSubmitOtp()}
-              // onPress={() => { hideModal(); setType(0);onSubmit()}}
-               />
+              disable={getValues('otp')?.length !== 6}
+              onPress={() => onSubmitOtp()}
+            />
           </View>
-          }
+        }
       </Modal >
-    </ScrollView >
+    </View>
   )
 }
 
@@ -223,6 +328,7 @@ export default KYC
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width:'100%',
     backgroundColor: colors.bgColor,
     paddingHorizontal: 16,
   },
@@ -235,8 +341,8 @@ const styles = StyleSheet.create({
     // position: 'absolute',
     alignSelf: 'center',
     width: '100%',
-    marginTop:30,
-    marginBottom:30
+    marginTop: 30,
+    marginBottom: 30
     // bottom: 10
   },
   modalButtonContainer: {
@@ -313,12 +419,12 @@ const styles = StyleSheet.create({
     marginTop: 15
   },
   modalContainer: {
-    width: '100%',
+    width:'100%',
     padding: 20,
     paddingTop: 30,
     backgroundColor: colors.white,
     position: 'absolute',
-    bottom: 30,
+    bottom: 0,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
   },
@@ -339,9 +445,11 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   input: {
-    flexGrow: 1,
-    marginHorizontal: 5,
-    paddingVertical: 8
+    // flexGrow: 1,
+    // marginHorizontal: 5,
+    // paddingVertical: 8
+    height: '100%',
+    width: '100%'
   },
   tickImage: {
     width: 15,
@@ -378,8 +486,8 @@ const styles = StyleSheet.create({
     // borderRadius: 10,
     marginVertical: 20,
     // marginTop: 40,
-    borderWidth:2,
-    borderColor:'#E8E8EA'
+    borderWidth: 2,
+    borderColor: '#E8E8EA'
   },
   timerImage: {
     width: 15,
