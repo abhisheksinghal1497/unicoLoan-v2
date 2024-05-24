@@ -5,15 +5,14 @@ import { assets } from "../../../assets/assets";
 import CircularProgress from "../../../components/CircularProgress";
 import DimensionUtils from "./../../../utils/DimensionUtils";
 import { useRoute } from "@react-navigation/native";
+import useGetProgressPercentage from "../../../utils/useGetProgressPercentage";
 const horizontalScale = DimensionUtils.pixelSizeHorizontal;
 const verticalScale = DimensionUtils.pixelSizeVertical;
 
-const ApplicationCard = ({ percentage }) => {
+const ApplicationCard = () => {
   const { colors } = useTheme();
   const styles = style(colors);
-  const route = useRoute();
-  const ProgressBarPercent = route?.params?.ProgressBarPercent;
-  // console.log('ProgressBarPercent',ProgressBarPercent)
+  const percentage = useGetProgressPercentage();
 
   return (
     <View style={styles.applicationContainer}>
@@ -36,7 +35,7 @@ const ApplicationCard = ({ percentage }) => {
             ImageData={require("../../../../assets/images/Home2.png")}
             size={105}
             strokeWidth={12}
-            progressPercent={!!ProgressBarPercent ? ProgressBarPercent : 10}
+            progressPercent={percentage}
             bgColor={"#F2F2F2"}
             pgColor={"#2E52A1"}
           />

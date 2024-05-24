@@ -47,7 +47,6 @@ export default function ApplicationDetails(props) {
   const [isVerified, setIsVerified] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [{ data = {}, error }] = getUserDetailQuery();
-  console.log("DATA HERE-----", { data, error });
   const mock_data = [
     {
       id: "rmUser",
@@ -400,8 +399,6 @@ export default function ApplicationDetails(props) {
 
   const { colors } = useTheme();
 
-  console.log("All form data---------", watch());
-
   useEffect(() => {
     async function fetchData() {
       await AsyncStorage.setItem(
@@ -544,7 +541,6 @@ export default function ApplicationDetails(props) {
   };
 
   const percentage = getPercentage();
-  console.log({ percentage });
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <HelpModal
@@ -588,7 +584,6 @@ export default function ApplicationDetails(props) {
         <View style={style.container}>
           <ApplicationCard
             navigation={props?.navigation}
-            // percentage={10}
           />
         </View>
 
@@ -639,7 +634,7 @@ export default function ApplicationDetails(props) {
           <Button
             type="primary"
             label="Continue"
-            disable={percentage !== 100}
+            // disable={percentage !== 100}
             onPress={onSubmit}
             buttonContainer={{ marginVertical: verticalScale(20) }}
           />

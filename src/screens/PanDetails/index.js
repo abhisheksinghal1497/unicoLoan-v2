@@ -135,7 +135,7 @@ const PanDetails = (props) => {
         onPressRight={toggleModal}
       />
       <ScrollView>
-        <ProgressCard screenName={screenName} percentage={10} />
+        <ProgressCard screenName={screenName} />
         {mock_data.map((comp, index) => {
           return (
             (index === 0 ||

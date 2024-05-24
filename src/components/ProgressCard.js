@@ -5,9 +5,11 @@ import { colors } from "../colors";
 import { useTheme } from "react-native-paper";
 import CircularProgress from "./CircularProgress";
 import home from "./../assets/home_icon.png";
+import useGetProgressPercentage from "../utils/useGetProgressPercentage";
 
-const ProgressCard = ({ screenName, percentage }) => {
+const ProgressCard = ({ screenName }) => {
   const { fonts } = useTheme();
+  const percentage = useGetProgressPercentage()
   return (
     <View style={styles.cardContainer}>
       <View style={{ flexGrow: 1 }}>
