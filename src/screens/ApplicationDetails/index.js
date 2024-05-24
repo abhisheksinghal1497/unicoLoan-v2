@@ -582,9 +582,7 @@ export default function ApplicationDetails(props) {
       </View>
       <ScrollView contentContainerStyle={style.scrollviewStyle}>
         <View style={style.container}>
-          <ApplicationCard
-            navigation={props?.navigation}
-          />
+          <ApplicationCard navigation={props?.navigation} />
         </View>
 
         <View
@@ -612,6 +610,7 @@ export default function ApplicationDetails(props) {
                 isDisabled={comp.isDisabled}
                 onChangeText={(value) => ChangeValue(value, comp.id)}
                 type={comp.keyboardtype}
+                trigger={trigger}
                 // showRightComp={true}
                 // rightComp={() =>
                 //   isVerified ? (

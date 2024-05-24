@@ -32,6 +32,7 @@ export default InputField = ({
   rightCompPress,
   onChangeText,
   value: defaultValue,
+  trigger = () => {},
   ...rest
 }) => {
   const { colors, fonts } = useTheme();
