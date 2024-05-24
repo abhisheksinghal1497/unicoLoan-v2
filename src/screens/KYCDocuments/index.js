@@ -67,81 +67,14 @@ const KYCDocuments = ({ navigation }) => {
   },[TempKyc.error])
 
   console.log('selectedItem', selectedItem?.title)
-  const handleGalleryUpload = () => {
-
-    if (selectedItem) {
-      ImagePicker.openPicker({
-        width: 300,
-        height: 400,
-        cropping: true
-      }).then(image => {
-        console.log('image path--', image.path);
-        setModalVisible3(false)
-        setImageSelected(true);
-      }).catch(error => {
-        console.log('Error:', error);
-      });
-    } else {
-      console.log('Please select an option first.');
-    }
-  }
-
-  const handleCameraUpload = () => {
-    if (selectedItem) {
-      ImagePicker.openCamera({
-        width: 300,
-        height: 400,
-        cropping: true
-      }).then(image => {
-        console.log(image.path);
-        setModalVisible3(false)
-        setImageSelected(true);
-      }).catch(error => {
-        console.log('Error:', error);
-      });
-    } else {
-      console.log('Please select an option first.');
-    }
-  }
-
+ 
+ 
   useFocusEffect(
     useCallback(() => {
       fetchData();
     }, [])
   );
 
-  const renderOptions = ({ item }) => {
-    return (
-      <TouchableOpacity
-        style={styles.itemView}
-        onPress={() => {
-          setSelectedItem(item);
-          setModalVisible(false);
-        }}
-      >
-        <Text style={styles.itemText}>{item.title}</Text>
-      </TouchableOpacity>
-    );
-  };
-
-  const renderOptions2 = ({ item }) => {
-    return (
-      <TouchableOpacity
-        style={styles.itemView}
-        onPress={() => {
-          setSelectedItem(item);
-          setModalVisible2(false);
-        }}
-      >
-        <Text style={styles.itemText}>{item.title}</Text>
-      </TouchableOpacity>
-    );
-  };
-
-  const handleNoButtonPress = () => {
-    setShowModal(!showModal)
-    setConfirmModal(true);
-  }
 
   const fetchData = async () => {
     await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.KYC));
@@ -179,7 +112,7 @@ const KYCDocuments = ({ navigation }) => {
                   style={styles.cancelButton}>
                   <Text style={styles.cancelButtonText}>Yes</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => handleNoButtonPress()} style={styles.cancelButton}>
+                <TouchableOpacity onPress={() => navigation.navigate('CurrentAddress')} style={styles.cancelButton}>
                   <Text style={styles.cancelButtonText}>No</Text>
                 </TouchableOpacity>
               </View>
@@ -188,188 +121,11 @@ const KYCDocuments = ({ navigation }) => {
         </TouchableOpacity>
       </CustomModal>
 
-      {/* choose Address proof documents Modal */}
-      <CustomModal
-        showModal={confirmModal}
-        setShowModal={setConfirmModal}
-      >
-        <View style={styles.container}>
-          <View style={styles.labelContainer}>
-            <Text style={{ fontWeight: 'bold', fontSize: 16, lineHeight: 20 }}>Please choose the current Address Proof from Below Options.</Text>
-          </View>
-          <Text style={styles.error}>
-            {" "}
-          </Text>
-          <CustomShadow shadowColor={colors.gray100}>
-            <TouchableOpacity
-              style={[
-                styles.selectContainer,
-                styles,
-                {
-                  backgroundColor:
-                    "transparent",
-                },
-              ]}
-              activeOpacity={1}
-              onPress={() => {
-                setModalVisible(true);
-              }}
-            >
-              <View
-                style={[
-                  styles.selectField,
-                  { borderColor: colors.error },
-                ]}
-              >
-                <Text
-                  style={[
-                    { color: "#000" }
-                  ]}
-                >
-                  Other KYC
-                </Text>
-                <Text style={styles.selectArr}>&#9013;</Text>
-              </View>
-            </TouchableOpacity>
-          </CustomShadow>
-          <Text style={styles.error}>
-            {" "}
-          </Text>
-          <CustomShadow shadowColor={colors.gray100}>
-            <TouchableOpacity
-              style={[
-                styles.selectContainer,
-                styles,
-                {
-                  backgroundColor:
-
-                    "transparent",
-                },
-              ]}
-
-              activeOpacity={1}
-              onPress={() => {
-                setModalVisible2(true);
-              }}
-            >
-              <View
-                style={[
-                  styles.selectField,
-                  { borderColor: colors.error },
-                ]}
-              >
-                <Text
-                  style={[
-
-                    { color: "#000" }
-
-                  ]}
-                >
-                  Temperary Address Proof
-                </Text>
-                <Text style={styles.selectArr}>&#9013;</Text>
-              </View>
-            </TouchableOpacity>
-          </CustomShadow>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
-            <TouchableOpacity
-
-              onPress={() => setConfirmModal(false)}
-              style={styles.cancelButton}>
-              <Text style={styles.cancelButtonText}>
-                Cancel
-              </Text>
-            </TouchableOpacity>
-            {
-              imageSelected ? <TouchableOpacity
-                onPress={() => alert('submit')}
-                style={styles.cancelButton}>
-                <Text style={styles.cancelButtonText}>
-                  Submit
-                </Text>
-              </TouchableOpacity> : null
-            }
-          </View>
-          {
-            selectedItem?.title ?
-              <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: verticalScale(15) }}>
-                <Text style={{ alignSelf: 'center', fontSize: 18, fontWeight: 'bold', color: colors.black }}>{selectedItem?.title} {selectedItem?.title ? "--" : null}</Text>
-                <TouchableOpacity
-                onPress={() =>
-                   setModalVisible3(true)}>
-                  <Text style={{ alignSelf: 'center', fontSize: 18, fontWeight: 'bold', color: colors.coreBlue }}> {
-                    imageSelected ? 'Uploaded' : 'Upload'
-                  } </Text>
-                </TouchableOpacity>
-
-              </View> : null}
-        </View>
-
-      </CustomModal>
-
-      {/* other KYC Dropdown */}
-      <CustomModal
-        type="bottom"
-        showModal={modalVisible}
-        setShowModal={setModalVisible}
-        centeredViewStyle={{ backgroundColor: "rgba(0, 0, 0, 0.1)" }}
-      >
-        <View>
-          <View style={styles.modalHeader}>
-            <Text style={styles.modalHeaderTxt}> Select one</Text>
-          </View>
-          <FlatList
-            data={data}
-            keyExtractor={(item) => item?.id?.toString()}
-            renderItem={renderOptions}
-          // ItemSeparatorComponent={<View style={styles.itemSeparator} />}
-          />
-        </View>
-      </CustomModal>
-
-      {/* Temperary Address Dropdown */}
-      <CustomModal
-        type="bottom"
-        showModal={modalVisible2}
-        setShowModal={setModalVisible2}
-        centeredViewStyle={{ backgroundColor: "rgba(0, 0, 0, 0.1)" }}
-      >
-        <View>
-          <View style={styles.modalHeader}>
-            <Text style={styles.modalHeaderTxt}> Select one</Text>
-          </View>
-          <FlatList
-            data={data2}
-            keyExtractor={(item) => item?.id?.toString()}
-            renderItem={renderOptions2}
-          />
-        </View>
-      </CustomModal>
+    
+     
 
 {/* select Gallery or Camera to uplaod Document Dropdown*/}
-      <CustomModal
-        type="bottom"
-        showModal={modalVisible3}
-        setShowModal={setModalVisible3}
-        centeredViewStyle={{ backgroundColor: "rgba(0, 0, 0, 0.1)" }}
-      >
-        <View>
-          <View style={styles.modalHeader}>
-            <Text style={styles.modalHeaderTxt}> Select one</Text>
-          </View>
-          <TouchableOpacity style={styles.itemView} onPress={() => handleGalleryUpload()}>
-            <Text style={styles.itemText}>
-              Gallery
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.itemView} onPress={() => handleCameraUpload()}>
-            <Text style={styles.itemText}>
-              Camera
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </CustomModal>
+    
 
       <Header
         title="KYC Documents"

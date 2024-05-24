@@ -75,11 +75,17 @@ const RaiseTicket = ({ navigation }) => {
                                 titleStyle={{ marginRight: horizontalScale(10) }}
                                 onPressLeft={() => navigation.goBack()}
                                 colour={colors.transparent}
-                                rightStyle={{ width: 32, height: 32 }}
-                                right={require('../../../assets/images/ChatsCircle.png')}
                                 left={require('../../../assets/images/Back.png')}
                                 leftStyle={{ width: 30, height: 30 }} title="Raise Tickets"
-                                onPressRight={() => alert("Faq")} />
+                                onPressRight={(index) => {
+                                    if (index === 0) {
+                                      alert("Chat");
+                                    } 
+                                  }}
+                                  rightImages={[
+                                    { source: require('../../../assets/images/ChatsCircle.png'), imageProps: { style: { width: 32, height: 32, } } },
+                                  ]}
+                                 />
                         </View>
                         <View>
                             <Text style={styles.choose}>
