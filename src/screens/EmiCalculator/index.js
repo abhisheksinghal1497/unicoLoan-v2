@@ -7,7 +7,6 @@ import Slider from '@react-native-community/slider';
 import { TextInput } from 'react-native-paper'
 import Button from '../../components/Button'
 
-
 const EmiCalculator = ({ navigation }) => {
     const [sliderValue, setSliderValue] = useState(0);
     const [text, setText] = useState('');
@@ -16,7 +15,6 @@ const EmiCalculator = ({ navigation }) => {
     const [sliderValue3, setSliderValue3] = useState(0);
     const [text3, setText3] = useState('');
     const [emi, setEmi] = useState(0);
-
 
     const onSliderValueChange = (value) => {
         setSliderValue(value);
@@ -43,7 +41,6 @@ const EmiCalculator = ({ navigation }) => {
         }
     };
 
-
     const onTextInputChange2 = (inputText) => {
         const numericValue = inputText.replace(/[^0-9]/g, '');
         const numberValue = parseInt(numericValue, 10);
@@ -54,7 +51,6 @@ const EmiCalculator = ({ navigation }) => {
         }
     };
 
-
     const onTextInputChange3 = (inputText) => {
         const numericValue = inputText.replace(/[^0-9]/g, '');
         const numberValue = parseInt(numericValue, 10);
@@ -64,7 +60,6 @@ const EmiCalculator = ({ navigation }) => {
             setText3(numericValue.toString());
         }
     };
-
 
     const onTextInputEndEditing = (inputText) => {
         const numericValue = parseFloat(inputText);
@@ -106,21 +101,16 @@ const EmiCalculator = ({ navigation }) => {
         setEmi(emi.toFixed(2));
     };
 
-
-
     return (
         <View style={{ flex: 1 }}>
-
             <ScrollView>
                 <View style={{ marginHorizontal: horizontalScale(10) }}>
                     <Header
                         titleStyle={{ marginLeft: horizontalScale(-15) }}
                         onPressLeft={() => navigation.goBack()}
                         colour={colors.transparent}
-
                         left={require('../../../assets/images/Back.png')}
-                        leftStyle={{ width: 30, height: 30 }} title="EMI Calculator"
-                        onPressRight={() => alert("Faq")} />
+                        leftStyle={{ width: 30, height: 30 }} title="EMI Calculator" />
                 </View>
                 {/* Requested Loan Amount */}
                 <View style={{ justifyContent: 'center', marginTop: verticalScale(30) }}>

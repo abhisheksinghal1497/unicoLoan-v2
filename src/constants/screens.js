@@ -34,6 +34,7 @@ export const screens = {
     TrackTicket: 'TrackTicket',
     PayNow: 'PayNow',
     StatusCheck: "StatusCheck",
+    EmiCalculator: "EmiCalculator",
+    CurrentAddress: "CurrentAddress"
     Profile: 'Profile',
-    EmiCalculator: "EmiCalculator"
   };

@@ -27,6 +27,7 @@ import PayNow from '../screens/PayNow';
 import StatusCheck from '../screens/StatusCheck';
 import Profile from '../screens/Profile';
 import EmiCalculator from '../screens/EmiCalculator';
+import CurrentAddress from '../screens/CurrentAddress';
 
 const Stack = createStackNavigator();
 
@@ -34,7 +35,7 @@ const Dashboard = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}
-        initialRouteName={screens.HomeScreen}>
+        initialRouteName={screens.CurrentAddress}>
         <Stack.Screen
           name={screens.Splash}
           component={Splash}
@@ -121,6 +122,10 @@ const Dashboard = () => {
         <Stack.Screen
           name={screens.EmiCalculator}
           component={EmiCalculator}
+        />
+         <Stack.Screen
+          name={screens.CurrentAddress}
+          component={CurrentAddress}
         />
         <Stack.Screen
           name={screens.PayNow}
