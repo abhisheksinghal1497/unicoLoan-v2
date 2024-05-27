@@ -155,7 +155,7 @@ const HomeScreen = ({navigation}) => {
         break;
       case 1:
         const ProgressBarPercent =  0;
-        navigation.navigate(screens.KYC, { ProgressBarPercent })
+        navigation.navigate(screens.ApplicantDetails, { ProgressBarPercent })
         break;
      case 2:
       navigation.navigate(screens.StatusCheck)
