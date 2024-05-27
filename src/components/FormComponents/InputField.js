@@ -31,6 +31,8 @@ export default InputField = ({
   isMultiline,
   rightCompPress,
   onChangeText,
+  value: defaultValue,
+  trigger = () => {},
   ...rest
 }) => {
   const { colors, fonts } = useTheme();
@@ -39,6 +41,7 @@ export default InputField = ({
     <Controller
       control={control}
       rules={{required: isRequired, ...validations}}
+      defaultValue={defaultValue}
       render={({
         field: { onChange, onBlur, value },
         fieldState: { error, invalid },

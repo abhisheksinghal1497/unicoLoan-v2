@@ -25,6 +25,7 @@ import CreateTicket from '../screens/CreateTicket';
 import TrackTicket from '../screens/TrackTicket/index'
 import PayNow from '../screens/PayNow';
 import StatusCheck from '../screens/StatusCheck';
+import Profile from '../screens/Profile';
 import EmiCalculator from '../screens/EmiCalculator';
 import CurrentAddress from '../screens/CurrentAddress';
 
@@ -139,6 +140,10 @@ const Dashboard = () => {
           options={{
             headerShown: true,
           }}
+        />
+         <Stack.Screen
+          name={screens.Profile}
+          component={Profile}
         />
       </Stack.Navigator>
     </NavigationContainer>

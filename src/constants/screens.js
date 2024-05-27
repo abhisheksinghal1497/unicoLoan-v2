@@ -36,4 +36,5 @@ export const screens = {
     StatusCheck: "StatusCheck",
     EmiCalculator: "EmiCalculator",
     CurrentAddress: "CurrentAddress"
+    Profile: 'Profile',
   };
