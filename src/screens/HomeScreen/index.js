@@ -217,7 +217,7 @@ const HomeScreen = ({navigation}) => {
       </CustomModal> */}
         <View style={{ backgroundColor: colors.coreCream, }}>
               {/* <View style={styles.profileImageView}> */}
-                <TouchableOpacity style={styles.profileImageView} onPress={() => navigation.navigate(screens.ProfileImageScreen)}>
+                <TouchableOpacity style={styles.profileImageView} onPress={() => navigation.navigate(screens.Profile)}>
                   <Image source={require('../../../assets/images/profileIcon.png')} style={styles.profileIcon} />
               
                 <Text style={styles.profileName}>Bhavesh Rao</Text>
@@ -481,5 +481,3 @@ const styles = StyleSheet.create({
 });
 
 export default HomeScreen;
-
-

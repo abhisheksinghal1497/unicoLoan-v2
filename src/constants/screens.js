@@ -37,5 +37,6 @@ export const screens = {
     EmiCalculator: "EmiCalculator",
     CurrentAddress: "CurrentAddress",
     OtpScreen: "OtpScreen",
-    PinCodeVerify: "PinCodeVerify"
+    PinCodeVerify: "PinCodeVerify",
+    Profile: 'Profile',
   };
