@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, ScrollView, Alert, TouchableOpacity, FlatList } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import ImagePicker from "react-native-image-crop-picker";
 import Header from '../../components/Header'
 import { horizontalScale, verticalScale } from '../../utils/matrcis'
@@ -9,40 +9,7 @@ import CustomShadow from '../../components/FormComponents/CustomShadow'
 import CustomModal from '../../components/CustomModal'
 import Button from '../../components/Button'
 import { Image } from 'react-native';
-
-const data = [
-  {
-    id: '1',
-    title: "Driving License"
-  },
-  {
-    id: '2',
-    title: "Passport"
-  },
-  {
-    id: '3',
-    title: "Voter ID"
-  },
-  {
-    id: '4',
-    title: "NREGA Card"
-  }
-];
-
-const data2 = [
-  {
-    id: '1',
-    title: "Electricity Bill"
-  },
-  {
-    id: '2',
-    title: "Gas Bill"
-  },
-  {
-    id: '3',
-    title: "Mobile Bill"
-  },
-];
+import { getOtherKycList, getTempAddressKycList } from '../../services/ApiUtils';
 
 const CurrentAddress = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -51,6 +18,43 @@ const CurrentAddress = ({ navigation }) => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedItem2, setSelectedItem2] = useState(null);
   const [imageSelected, setImageSelected] = useState('');
+  const [data, setData] = useState([])
+  const [data2, setData2] = useState([])
+  const [isLoading, setIsLoading] = useState(true);
+
+  const otherkyc = getOtherKycList()
+  const TempKyc = getTempAddressKycList()
+
+  useEffect(()=>{
+    otherkyc?.mutate()
+    TempKyc?.mutate()
+  },[])
+
+  useEffect(()=>{
+    if(otherkyc.data){
+      setIsLoading(false)
+      setData(otherkyc.data)
+    }
+  },[otherkyc.data])
+
+  useEffect(()=>{
+    if(TempKyc.data){
+      setIsLoading(false)
+      setData2(TempKyc.data)
+    }
+  },[TempKyc.data])
+
+  useEffect(()=>{
+    if(otherkyc.error){
+      Alert.alert(otherkyc.error)
+    }
+  },[otherkyc.error])
+
+  useEffect(()=>{
+    if(TempKyc.error){
+      Alert.alert(TempKyc.error)
+    }
+  },[TempKyc.error])
 
   console.log('imageSelected', imageSelected.split('/').pop())
 
@@ -58,7 +62,7 @@ const CurrentAddress = ({ navigation }) => {
     ImagePicker.openPicker({
       width: 300,
       height: 400,
-      cropping: true
+      cropping: true,
     }).then(image => {
       console.log('image path--', image.path);
       setModalVisible3(false)
@@ -279,17 +283,17 @@ const CurrentAddress = ({ navigation }) => {
               disabled={imageSelected.split('/').pop() !== "" ? true : false}
               onPress={() => setModalVisible3(true)} style={styles.uploadButton}>
               <Text style={[styles.uploadButtonText, {
-                borderColor: imageSelected.split('/').pop() !== "" ? "grey" : "#2E52A1",
-                color: imageSelected.split('/').pop() !== "" ? "grey" : "#2E52A1",
+                borderColor: imageSelected.split('/').pop() !== "" ? colors.grey : colors.coreBlue,
+                color: imageSelected.split('/').pop() !== "" ?  colors.grey : colors.coreBlue,
               }]}> {imageSelected.split('/').pop() !== "" ? 'Uploaded' : 'Upload'}</Text>
             </TouchableOpacity>
           )}
 
           {(imageSelected !== "") && (
-            <><View style={{ borderBottomWidth: 1, borderBottomColor: '#606060', width: ' 100%', alignSelf: 'center', marginVertical: verticalScale(9) }}>
+            <><View style={{ borderBottomWidth: 1, borderBottomColor: colors.border, width: ' 100%', alignSelf: 'center', marginVertical: verticalScale(9) }}>
             </View><View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: horizontalScale(5), marginTop: verticalScale(10) }}>
-                <Text style={{ color: '#0076C7', fontSize: 15, fontWeight: '500' }}>
-                  {imageSelected.split('/').pop()}
+                <Text style={{ color: colors.surface, fontSize: 15, fontWeight: '500' }}>
+                  {imageSelected.split('/').pop().slice(0, 24)}
                 </Text>
                 <TouchableOpacity
                   onPress={() => {
@@ -308,10 +312,11 @@ const CurrentAddress = ({ navigation }) => {
             <Button
               onPress={() => {
                 alert('Submit')
+                console.log('imageSelected submit',imageSelected)
               }}
               type="primary"
               label="Submit"
-              disable={!imageSelected !== "" ? true : false}
+              disable={imageSelected !== "" ? false : true}
             />
           </View>
         </View>

@@ -35,5 +35,7 @@ export const screens = {
     PayNow: 'PayNow',
     StatusCheck: "StatusCheck",
     EmiCalculator: "EmiCalculator",
-    CurrentAddress: "CurrentAddress"
+    CurrentAddress: "CurrentAddress",
+    OtpScreen: "OtpScreen",
+    PinCodeVerify: "PinCodeVerify"
   };
