@@ -20,12 +20,14 @@ const CaptureAdhaar = ({ navigation }) => {
     useEffect(() => {
       if (uploadAdhaarMethodFn?.data) {
         alert('Success')
+        console.log('Success came here')
       }
     }, [uploadAdhaarMethodFn?.data]);
   
     useEffect(() => {
       if (uploadAdhaarMethodFn?.error) {
         alert("error");
+        console.log('Error came here')
       }
     }, [uploadAdhaarMethodFn?.error]);
 
@@ -76,7 +78,7 @@ const CaptureAdhaar = ({ navigation }) => {
                 toast('success', "Aadhar Back Successfully Uploaded");
             }  
             uploadAdhaarMethodFn.mutate(data);
-            navigation?.navigate(screens.KYC)
+            // navigation?.navigate(screens.KYC)
         }
     }
 

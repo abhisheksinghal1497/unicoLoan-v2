@@ -399,6 +399,25 @@ export const uploadAdhaarMethod = () =>{
   return mutate
 }
 
+export const uploadKycMethod = () =>{
+  const mutate = useMutation({
+      networkMode:"always",
+      mutationFn:async(AdhaarData)=>{
+      
+         return new Promise((resolve, reject)=>{
+            
+               setTimeout(()=>{
+                  const data = {success:true,response:AdhaarData}
+                  resolve(data)
+                  // reject('Something went wrong')
+              }, 3000)
+          }, )
+      }
+  })
+
+  return mutate
+}
+
 export const uploadOtpMethod = () =>{
   const mutate = useMutation({
       networkMode:"always",
@@ -407,7 +426,7 @@ export const uploadOtpMethod = () =>{
          return new Promise((resolve, reject)=>{
             
                setTimeout(()=>{
-                  const data = {success:true,response:OtpDataData}
+                  const data = {success:true,response:OtpData}
                   resolve(data)
                   // reject('Something went wrong')
               }, 3000)
