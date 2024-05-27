@@ -26,6 +26,7 @@ export default function CustomDatepicker({
   isDisabled = false,
   isRequired = false,
   isVisible = true,
+  trigger = () => {},
   ...rest
 }) {
   const { colors: themeColor } = useTheme();

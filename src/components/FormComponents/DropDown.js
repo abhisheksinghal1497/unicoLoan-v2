@@ -35,6 +35,7 @@ export default DropDown = ({
   placeholder,
   style = {},
   data = [],
+  trigger = () => {},
   ...rest
 }) => {
   const { colors, fonts } = useTheme();
@@ -51,6 +52,7 @@ export default DropDown = ({
             setValue(name, item.value);
             setValueText(item.label);
           }
+          trigger()
           setModalVisible(false);
         }}
       >

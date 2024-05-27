@@ -17,8 +17,7 @@ export default function OtpInput({
   isDisabled = false,
   otpLimit = 6,
   isRequired = false,
-  // otp,
-  // setOtp,
+  trigger = () => {},
   ...rest
 }) {
   const { colors: themeColor } = useTheme();

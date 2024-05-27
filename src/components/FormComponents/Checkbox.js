@@ -13,6 +13,7 @@ export default function CheckBox({
   label,
   checkboxProps,
   isRequired = false,
+  trigger = () => {},
 }) {
   const getCheckboxImage = (value, error) => {
     if (!!error) {
