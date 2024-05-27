@@ -32,5 +32,13 @@ noteContainer: {
     top: -15,
     left: 8
   },
+  buttonContainer: {
+    // position: 'absolute',
+    alignSelf: 'center',
+    width: '100%',
+    marginTop: 30,
+    marginBottom: 30
+    // bottom: 10
+  },
  
 });

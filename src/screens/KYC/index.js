@@ -16,7 +16,7 @@ import { screens } from '../../constants/screens';
 import { useFocusEffect } from '@react-navigation/native';
 import ProgressCard from '../../components/ProgressCard'
 import { ScrollView } from 'react-native-gesture-handler';
-import { uploadOtpMethod ,uploadAdhaarMethod} from "../../services/ApiUtils";
+import { uploadOtpMethod, uploadAdhaarMethod } from "../../services/ApiUtils";
 
 
 
@@ -33,6 +33,7 @@ const KYC = (props) => {
   const [captcha, setCaptcha] = useState('');
   const [selectedImageBack, setSelectedImageBack] = useState('');
   const [isVerified, setIsVerified] = useState(false);
+  const [adharValidation, setAdhaarValidation] = useState(false);
 
   const uploadOtpMethodFn = uploadOtpMethod();
   const uploadAdhaarMethodFn = uploadAdhaarMethod();
@@ -44,10 +45,10 @@ const KYC = (props) => {
   }, [uploadOtpMethodFn?.data]);
 
   useEffect(() => {
-    if (uploadAdhaarMethodFn?.error) {
+    if (uploadOtpMethodFn?.error) {
       alert("error");
     }
-  }, [uploadAdhaarMethodFn?.error]);
+  }, [uploadOtpMethodFn?.error]);
 
   useEffect(() => {
     if (uploadAdhaarMethodFn?.data) {
@@ -57,7 +58,8 @@ const KYC = (props) => {
 
   useEffect(() => {
     if (uploadAdhaarMethodFn?.error) {
-      alert("error");
+      setAdhaarValidation(true)
+      // alert("error");
     }
   }, [uploadAdhaarMethodFn?.error]);
 
@@ -125,7 +127,7 @@ const KYC = (props) => {
   };
   const hideModal = () => setVisible(false);
 
-  console.log(getValues('otp')?.length,"Otp values here-->")
+  console.log(getValues('otp')?.length, "Otp values here-->")
 
 
 
@@ -159,82 +161,95 @@ const KYC = (props) => {
   const onSubmitAdhaar = () => {
     setType(1);
     const AdhaarDetails = getValues('adhaarNumber');
-    uploadOtpMethodFn.mutate({ "AdharNumber": AdhaarDetails,"captcha": captcha });
+    uploadOtpMethodFn.mutate({ "AdharNumber": AdhaarDetails, "captcha": captcha });
   }
 
   return (
-    <View style={{flex:1}}>
-    <ScrollView style={styles.container}>
-      <Header
-        title="Documents"
-        left={require('../../images/back.png')}
-        onPressLeft={() => { props?.navigation?.navigate(screens.PanDetails) }}
-        right={require('../../images/question.png')}
-        onPressRight={() => { }} />
-      <ProgressCard screenName={screenName} percentage={10} ImageData={require('../../images/Home.png')} />
-      <View style={styles.subContainer}>
-        <Text style={[fonts.labelSmall, { width: '100%' }]}>Let's verify your identity quickly</Text>
-        <TouchableOpacity onPress={() => { showModal() }} style={{ alignSelf: 'center', marginTop: 15, }}>
-          <View style={styles.recommendedContainer}>
-            <Text style={[fonts.smallLightText, { color: colors.white }]}>Recommended</Text>
-          </View>
-          <View style={styles.cardContainer}>
-            <Image source={require('../../images/aadhar-front.png')} style={styles.frontImage} />
-          </View>
-        </TouchableOpacity>
-        <Text style={[fonts.labelMedium, { marginTop: 10, color: 'rgba(68, 70, 91, 1)' }]}>Generate E-Aadhaar</Text>
-        <Text style={[fonts.labelSmall, { marginTop: 5, lineHeight: 22, textAlign: 'center' }]}>You will receive an OTP on your{'\n'}Aadhaar
-          {'\n'}linked mobile number</Text>
-        <View style={styles.noteContainer}>
-          <Image source={require('../../images/bulb.png')} style={styles.bulbImage} />
-          <Text style={fonts.bodySmall}>Choose <Text style={fonts.bodyBold}>e-Aadhaar</Text> to get <Text style={fonts.bodyBold}>special benefits</Text> on Interest Rates!</Text>
-        </View>
-        <View style={styles.dividerContainer}>
-          <View style={styles.horizonalDivider} />
-          <Text style={[fonts.labelSmall, { marginTop: 1, marginHorizontal: 10 }]}>OR</Text>
-          <View style={styles.horizonalDivider} />
-        </View>
-        <View style={styles.rowContainer}>
-          <TouchableOpacity onPress={() => props.navigation.navigate(screens.CaptureAdhaar, { method: "Front" })}>
-            <View style={styles.cardContainerTwo}>
-              <Image
-                source={selectedImage ? { uri: `data:${selectedImage.mime};base64,${selectedImage.data}` } : require('../../images/aadhar-front.png')}
-                style={[styles.frontImage]} />
+    <View style={{ flex: 1 }}>
+      <ScrollView style={styles.container}>
+        <Header
+          title="Documents"
+          left={require('../../images/back.png')}
+          onPressLeft={() => { props?.navigation?.navigate(screens.PanDetails) }}
+          right={require('../../images/question.png')}
+          onPressRight={() => { }} />
+        <ProgressCard screenName={screenName} percentage={10} ImageData={require('../../images/Home.png')} />
+        <View style={styles.subContainer}>
+          <Text style={[fonts.labelSmall, { width: '100%' }]}>Let's verify your identity quickly</Text>
+          <TouchableOpacity onPress={() => { showModal() }} style={{ alignSelf: 'center', marginTop: 15, }}>
+            <View style={styles.recommendedContainer}>
+              <Text style={[fonts.smallLightText, { color: colors.white }]}>Recommended</Text>
             </View>
-            <Text style={[fonts.labelMedium, styles.titleText]}>Upload Your{'\n'}Aadhaar Front{'\n'}Photo</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => props.navigation.navigate(screens.CaptureAdhaar, { method: "Back" })} >
-            <View style={styles.cardContainerTwo}>
-              <Image
-                source={selectedImageBack ? { uri: `data:${selectedImageBack.mime};base64,${selectedImageBack.data}` } : require('../../images/aadhar-back.png')}
-                style={[styles.frontImage]} />
+            <View style={styles.cardContainer}>
+              <Image source={require('../../images/aadhar-front.png')} style={styles.frontImage} />
             </View>
-            <Text style={[fonts.labelMedium, styles.titleText]}>Upload Your{'\n'}Aadhaar Back{'\n'}Photo</Text>
           </TouchableOpacity>
-        </View>
-      </View>
-      <CustomButton
-        type="primary"
-        label="Continue"
-        buttonContainer={styles.buttonContainer}
-        onPress={() => { showModal() }}
-        disable={Boolean(selectedImage) && Boolean(selectedImageBack) ? false : true}
-      />
+          <Text style={[fonts.labelMedium, { marginTop: 10, color: 'rgba(68, 70, 91, 1)' }]}>Generate E-Aadhaar</Text>
+          <Text style={[fonts.labelSmall, { marginTop: 5, lineHeight: 22, textAlign: 'center' }]}>You will receive an OTP on your{'\n'}Aadhaar
+            {'\n'}linked mobile number</Text>
+          {adharValidation ? (
+            <>
+              <View style={styles.noteContainerAdhaar}>
+                <Image source={require('../../images/error.png')} style={styles.bulbImage} />
+                <Text style={fonts.bodySmall}>We couldn’t<Text style={fonts.bodyBold}> connect with Aadhaar server.
+                </Text>Please retry or upload your Aadhaar to proceed further on Interest Rates!</Text>
+              </View>
+            </>
+          ) : (
+            <>
+              <View style={styles.noteContainer}>
+                <Image source={require('../../images/bulb.png')} style={styles.bulbImage} />
+                <Text style={fonts.bodySmall}>Choose <Text style={fonts.bodyBold}>e-Aadhaar</Text> to get <Text style={fonts.bodyBold}>special benefits</Text> on Interest Rates!</Text>
+              </View>
+            </>
 
-      
-    </ScrollView >
-    <Modal 
-      withHandle={false}
+          )}
+          <View style={styles.dividerContainer}>
+            <View style={styles.horizonalDivider} />
+            <Text style={[fonts.labelSmall, { marginTop: 1, marginHorizontal: 10 }]}>OR</Text>
+            <View style={styles.horizonalDivider} />
+          </View>
+          <View style={styles.rowContainer}>
+            <TouchableOpacity onPress={() => props.navigation.navigate(screens.CaptureAdhaar, { method: "Front" })}>
+              <View style={styles.cardContainerTwo}>
+                <Image
+                  source={selectedImage ? { uri: `data:${selectedImage.mime};base64,${selectedImage.data}` } : require('../../images/aadhar-front.png')}
+                  style={[styles.frontImage]} />
+              </View>
+              <Text style={[fonts.labelMedium, styles.titleText]}>Upload Your{'\n'}Aadhaar Front{'\n'}Photo</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => props.navigation.navigate(screens.CaptureAdhaar, { method: "Back" })} >
+              <View style={styles.cardContainerTwo}>
+                <Image
+                  source={selectedImageBack ? { uri: `data:${selectedImageBack.mime};base64,${selectedImageBack.data}` } : require('../../images/aadhar-back.png')}
+                  style={[styles.frontImage]} />
+              </View>
+              <Text style={[fonts.labelMedium, styles.titleText]}>Upload Your{'\n'}Aadhaar Back{'\n'}Photo</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <CustomButton
+          type="primary"
+          label="Continue"
+          buttonContainer={styles.buttonContainer}
+          onPress={() => { showModal() }}
+          disable={Boolean(selectedImage) && Boolean(selectedImageBack) ? false : true}
+        />
+
+
+      </ScrollView >
+      <Modal
+        withHandle={false}
         statusBarTranslucent={true}
         visible={visible}
         onDismiss={hideModal}
         contentContainerStyle={styles.modalContainer}
-         >
+      >
         {type === 0 ?
           <View>
-             <TouchableOpacity onPress={hideModal} style={{ height: 20, width: '100%', justifyContent: 'flex-end', alignItems: 'flex-end' }}>    
-            <Image source={require('../../images/cross.png')} style={{ height: 20, width: 20 }} />
-           </TouchableOpacity>
+            <TouchableOpacity onPress={hideModal} style={{ height: 20, width: '100%', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+              <Image source={require('../../images/cross.png')} style={{ height: 20, width: 20 }} />
+            </TouchableOpacity>
             {mock_data.map((comp, index) => {
               return (index === 0 || (!errors[comp.id] && getValues('adhaarNumber')?.length === 12 && !isVerified)) && (
                 <FormControl
@@ -293,7 +308,7 @@ const KYC = (props) => {
               onPress={() => { onSubmitAdhaar() }} />
           </View>
           :
-           <View>
+          <View>
             <Text style={[fonts.labelMedium, { marginTop: 10, color: 'rgba(68, 70, 91, 1)', textAlign: 'center' }]}>OTP Verification</Text>
             <Text style={[fonts.labelSmall, { marginTop: 5, lineHeight: 18, textAlign: 'center' }]}>One-Time Password has been sent to{'\n'}your registered Mobile Number.</Text>
             <FormControl
@@ -328,7 +343,7 @@ export default KYC
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width:'100%',
+    width: '100%',
     backgroundColor: colors.bgColor,
     paddingHorizontal: 16,
   },
@@ -391,6 +406,15 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderRadius: 10,
   },
+  noteContainerAdhaar: {
+    backgroundColor: 'rgba(251, 226, 226, 1)',
+    padding: 10,
+    width: '100%',
+    paddingHorizontal: 20,
+    paddingLeft: 40,
+    marginTop: 10,
+    borderRadius: 10,
+  },
   bulbImage: {
     width: 25,
     height: 25,
@@ -419,7 +443,7 @@ const styles = StyleSheet.create({
     marginTop: 15
   },
   modalContainer: {
-    width:'100%',
+    width: '100%',
     padding: 20,
     paddingTop: 30,
     backgroundColor: colors.white,

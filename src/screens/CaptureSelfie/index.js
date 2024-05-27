@@ -8,14 +8,16 @@ import { styles } from './style/style';
 import { useTheme } from 'react-native-paper'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { screens } from '../../constants/screens';
+import CustomButton from '../../components/Button'
 
 const CaptureSelfie = ({ navigation }) => {
     const { fonts } = useTheme();
     const [selectedImage, setSelectedImage] = useState(null);
-    const onCameraPress = () => {
+    const onCameraPress = ({front = false}) => {
         ImagePicker.openCamera({
             cropping: true,
-            compressImageQuality: 0.6
+            compressImageQuality: 0.6,
+            useFrontCamera: front
         })
             .then((image) => {
                 setSelectedImage(image.path);
@@ -30,7 +32,12 @@ const CaptureSelfie = ({ navigation }) => {
         setSelectedImage(null)
     }
 
-    const onCameraReload = async() => {
+    const onCameraReload = () => {
+        onCameraPress(true)
+        // navigation?.navigate(screens.KYCDocuments)
+    }
+
+    const onSubmit = () =>{
         navigation?.navigate(screens.KYCDocuments)
     }
 
@@ -49,6 +56,15 @@ const CaptureSelfie = ({ navigation }) => {
                     <Image source={require('../../images/bulb.png')} style={styles.bulbImage} />
                     <Text style={fonts.bodySmall}>Place <Text style={fonts.bodyBold}>your</Text>Face within Circle</Text>
                 </View>
+
+
+                <CustomButton
+        type="primary"
+        label="Continue"
+        buttonContainer={styles.buttonContainer}
+        onPress={() => { onSubmit() }}
+        disable={Boolean(selectedImage)  ? false : true}
+      />
             </SafeAreaView>
         </>
     )
