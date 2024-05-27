@@ -63,6 +63,7 @@ const PinCodeVerify = ({ navigation }) => {
   //     Alert.alert('Submitted');
   //   }
   // };
+  //
 
   return (
     <View style={styles.container}>
