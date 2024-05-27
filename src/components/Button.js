@@ -1,40 +1,89 @@
 import * as React from "react";
-import { TouchableRipple, useTheme } from "react-native-paper";
+import {
+  ActivityIndicator,
+  TouchableRipple,
+  useTheme,
+} from "react-native-paper";
 import { colors } from "../colors";
 import { StyleSheet, Text, View } from "react-native";
 import customTheme from "../colors/theme";
 
 export default function CustomButton(props) {
-    const { type, label, left, right, buttonContainer, labelStyle, icon, onPress, rippleColor, disable = false ,isDisabled} = props;
-    const theme = useTheme();
-    return type === "primary" ? (
-        <TouchableRipple
-            rippleColor={rippleColor || "rgba(255, 255, 255, .32)"}
-            style={[styles.buttonContainer, buttonContainer, {opacity: disable ? 0.5 : 1}]}
-            disabled={disable}
-            onPress={onPress} >
-            <View style={styles.rowContainer}>
-                {left}
-                <Text style={[theme.fonts.buttonText, labelStyle, disable ? {color: colors.black}: {}]} numberOfLines={1}>{label}</Text>
-                {right}
-            </View>
-        </TouchableRipple>
-    ) : type === "secondery" ? (
-        <TouchableRipple
-            style={[styles.seconderyButtonContainer, buttonContainer]}
-            rippleColor={rippleColor || "rgba(0, 0, 0, .32)"}
-            onPress={onPress} >
-            <View style={styles.rowContainer}>
-                {left}
-                <Text style={[theme.fonts.seconderyButtonText, labelStyle]} numberOfLines={1}>{label}</Text>
-                {right}
-            </View>
-        </TouchableRipple>
-    ) : type === "circle" ? (
-        <TouchableRipple style={[styles.circleButtonContainer, buttonContainer]}>
-            {icon}
-        </TouchableRipple>
-    ) : null
+  const {
+    type,
+    label,
+    left,
+    right,
+    buttonContainer,
+    labelStyle,
+    icon,
+    onPress,
+    rippleColor,
+    disable = false,
+    isDisabled,
+    isLoading = false,
+  } = props;
+  const theme = useTheme();
+  return type === "primary" ? (
+    <TouchableRipple
+      rippleColor={rippleColor || "rgba(255, 255, 255, .32)"}
+      style={[
+        styles.buttonContainer,
+        buttonContainer,
+        { opacity: disable ? 0.5 : 1 },
+      ]}
+      disabled={disable || isLoading}
+      onPress={onPress}
+    >
+      <View style={styles.rowContainer}>
+        {left}
+        {isLoading ? (
+          <ActivityIndicator size={"small"} />
+        ) : (
+          <Text
+            style={[
+              theme.fonts.buttonText,
+              labelStyle,
+              disable ? { color: colors.black } : {},
+            ]}
+            numberOfLines={1}
+          >
+            {label}
+          </Text>
+        )}
+        {right}
+      </View>
+    </TouchableRipple>
+  ) : type === "secondery" ? (
+    <TouchableRipple
+      style={[styles.seconderyButtonContainer, buttonContainer]}
+      rippleColor={rippleColor || "rgba(0, 0, 0, .32)"}
+      onPress={onPress}
+      disabled={disable || isLoading}
+    >
+      <View style={styles.rowContainer}>
+        {left}
+        {isLoading ? (
+          <ActivityIndicator size={"small"} />
+        ) : (
+          <Text
+            style={[theme.fonts.seconderyButtonText, labelStyle]}
+            numberOfLines={1}
+          >
+            {label}
+          </Text>
+        )}
+        {right}
+      </View>
+    </TouchableRipple>
+  ) : type === "circle" ? (
+    <TouchableRipple
+      disabled={disable || isLoading}
+      style={[styles.circleButtonContainer, buttonContainer]}
+    >
+      {isLoading ? <ActivityIndicator size={"small"} /> : icon}
+    </TouchableRipple>
+  ) : null;
 }
 
 const styles = StyleSheet.create({

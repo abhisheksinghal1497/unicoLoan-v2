@@ -17,7 +17,7 @@ import { assets } from "../../assets/assets";
 import HelpModal from "./component/HelpModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getDateYearsBack } from "../../utils/dateUtil";
-import { getApplicationDetailQuery } from "./../../services/ApiUtils";
+import { getUserDetailQuery } from "./../../services/ApiUtils";
 import DimensionUtils from "../../utils/DimensionUtils";
 
 const initialData = [
@@ -46,8 +46,7 @@ const initialData = [
 export default function ApplicationDetails(props) {
   const [isVerified, setIsVerified] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [{ data = {} }] = getApplicationDetailQuery();
-
+  const [{ data = {}, error }] = getUserDetailQuery();
   const mock_data = [
     {
       id: "rmUser",
@@ -294,7 +293,7 @@ export default function ApplicationDetails(props) {
       id: "rentPerMonth",
       label: "Rent per month",
       type: component.textInput,
-      placeHolder: "Applicant Type",
+      placeHolder: "Rent per month",
       validations: validations.numberOnly,
       isRequired: true,
       keyboardtype: "numeric",
@@ -392,14 +391,13 @@ export default function ApplicationDetails(props) {
     formState: { errors },
     watch,
     setValue,
+    trigger,
   } = useForm({
     mode: "onBlur",
     defaultValues: { LeadSource: "Customer Mobile App", branchName: "" },
   });
 
   const { colors } = useTheme();
-
-  console.log("All form data---------", watch());
 
   useEffect(() => {
     async function fetchData() {
@@ -436,9 +434,15 @@ export default function ApplicationDetails(props) {
     }
   }, [data]);
 
-  const onSubmit = (data) => {
-    console.log(JSON.stringify(data, null, 2));
-    props?.navigation?.navigate(screens.PanDetails);
+  const onSubmit = async () => {
+    try {
+      const isValid = await trigger();
+      if (isValid) {
+        props?.navigation?.navigate(screens.PanDetails);
+      }
+    } catch (error) {
+      console.log("IN ERROR");
+    }
   };
 
   const ChangeValue = async (value, id) => {
@@ -499,7 +503,8 @@ export default function ApplicationDetails(props) {
 
           if (
             customerProfile !== "salaried" &&
-            (field.id === "employmentExperience" || field.id === "totalWorkExperience")
+            (field.id === "employmentExperience" ||
+              field.id === "totalWorkExperience")
           ) {
             return acc;
           }
@@ -512,7 +517,7 @@ export default function ApplicationDetails(props) {
           }
 
           acc.totalRequiredFields++;
-          if (watch(field.id) !== "") {
+          if (!!watch(field.id)) {
             acc.filledRequiredFields++;
           }
         }
@@ -523,14 +528,19 @@ export default function ApplicationDetails(props) {
 
     let completionPercentage = 0;
     if (totalRequiredFields > 0) {
-        completionPercentage = (filledRequiredFields / totalRequiredFields) * 100;
+      completionPercentage = (filledRequiredFields / totalRequiredFields) * 100;
     }
+
+    console.log({
+      totalRequiredFields,
+      completionPercentage,
+      filledRequiredFields,
+    });
 
     return completionPercentage;
   };
 
-  const percentage= getPercentage();
-
+  const percentage = getPercentage();
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <HelpModal
@@ -572,7 +582,7 @@ export default function ApplicationDetails(props) {
       </View>
       <ScrollView contentContainerStyle={style.scrollviewStyle}>
         <View style={style.container}>
-          <ApplicationCard percentage={percentage}  />
+          <ApplicationCard navigation={props?.navigation} />
         </View>
 
         <View
@@ -600,6 +610,7 @@ export default function ApplicationDetails(props) {
                 isDisabled={comp.isDisabled}
                 onChangeText={(value) => ChangeValue(value, comp.id)}
                 type={comp.keyboardtype}
+                trigger={trigger}
                 // showRightComp={true}
                 // rightComp={() =>
                 //   isVerified ? (
@@ -622,9 +633,9 @@ export default function ApplicationDetails(props) {
           <Button
             type="primary"
             label="Continue"
-            disable={percentage !== 100}
-            onPress={handleSubmit(onSubmit)}
-            buttonContainer={{ marginVertical: verticalScale(20)}}
+            // disable={percentage !== 100}
+            onPress={onSubmit}
+            buttonContainer={{ marginVertical: verticalScale(20) }}
           />
         </View>
       </ScrollView>

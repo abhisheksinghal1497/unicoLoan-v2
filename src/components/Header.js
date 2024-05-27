@@ -46,5 +46,6 @@ const styles = StyleSheet.create({
     titleText: {
         marginTop: 2,
         flexGrow: 1,
+        fontWeight:'bold'
     }
 })

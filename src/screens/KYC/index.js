@@ -1,4 +1,4 @@
-import { Dimensions, Image, ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Dimensions, Image, ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View ,ActivityIndicator } from 'react-native'
 import React, { useState, useEffect, useCallback } from 'react'
 import { colors } from '../../colors'
 import {
@@ -34,13 +34,15 @@ const KYC = (props) => {
   const [selectedImageBack, setSelectedImageBack] = useState('');
   const [isVerified, setIsVerified] = useState(false);
   const [adharValidation, setAdhaarValidation] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
   const uploadOtpMethodFn = uploadOtpMethod();
   const uploadAdhaarMethodFn = uploadAdhaarMethod();
 
   useEffect(() => {
     if (uploadOtpMethodFn?.data) {
-      alert('Success')
+      // alert('Success')
+      setIsLoading(false)
+      setType(1);
     }
   }, [uploadOtpMethodFn?.data]);
 
@@ -159,7 +161,7 @@ const KYC = (props) => {
     props.navigation.navigate(screens.CaptureSelfie)
   }
   const onSubmitAdhaar = () => {
-    setType(1);
+    setIsLoading(true)
     const AdhaarDetails = getValues('adhaarNumber');
     uploadOtpMethodFn.mutate({ "AdharNumber": AdhaarDetails, "captcha": captcha });
   }
@@ -173,6 +175,12 @@ const KYC = (props) => {
           onPressLeft={() => { props?.navigation?.navigate(screens.PanDetails) }}
           right={require('../../images/question.png')}
           onPressRight={() => { }} />
+          {isLoading ? (
+          <View style={styles.ActivityStyle}>
+             <ActivityIndicator size="large" color={colors.coreBlue} />
+          </View>
+      ) : (
+        <>
         <ProgressCard screenName={screenName} percentage={10} ImageData={require('../../images/Home.png')} />
         <View style={styles.subContainer}>
           <Text style={[fonts.labelSmall, { width: '100%' }]}>Let's verify your identity quickly</Text>
@@ -232,10 +240,12 @@ const KYC = (props) => {
           type="primary"
           label="Continue"
           buttonContainer={styles.buttonContainer}
+          isLoading={isLoading}
           onPress={() => { showModal() }}
           disable={Boolean(selectedImage) && Boolean(selectedImageBack) ? false : true}
         />
-
+</>
+      )}
 
       </ScrollView >
       <Modal
@@ -309,6 +319,9 @@ const KYC = (props) => {
           </View>
           :
           <View>
+                 <TouchableOpacity onPress={hideModal} style={{ height: 20, width: '100%', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+              <Image source={require('../../images/cross.png')} style={{ height: 20, width: 20 }} />
+            </TouchableOpacity>
             <Text style={[fonts.labelMedium, { marginTop: 10, color: 'rgba(68, 70, 91, 1)', textAlign: 'center' }]}>OTP Verification</Text>
             <Text style={[fonts.labelSmall, { marginTop: 5, lineHeight: 18, textAlign: 'center' }]}>One-Time Password has been sent to{'\n'}your registered Mobile Number.</Text>
             <FormControl
