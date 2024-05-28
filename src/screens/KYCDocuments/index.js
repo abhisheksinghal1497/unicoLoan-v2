@@ -10,71 +10,18 @@ import { useFocusEffect } from '@react-navigation/native';
 import CustomModal from "../../components/CustomModal";
 import { horizontalScale, verticalScale } from "../../utils/matrcis";
 import { colors } from "../../colors";
-import CustomShadow from "../../components/FormComponents/CustomShadow";
-import { FlatList } from "react-native";
-import ImagePicker from "react-native-image-crop-picker";
-import { getOtherKycList, getTempAddressKycList } from "../../services/ApiUtils";
 
 const KYCDocuments = ({ navigation }) => {
-
   const [selectedImage, setSelectedImage] = useState('');
   const [selectedImageBack, setSelectedImageBack] = useState('');
   const [selectedImageSelfie, setSelectedImageSelfie] = useState('');
-  const [showModal, setShowModal] = useState(false);
-  const [confirmModal, setConfirmModal] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalVisible2, setModalVisible2] = useState(false);
-  const [modalVisible3, setModalVisible3] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [imageSelected, setImageSelected] = useState(false);
-  const [data, setData] = useState([])
-  const [data2, setData2] = useState([])
-
-  const [isLoading, setIsLoading] = useState(true);
-
-  const otherkyc = getOtherKycList()
-  const TempKyc = getTempAddressKycList()
-
-  useEffect(()=>{
-    otherkyc?.mutate()
-    TempKyc?.mutate()
-  },[])
-
-  useEffect(()=>{
-    if(otherkyc.data){
-      setIsLoading(false)
-      setData(otherkyc.data)
-    }
-  },[otherkyc.data])
-
-  useEffect(()=>{
-    if(TempKyc.data){
-      setIsLoading(false)
-      setData2(TempKyc.data)
-    }
-  },[TempKyc.data])
-
-  useEffect(()=>{
-    if(otherkyc.error){
-      Alert.alert(otherkyc.error)
-    }
-  },[otherkyc.error])
-
-  useEffect(()=>{
-    if(TempKyc.error){
-      Alert.alert(TempKyc.error)
-    }
-  },[TempKyc.error])
-
-  console.log('selectedItem', selectedItem?.title)
- 
+  const [showModal, setShowModal] = useState(false); 
  
   useFocusEffect(
     useCallback(() => {
       fetchData();
     }, [])
   );
-
 
   const fetchData = async () => {
     await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.KYC));
@@ -93,7 +40,6 @@ const KYCDocuments = ({ navigation }) => {
 
   return (
     <ScrollView>
-
       {/* same address Yes/No selection Modal */}
       <CustomModal
         showModal={showModal}
@@ -119,13 +65,7 @@ const KYCDocuments = ({ navigation }) => {
             </View>
           </View>
         </TouchableOpacity>
-      </CustomModal>
-
-    
-     
-
-{/* select Gallery or Camera to uplaod Document Dropdown*/}
-    
+      </CustomModal>    
 
       <Header
         title="KYC Documents"

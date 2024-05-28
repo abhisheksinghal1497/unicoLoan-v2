@@ -39,5 +39,8 @@ export const colors = {
   SeaGreen: "#6DA5A6",
   Brown: "#342222",
   transparent: "Transparent",
-  progressBg: "#F2F2F2"
+  progressBg: "#F2F2F2",
+  surface: "#0076C7",
+  border: "#606060",
+  grey: "grey"
 };
