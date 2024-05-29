@@ -38,7 +38,7 @@ const Dashboard = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}
-        initialRouteName={screens.PinCodeVerify}>
+        initialRouteName={screens.HomeScreen}>
         <Stack.Screen
           name={screens.Splash}
           component={Splash}
@@ -148,9 +148,7 @@ const Dashboard = () => {
         <Stack.Screen
           name={screens.StatusCheck}
           component={StatusCheck}
-          options={{
-            headerShown: true,
-          }}
+         
         />
          <Stack.Screen
           name={screens.Profile}
