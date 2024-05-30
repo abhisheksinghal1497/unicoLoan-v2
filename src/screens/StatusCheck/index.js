@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, ScrollView, Image, FlatList } from 'react-native'
-import React, { useState } from 'react'
+import { StyleSheet, Text, View, ScrollView, Image, FlatList,useWindowDimensions } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import Header from '../../components/Header';
 import { colors } from '../../colors';
 import { horizontalScale, verticalScale } from '../../utils/matrcis';
@@ -13,19 +13,44 @@ const data = [
   { id: '6', title: '', imagePathActive: require('../../../assets/images/loandone.png'), }
 ];
 
-const StatusCheck = () => {
+const StatusCheck = ({navigation}) => {
+  const [orientation, setOrientation] = useState('portrait');
+  const { width, height } = useWindowDimensions();
+
+  useEffect(() => {
+    const isPortrait = height > width;
+    setOrientation(isPortrait ? 'portrait' : 'landscape');
+  }, [width, height]);
+
+  const isTablet = width >= 600; 
 
   const renderItem = ({ item, index }) => {
     const isLeft = index % 2 === 0;
     const itemStyle = isLeft ? styles.itemLeft : styles.itemRight;
     const itemContainerStyle = isLeft ? styles.itemContainerLeft : styles.itemContainerRight;
 
+    const marginHorizontalPortrait = index === 0 ? 36 : 
+    index === 1 ? 10 : 
+    index === 2 ? 60 : 
+    index === 3 ? 82 : 
+    index === 4 ? 15 : 75;
+
+  const marginHorizontalLandscape = isTablet ? (
+    index === 0 ? 230 : 
+    index === 1 ? 205 : 
+    index === 2 ? 254 : 
+    index === 3 ? 272 : 
+    index === 4 ? 210 : 267.5
+  ) : marginHorizontalPortrait;
+
+    const marginHorizontal = orientation === 'portrait' ? marginHorizontalPortrait : marginHorizontalLandscape;
+
     return (
-      <View style={[styles.itemContainer, itemContainerStyle, { marginHorizontal: horizontalScale(index == 0 ? 36 : index == 1 ? 10 : index == 2 ? 60 : index == 3 ? 82 : index == 4 ? 15 : 75), }]}>
+      <View style={[styles.itemContainer, itemContainerStyle, {  marginHorizontal }]}>
         {
           index == 0 || index == 2 || index == 4 ?
             <View style={[styles.item, itemStyle, { flexDirection: 'row' }]}>
-              <Text style={{ fontSize: 12, fontWeight: '500', color: colors.black, marginTop: verticalScale(18), right: horizontalScale(8) }}>{item.title}</Text>
+              <Text style={{ fontSize: 12, fontWeight: '500', color: colors.black, marginTop: verticalScale(18), right: horizontalScale(6) }}>{item.title}</Text>
               <Image
                 style={{ width: 25, height: 25, resizeMode: 'contain' }}
                 source={item.imagePathActive}
@@ -36,7 +61,7 @@ const StatusCheck = () => {
                 style={{ width: index == 5 ? 50 : 25, height: index == 5 ? 53 : 25, resizeMode: 'contain', marginHorizontal: horizontalScale(index == 5 && 20) }}
                 source={item.imagePathActive}
               />
-              <Text style={{ fontSize: 12, fontWeight: '500', color: colors.black, marginTop: verticalScale(18), left: horizontalScale(8) }}>{item.title}</Text>
+              <Text style={{ fontSize: 12, fontWeight: '500', color: colors.black, marginTop: verticalScale(18), left: horizontalScale(6) }}>{item.title}</Text>
             </View>}
 
       </View>
@@ -44,14 +69,14 @@ const StatusCheck = () => {
   };
 
   return (
-    <ScrollView style={{ backgroundColor: colors.white }} >
+    <ScrollView style={{ backgroundColor: colors.white }}>
       <View style={styles.container}>
         <View style={{ marginHorizontal: horizontalScale(-10), alignItems: 'center' }}>
           <Header
-            onPressLeft={() => navigation.navigate('KYCDocuments')}
+            onPressLeft={() => navigation.goBack()}
             colour={colors.transparent}
             left={require('../../../assets/images/Back.png')}
-            leftStyle={{ width: 27, height: 27, marginRight: horizontalScale(0) }}
+            leftStyle={{ width: 27, height: 27,marginLeft: isTablet ? horizontalScale(10) : 0 }}
             title="Loan Status Check"
           />
         </View>
@@ -88,9 +113,9 @@ const StatusCheck = () => {
 
         <Text style={styles.header}>Apply for loan</Text>
         <View style={{ marginTop: verticalScale(0) }}>
-          <View style={styles.line}>
+          <View style={[styles.line,{ height: orientation === 'portrait' ? 500 : 500 }]}>
             <Image source={require('../../../assets/images/homekey.png')}
-             style={[styles.key,{marginTop: verticalScale(10)}]} />
+             style={[styles.key,{marginTop: verticalScale(171)}]} />
             <View style={styles.line2}>
               <View style={styles.dash1} />
               <View style={styles.dash} />
@@ -115,6 +140,7 @@ const StatusCheck = () => {
 
           </View>
           <FlatList
+          scrollEnable={false}
             data={data}
             renderItem={renderItem}
             keyExtractor={item => item.id}
@@ -122,7 +148,7 @@ const StatusCheck = () => {
         </View>
 
       </View>
-    </ScrollView>
+     </ScrollView>
   )
 }
 
@@ -142,7 +168,7 @@ const styles = StyleSheet.create({
   },
   key:{
     width: 40, height: 42,
-    resizeMode: 'contain', alignSelf: 'center',
+    resizeMode: 'contain', alignSelf: 'center', zIndex: 999
   },
   loantext:{
     fontWeight: '500', fontSize: 15, color: '#2E52A1'
@@ -165,13 +191,17 @@ const styles = StyleSheet.create({
   },
   line: {
     position: 'absolute',
-    height: 500,
+    // height: 500,
     width: 20,
     backgroundColor: colors.black,
     marginHorizontal: 'auto',
     alignSelf: 'center',
     marginTop: verticalScale(12),
-    borderRadius: 16
+    borderRadius: 16,
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   line2: {
     position: 'absolute',
