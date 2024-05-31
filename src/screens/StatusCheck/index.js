@@ -17,6 +17,13 @@ const StatusCheck = ({navigation}) => {
   const [orientation, setOrientation] = useState('portrait');
   const { width, height } = useWindowDimensions();
 
+  const numberOfDashes = 17;
+  const dashes = [];
+
+  for (let i = 0; i < numberOfDashes; i++) {
+    dashes.push(<View key={i} style={styles.dash} />);
+  }
+
   useEffect(() => {
     const isPortrait = height > width;
     setOrientation(isPortrait ? 'portrait' : 'landscape');
@@ -117,30 +124,13 @@ const StatusCheck = ({navigation}) => {
             <Image source={require('../../../assets/images/homekey.png')}
              style={[styles.key,{marginTop: verticalScale(171)}]} />
             <View style={styles.line2}>
-              <View style={styles.dash1} />
-              <View style={styles.dash} />
-              <View style={styles.dash} />
-              <View style={styles.dash} />
-              <View style={styles.dash} />
-              <View style={styles.dash} />
-              <View style={styles.dash} />
-              <View style={styles.dash} />
-              <View style={styles.dash} />
-              <View style={styles.dash} />
-              <View style={styles.dash} />
-              <View style={styles.dash} />
-              <View style={styles.dash} />
-              <View style={styles.dash} />
-              <View style={styles.dash} />
-              <View style={styles.dash} />
-              <View style={styles.dash} />
-              <View style={styles.dash} />
-              {/* Add more dashes as needed */}
+            <View style={styles.dash1}/>
+              {dashes}
             </View>
 
           </View>
           <FlatList
-          scrollEnable={false}
+           scrollEnable={false}
             data={data}
             renderItem={renderItem}
             keyExtractor={item => item.id}
