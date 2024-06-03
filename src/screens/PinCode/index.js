@@ -276,7 +276,7 @@ const ModalScreen = ({ modalStyle }) => {
           </View>
           <View>
             <Text style={styles.additionalText}>New DelSultanpur</Text>
-            <Text style={styles.additionalText}>New Delhi/Dwarika</Text>
+            {/* <Text style={styles.additionalText}>New Delhi/Dwarika</Text> */}
           </View>
           <View style={styles.button}>
           <Button label="Ok" type="primary" onPress={handleOkPress}  />
