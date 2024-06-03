@@ -31,6 +31,7 @@ import CurrentAddress from '../screens/CurrentAddress';
 import OtpInput from '../components/FormComponents/OtpInput';
 import OtpScreen from '../screens/OtpEnter';
 import PinCodeVerify from '../screens/PinCode';
+import Dummy from '../screens/Dummy';
 
 const Stack = createStackNavigator();
 
@@ -38,7 +39,7 @@ const Dashboard = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}
-        initialRouteName={screens.HomeScreen}>
+        initialRouteName={screens.Dummy}>
         <Stack.Screen
           name={screens.Splash}
           component={Splash}
@@ -153,6 +154,11 @@ const Dashboard = () => {
          <Stack.Screen
           name={screens.Profile}
           component={Profile}
+        />
+
+<Stack.Screen
+          name={"Dummy"}
+          component={Dummy}
         />
       </Stack.Navigator>
     </NavigationContainer>
