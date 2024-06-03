@@ -172,9 +172,9 @@ const Dummy = () => {
 {appDownTimeAlertVisible && (
         <View style={styles.alertContainer}>
           <Text style={styles.alertText}>{jsonData.downTime.appDownTimeMessage}</Text>
-          <TouchableOpacity style={styles.alertButton} onPress={() => setAppDownTimeAlertVisible(false)}>
+          {/* <TouchableOpacity style={styles.alertButton} onPress={() => setAppDownTimeAlertVisible(false)}>
             <Text style={styles.alertButtonText}>Okay</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       )}
 
