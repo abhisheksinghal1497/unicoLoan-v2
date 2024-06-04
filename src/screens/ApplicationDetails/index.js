@@ -1,4 +1,4 @@
-import { ScrollView, View } from "react-native";
+import { ScrollView, Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {
@@ -19,6 +19,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getDateYearsBack } from "../../utils/dateUtil";
 import { getUserDetailQuery } from "./../../services/ApiUtils";
 import DimensionUtils from "../../utils/DimensionUtils";
+import CustomModal from "../../components/CustomModal";
+import { Image } from "react-native";
 
 const initialData = [
   {
@@ -47,6 +49,10 @@ export default function ApplicationDetails(props) {
   const [isVerified, setIsVerified] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [{ data = {}, error }] = getUserDetailQuery();
+  const [modalVisible2, setModalVisible2] = useState(false);
+  const [isChecked, setIsChecked] = useState(true);
+
+
   const mock_data = [
     {
       id: "rmUser",
@@ -385,6 +391,21 @@ export default function ApplicationDetails(props) {
 
   // const allFields = mock_data.map
 
+  const TnC = () => {
+    // if (!isChecked){
+    setModalVisible2(true)
+    // }
+  }
+
+  const ok = () => {
+    setModalVisible2(false)
+  }
+
+  const handleCheckBoxClick = () => {
+    setIsChecked(!isChecked);
+    setModalVisible2(true)
+  };
+
   const {
     control,
     handleSubmit,
@@ -611,34 +632,96 @@ export default function ApplicationDetails(props) {
                 onChangeText={(value) => ChangeValue(value, comp.id)}
                 type={comp.keyboardtype}
                 trigger={trigger}
-                // showRightComp={true}
-                // rightComp={() =>
-                //   isVerified ? (
-                //     <Text>Verify</Text>
-                //   ) : (
-                //     <Image
-                //       source={require("../../images/tick.png")}
-                //       style={styles.tickImage}
-                //     />
-                //   )
-                // }
-                // rightCompPress={() => {
-                //   setIsVerified(!isVerified);
-                // }}
+              // showRightComp={true}
+              // rightComp={() =>
+              //   isVerified ? (
+              //     <Text>Verify</Text>
+              //   ) : (
+              //     <Image
+              //       source={require("../../images/tick.png")}
+              //       style={styles.tickImage}
+              //     />
+              //   )
+              // }
+              // rightCompPress={() => {
+              //   setIsVerified(!isVerified);
+              // }}
               />
             );
           })}
         </View>
+
+        <View style={{ flexDirection: 'row', alignItems: 'center', maxWidth: '84%', marginHorizontal: horizontalScale(20), marginTop: verticalScale(25), marginBottom: verticalScale(15) }}>
+          <TouchableOpacity
+            style={{
+            }}
+            onPress={() => handleCheckBoxClick()}
+          >
+            <Image
+              style={{ width: 22, height: 22, resizeMode: 'contain', }}
+              source={isChecked ? require('../../../assets/images/box.png') : require('../../../assets/images/checked.png')}
+            />
+          </TouchableOpacity>
+          <Text style={{ marginLeft: verticalScale(5), fontSize: 14, lineHeight: 18, color: '#000000', }}>Terms and Condition Unico Housing Finance Private Limited.</Text>
+
+        </View>
+
         <View style={{ paddingHorizontal: horizontalScale(30) }}>
           <Button
             type="primary"
             label="Continue"
             // disable={percentage !== 100}
             onPress={onSubmit}
+            // onPress={()=>TnC()}
             buttonContainer={{ marginVertical: verticalScale(20) }}
           />
         </View>
+        <CustomModal
+          modalStyle={style.modalstyle}
+          showModal={modalVisible2}
+          //  setShowModal={setModalVisible2}
+          centeredViewStyle={{ backgroundColor: "rgba(0, 0, 0, 0.1)", }}
+        >
+          <View>
+            <TouchableOpacity
+              onPress={() => setModalVisible2(false)}
+            >
+              <Image
+                source={require('../../../assets/images/crossGray.png')}
+                style={{ width: 17, height: 17, resizeMode: 'contain', justifyContent: 'flex-end', marginHorizontal: horizontalScale(330), marginBottom: verticalScale(12.5) }}
+              />
+            </TouchableOpacity>
+
+            <Text style={{ fontWeight: '600', fontSize: 20, color: '#000000' }}>
+              Terms and Condition
+            </Text>
+            <ScrollView>
+
+              <View style={{ width: '100%', alignSelf: 'center', marginTop: verticalScale(17.5), marginBottom: verticalScale(-15) }}>
+                <Text style={{ lineHeight: 28, fontSize: 12, color: '#000000', fontWeight: '600', }}>
+                  An Intellectual Property clause will inform users that the contents, logo and other visual media you created is your property and is protected by copyright laws.
+                  {'\n'}
+
+                  1. A Termination clause will inform users that any accounts on your website and mobile app, or users' access to your website and app, can be terminated in case of abuses or at your sole discretion.
+                  {'\n'}
+                  2. A Governing Law clause will inform users which laws govern the agreement. These laws should come from the country in which your company is headquartered or the country from which you operate your website and mobile app.
+                  {'\n'}
+                  3. A Links to Other Websites clause will inform users that you are not responsible for any third party websites that you link to.
+                </Text>
+              </View>
+            </ScrollView>
+            <View style={{ marginBottom: verticalScale(10) }}>
+              <Button
+                type="primary"
+                label="ok"
+                onPress={() => ok()}
+                buttonContainer={{ width: 154, alignSelf: 'center', }}
+              />
+            </View>
+          </View>
+        </CustomModal>
       </ScrollView>
     </View>
   );
 }
+

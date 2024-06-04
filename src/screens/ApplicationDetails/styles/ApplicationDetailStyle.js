@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { horizontalScale } from "../../../utils/matrcis";
+import { horizontalScale, verticalScale } from "../../../utils/matrcis";
 
 export const styles = (themeColor) =>
   StyleSheet.create({
@@ -24,4 +24,8 @@ export const styles = (themeColor) =>
     buttonContainer: {
       marginTop: 20,
     },
+    modalstyle:{
+      borderRadius: 10,
+      // marginBottomBottom: verticalScale(30)
+    }
   });
