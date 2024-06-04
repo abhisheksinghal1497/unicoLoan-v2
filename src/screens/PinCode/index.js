@@ -50,27 +50,27 @@
 //     setModalVisible2(false);
 //   }
 
-//   // const handleOnSubmit = () => {
-//   //   if (!code) {
-//   //     setErrorMessage('Please Enter the Pin');
-//   //   } else if (code.length !== 6) {
-//   //     setErrorMessage('Please enter all six digits of Pin');
-//   //   } else if (isChecked) {
-//   //     Alert.alert('Please select the Terms & Conditions checkbox');
-//   //   } else {
-//   //     console.log('Code is', code);
-//   //     setErrorMessage('');
-//   //     Alert.alert('Submitted');
-//   //   }
-//   // };
-//   //
+  // const handleOnSubmit = () => {
+  //   if (!code) {
+  //     setErrorMessage('Please Enter the Pin');
+  //   } else if (code.length !== 6) {
+  //     setErrorMessage('Please enter all six digits of Pin');
+  //   } else if (isChecked) {
+  //     Alert.alert('Please select the Terms & Conditions checkbox');
+  //   } else {
+  //     console.log('Code is', code);
+  //     setErrorMessage('');
+  //     Alert.alert('Submitted');
+  //   }
+  // };
+  
 
-//   return (
-//     <View style={styles.container}>
-//       {/* <StatusBar
+  // return (
+  //   <View style={styles.container}>
+       {/* <StatusBar
 //         backgroundColor={"#EFEFED"}
 //       /> */}
-//       <ScrollView>
+//        <ScrollView>
 //         <CustomModal
 //           showModal={modalVisible}
 //           setShowModal={setModalVisible}
@@ -203,15 +203,14 @@
 
 
 import React, { useState } from "react";
-import { View, Text, StyleSheet,TextInput ,Alert,} from "react-native";
+import { View, Text, StyleSheet,TextInput ,ScrollView,Alert,StatusBar} from "react-native";
 import CustomModal from '../../components/CustomModal';
 import { verticalScale } from "../../utils/matrcis";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Button from "../../components/Button";
 
 
-const ModalScreen = ({ modalStyle }) => {
-  
+const PinCodeVerify = ({ navigation,modalStyle }) => {  
   
   const [pinCode, setPinCode] = useState('');
   const [modalVisible, setModalVisible] = useState(true);
@@ -222,8 +221,14 @@ const ModalScreen = ({ modalStyle }) => {
 
   const closeModal = () => {
     setModalVisible(false);
+    navigation.navigate("HomeScreen")
   };
-
+  const cities = [
+    "New York", "Los Angeles","Chicago","Houston", "Phoenix",
+    "Philadelphia", "San Antonio", "San Diego","Dallas","San Jose",
+    "Austin", "Jacksonville","Fort Worth","Columbus","Charlotte",
+    "San Francisco","Indianapolis", "Seattle","Denver","Washington D.C."
+  ];
   const handleOkPress = () => {
     if (pinCode.length !== 6) {
       Alert.alert(
@@ -239,13 +244,16 @@ const ModalScreen = ({ modalStyle }) => {
       );
       setPinCode('')
       setModalVisible(true)
+      navigation.navigate("HomeScreen")
     }
   };
 
 
   return (
-    <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
-     <Text  onPress={openModal}>OpenModal</Text>
+    <View style={styles.container}>
+       <StatusBar
+        animated={true}
+        backgroundColor="black"/>
    
     <CustomModal
       type="center"
@@ -253,7 +261,7 @@ const ModalScreen = ({ modalStyle }) => {
       setShowModal={setModalVisible}
       centeredViewStyle={{ backgroundColor: "rgba(0, 0, 0, 0.1)" }}
       modalStyle={[styles.modal, modalStyle]}>
-        
+     
     <View style={styles.modalHeader}>
       
        <Text style={styles.modalHeaderTxt}>Enter Pin code</Text>
@@ -274,10 +282,13 @@ const ModalScreen = ({ modalStyle }) => {
     
           />
           </View>
-          <View>
-            <Text style={styles.additionalText}>New DelSultanpur</Text>
-            {/* <Text style={styles.additionalText}>New Delhi/Dwarika</Text> */}
-          </View>
+     <ScrollView style={styles.scrollView}  propagateSwipe={true}>
+         {cities.map((city, index) => (
+        <View key={index} >
+          <Text style={styles.additionalText}>{city}</Text>
+        </View>
+      ))}
+    </ScrollView>
           <View style={styles.button}>
           <Button label="Ok" type="primary" onPress={handleOkPress}  />
         </View>
@@ -285,20 +296,21 @@ const ModalScreen = ({ modalStyle }) => {
 </CustomModal>
 </View>
   )}
+
   const styles = StyleSheet.create({
+    container:{flex:1,alignItems:'center',justifyContent:'center'},
     modal: {
       width: "95%",
       height:'55%',
       alignSelf:'center', 
-     
-    },
+         },
+
     modalHeader:{
-      flexDirection: "row",
-      alignItems: "center",
       justifyContent: "space-between",
       paddingBottom: verticalScale(15),
+      flexDirection: "row",
+      alignItems: "center",
     },
-   
     modalHeaderTxt: {
       fontSize: verticalScale(19),
       color: "#44465B", 
@@ -325,18 +337,24 @@ const ModalScreen = ({ modalStyle }) => {
       shadowRadius: 3.84,
       elevation: 12,
     },
+    scrollView: {
+      flex: 1,
+      width: '100%',
+      marginBottom: 80, 
+    },
     pinValue: {
       fontSize: 16,
       color: 'black',
       marginHorizontal:10
     },
     additionalText: {
-      marginVertical: 5,
-    },
- 
+      fontSize:verticalScale(12),
+      marginVertical: 14,
+      marginHorizontal:15
+    }, 
     button: {
     maxHeight:65,
-    marginBottom:15,
+    marginBottom:25,
     borderRadius: 33,
     width: '50%',
     justifyContent: 'center',
@@ -346,4 +364,4 @@ const ModalScreen = ({ modalStyle }) => {
     },
 
   })
-  export default ModalScreen;
+  export default PinCodeVerify;
