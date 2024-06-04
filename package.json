@@ -13,11 +13,7 @@
     },
     "dependencies": {
         "@react-native-async-storage/async-storage": "^1.23.1",
-<<<<<<< HEAD
-        "@react-native-clipboard/clipboard": "^1.14.1",
-=======
         "@react-native-community/clipboard": "^1.5.1",
->>>>>>> b71c03a634ec5991f7813533230c62c1643043fe
         "@react-native-community/netinfo": "^11.3.1",
         "@react-native-community/slider": "^4.5.2",
         "@react-native-masked-view/masked-view": "^0.2.7",
