@@ -1,21 +1,48 @@
 import { StyleSheet, Text, View, Alert, Image } from 'react-native';
 import React, { useState, useEffect } from 'react';
+import { NativeModules } from 'react-native';
 import CustomModal from '../../components/CustomModal';
 import { horizontalScale, verticalScale } from '../../utils/matrcis';
 import { colors } from '../../colors';
 import { TouchableOpacity } from 'react-native';
 import { verifyPanApi } from '../../services/ApiUtils';
+import VersionNumber  from 'react-native-version-number';
+
+
+const {AndroidVersionModule} = NativeModules;
 
 const Dummy = () => {
-    const appVersion = '1.0.0';
+    const [appVersion, setAppVersion] = useState('');
+
+const onPress = () => {
+    AndroidVersionModule.createCalendarEvent('testName',  eventId => {
+      console.log(`Created a new event with id ${eventId}`);
+    },);
+  };
+
+  useEffect(() => {
+    const fetchAppVersion = async () => {
+        try {
+            const version = VersionNumber.appVersion;
+            console.log("Version number fetched:=====", version);
+            setAppVersion(version); 
+        } catch (error) {
+            console.error('Error fetching app version:', error);
+        } 
+    };
+    fetchAppVersion();
+}, []);
+
+
+    // const appVersion = '1.0.0';
 
     const jsonData = {
         "downTime": {
-            "isAppDownTime": true,
+            "isAppDownTime": false,
             "appDownTimeMessage": "App is in under maintenance"
         },
         "android": {
-            "latestVersion": "1.0.9",
+            "latestVersion": "0.9",
             "isForceUpdateRequired": false,
             "updateMessage": "New version is available",
             "redirectUrl": "https://google.playstore.com/com.unico"
@@ -43,6 +70,7 @@ const Dummy = () => {
 
 
     useEffect(() => {
+        console.log('nowww')
         if (jsonData.downTime.isAppDownTime) {
             setAppDownTimeAlertVisible(true);
             setModalVisible1(true)
@@ -50,7 +78,7 @@ const Dummy = () => {
 
         const versionToNumber = (version) => {
             const parts = version.split('.').map(part => parseInt(part));
-            return parts[0] * 10000 + parts[1] * 100 + parts[2];
+            return parts[0] * 100 + parts[1];
         };
 
         const appVersionNumber = versionToNumber(appVersion);
@@ -71,7 +99,7 @@ const Dummy = () => {
             setGeneralMessageAlertVisible(true);
             setModalVisible4(true)
         }
-    }, []);
+    }, [appVersion]);
 
     return (
         <><View style={styles.container}>

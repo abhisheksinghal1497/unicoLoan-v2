@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { FlatList, Dimensions, View, StyleSheet, Text, Image, ScrollView, TouchableOpacity, ImageBackground, SafeAreaView,TextInput, ActivityIndicator, Alert } from 'react-native';
+import { FlatList, Dimensions, View, StyleSheet, Text, Image, ScrollView, TouchableOpacity, ImageBackground, SafeAreaView, ActivityIndicator, Alert } from 'react-native';
+// import { NativeModules } from 'react-native';
 import CardComponent from './cardComponent';
 import { colors } from '../../colors';
 import customTheme from '../../colors/theme';
@@ -12,8 +13,11 @@ import CustomModal from '../../components/CustomModal';
 import PinCodeVerify from '../PinCode';
 import Button from "../../components/Button";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
+// import VersionNumber  from 'react-native-version-number';
 
-const HomeScreen = ({navigation,modalStyle}) => {
+// const {AndroidVersionModule} = NativeModules;
+
+const HomeScreen = ({navigation}) => {
   const flatListRef = useRef(null);
   const screenWidth = Dimensions.get('window').width;
   const getLoanCardData = getHomeScreenDetails()
@@ -24,8 +28,30 @@ const HomeScreen = ({navigation,modalStyle}) => {
   const [selectedDotIndex, setSelectedDotIndex] = useState(0); 
   const [showModal, setShowModal] = useState(false);
 
+  const onPress = () => {
+    AndroidVersionModule.createCalendarEvent('testName',  eventId => {
+      console.log(`Created a new event with id ${eventId}`);
+    },);
+  };
+
+  // useEffect(() => {
+  //   const fetchAppVersion = async () => {
+  //     try {
+  //       const version = VersionNumber.appVersion;
+  //       console.log("Version number fetched:", version);
+  //       setAppVersion(version); 
+  //     } catch (error) {
+  //       console.error('Error fetching app version:', error);
+  //     }
+  //   };
+  //   fetchAppVersion();
+  // }, []);
+  
+
   console.log('datatt', data)
   const [currentScreen, setCurrentScreen] = React.useState(false);
+
+  // console.log('versionn--->',VersionNumber.appVersion)
 
   useEffect(()=>{
     getLoanCardData?.mutate()
@@ -260,7 +286,12 @@ const handleOkPress = () => {
       </CustomModal> */}
         <View style={{ backgroundColor: colors.coreCream, }}>
               {/* <View style={styles.profileImageView}> */}
-                <TouchableOpacity style={styles.profileImageView} onPress={() => navigation.navigate(screens.Profile)}>
+                <TouchableOpacity
+                
+                style={styles.profileImageView} onPress={() => 
+                  navigation.navigate(screens.Profile)
+                  // onPress()
+                }>
                   <Image source={require('../../../assets/images/profileIcon.png')} style={styles.profileIcon} />
               
                 <Text style={styles.profileName}>Bhavesh Rao</Text>
