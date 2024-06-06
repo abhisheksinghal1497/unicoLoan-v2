@@ -10,6 +10,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { screens } from "../../constants/screens";
 import { getHomeScreenDetails, getHomeScreenOurServices } from '../../services/ApiUtils';
 import CustomModal from '../../components/CustomModal';
+import PinCodeVerify from '../PinCode';
+import Button from "../../components/Button";
+import EvilIcons from "react-native-vector-icons/EvilIcons";
 // import VersionNumber  from 'react-native-version-number';
 
 // const {AndroidVersionModule} = NativeModules;
@@ -180,7 +183,8 @@ const HomeScreen = ({navigation}) => {
         break;
       case 1:
         const ProgressBarPercent =  0;
-        navigation.navigate(screens.ApplicantDetails, { ProgressBarPercent })
+        // navigation.navigate(screens.ApplicantDetails, { ProgressBarPercent })
+       setModalVisible(true);
         break;
      case 2:
       navigation.navigate(screens.StatusCheck)
@@ -209,6 +213,46 @@ const HomeScreen = ({navigation}) => {
     const index = Math.round(contentOffset.x / screenWidth);
     setSelectedDotIndex(index);
   };
+
+//Apply loan modal
+
+const [pinCode, setPinCode] = useState('');
+const [modalVisible, setModalVisible] = useState(false);
+
+const openModal = () => {
+  setModalVisible(true);
+};
+
+const closeModal = () => {
+  setModalVisible(false);
+
+};
+const cities = [
+  "New York", "Los Angeles","Chicago","Houston", "Phoenix",
+  "Philadelphia", "San Antonio", "San Diego","Dallas","San Jose",
+  "Austin", "Jacksonville","Fort Worth","Columbus","Charlotte",
+  "San Francisco","Indianapolis", "Seattle","Denver","Washington D.C."
+];
+const handleOkPress = () => {
+  if (pinCode.length !== 6) {
+    Alert.alert(
+      "Invalid Pin",
+      "Pin code must be 6 digits",
+      [{ text: "OK" }]
+    );
+  } else {
+    Alert.alert(
+      "Success",
+      "Valid pin code entered",
+      [{ text: "OK" ,}]
+    );
+    setPinCode('')
+    setModalVisible(true)
+  
+  }
+};
+//  Apply loan modal
+
 
   return (
     <View style={{ flex:1}}>
@@ -256,15 +300,58 @@ const HomeScreen = ({navigation}) => {
               <View style={{marginBottom: verticalScale(-60) }}>
                 <CardComponent />
               </View>
-            </View><View style={{ marginTop: verticalScale(78) }}>
+            </View>
+{/* Apply Loan modal */}
+            <CustomModal
+                  type="center"
+                  showModal={modalVisible}
+                  setShowModal={setModalVisible}
+                  centeredViewStyle={{ backgroundColor: "rgba(0, 0, 0, 0.1)" }}
+                  modalStyle={[styles.modal, modalStyle]}>
+                
+                <View style={styles.modalHeader}>
+                  
+                  <Text style={styles.modalHeaderTxt}>Enter Pin code</Text>
+                  <EvilIcons
+                        onPress={closeModal}
+                        name="close"
+                        size={verticalScale(22)}
+                        color={"#828282"}
+                      />
+              </View>
+                <View style={styles.textInputContainer}>
+                  <TextInput
+                        style={styles.pinValue}
+                        keyboardType="numeric"
+                        maxLength={6}
+                        onChangeText={setPinCode}
+                        value={pinCode}
+                
+                      />
+                      </View>
+                <ScrollView style={styles.scrollView}  propagateSwipe={true}>
+                    {cities.map((city, index) => (
+                    <View key={index} >
+                      <Text style={styles.additionalText}>{city}</Text>
+                    </View>
+                  ))}
+                </ScrollView>
+                      <View style={styles.button}>
+                      <Button label="Ok" type="primary" onPress={handleOkPress}  />
+                    </View>
+
+            </CustomModal>
+
+            <View style={{ marginTop: verticalScale(78) }}>
                 <Text style={styles.yourLoan}>
                   Your Loans
                 </Text>
                 {data.length === 0 ? (
-                  <TouchableOpacity  onPress={() => {
-                    const ProgressBarPercent = item.ProgressBarPercent || 0;
-                    navigation.navigate(screens.ApplicantDetails, { ProgressBarPercent });
-                  }} style={styles.loanapplyview}>
+                  // <TouchableOpacity  onPress={() => {
+                  //   const ProgressBarPercent = item.ProgressBarPercent || 0;
+                  //   navigation.navigate(screens.ApplicantDetails, { ProgressBarPercent });
+                  // }} style={styles.loanapplyview}>
+              <TouchableOpacity onPress={openModal}>
                     <ImageBackground
                       style={styles.imgBackground}
                       source={require('../../../assets/images/loanapply.png')}
@@ -507,6 +594,70 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: colors.coreBlue,
   },
+  modal: {
+    width: "95%",
+    height:'55%',
+    alignSelf:'center', 
+       },
+
+  modalHeader:{
+    justifyContent: "space-between",
+    paddingBottom: verticalScale(15),
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  modalHeaderTxt: {
+    fontSize: verticalScale(19),
+    color: "#44465B", 
+    
+  },
+  close:{
+    size:verticalScale(2),
+    color:"#828282"
+  },
+  textInputContainer: {
+    height: 50,
+    width:'105%',    
+    borderRadius: 33,
+    backgroundColor: 'white', 
+    justifyContent:'center',
+    alignSelf:'center',
+    marginBottom: 20,    
+    shadowColor: 'black', 
+    shadowOffset: {
+        width: 0,
+        height: 4,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 12,
+  },
+  scrollView: {
+    flex: 1,
+    width: '100%',
+    marginBottom: 80, 
+  },
+  pinValue: {
+    fontSize: 16,
+    color: 'black',
+    marginHorizontal:10
+  },
+  additionalText: {
+    fontSize:verticalScale(12),
+    marginVertical: 14,
+    marginHorizontal:15
+  }, 
+  button: {
+  maxHeight:65,
+  marginBottom:25,
+  borderRadius: 33,
+  width: '50%',
+  justifyContent: 'center',
+  alignSelf: 'center',
+  position:'absolute',
+  bottom:0
+  },
+
 
 });
 
