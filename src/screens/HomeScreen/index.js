@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { FlatList, Dimensions, View, StyleSheet, Text, Image, ScrollView, TouchableOpacity, ImageBackground, SafeAreaView, ActivityIndicator, Alert } from 'react-native';
+// import { NativeModules } from 'react-native';
 import CardComponent from './cardComponent';
 import { colors } from '../../colors';
 import customTheme from '../../colors/theme';
@@ -9,7 +10,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { screens } from "../../constants/screens";
 import { getHomeScreenDetails, getHomeScreenOurServices } from '../../services/ApiUtils';
 import CustomModal from '../../components/CustomModal';
+// import VersionNumber  from 'react-native-version-number';
 
+// const {AndroidVersionModule} = NativeModules;
 
 const HomeScreen = ({navigation}) => {
   const flatListRef = useRef(null);
@@ -22,8 +25,30 @@ const HomeScreen = ({navigation}) => {
   const [selectedDotIndex, setSelectedDotIndex] = useState(0); 
   const [showModal, setShowModal] = useState(false);
 
+  const onPress = () => {
+    AndroidVersionModule.createCalendarEvent('testName',  eventId => {
+      console.log(`Created a new event with id ${eventId}`);
+    },);
+  };
+
+  // useEffect(() => {
+  //   const fetchAppVersion = async () => {
+  //     try {
+  //       const version = VersionNumber.appVersion;
+  //       console.log("Version number fetched:", version);
+  //       setAppVersion(version); 
+  //     } catch (error) {
+  //       console.error('Error fetching app version:', error);
+  //     }
+  //   };
+  //   fetchAppVersion();
+  // }, []);
+  
+
   console.log('datatt', data)
   const [currentScreen, setCurrentScreen] = React.useState(false);
+
+  // console.log('versionn--->',VersionNumber.appVersion)
 
   useEffect(()=>{
     getLoanCardData?.mutate()
@@ -217,7 +242,12 @@ const HomeScreen = ({navigation}) => {
       </CustomModal> */}
         <View style={{ backgroundColor: colors.coreCream, }}>
               {/* <View style={styles.profileImageView}> */}
-                <TouchableOpacity style={styles.profileImageView} onPress={() => navigation.navigate(screens.Profile)}>
+                <TouchableOpacity
+                
+                style={styles.profileImageView} onPress={() => 
+                  navigation.navigate(screens.Profile)
+                  // onPress()
+                }>
                   <Image source={require('../../../assets/images/profileIcon.png')} style={styles.profileIcon} />
               
                 <Text style={styles.profileName}>Bhavesh Rao</Text>
