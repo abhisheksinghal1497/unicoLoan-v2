@@ -12,7 +12,7 @@ import questionRound from "./icons/questionRound.png";
 import back from "./icons/back.png";
 import homeIconPerson from './homeIconPerson.png';
 import homeIcon from './home_icon.png'
-
+import chat from './chatt.png'
 export const assets = {
   checkboxError,
   checkboxOff,
@@ -24,6 +24,7 @@ export const assets = {
   tick,
   questionRound,
   back,
+  chat,
   Frame3,
   ChatsCircle,
   homeIconPerson,

@@ -46,12 +46,20 @@ const initialData = [
 ];
 
 export default function ApplicationDetails(props) {
+  
   const [isVerified, setIsVerified] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [{ data = {}, error }] = getUserDetailQuery();
   const [modalVisible2, setModalVisible2] = useState(false);
   const [isChecked, setIsChecked] = useState(true);
 
+  const handleRightIconPress = (index) => {
+    if (index === 0) {
+        props.navigation.navigate(screens.FAQ);
+    } else if (index === 1) {
+        props.navigation.navigate(screens.HomeScreen);
+    } 
+};
 
   const mock_data = [
     {
@@ -509,8 +517,9 @@ export default function ApplicationDetails(props) {
 
   const toggleModal = () => setShowModal(!showModal);
   const style = styles(colors);
-  const goBack = () => props.navigation.goBack();
-
+  
+ 
+ 
   const getPercentage = () => {
     const customerProfile = watch("customerProfile");
     const isRented = watch("presentAccommodation") === "rented";
@@ -575,31 +584,18 @@ export default function ApplicationDetails(props) {
           marginTop: verticalScale(10),
         }}
       >
-        <Header
-          colour="#fff"
-          title="Applicant Details"
-          left={assets.back}
-          right={assets.questionRound}
-          leftStyle={{
-            height: verticalScale(15),
-            width: verticalScale(15),
-          }}
-          leftImageProps={{
-            resizeMode: "contain",
-          }}
-          rightStyle={{
-            height: verticalScale(25),
-            width: verticalScale(25),
-          }}
-          rightImageProps={{
-            resizeMode: "contain",
-          }}
-          titleStyle={{
-            fontSize: verticalScale(18),
-          }}
-          onPressRight={toggleModal}
-          onPressLeft={goBack}
-        />
+        <Header        
+       title="Application Details"
+       left={assets.back}
+       rightImages={[{source: assets.chat,},{source: assets.questionRound,},]}
+       leftStyle={{height: verticalScale(15),width: verticalScale(15),}}
+       leftImageProps={{resizeMode: "contain",}}
+       rightStyle={{height: verticalScale(23),width: verticalScale(23),marginHorizontal:10}}
+       rightImageProps={{ resizeMode: "contain"}}
+       titleStyle={{fontSize: verticalScale(18), }}
+       onPressRight={handleRightIconPress}
+       onPressLeft={() => {props.navigation.goBack();}}
+     />
       </View>
       <ScrollView contentContainerStyle={style.scrollviewStyle}>
         <View style={style.container}>

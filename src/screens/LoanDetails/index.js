@@ -10,6 +10,8 @@ import {
 import { validations } from "../../constants/validations";
 import CustomButton from "../../components/Button";
 import { screens } from "../../constants/screens";
+import { assets } from "../../assets/assets";
+import { horizontalScale, verticalScale } from "../../utils/matrcis";
 import {
   HeaderTexts,
   LOAN_DETAILS_KEYS,
@@ -384,10 +386,16 @@ const LoanDetails = (props) => {
   const toggleModal = () => {
     setShowModal(!showModal);
   };
-
+  const handleRightIconPress = (index) => {
+    if (index === 0) {
+        props.navigation.navigate(screens.FAQ);
+    } else if (index === 1) {
+       toggleModal();
+    } 
+};
   return (
     <View style={styles.container}>
-      <Header
+      {/* <Header
         title={HeaderTexts.loanDetails}
         titleStyle={styles.headerTitle}
         left={require("../../../assets/images/Back.png")}
@@ -400,8 +408,20 @@ const LoanDetails = (props) => {
           toggleModal();
         }}
         colour="transparent"
-      />
+      /> */}
 
+    <Header        
+       title="Loan Details"
+       left={assets.back}
+       rightImages={[{source: assets.chat,},{source: assets.questionRound,},]}
+       leftStyle={{height: verticalScale(15),width: verticalScale(15),}}
+       leftImageProps={{resizeMode: "contain",}}
+       rightStyle={{height: verticalScale(23),width: verticalScale(23),marginHorizontal:10}}
+       rightImageProps={{ resizeMode: "contain"}}
+       titleStyle={{fontSize: verticalScale(18), }}
+       onPressRight={handleRightIconPress}
+       onPressLeft={() => { props?.navigation.goBack();}}
+     />
       <ScrollView
         contentContainerStyle={{
           paddingBottom: 120,

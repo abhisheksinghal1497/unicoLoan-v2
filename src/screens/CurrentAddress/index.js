@@ -2,6 +2,8 @@ import { StyleSheet, Text, View, ScrollView, Alert, TouchableOpacity, FlatList }
 import React, { useState, useEffect } from 'react'
 import ImagePicker from "react-native-image-crop-picker";
 import Header from '../../components/Header'
+import { assets } from "../../assets/assets";
+import { screens } from '../../constants/screens';
 import { horizontalScale, verticalScale } from '../../utils/matrcis'
 import { colors } from '../../colors'
 import customTheme from '../../colors/theme'
@@ -113,9 +115,15 @@ const CurrentAddress = ({ navigation }) => {
       </TouchableOpacity>
     );
   };
-
+  const handleRightIconPress = (index) => {
+    if (index === 0) {
+        navigation.navigate(screens.FAQ);
+    } else if (index === 1) {
+        navigation.navigate(screens.HomeScreen);
+    } 
+};
   return (
-    <ScrollView >
+    <ScrollView style={{backgroundColor:'#ffff'}} >
       <View style={styles.container}>
         <CustomModal
           showModal={modalVisible}
@@ -175,7 +183,7 @@ const CurrentAddress = ({ navigation }) => {
         </CustomModal>
 
         <View style={{ marginHorizontal: horizontalScale(10) }}>
-          <Header
+          {/* <Header
             titleStyle={{ marginLeft: horizontalScale(0) }}
             onPressLeft={() => navigation.navigate('KYCDocuments')}
             colour={colors.transparent}
@@ -193,7 +201,19 @@ const CurrentAddress = ({ navigation }) => {
               { source: require('../../../src/assets/chatt.png'), imageProps: { style: { width: 32, height: 32, marginRight: horizontalScale(8) } } },
               { source: require('../../../src/assets/Question.png'), imageProps: { style: { width: 32, height: 32 } } },
             ]}
-          />
+          /> */}
+      <Header        
+       title="Upload Documents"
+       left={require('../../images/back.png')}
+       rightImages={[{source: assets.chat,},{source: assets.questionRound,},]}
+       leftStyle={{height: verticalScale(15),width: verticalScale(15),}}
+       leftImageProps={{resizeMode: "contain",}}
+       rightStyle={{height: verticalScale(23),width: verticalScale(23),marginHorizontal:10}}
+       rightImageProps={{ resizeMode: "contain"}}
+       titleStyle={{fontSize: verticalScale(18), }}
+       onPressRight={handleRightIconPress}
+       onPressLeft={() => {navigation.navigate(screens.KYCDocuments);}}
+     />
         </View>
 
         <View style={[styles.container, { marginHorizontal: horizontalScale(11) }]}>
