@@ -45,7 +45,7 @@ const KYCDocuments = ({ navigation }) => {
     } 
 };
   return (
-    <ScrollView>
+    <ScrollView style={{backgroundColor:'#ffff'}}>
       {/* same address Yes/No selection Modal */}
       <CustomModal
         showModal={showModal}

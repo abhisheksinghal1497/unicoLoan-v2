@@ -168,7 +168,7 @@ const Eligibility = (props) => {
 
 
   return (
-    <ScrollView>
+    <ScrollView style={{backgroundColor:'#ffff'}}>
       <Header        
        title="Eligibility"
        left={assets.back}

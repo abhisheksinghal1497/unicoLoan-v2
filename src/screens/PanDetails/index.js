@@ -137,7 +137,7 @@ const PanDetails = (props) => {
       />
        <Header        
        title="PAN Details"
-       left={assets.back}
+       left={require('../../images/back.png')}
        rightImages={[{source: assets.chat,},{source: assets.questionRound,},]}
        leftStyle={{height: verticalScale(15),width: verticalScale(15),}}
        leftImageProps={{resizeMode: "contain",}}
