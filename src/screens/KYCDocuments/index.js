@@ -37,7 +37,13 @@ const KYCDocuments = ({ navigation }) => {
     const currentDataSelfie = JSON.parse(savedSelfie)
     setSelectedImageSelfie(currentDataSelfie)
   }
-
+  const handleRightIconPress = (index) => {
+    if (index === 0) {
+        navigation.navigate(screens.FAQ);
+    } else if (index === 1) {
+        navigation.navigate(screens.HomeScreen);
+    } 
+};
   return (
     <ScrollView>
       {/* same address Yes/No selection Modal */}
@@ -66,13 +72,18 @@ const KYCDocuments = ({ navigation }) => {
           </View>
         </TouchableOpacity>
       </CustomModal>    
-
-      <Header
-        title="KYC Documents"
-        left={require('../../images/back.png')}
-        onPressLeft={() => { navigation?.navigate(screens.PanDetails) }}
-        right={require('../../images/question.png')}
-        onPressRight={() => { }} />
+      <Header        
+       title="KYC Documents"
+       left={require('../../images/back.png')}
+       rightImages={[{source: assets.chat,},{source: assets.questionRound,},]}
+       leftStyle={{height: verticalScale(15),width: verticalScale(15),}}
+       leftImageProps={{resizeMode: "contain",}}
+       rightStyle={{height: verticalScale(23),width: verticalScale(23),marginHorizontal:10}}
+       rightImageProps={{ resizeMode: "contain"}}
+       titleStyle={{fontSize: verticalScale(18), }}
+       onPressRight={handleRightIconPress}
+       onPressLeft={() => {navigation.navigate(screens.PanDetails);}}
+     />
       <View style={styles.topCon}>
         <Image source={assets.protection} />
         <Text>

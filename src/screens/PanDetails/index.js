@@ -6,6 +6,7 @@ import {
   View,
   ScrollView,
 } from "react-native";
+import { assets } from "../../assets/assets";
 import React, { useState, useEffect } from "react";
 import { colors } from "../../colors";
 import { ActivityIndicator } from "react-native-paper";
@@ -16,6 +17,7 @@ import {
   FormControl,
   component,
 } from "../../components/FormComponents/FormControl";
+import { horizontalScale, verticalScale } from "../../utils/matrcis";
 import { validations } from "../../constants/validations";
 import { useForm } from "react-hook-form";
 import ProgressCard from "../../components/ProgressCard";
@@ -27,6 +29,7 @@ const WIDTH = Dimensions.get("window").width;
 const screenName = "PAN Details";
 
 const PanDetails = (props) => {
+  
   const [isVerified, setIsVerified] = useState(false);
   const [showModal, setShowModal] = useState(false);
   // const [message, setMessage] = useState('12345');
@@ -117,7 +120,14 @@ const PanDetails = (props) => {
       toast('error', "Some error occurred");
     }
   }
-
+  const handleRightIconPress = (index) => {
+    if (index === 0) {
+        props.navigation.navigate(screens.FAQ);
+    } else if (index === 1) {
+        props.navigation.navigate(screens.HomeScreen);
+    } 
+};
+ 
   return (
     <View style={styles.container}>
       <HelpModal
@@ -125,15 +135,18 @@ const PanDetails = (props) => {
         showModal={showModal}
         setShowModal={setShowModal}
       />
-      <Header
-        title={screenName}
-        left={require("../../images/back.png")}
-        right={require("../../images/question.png")}
-        onPressLeft={() => {
-          props?.navigation?.navigate(screens.ApplicantDetails);
-        }}
-        onPressRight={toggleModal}
-      />
+       <Header        
+       title="PAN Details"
+       left={assets.back}
+       rightImages={[{source: assets.chat,},{source: assets.questionRound,},]}
+       leftStyle={{height: verticalScale(15),width: verticalScale(15),}}
+       leftImageProps={{resizeMode: "contain",}}
+       rightStyle={{height: verticalScale(23),width: verticalScale(23),marginHorizontal:10}}
+       rightImageProps={{ resizeMode: "contain"}}
+       titleStyle={{fontSize: verticalScale(18), }}
+       onPressRight={handleRightIconPress}
+       onPressLeft={() => {props.navigation.navigate(screens.ApplicantDetails);}}
+     />
       <ScrollView>
         <ProgressCard screenName={screenName} />
         {mock_data.map((comp, index) => {

@@ -11,7 +11,8 @@ import {
 } from "react-native";
 import RNFetchBlob from "rn-fetch-blob";
 import { useTheme } from "react-native-paper";
-
+import { screens } from "../../constants/screens";
+import { horizontalScale, verticalScale } from "../../utils/matrcis";
 import HrProgress from "../../components/HrProgress";
 import { assets } from "../../assets/assets";
 import Card from "../../components/Card";
@@ -72,18 +73,27 @@ const Sanction = (props) => {
     updatedDate: "22/04/20202",
     updatedTime: "15:50PM",
   };
-
+  const handleRightIconPress = (index) => {
+    if (index === 0) {
+       props.navigation.navigate(screens.FAQ);
+    } else if (index === 1) {
+        navigation.navigate(screens.HomeScreen);
+    } 
+};
   return (
     <View style={styles.container}>
-      <Header
-        title="In-Principle Sanction"
-        left={require("../../images/back.png")}
-        onPressLeft={() => {
-          props?.navigation.goBack();
-        }}
-        right={require("../../images/question.png")}
-        onPressRight={() => {}}
-      />
+      <Header        
+       title="IN-Principle Sanction"
+       left={require('../../images/back.png')}
+       rightImages={[{source: assets.chat,},{source: assets.questionRound,},]}
+       leftStyle={{height: verticalScale(15),width: verticalScale(15),}}
+       leftImageProps={{resizeMode: "contain",}}
+       rightStyle={{height: verticalScale(23),width: verticalScale(23),marginHorizontal:10}}
+       rightImageProps={{ resizeMode: "contain"}}
+       titleStyle={{fontSize: verticalScale(18), }}
+       onPressRight={handleRightIconPress}
+       onPressLeft={() => {props?.navigation.goBack();}}
+     />
 
       <Card cardStyle={styles.cardContainer}>
         <ImageBackground

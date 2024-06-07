@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { FlatList, Dimensions, View, StyleSheet, Text, Image, ScrollView, TouchableOpacity, ImageBackground, SafeAreaView,TextInput, ActivityIndicator, Alert } from 'react-native';
+import { FlatList, Dimensions, View, StyleSheet, Text, Image, StatusBar,ScrollView, TouchableOpacity, ImageBackground, SafeAreaView,TextInput, ActivityIndicator, Alert } from 'react-native';
 import CardComponent from './cardComponent';
 import { colors } from '../../colors';
 import customTheme from '../../colors/theme';
@@ -277,7 +277,7 @@ const handleOkPress = () => {
                   setShowModal={setModalVisible}
                   centeredViewStyle={{ backgroundColor: "rgba(0, 0, 0, 0.1)" }}
                   modalStyle={[styles.modal, modalStyle]}>
-                
+                <StatusBar hidden={modalVisible} backgroundColor="transparent" />
                 <View style={styles.modalHeader}>
                   
                   <Text style={styles.modalHeaderTxt}>Enter Pin code</Text>
