@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -13,21 +13,29 @@ import { colors } from "../../colors";
 import customTheme from "../../colors/theme";
 import CustomShadow from "./CustomShadow";
 import { getErrMsg } from "../../services/globalHelper";
+import CustomModal from "../CustomModal";
+import {
+  fieldContainerStyle,
+  fieldLabelViewStyle,
+  fieldLabelStyle,
+} from "../../constants/commonStyles";
 
 export default DropDown = ({
   control,
-  validations,
+  validations={},
   setValue,
   name,
   label,
   type,
   right,
+  value = "",
   isDisabled = false,
   isRequired = false,
   tooltipText = "",
   placeholder,
   style = {},
   data = [],
+  trigger = () => {},
   ...rest
 }) => {
   const { colors, fonts } = useTheme();
@@ -35,11 +43,39 @@ export default DropDown = ({
 
   const [valueText, setValueText] = useState("");
 
+  const renderOptions = ({ item }) => {
+    return (
+      <TouchableOpacity
+        style={styles.itemView}
+        onPress={() => {
+          if (setValue) {
+            setValue(name, item.value);
+            setValueText(item.label);
+          }
+          trigger()
+          setModalVisible(false);
+        }}
+      >
+        <Text style={styles.itemText}>{item?.label}</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const getTextFromVal = (value) => {
+    if (value && valueText === "") {
+      let valText = data.filter((el) => el.value === value);
+      if (valText.length > 0) {
+        return valText[0].label;
+      }
+    }
+    return "";
+  };
+
   return (
     <>
       <Controller
         control={control}
-        rules={validations}
+        rules={{ required: isRequired, ...validations }}
         render={({
           field: { onChange, onBlur, value },
           fieldState: { error, invalid },
@@ -47,7 +83,7 @@ export default DropDown = ({
           return (
             <View style={styles.container}>
               <View style={styles.labelContainer}>
-                <Text style={fonts.regularText}>
+                <Text style={styles.label}>
                   {isRequired && <Text style={styles.asterisk}>* </Text>}
                   {label}
                 </Text>
@@ -55,7 +91,16 @@ export default DropDown = ({
 
               <CustomShadow shadowColor={error ? colors.error : colors.primary}>
                 <TouchableOpacity
-                  style={[styles.selectContainer, style]}
+                  style={[
+                    styles.selectContainer,
+                    style,
+                    {
+                      backgroundColor: isDisabled
+                        ? customTheme.colors.disableBg
+                        : "transparent",
+                    },
+                  ]}
+                  disabled={isDisabled}
                   activeOpacity={1}
                   onPress={() => {
                     setModalVisible(true);
@@ -67,8 +112,14 @@ export default DropDown = ({
                       error && { borderColor: colors.error },
                     ]}
                   >
-                    <Text style={[value ? { color: colors.grey } : {}]}>
-                      {valueText || placeholder}
+                    <Text
+                      style={[
+                        value
+                          ? { color: isDisabled ? "#000" : colors.grey }
+                          : {},
+                      ]}
+                    >
+                      {valueText || getTextFromVal(value) || placeholder}
                     </Text>
                     <Text style={styles.selectArr}>&#9013;</Text>
                   </View>
@@ -87,53 +138,34 @@ export default DropDown = ({
         name={name}
       />
 
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(false);
-        }}
+      <CustomModal
+        type="bottom"
+        showModal={modalVisible}
+        setShowModal={setModalVisible}
+        centeredViewStyle={{ backgroundColor: "rgba(0, 0, 0, 0.1)" }}
       >
-        <TouchableOpacity
-          style={styles.modalContainer}
-          onPress={() => {
-            setModalVisible(false);
-          }}
-        >
-          <View style={styles.modal}>
-            <FlatList
-              data={data}
-              keyExtractor={(item) => item?.id?.toString()}
-              renderItem={({ item }) => {
-                return (
-                  <TouchableOpacity
-                    style={styles.itemView}
-                    onPress={() => {
-                      if (setValue) {
-                        setValue(name, item.value);
-                        setValueText(item.label);
-                      }
-                      setModalVisible(false);
-                    }}
-                  >
-                    <Text style={styles.itemText}>{item?.label}</Text>
-                  </TouchableOpacity>
-                );
-              }}
-            />
+        <View>
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalHeaderTxt}> Select {label}</Text>
           </View>
-        </TouchableOpacity>
-      </Modal>
+          <FlatList
+            data={data}
+            keyExtractor={(item) => item?.id?.toString()}
+            renderItem={renderOptions}
+            // ItemSeparatorComponent={<View style={styles.itemSeparator} />}
+          />
+        </View>
+      </CustomModal>
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  labelText: {
+    color: colors.labelColor,
+  },
   container: {
-    marginHorizontal: 5,
-    marginVertical: 10,
-    paddingBottom: 0,
+    ...fieldContainerStyle,
   },
   selectArr: {
     fontSize: 18,
@@ -147,19 +179,15 @@ const styles = StyleSheet.create({
     color: customTheme.colors.error,
     marginTop: 5,
   },
-  container: {
-    marginHorizontal: 5,
-    marginVertical: 10,
-    paddingBottom: 0,
-  },
   labelContainer: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    marginBottom: 2,
+    ...fieldLabelViewStyle,
+  },
+  label: {
+    ...fieldLabelStyle,
   },
   selectContainer: {
     backgroundColor: customTheme.colors.textInputBackground,
-    padding: 10,
+    padding: 13,
     borderRadius: 30,
     paddingHorizontal: 20,
   },
@@ -182,9 +210,20 @@ const styles = StyleSheet.create({
   },
   itemView: {
     padding: 10,
-    borderTopWidth: 0.5,
   },
   itemText: {
+    ...customTheme.fonts.regularText,
     color: colors.black,
+  },
+  modalHeader: {
+    paddingVertical: 10,
+  },
+  modalHeaderTxt: {
+    fontWeight: "bold",
+    fontSize: 18,
+  },
+  itemSeparator: {
+    borderTopWidth: 1,
+    borderTopColor: customTheme.colors.border,
   },
 });

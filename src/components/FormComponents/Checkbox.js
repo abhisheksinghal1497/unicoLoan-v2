@@ -8,11 +8,12 @@ import { assets } from "../../assets/assets";
 
 export default function CheckBox({
   control,
-  validationProps,
+  validations={},
   name,
   label,
   checkboxProps,
   isRequired = false,
+  trigger = () => {},
 }) {
   const getCheckboxImage = (value, error) => {
     if (!!error) {
@@ -27,7 +28,7 @@ export default function CheckBox({
     <View key={label + name}>
       <Controller
         control={control}
-        rules={validationProps}
+        rules={{required: isRequired, ...validations}}
         render={({
           field: { onChange, onBlur, value },
           fieldState: { error },
