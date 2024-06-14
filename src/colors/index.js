@@ -42,5 +42,8 @@ export const colors = {
   progressBg: "#F2F2F2",
   surface: "#0076C7",
   border: "#606060",
-  grey: "grey"
+  grey: "grey",
+  shadowColor:'rgba(0, 0, 0, 0.25)',
+  borderColor:'rgba(232, 232, 234, 1.0)',
+  MODAL_BG_COLOR: "#0E0E0E94",
 };

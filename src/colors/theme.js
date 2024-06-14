@@ -31,7 +31,7 @@ const customTheme = {
     border: "#D2D2D2",
     disableBg: "#D3D3D3",
     black: "#000000",
-    labelColor:'rgba(136, 136, 136, 1)'
+    labelColor: 'rgba(136, 136, 136, 1)'
   },
   shape: {
     ...DefaultTheme.shape,
@@ -53,9 +53,11 @@ const customTheme = {
     },
     regularText: {
       fontFamily: "Nunito-Regular",
-      fontWeight: "normal",
-      fontSize: 14,
-      color: "#000000",
+      color: colors.black,
+      fontSize: 16,
+      fontWeight: "400",
+      fontStyle: "normal",
+      color: colors.labelColor
     },
     regularLightText: {
       fontFamily: "Nunito-Regular",
