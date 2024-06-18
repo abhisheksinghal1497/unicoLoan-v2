@@ -26,15 +26,44 @@
  */
 package com.unico_loan.react;
 
+import com.salesforce.androidsdk.reactnative.app.SalesforceReactSDKManager;
 import com.salesforce.androidsdk.reactnative.ui.SalesforceReactActivity;
+
+import android.os.Bundle;
+import androidx.fragment.app.FragmentManager;
 
 public class MainActivity extends SalesforceReactActivity {
 
-    /**
-     *
-     * @return true if you want login to happen when application launches
-     *         false otherwise
-     */
+	public FragmentManager fragmentManager;
+
+
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		// Initialize fragmentManager
+		fragmentManager = getSupportFragmentManager();
+
+		// Call the method to present the opt-in dialog if needed
+		presentBiometricOptInDialog();
+	}
+
+	/**
+	 * Determines if biometric authentication opt-in dialog needs to be presented.
+	 */
+	private void presentBiometricOptInDialog() {
+		SalesforceReactSDKManager.getInstance()
+				.getBiometricAuthenticationManager()
+				.presentOptInDialog(fragmentManager);
+	}
+
+	/**
+	 * Override to control whether login should happen when the application launches.
+	 *
+	 * @return true if you want login to happen, false otherwise
+	 */
+
 	@Override
 	public boolean shouldAuthenticate() {
 		return true;
