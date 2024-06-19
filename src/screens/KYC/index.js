@@ -9,6 +9,8 @@ import { useForm } from "react-hook-form";
 import { Modal, useTheme } from 'react-native-paper'
 import CustomButton from '../../components/Button'
 import Header from '../../components/Header'
+import { horizontalScale, verticalScale } from "../../utils/matrcis";
+import { assets } from "../../assets/assets";
 import { validations } from "../../constants/validations";
 import customTheme from '../../colors/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -22,9 +24,6 @@ import { uploadOtpMethod, uploadAdhaarMethod } from "../../services/ApiUtils";
 
 const WIDTH = Dimensions.get('window').width;
 const screenName = "Documents"
-
-
-
 
 
 const KYC = (props) => {
@@ -165,16 +164,28 @@ const KYC = (props) => {
     const AdhaarDetails = getValues('adhaarNumber');
     uploadOtpMethodFn.mutate({ "AdharNumber": AdhaarDetails, "captcha": captcha });
   }
-
+  const handleRightIconPress = (index) => {
+    if (index === 0) {
+        props.navigation.navigate(screens.FAQ);
+    } else if (index === 1) {
+        props.navigation.navigate(screens.HomeScreen);
+    } 
+};
   return (
     <View style={{ flex: 1 }}>
       <ScrollView style={styles.container}>
-        <Header
-          title="Documents"
-          left={require('../../images/back.png')}
-          onPressLeft={() => { props?.navigation?.navigate(screens.PanDetails) }}
-          right={require('../../images/question.png')}
-          onPressRight={() => { }} />
+      <Header        
+       title="Documents"
+       left={require('../../images/back.png')}
+       rightImages={[{source: assets.chat,},{source: assets.questionRound,},]}
+       leftStyle={{height: verticalScale(15),width: verticalScale(15),}}
+       leftImageProps={{resizeMode: "contain",}}
+       rightStyle={{height: verticalScale(23),width: verticalScale(23),marginHorizontal:10}}
+       rightImageProps={{ resizeMode: "contain"}}
+       titleStyle={{fontSize: verticalScale(18), }}
+       onPressRight={handleRightIconPress}
+       onPressLeft={() => {props.navigation.navigate(screens.PanDetails);}}
+     />
         {isLoading ? (
           <View style={styles.ActivityStyle}>
             <ActivityIndicator size="large" color={colors.coreBlue} />

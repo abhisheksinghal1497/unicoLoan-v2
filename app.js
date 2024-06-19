@@ -25,7 +25,7 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, FlatList,StatusBar } from "react-native";
+import { StyleSheet, Text, View, FlatList, StatusBar, Platform, NativeModules } from "react-native";
 import {
     MD3LightTheme as DefaultTheme,
     PaperProvider,
@@ -47,11 +47,6 @@ import NoInternet from "./src/screens/NoInternet";
 import Toast from 'react-native-toast-message';
 import ErrorBoundary from 'react-native-error-boundary'
 import { onlineManager } from "@tanstack/react-query/build/legacy";
-
-
-
-
-
 // import Dashboard from './src/Navigation/Dashboard';
 import HomeScreen from "./src/screens/HomeScreen";
 import ApplicationDetails from "./src/screens/ApplicationDetails";
@@ -133,7 +128,14 @@ const styles = StyleSheet.create({
 });
 
 export const App = function () {
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+        defaultOptions: {
+            queries: {
+                retry: 0, //no retry 
+                networkMode: 'online', // always execute in online
+            },
+        },
+    })
     const [isConnected, setIsConnected] = useState(true);
 
     useEffect(() => {
@@ -164,8 +166,6 @@ export const App = function () {
                 <QueryClientProvider client={queryClient}>
                     <Reduxprovider store={store}>
                         {isConnected ? <Dashboard /> : <NoInternet />}
-                        {/* <HomeScreen/> */}
-                        {/* <ContactListScreen /> */}
                         <Toast
                             position='bottom'
                             bottomOffset={20}

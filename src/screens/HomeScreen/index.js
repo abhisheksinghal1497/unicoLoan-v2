@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { FlatList, Dimensions, View, StyleSheet, Text, Image, ScrollView, TouchableOpacity, ImageBackground, SafeAreaView, ActivityIndicator, Alert } from 'react-native';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
+import { FlatList, Dimensions, View, StyleSheet, Text, Image, StatusBar, ScrollView, TouchableOpacity, ImageBackground, SafeAreaView, TextInput, ActivityIndicator, Alert } from 'react-native';
 import CardComponent from './cardComponent';
 import { colors } from '../../colors';
 import customTheme from '../../colors/theme';
@@ -7,11 +7,13 @@ import { horizontalScale, verticalScale } from '../../utils/matrcis';
 import CircularProgress from '../../components/CircularProgress'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { screens } from "../../constants/screens";
-import { getHomeScreenDetails, getHomeScreenOurServices } from '../../services/ApiUtils';
+import { getPinCodes, getHomeScreenDetails, getHomeScreenOurServices } from '../../services/ApiUtils';
 import CustomModal from '../../components/CustomModal';
+import Button from "../../components/Button";
+import PincodeModal from '../../components/PincodeModal';
 
 
-const HomeScreen = ({navigation}) => {
+const HomeScreen = ({ navigation }) => {
   const flatListRef = useRef(null);
   const screenWidth = Dimensions.get('window').width;
   const getLoanCardData = getHomeScreenDetails()
@@ -19,67 +21,98 @@ const HomeScreen = ({navigation}) => {
   const [data, setData] = useState([])
   const [data2, setData2] = useState([])
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedDotIndex, setSelectedDotIndex] = useState(0); 
-  const [showModal, setShowModal] = useState(false);
+  const [selectedDotIndex, setSelectedDotIndex] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
 
-  console.log('datatt', data)
-  const [currentScreen, setCurrentScreen] = React.useState(false);
 
-  useEffect(()=>{
+  useEffect(() => {
     getLoanCardData?.mutate()
     getOurServicesCardData?.mutate()
-  },[])
+  }, [])
 
-  useEffect(()=>{
-    if(getLoanCardData.data){
+  useEffect(() => {
+    if (getLoanCardData.data) {
       setIsLoading(false)
       setData(getLoanCardData.data)
     }
-  },[getLoanCardData.data])
+  }, [getLoanCardData.data])
 
-  useEffect(()=>{
-    if(getOurServicesCardData.data){
+  useEffect(() => {
+    if (getOurServicesCardData.data) {
       setIsLoading(false)
       setData2(getOurServicesCardData.data)
     }
-  },[getOurServicesCardData.data])
+  }, [getOurServicesCardData.data])
 
-  useEffect(()=>{
-    if(getLoanCardData.error){
+  useEffect(() => {
+    if (getLoanCardData.error) {
       Alert.alert(getLoanCardData.error)
     }
-  },[getLoanCardData.error])
+  }, [getLoanCardData.error])
 
-  useEffect(()=>{
-    if(getOurServicesCardData.error){
+  useEffect(() => {
+    if (getOurServicesCardData.error) {
       Alert.alert(getOurServicesCardData.error)
     }
-  },[getOurServicesCardData.error])
+  }, [getOurServicesCardData.error])
 
- 
+
   useEffect(() => {
     async function fetchData() {
       const savedData = await AsyncStorage.getItem('CurrentScreen');
       const currentData = JSON.parse(savedData);
-      console.log(currentData,'current Screen');
-      setCurrentScreen(currentData)
+      // setCurrentScreen(currentData)
     }
     fetchData();
   }, []);
 
-  const onResume = () =>{
-    console.log(currentScreen)
-    navigation?.navigate(currentScreen)
-  }
 
   const cardWidth = 350;
-  
-  const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.servicesCards}>
-      <Image style={styles.serviceImage} source={item.image} />
-      <Text style={styles.serviceText}>{item.title}</Text>
-    </TouchableOpacity>
-  );
+
+
+
+  const handleNavigation = (index) => {
+
+    switch (index) {
+      case 0:
+        navigation.navigate(screens.EmiCalculator)
+        break;
+      case 1:
+        const ProgressBarPercent = 0;
+        setModalVisible(true);
+        break;
+      case 2:
+        navigation.navigate(screens.StatusCheck)
+        break;
+      case 3:
+        navigation.navigate(screens.RaiseTicket)
+        break;
+      case 4:
+        navigation.navigate(screens.MyTickets)
+        break;
+      case 5:
+        navigation.navigate(screens.FAQ);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const scrollToIndex = (index) => {
+    flatListRef.current.scrollToIndex({ animated: true, index });
+    setSelectedDotIndex(index);
+  }
+
+  const handleScroll = (event) => {
+    const { contentOffset } = event.nativeEvent;
+    const index = Math.round(contentOffset.x / screenWidth);
+    setSelectedDotIndex(index);
+  };
+
+  const openModal = () => {
+    setModalVisible(true);
+  };
+
 
   const renderItems = ({ item, index }) => {
     return (
@@ -108,7 +141,7 @@ const HomeScreen = ({navigation}) => {
         </View>
         <View style={styles.belowCardView}>
 
-          <CircularProgress  imageStyle={{ width: 40, height: 33 }} ImageData={require('../../../assets/images/Home2.png')} size ={90} strokeWidth={12}  progressPercent={item.ProgressBarPercent} bgColor ={colors.progressBg} pgColor={colors.coreBlue} />
+          <CircularProgress imageStyle={{ width: 40, height: 33 }} ImageData={require('../../../assets/images/Home2.png')} size={90} strokeWidth={12} progressPercent={item.ProgressBarPercent} bgColor={colors.progressBg} pgColor={colors.coreBlue} />
           <View style={{ marginLeft: horizontalScale(11.5) }}>
             {item.nextPayment && item.paymentDate && item.NextPaymentText && (
               <><Text style={styles.naxtPaymentKyc}>{item.NextPaymentText}</Text><Text style={styles.naxtPaymentKyc2}>{item.nextPayment}</Text><Text style={styles.paymentDate}>{item.paymentDate}</Text></>
@@ -120,175 +153,114 @@ const HomeScreen = ({navigation}) => {
             }
           </View>
         </View>
-        <View style={[ styles.cardBottomBar,{ marginTop: !item.tenure ? verticalScale(40) : verticalScale(2),} ] }>
-        {item.nextPayment && item.paymentDate && item.NextPaymentText ? (
-          <View style={{flexDirection:'row', justifyContent:'space-between', marginHorizontal: horizontalScale(105)}}>
-            <TouchableOpacity onPress={()=> navigation.navigate(screens.ApplicantDetails,{
-      ProgressBarPercent: item.ProgressBarPercent,
-    })} style={styles.seeDetailsresumeJourneyButton}>
-      <Text style={styles.seeDetailsresumeJourneyText}>See Details</Text>
-    </TouchableOpacity>
-    <TouchableOpacity onPress={()=> navigation.navigate(screens.PayNow)} style={styles.PayNowButton}>
-      <Text style={styles.PayNowText}>Pay Now</Text>
-    </TouchableOpacity>
+        <View style={[styles.cardBottomBar, { marginTop: !item.tenure ? verticalScale(40) : verticalScale(2), }]}>
+          {item.nextPayment && item.paymentDate && item.NextPaymentText ? (
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: horizontalScale(105) }}>
+              <TouchableOpacity onPress={() => navigation.navigate(screens.ApplicantDetails, {
+                ProgressBarPercent: item.ProgressBarPercent,
+              })} style={styles.seeDetailsresumeJourneyButton}>
+                <Text style={styles.seeDetailsresumeJourneyText}>See Details</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate(screens.PayNow)} style={styles.PayNowButton}>
+                <Text style={styles.PayNowText}>Pay Now</Text>
+              </TouchableOpacity>
             </View>
-    
-  ) : (
-    <TouchableOpacity style={styles.seeDetailsresumeJourneyButton}   onPress={() => {
-      const ProgressBarPercent = item.ProgressBarPercent || 0;
-      navigation.navigate(screens.ApplicantDetails, { ProgressBarPercent });
-    }}>
-      <Text style={styles.seeDetailsresumeJourneyText}>Resume Journey</Text>
-    </TouchableOpacity>
-  )}
+
+          ) : (
+            <TouchableOpacity style={styles.seeDetailsresumeJourneyButton} onPress={() => {
+              const ProgressBarPercent = item.ProgressBarPercent || 0;
+              navigation.navigate(screens.ApplicantDetails, { ProgressBarPercent });
+            }}>
+              <Text style={styles.seeDetailsresumeJourneyText}>Resume Journey</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     );
   };
 
-  const handleNavigation = (index) => {
-   
-    switch (index) {
-      case 0:
-        // setShowModal(true);
-        navigation.navigate(screens.EmiCalculator)
-        break;
-      case 1:
-        const ProgressBarPercent =  0;
-        navigation.navigate(screens.ApplicantDetails, { ProgressBarPercent })
-        break;
-     case 2:
-      navigation.navigate(screens.StatusCheck)
-     break;
-     case 3:
-      navigation.navigate(screens.RaiseTicket)
-     break;
-     case 4:
-      navigation.navigate(screens.MyTickets)
-     break;
-     case 5:
-       navigation.navigate(screens.FAQ);
-       break;
-      default:
-        break;
-    }
-  };
 
-  const scrollToIndex = (index) => {
-    flatListRef.current.scrollToIndex({ animated: true, index });
-    setSelectedDotIndex(index);
-  }
-
-  const handleScroll = (event) => {
-    const { contentOffset } = event.nativeEvent;
-    const index = Math.round(contentOffset.x / screenWidth);
-    setSelectedDotIndex(index);
-  };
 
   return (
-    <View style={{ flex:1}}>
-    <ScrollView>
-    {/* <SafeAreaView style={styles.container}> */}
+    <View style={{ flex: 1 }}>
+      <ScrollView>
         {isLoading ? (
           <View style={styles.ActivityStyle}>
- <ActivityIndicator size="large" color={colors.coreBlue} />
+            <ActivityIndicator size="large" color={colors.coreBlue} />
           </View>
-      ) : (
-        <>
-        {/* <CustomModal
-        showModal={showModal}
-        setShowModal={setShowModal}
-        // You can pass any necessary props to your modal component here
-      >
- <TouchableOpacity style={{}} onPress={() => setShowModal(!showModal)}>
-        <View style={[ { justifyContent:  "center",  }]}>
-          <View>
-            <Text style={styles.titleText}>EMI Calculator</Text>
-           
-             
-              <TouchableOpacity onPress={() => setShowModal(!showModal)} style={styles.cancelButton}>
-                <Text style={styles.cancelButtonText}>Cancel</Text>
-              </TouchableOpacity>
-            
-          </View>
-        </View>
-      </TouchableOpacity>
+        ) : (
+          <>
+            <View style={{ backgroundColor: colors.coreCream, }}>
+              <TouchableOpacity style={styles.profileImageView} onPress={() => navigation.navigate(screens.Profile)}>
+                <Image source={require('../../../assets/images/profileIcon.png')} style={styles.profileIcon} />
 
-      </CustomModal> */}
-        <View style={{ backgroundColor: colors.coreCream, }}>
-              {/* <View style={styles.profileImageView}> */}
-                <TouchableOpacity style={styles.profileImageView} onPress={() => navigation.navigate(screens.Profile)}>
-                  <Image source={require('../../../assets/images/profileIcon.png')} style={styles.profileIcon} />
-              
                 <Text style={styles.profileName}>Bhavesh Rao</Text>
-                </TouchableOpacity>
-              {/* </View> */}
-              <View style={{marginBottom: verticalScale(-60) }}>
+              </TouchableOpacity>
+              <View style={{ marginBottom: verticalScale(-60) }}>
                 <CardComponent />
               </View>
-            </View><View style={{ marginTop: verticalScale(78) }}>
-                <Text style={styles.yourLoan}>
-                  Your Loans
-                </Text>
-                {data.length === 0 ? (
-                  <TouchableOpacity  onPress={() => {
-                    const ProgressBarPercent = item.ProgressBarPercent || 0;
-                    navigation.navigate(screens.ApplicantDetails, { ProgressBarPercent });
-                  }} style={styles.loanapplyview}>
-                    <ImageBackground
-                      style={styles.imgBackground}
-                      source={require('../../../assets/images/loanapply.png')}
-                    >
-                      <Text style={styles.applyforloan}>Apply For Loan</Text>
-                    </ImageBackground>
+            </View>
+
+            <PincodeModal setModalVisible={setModalVisible} modalVisible={modalVisible} />
+
+
+            <View style={{ marginTop: verticalScale(78) }}>
+              <Text style={styles.yourLoan}>
+                Your Loans
+              </Text>
+              {data.length === 0 ? (
+                <TouchableOpacity onPress={openModal}>
+                  <ImageBackground
+                    style={styles.imgBackground}
+                    source={require('../../../assets/images/loanapply.png')}
+                  >
+                    <Text style={styles.applyforloan}>Apply For Loan</Text>
+                  </ImageBackground>
+                </TouchableOpacity>
+              ) :
+                <><View style={styles.secondcards}>
+                  <FlatList
+                    ref={flatListRef}
+                    data={data}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={renderItems}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{
+                      paddingHorizontal: (screenWidth - cardWidth) / 2,
+                    }}
+                    onScroll={handleScroll}
+                    scrollEventThrottle={16}
+                  />
+                </View><View style={styles.dotsContainer}>
+                    {data.map((_, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        style={[styles.dot, selectedDotIndex === index && styles.selectedDot]}
+                        onPress={() => scrollToIndex(index)} />
+                    ))}
+                  </View></>
+              }
+            </View><View style={{ marginTop: verticalScale(20) }}>
+              <Text style={styles.ourSerices}>
+                Our Services
+              </Text>
+              <View style={styles.ourSericesCards}>
+                {data2.map((item, index) => (
+                  <TouchableOpacity
+                    key={item.key}
+                    style={styles.servicesCards}
+                    onPress={() => handleNavigation(index)}
+                  >
+                    <Image style={styles.serviceImage} source={item.image} />
+                    <Text style={styles.serviceText}>{item.title}</Text>
                   </TouchableOpacity>
-                ) :
-                  <><View style={styles.secondcards}>
-                    <FlatList
-                      ref={flatListRef}
-                      data={data}
-                      keyExtractor={(item, index) => index.toString()}
-                      renderItem={renderItems}
-                      horizontal
-                      showsHorizontalScrollIndicator={false}
-                      contentContainerStyle={{
-                        paddingHorizontal: (screenWidth - cardWidth) / 2,
-                        
-            // scrollEventThrottle={16} 
-                      }} 
-                      onScroll={handleScroll}
-                      scrollEventThrottle={16}
-                      />
-                  </View><View style={styles.dotsContainer}>
-                      {data.map((_, index) => (
-                        <TouchableOpacity
-                          key={index}
-                          style={[styles.dot, selectedDotIndex === index && styles.selectedDot]}
-                          onPress={() => scrollToIndex(index)} />
-                      ))}
-                    </View></>
-                  }
-              </View><View style={{ marginTop: verticalScale(20) }}>
-                <Text style={styles.ourSerices}>
-                  Our Services
-                </Text>
-                <View style={styles.ourSericesCards}>
-                  {data2.map((item, index) => (
-                    <TouchableOpacity
-                      key={item.key}
-                      style={styles.servicesCards}
-                      onPress={() => handleNavigation(index)}
-                    >
-                      <Image style={styles.serviceImage} source={item.image} />
-                      <Text style={styles.serviceText}>{item.title}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
+                ))}
               </View>
-              </>
-      )}
-    {/* </SafeAreaView> */}
-    </ScrollView>
+            </View>
+          </>
+        )}
+      </ScrollView>
     </View>
 
   );
@@ -321,7 +293,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: verticalScale(15),
-    alignItems:'center'
+    alignItems: 'center'
   },
   dot: {
     width: 8,
@@ -336,20 +308,20 @@ const styles = StyleSheet.create({
     height: 12,
     borderRadius: 6,
   },
-  ActivityStyle:{
+  ActivityStyle: {
     flex: 1,
     justifyContent: 'center',
-    alignSelf:'center',
+    alignSelf: 'center',
     marginTop: verticalScale(325)
   },
 
-  loanView:{ marginTop: verticalScale(13), flexDirection: 'row', justifyContent: 'space-between', paddingLeft: horizontalScale(21), paddingRight: horizontalScale(14), alignItems: 'center' },
-  loanTitle:{color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelMedium.fontWeight},
-  uhfl:{ color: colors.coreBlue, fontSize: 8, fontWeight: customTheme.fonts.labelMedium.fontWeight },
-  profileImageView:{ flexDirection: 'row', alignItems: 'center', left: horizontalScale(40), marginBottom: verticalScale(10), marginTop: verticalScale(21) },
-  lanloanview:{ marginTop: verticalScale(6), flexDirection: 'row', justifyContent: 'space-between', paddingLeft: 21, paddingRight: 14, alignItems: 'center' },
-  lan:{
-     color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelMedium.fontWeight 
+  loanView: { marginTop: verticalScale(13), flexDirection: 'row', justifyContent: 'space-between', paddingLeft: horizontalScale(21), paddingRight: horizontalScale(14), alignItems: 'center' },
+  loanTitle: { color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelMedium.fontWeight },
+  uhfl: { color: colors.coreBlue, fontSize: 8, fontWeight: customTheme.fonts.labelMedium.fontWeight },
+  profileImageView: { flexDirection: 'row', alignItems: 'center', left: horizontalScale(40), marginBottom: verticalScale(10), marginTop: verticalScale(21) },
+  lanloanview: { marginTop: verticalScale(6), flexDirection: 'row', justifyContent: 'space-between', paddingLeft: 21, paddingRight: 14, alignItems: 'center' },
+  lan: {
+    color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelMedium.fontWeight
   },
   loanAmountText: {
     color: colors.coreBlue, fontSize: 10, fontWeight: customTheme.fonts.labelMedium.fontWeight, paddingRight: 12
@@ -438,7 +410,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 1,
     shadowRadius: 3.84,
-    elevation: 5, justifyContent: 'center', 
+    elevation: 5, justifyContent: 'center',
   },
   ourSericesCards:
     { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: horizontalScale(28), flexWrap: 'wrap', },
@@ -462,10 +434,10 @@ const styles = StyleSheet.create({
   PayNowButton: {
     justifyContent: 'center',
     alignSelf: 'center',
-  
+
     paddingHorizontal: 10,
     paddingVertical: 4,
-    backgroundColor:colors.coreCream,
+    backgroundColor: colors.coreCream,
     borderRadius: 4,
   },
 
@@ -477,7 +449,16 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: colors.coreBlue,
   },
+  modal: {
+    width: "95%",
+    height: '55%',
+    alignSelf: 'center',
+  },
 
+  close: {
+    size: verticalScale(2),
+    color: "#828282"
+  },
 });
 
 export default HomeScreen;

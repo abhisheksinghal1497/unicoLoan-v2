@@ -1,7 +1,9 @@
 import { StyleSheet, Text, View, ScrollView, Alert, TouchableOpacity, FlatList } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import ImagePicker from "react-native-image-crop-picker";
 import Header from '../../components/Header'
+import { assets } from "../../assets/assets";
+import { screens } from '../../constants/screens';
 import { horizontalScale, verticalScale } from '../../utils/matrcis'
 import { colors } from '../../colors'
 import customTheme from '../../colors/theme'
@@ -9,40 +11,7 @@ import CustomShadow from '../../components/FormComponents/CustomShadow'
 import CustomModal from '../../components/CustomModal'
 import Button from '../../components/Button'
 import { Image } from 'react-native';
-
-const data = [
-  {
-    id: '1',
-    title: "Driving License"
-  },
-  {
-    id: '2',
-    title: "Passport"
-  },
-  {
-    id: '3',
-    title: "Voter ID"
-  },
-  {
-    id: '4',
-    title: "NREGA Card"
-  }
-];
-
-const data2 = [
-  {
-    id: '1',
-    title: "Electricity Bill"
-  },
-  {
-    id: '2',
-    title: "Gas Bill"
-  },
-  {
-    id: '3',
-    title: "Mobile Bill"
-  },
-];
+import { getOtherKycList, getTempAddressKycList } from '../../services/ApiUtils';
 
 const CurrentAddress = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -51,6 +20,43 @@ const CurrentAddress = ({ navigation }) => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedItem2, setSelectedItem2] = useState(null);
   const [imageSelected, setImageSelected] = useState('');
+  const [data, setData] = useState([])
+  const [data2, setData2] = useState([])
+  const [isLoading, setIsLoading] = useState(true);
+
+  const otherkyc = getOtherKycList()
+  const TempKyc = getTempAddressKycList()
+
+  useEffect(()=>{
+    otherkyc?.mutate()
+    TempKyc?.mutate()
+  },[])
+
+  useEffect(()=>{
+    if(otherkyc.data){
+      setIsLoading(false)
+      setData(otherkyc.data)
+    }
+  },[otherkyc.data])
+
+  useEffect(()=>{
+    if(TempKyc.data){
+      setIsLoading(false)
+      setData2(TempKyc.data)
+    }
+  },[TempKyc.data])
+
+  useEffect(()=>{
+    if(otherkyc.error){
+      Alert.alert(otherkyc.error)
+    }
+  },[otherkyc.error])
+
+  useEffect(()=>{
+    if(TempKyc.error){
+      Alert.alert(TempKyc.error)
+    }
+  },[TempKyc.error])
 
   console.log('imageSelected', imageSelected.split('/').pop())
 
@@ -58,7 +64,7 @@ const CurrentAddress = ({ navigation }) => {
     ImagePicker.openPicker({
       width: 300,
       height: 400,
-      cropping: true
+      cropping: true,
     }).then(image => {
       console.log('image path--', image.path);
       setModalVisible3(false)
@@ -109,9 +115,15 @@ const CurrentAddress = ({ navigation }) => {
       </TouchableOpacity>
     );
   };
-
+  const handleRightIconPress = (index) => {
+    if (index === 0) {
+        navigation.navigate(screens.FAQ);
+    } else if (index === 1) {
+        navigation.navigate(screens.HomeScreen);
+    } 
+};
   return (
-    <ScrollView >
+    <ScrollView style={{backgroundColor:'#ffff'}} >
       <View style={styles.container}>
         <CustomModal
           showModal={modalVisible}
@@ -171,7 +183,7 @@ const CurrentAddress = ({ navigation }) => {
         </CustomModal>
 
         <View style={{ marginHorizontal: horizontalScale(10) }}>
-          <Header
+          {/* <Header
             titleStyle={{ marginLeft: horizontalScale(0) }}
             onPressLeft={() => navigation.navigate('KYCDocuments')}
             colour={colors.transparent}
@@ -189,7 +201,19 @@ const CurrentAddress = ({ navigation }) => {
               { source: require('../../../src/assets/chatt.png'), imageProps: { style: { width: 32, height: 32, marginRight: horizontalScale(8) } } },
               { source: require('../../../src/assets/Question.png'), imageProps: { style: { width: 32, height: 32 } } },
             ]}
-          />
+          /> */}
+      <Header        
+       title="Upload Documents"
+       left={require('../../images/back.png')}
+       rightImages={[{source: assets.chat,},{source: assets.questionRound,},]}
+       leftStyle={{height: verticalScale(15),width: verticalScale(15),}}
+       leftImageProps={{resizeMode: "contain",}}
+       rightStyle={{height: verticalScale(23),width: verticalScale(23),marginHorizontal:10}}
+       rightImageProps={{ resizeMode: "contain"}}
+       titleStyle={{fontSize: verticalScale(18), }}
+       onPressRight={handleRightIconPress}
+       onPressLeft={() => {navigation.navigate(screens.KYCDocuments);}}
+     />
         </View>
 
         <View style={[styles.container, { marginHorizontal: horizontalScale(11) }]}>
@@ -279,17 +303,17 @@ const CurrentAddress = ({ navigation }) => {
               disabled={imageSelected.split('/').pop() !== "" ? true : false}
               onPress={() => setModalVisible3(true)} style={styles.uploadButton}>
               <Text style={[styles.uploadButtonText, {
-                borderColor: imageSelected.split('/').pop() !== "" ? "grey" : "#2E52A1",
-                color: imageSelected.split('/').pop() !== "" ? "grey" : "#2E52A1",
+                borderColor: imageSelected.split('/').pop() !== "" ? colors.grey : colors.coreBlue,
+                color: imageSelected.split('/').pop() !== "" ?  colors.grey : colors.coreBlue,
               }]}> {imageSelected.split('/').pop() !== "" ? 'Uploaded' : 'Upload'}</Text>
             </TouchableOpacity>
           )}
 
           {(imageSelected !== "") && (
-            <><View style={{ borderBottomWidth: 1, borderBottomColor: '#606060', width: ' 100%', alignSelf: 'center', marginVertical: verticalScale(9) }}>
+            <><View style={{ borderBottomWidth: 1, borderBottomColor: colors.border, width: ' 100%', alignSelf: 'center', marginVertical: verticalScale(9) }}>
             </View><View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: horizontalScale(5), marginTop: verticalScale(10) }}>
-                <Text style={{ color: '#0076C7', fontSize: 15, fontWeight: '500' }}>
-                  {imageSelected.split('/').pop()}
+                <Text style={{ color: colors.surface, fontSize: 15, fontWeight: '500' }}>
+                  {imageSelected.split('/').pop().slice(0, 24)}
                 </Text>
                 <TouchableOpacity
                   onPress={() => {
@@ -308,10 +332,11 @@ const CurrentAddress = ({ navigation }) => {
             <Button
               onPress={() => {
                 alert('Submit')
+                console.log('imageSelected submit',imageSelected)
               }}
               type="primary"
               label="Submit"
-              disable={!imageSelected !== "" ? true : false}
+              disable={imageSelected !== "" ? false : true}
             />
           </View>
         </View>

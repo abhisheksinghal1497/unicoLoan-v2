@@ -1,5 +1,4 @@
 import React from 'react'
-import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../screens/HomeScreen';
@@ -28,6 +27,9 @@ import StatusCheck from '../screens/StatusCheck';
 import Profile from '../screens/Profile';
 import EmiCalculator from '../screens/EmiCalculator';
 import CurrentAddress from '../screens/CurrentAddress';
+import OtpInput from '../components/FormComponents/OtpInput';
+import OtpScreen from '../screens/OtpEnter';
+import PinCodeVerify from '../screens/PinCode';
 
 const Stack = createStackNavigator();
 
@@ -35,7 +37,7 @@ const Dashboard = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}
-        initialRouteName={screens.CurrentAddress}>
+        initialRouteName={screens.HomeScreen}>
         <Stack.Screen
           name={screens.Splash}
           component={Splash}
@@ -126,6 +128,14 @@ const Dashboard = () => {
          <Stack.Screen
           name={screens.CurrentAddress}
           component={CurrentAddress}
+        />
+         <Stack.Screen
+          name={screens.OtpScreen}
+          component={OtpScreen}
+        />
+         <Stack.Screen
+          name={screens.PinCodeVerify}
+          component={PinCodeVerify}
         />
         <Stack.Screen
           name={screens.PayNow}

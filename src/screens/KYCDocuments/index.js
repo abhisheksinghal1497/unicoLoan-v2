@@ -10,71 +10,18 @@ import { useFocusEffect } from '@react-navigation/native';
 import CustomModal from "../../components/CustomModal";
 import { horizontalScale, verticalScale } from "../../utils/matrcis";
 import { colors } from "../../colors";
-import CustomShadow from "../../components/FormComponents/CustomShadow";
-import { FlatList } from "react-native";
-import ImagePicker from "react-native-image-crop-picker";
-import { getOtherKycList, getTempAddressKycList } from "../../services/ApiUtils";
 
 const KYCDocuments = ({ navigation }) => {
-
   const [selectedImage, setSelectedImage] = useState('');
   const [selectedImageBack, setSelectedImageBack] = useState('');
   const [selectedImageSelfie, setSelectedImageSelfie] = useState('');
-  const [showModal, setShowModal] = useState(false);
-  const [confirmModal, setConfirmModal] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalVisible2, setModalVisible2] = useState(false);
-  const [modalVisible3, setModalVisible3] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [imageSelected, setImageSelected] = useState(false);
-  const [data, setData] = useState([])
-  const [data2, setData2] = useState([])
-
-  const [isLoading, setIsLoading] = useState(true);
-
-  const otherkyc = getOtherKycList()
-  const TempKyc = getTempAddressKycList()
-
-  useEffect(()=>{
-    otherkyc?.mutate()
-    TempKyc?.mutate()
-  },[])
-
-  useEffect(()=>{
-    if(otherkyc.data){
-      setIsLoading(false)
-      setData(otherkyc.data)
-    }
-  },[otherkyc.data])
-
-  useEffect(()=>{
-    if(TempKyc.data){
-      setIsLoading(false)
-      setData2(TempKyc.data)
-    }
-  },[TempKyc.data])
-
-  useEffect(()=>{
-    if(otherkyc.error){
-      Alert.alert(otherkyc.error)
-    }
-  },[otherkyc.error])
-
-  useEffect(()=>{
-    if(TempKyc.error){
-      Alert.alert(TempKyc.error)
-    }
-  },[TempKyc.error])
-
-  console.log('selectedItem', selectedItem?.title)
- 
+  const [showModal, setShowModal] = useState(false); 
  
   useFocusEffect(
     useCallback(() => {
       fetchData();
     }, [])
   );
-
 
   const fetchData = async () => {
     await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.KYC));
@@ -90,10 +37,15 @@ const KYCDocuments = ({ navigation }) => {
     const currentDataSelfie = JSON.parse(savedSelfie)
     setSelectedImageSelfie(currentDataSelfie)
   }
-
+  const handleRightIconPress = (index) => {
+    if (index === 0) {
+        navigation.navigate(screens.FAQ);
+    } else if (index === 1) {
+        navigation.navigate(screens.HomeScreen);
+    } 
+};
   return (
-    <ScrollView>
-
+    <ScrollView style={{backgroundColor:'#ffff'}}>
       {/* same address Yes/No selection Modal */}
       <CustomModal
         showModal={showModal}
@@ -119,20 +71,19 @@ const KYCDocuments = ({ navigation }) => {
             </View>
           </View>
         </TouchableOpacity>
-      </CustomModal>
-
-    
-     
-
-{/* select Gallery or Camera to uplaod Document Dropdown*/}
-    
-
-      <Header
-        title="KYC Documents"
-        left={require('../../images/back.png')}
-        onPressLeft={() => { navigation?.navigate(screens.PanDetails) }}
-        right={require('../../images/question.png')}
-        onPressRight={() => { }} />
+      </CustomModal>    
+      <Header        
+       title="KYC Documents"
+       left={require('../../images/back.png')}
+       rightImages={[{source: assets.chat,},{source: assets.questionRound,},]}
+       leftStyle={{height: verticalScale(15),width: verticalScale(15),}}
+       leftImageProps={{resizeMode: "contain",}}
+       rightStyle={{height: verticalScale(23),width: verticalScale(23),marginHorizontal:10}}
+       rightImageProps={{ resizeMode: "contain"}}
+       titleStyle={{fontSize: verticalScale(18), }}
+       onPressRight={handleRightIconPress}
+       onPressLeft={() => {navigation.navigate(screens.PanDetails);}}
+     />
       <View style={styles.topCon}>
         <Image source={assets.protection} />
         <Text>

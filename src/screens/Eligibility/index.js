@@ -9,6 +9,8 @@ import { Text } from "react-native-paper";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import customTheme from "../../colors/theme";
 import { assets } from "../../assets/assets";
+import { screens } from "../../constants/screens";
+import { horizontalScale, verticalScale } from "../../utils/matrcis";
 import {
   FormControl,
   component,
@@ -108,12 +110,20 @@ const formData = [
   },
 ];
 
-const Eligibility = () => {
+const Eligibility = (props) => {
+ 
   const [showBottomModal, setShowBottomModal] = useState(false);
   const [applicantData, setApplicantData] = useState([]);
   const [cardData, setCardData] = useState();
 
   const eligibilityDetails = getEligibilityDetails();
+  const handleRightIconPress = (index) => {
+    if (index === 0) {
+        props.navigation.navigate(screens.FAQ);
+    } else if (index === 1) {
+        props.navigation.navigate(screens.HomeScreen);
+    } 
+};
 
   const {
     control,
@@ -158,12 +168,19 @@ const Eligibility = () => {
 
 
   return (
-    <ScrollView>
-      <Header
-        title="Eligibility"
-        left={true}
-        containerStyle={{ marginHorizontal: 20 }}
-      />
+    <ScrollView style={{backgroundColor:'#ffff'}}>
+      <Header        
+       title="Eligibility"
+       left={assets.back}
+       rightImages={[{source: assets.chat,},{source: assets.questionRound,},]}
+       leftStyle={{height: verticalScale(15),width: verticalScale(15),}}
+       leftImageProps={{resizeMode: "contain",}}
+       rightStyle={{height: verticalScale(23),width: verticalScale(23),marginHorizontal:10}}
+       rightImageProps={{ resizeMode: "contain"}}
+       titleStyle={{fontSize: verticalScale(18), }}
+       onPressRight={handleRightIconPress}
+       onPressLeft={() => {props.navigation.goBack();}}
+     />
       <View style={styles.topCon}>
         <Card cardStyle={styles.cardCon}>
           <ImageBackground
