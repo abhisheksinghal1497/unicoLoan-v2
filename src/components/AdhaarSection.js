@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View, Image } from 'react-native'
 import React from 'react'
 
-export default function AdhaarSection({ AdhaarText, image }) {
+export default function AdhaarSection({ AdhaarText, image, style }) {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container,{...style}]}>
       {image ? (
         <>
           <View style={styles.section}>

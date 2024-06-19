@@ -32,6 +32,7 @@ export default InputField = ({
   rightCompPress,
   onChangeText,
   value: defaultValue,
+  isEditable = true,
   trigger = () => {},
   ...rest
 }) => {
@@ -64,6 +65,7 @@ export default InputField = ({
                   keyboardType={type}
                   inputMode={type}
                   returnKeyType="done"
+                  editable={isEditable}
                   error={error?.message}
                   scrollEnabled={false}
                   onChangeText={(value) => {
