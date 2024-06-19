@@ -473,7 +473,6 @@ export default function ApplicationDetails(props) {
       console.log("IN ERROR");
     }
   };
-  console.log(errors,'isValid erors')
 
   const ChangeValue = async (value, id) => {
     setValue(id, value);

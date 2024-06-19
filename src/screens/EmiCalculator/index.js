@@ -1,270 +1,275 @@
-import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { Text, Dialog, Divider } from "react-native-paper";
-import { colors } from "../../colors";
-import {
-  horizontalScale,
-  moderateScale,
-  verticalScale,
-} from "../../utils/matrcis";
-import customTheme from "../../colors/theme";
-import {
-  FormControl,
-  component,
-} from "../../components/FormComponents/FormControl";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import Header from "../../components/Header";
-import Button from "./../../components/Button";
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import React, { useState } from 'react'
+import Header from '../../components/Header'
+import { horizontalScale, verticalScale } from '../../utils/matrcis'
+import { colors } from '../../colors'
+import Slider from '@react-native-community/slider';
+import { TextInput } from 'react-native-paper'
+import Button from '../../components/Button'
 
-const EMICalculatorComponent = ({ navigation }) => {
-  const defaultValues = {
-    Loan_Amount: "",
-    Interest_Rate: "",
-    Tenure: "",
-    EMI: "",
-  };
-  const validationSchema = yup.object().shape({
-    Loan_Amount: yup
-      .string()
-      .required("Loan Amount is required")
-      .matches(/^([0-9]+)?$/, "Invalid Value")
-      .test("min", "Amount should be in between 1 Lakh to 5 CR.", (value) => {
-        if (!value) {
-          return true;
+const EmiCalculator = ({ navigation }) => {
+    const [sliderValue, setSliderValue] = useState(0);
+    const [text, setText] = useState('');
+    const [sliderValue2, setSliderValue2] = useState(0);
+    const [text2, setText2] = useState('');
+    const [sliderValue3, setSliderValue3] = useState(0);
+    const [text3, setText3] = useState('');
+    const [emi, setEmi] = useState(0);
+
+    const onSliderValueChange = (value) => {
+        setSliderValue(value);
+        setText(value.toString());
+    };
+
+    const onSliderValueChange2 = (value) => {
+        setSliderValue2(value);
+        setText2(value.toString());
+    };
+
+    const onSliderValueChange3 = (value) => {
+        setSliderValue3(value);
+        setText3(value.toString());
+    };
+
+    const onTextInputChange = (inputText) => {
+        const numericValue = inputText.replace(/[^0-9]/g, '');
+        const numberValue = parseInt(numericValue, 10);
+        if (numberValue > 5000000) {
+            setText('5000000');
+        } else {
+            setText(numericValue.toString());
         }
-        return parseFloat(value.replace(",", "")) >= 100000;
-      })
-      .test("max", "Amount should be in between 1 Lakh to 5 CR.", (value) => {
-        if (!value) {
-          return true;
+    };
+
+    const onTextInputChange2 = (inputText) => {
+        const numericValue = inputText.replace(/[^0-9]/g, '');
+        const numberValue = parseInt(numericValue, 10);
+        if (numberValue > 360) {
+            setText2('360');
+        } else {
+            setText2(numericValue.toString());
         }
-        return parseFloat(value.replace(",", "")) <= 50000000;
-      })
-      .nullable(),
+    };
 
-    Interest_Rate: yup
-      .string()
-      .required("Interest Rate is required")
-      .matches(/^\d+(\.\d{1,1})?$/, "Invalid Value")
-      .test("min", "Interest Rate should be in between 1% to 25%.", (value) => {
-        if (!value) {
-          return true;
+    const onTextInputChange3 = (inputText) => {
+        const numericValue = inputText.replace(/[^0-9]/g, '');
+        const numberValue = parseInt(numericValue, 10);
+        if (numberValue > 25) {
+            setText3('25');
+        } else {
+            setText3(numericValue.toString());
         }
-        return parseFloat(value.replace(",", "")) >= 1;
-      })
-      .test("max", "Interest Rate should be in between 1% to 25%.", (value) => {
-        if (!value) {
-          return true;
+    };
+
+    const onTextInputEndEditing = (inputText) => {
+        const numericValue = parseFloat(inputText);
+        if (!isNaN(numericValue)) {
+            setSliderValue(numericValue);
         }
-        return parseFloat(value.replace(",", "")) <= 25;
-      })
-      .nullable(),
+    };
 
-    Tenure: yup
-      .string()
-      .required("Tenure is required")
-      .matches(/^([0-9]+)?$/, "Invalid Value")
-      .test("min", "Tenure should be in between 12 to 360 Months.", (value) => {
-        if (!value) {
-          return true;
+    const onTextInputEndEditing2 = (inputText) => {
+        const numericValue = parseFloat(inputText);
+        if (!isNaN(numericValue)) {
+            setSliderValue2(numericValue);
         }
-        return parseFloat(value.replace(",", "")) >= 12;
-      })
-      .test("max", "Tenure should be in between 12 to 360 Months.", (value) => {
-        if (!value) {
-          return true;
+    };
+
+    const onTextInputEndEditing3 = (inputText) => {
+        const numericValue = parseFloat(inputText);
+        if (!isNaN(numericValue)) {
+            setSliderValue3(numericValue);
         }
-        return parseFloat(value.replace(",", "")) <= 360;
-      })
-      .nullable(),
-  });
-  const {
-    control,
-    setValue,
-    handleSubmit,
-    reset,
-    formState: { errors },
-    watch,
-  } = useForm({
-    defaultValues,
-    resolver: yupResolver(validationSchema),
-    mode: "all",
-  });
+    };
 
-  const [emi, setEmi] = useState(0);
-  const [isEMIVisible, setIsEMIVisible] = useState(false);
+    const calculateEMI = () => {
+        if (!text || !text2 || !text3) {
+            alert("Please select all the fields.");
+            return;
+        }
+        const principal = parseFloat(text);
+        const tenureMonths = parseFloat(text2);
+        const interestRate = parseFloat(text3) / 12 / 100;
+        if (principal === 0 || tenureMonths === 0 || interestRate === 0) {
+            alert("Please enter valid values for all the fields.");
+            return;
+        }
+        const emi =
+            (principal * interestRate * Math.pow(1 + interestRate, tenureMonths)) /
+            (Math.pow(1 + interestRate, tenureMonths) - 1);
 
-  const calculateEMI = (data) => {
-    const principle = parseFloat(watch().Loan_Amount);
-    const rate = parseFloat(watch().Interest_Rate) / 100 / 12;
-    const months = parseFloat(watch().Tenure);
+        setEmi(emi.toFixed(2));
+    };
 
-    if (principle > 0 && rate > 0 && months > 0) {
-      const emiValue =
-        (principle * rate * Math.pow(1 + rate, months)) /
-        (Math.pow(1 + rate, months) - 1);
+    return (
+        <View style={{ flex: 1 }}>
+            <ScrollView>
+                <View style={{ marginHorizontal: horizontalScale(10) }}>
+                    <Header
+                        titleStyle={{ marginLeft: horizontalScale(-15) }}
+                        onPressLeft={() => navigation.goBack()}
+                        colour={colors.transparent}
+                        left={require('../../../assets/images/Back.png')}
+                        leftStyle={{ width: 30, height: 30 }} title="EMI Calculator" />
+                </View>
+                {/* Requested Loan Amount */}
+                <View style={{ justifyContent: 'center', marginTop: verticalScale(30) }}>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Text style={styles.star}>*</Text>
+                        <Text style={styles.title}>Requested Loan Amount(₹) </Text>
+                    </View>
+                    <View style={{
+                        marginVertical: verticalScale(10),
+                    }}>
+                        <Slider
+                            value={sliderValue}
+                            step={1}
+                            style={styles.sliderstyle} minimumValue={0}
+                            maximumValue={5000000}
+                            minimumTrackTintColor={"#0070D2"}
+                            maximumTrackTintColor="#C4C4C4"
+                            thumbTintColor={colors.coreBlue}
+                            onValueChange={onSliderValueChange}
+                        />
+                    </View>
+                    <View style={styles.numberView}>
+                        <Text style={styles.number}>
+                            ₹ 1L
+                        </Text>
+                        <Text style={styles.number}>
+                            ₹ 50L
+                        </Text>
+                    </View>
 
-      setEmi(Math.round(emiValue));
-      setValue("EMI", Math.round(emiValue));
-      setIsEMIVisible(true);
-      setIsEMIVisible(true);
-    } else {
-      setEmi(0);
-      setValue("EMI", 0);
-      setIsEMIVisible(false);
-      setIsEMIVisible(false);
-    }
-  };
-  return (
-    <View style={{ flex: 1, backgroundColor: colors.white }}>
-      <View style={{ marginHorizontal: horizontalScale(12) }}>
-        <Header
-          title={"EMI Calculator"}
-          left={require("../../images/back.png")}
-          onPressLeft={() => {
-            navigation.goBack();
-          }}
-          onPressRight={() => {}}
-          colour="white"
-        />
-      </View>
+                    <TextInput
+                        maxLength={7}
+                        keyboardType="numeric"
+                        style={styles.inputbox} onChangeText={onTextInputChange}
+                        onEndEditing={(event) => onTextInputEndEditing(event.nativeEvent.text)}
+                        value={text}
+                    />
 
-      <View style={{ flex: 1 }}>
-        <View>
-          <FormControl
-            compType={component.sliderAndInput}
-            label="Requested Loan Amount(₹)"
-            name="Loan_Amount"
-            control={control}
-            setValue={setValue}
-            required={true}
-            placeholder="Enter Loan Amount"
-            minValue="₹ 1L"
-            maxValue="₹ 5CR"
-            steps={5000}
-            minimumSliderValue={100000}
-            maximumSliderValue={50000000}
-            type="decimal-pad"
-          />
+                </View>
+
+                {/* Requested Monthly Tenure */}
+                <View style={{ justifyContent: 'center', marginTop: verticalScale(28) }}>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Text style={styles.star}>*</Text>
+                        <Text style={styles.title}>Requested Monthly Tenure</Text>
+                    </View>
+                    <View style={{
+                        marginVertical: verticalScale(10),
+                    }}>
+                        <Slider
+                            value={sliderValue2}
+                            step={1}
+                            style={styles.sliderstyle} minimumValue={0}
+                            maximumValue={360}
+                            minimumTrackTintColor={"#0070D2"}
+                            maximumTrackTintColor="#C4C4C4" thumbTintColor={colors.coreBlue}
+                            onValueChange={onSliderValueChange2}
+                        />
+                    </View>
+                    <View style={styles.numberView}>
+                        <Text style={styles.number}>
+                            12 Months
+                        </Text>
+                        <Text style={styles.number}>
+                            360 Months
+                        </Text>
+                    </View>
+
+                    <TextInput
+                        maxLength={3}
+                        keyboardType="numeric"
+                        style={styles.inputbox} onChangeText={onTextInputChange2}
+                        onEndEditing={(event) => onTextInputEndEditing2(event.nativeEvent.text)}
+                        value={text2}
+                    />
+
+                </View>
+
+                {/* Rate of Interest */}
+                <View style={{ justifyContent: 'center', marginTop: verticalScale(28) }}>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Text style={styles.star}>*</Text>
+                        <Text style={styles.title}>Rate Of Interest</Text>
+                    </View>
+                    <View style={{
+                        marginVertical: verticalScale(10),
+                    }}>
+                        <Slider
+                            value={sliderValue3}
+                            step={1}
+                            style={styles.sliderstyle}
+                            minimumValue={0}
+                            maximumValue={25}
+                            minimumTrackTintColor={"#0070D2"}
+                            maximumTrackTintColor="#C4C4C4" thumbTintColor={colors.coreBlue}
+                            onValueChange={onSliderValueChange3}
+                        />
+                    </View>
+                    <View style={styles.numberView}>
+                        <Text style={styles.number}>
+                            1%
+                        </Text>
+                        <Text style={styles.number}>
+                            25%
+                        </Text>
+                    </View>
+
+                    <TextInput
+                        maxLength={2}
+                        keyboardType="numeric"
+                        style={styles.inputbox}
+                        onChangeText={onTextInputChange3}
+                        onEndEditing={(event) => onTextInputEndEditing3(event.nativeEvent.text)}
+                        value={text3}
+                    />
+
+                </View>
+
+                {emi > 0 && (
+                    <View style={styles.emiview}>
+                        <Text style={styles.emi}>EMI: ₹{emi}</Text>
+                    </View>
+                )}
+
+                <View style={styles.buttonview}>
+                    <Button
+                        onPress={() => {
+                            calculateEMI()
+                        }}
+                        type="primary"
+                        label="Calculate EMI"
+                        buttonContainer={styles.button}
+                    />
+                </View>
+            </ScrollView>
         </View>
+    )
+}
 
-        <View>
-          <FormControl
-            compType={component.sliderAndInput}
-            label="Requested Tenure in Months"
-            name="Tenure"
-            control={control}
-            setValue={setValue}
-            required={true}
-            placeholder="Enter Tenure in months"
-            minValue="12 Months"
-            maxValue="360 Months"
-            steps={10}
-            minimumSliderValue={12}
-            maximumSliderValue={360}
-            type="decimal-pad"
-          />
-        </View>
-        <View>
-          <FormControl
-            compType={component.sliderAndInput}
-            label="Rate Of Interest"
-            name="Interest_Rate"
-            control={control}
-            setValue={setValue}
-            required={true}
-            placeholder="Enter Rate of Interest"
-            minValue="1%"
-            maxValue="25%"
-            steps={1}
-            minimumSliderValue={1}
-            maximumSliderValue={25}
-            type="decimal-pad"
-          />
-        </View>
-
-        {isEMIVisible ? (
-          <View style={styles.emiValueWrapper}>
-            <Text style={styles.emiValue}> EMI ₹ {emi}</Text>
-          </View>
-        ) : null}
-
-        <View
-          style={[styles.buttonContainer, { marginTop: isEMIVisible ? 0 : 10 }]}
-        >
-          <Button
-            type="primary"
-            label="Calculate EMI"
-            // disable={percentage !== 100}
-            onPress={handleSubmit(calculateEMI)}
-            // onPress={()=>TnC()}
-            buttonContainer={{
-              marginVertical: verticalScale(20),
-              paddingHorizontal: horizontalScale(15),
-              backgroundColor: "#0076C7",
-            }}
-          />
-        </View>
-      </View>
-    </View>
-  );
-};
+export default EmiCalculator
 
 const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  blurBackground: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    borderRadius: 10,
-    padding: moderateScale(25),
-    width: "80%",
-    backgroundColor: colors.bgLight,
-  },
-  labelContainer: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    marginBottom: 2,
-  },
-  alertIcon: {
-    justifyContent: "center",
-    alignItems: "center",
-    marginVertical: verticalScale(10),
-  },
-  title: {
-    textAlign: "center",
-    fontFamily: "Inter",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-evenly",
-    marginBottom: verticalScale(10),
-  },
-  button: {
-    borderRadius: 6,
-    borderColor: colors.bgDark,
-  },
-  textInput: {
-    backgroundColor: customTheme.colors.textInputBackground,
-  },
-  emiValueWrapper: {
-    marginTop: verticalScale(10),
-    marginBottom: verticalScale(10),
-  },
-  emiValue: {
-    fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-});
+    button: {
+        marginTop: verticalScale(30),
+        marginBottom: verticalScale(10),
+        backgroundColor: '#0076C7',
+        marginHorizontal: horizontalScale(120)
+    },
+    sliderstyle: {
+        width: '50%', alignSelf: 'center', transform: [{ scaleX: verticalScale(2), }, { scaleY: verticalScale(2) }], borderRadius: 20, height: verticalScale(30)
+    },
+    emi: {
+        fontSize: 24, fontWeight: '600', color: '#000000'
+    },
+    number: { color: "#3E3E3C", fontSize: 16, fontWeight: '400', lineHeight: 18 },
+    numberView: { flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: horizontalScale(15), marginTop: verticalScale(-8) },
+    emiview: { alignItems: 'center', marginTop: verticalScale(25), },
+    inputbox: { borderBottomWidth: 0.5, borderBottomColor: 'grey', backgroundColor: 'transparent', maxWidth: '90%', marginHorizontal: horizontalScale(18), marginTop: verticalScale(-5), marginBottom: verticalScale(5) },
+    star: { marginLeft: horizontalScale(20), color: "#C23934", bottom: verticalScale(2) },
+    title: { color: "#3E3E3C", fontSize: 14, fontWeight: '400', lineHeight: 18 },
 
-export default EMICalculatorComponent;
+})

@@ -34,6 +34,11 @@ const CardComponent = () => {
     </View>
   );
 
+  // const data = [
+  //   { uri: 'https://thumbs.dreamstime.com/b/unico-bank-building-marked-treeo-arkansas-unico-bank-building-marked-tree-arkansas-provides-credit-cards-mortgages-commercial-121368162.jpg' },
+  //   { uri: 'https://thumbs.dreamstime.com/b/unico-bank-building-marked-treeo-arkansas-unico-bank-building-marked-tree-arkansas-provides-credit-cards-mortgages-commercial-121368162.jpg' },
+  //   { uri: 'https://thumbs.dreamstime.com/b/unico-bank-building-marked-treeo-arkansas-unico-bank-building-marked-tree-arkansas-provides-credit-cards-mortgages-commercial-121368162.jpg' },
+  // ];
 
   useEffect(()=>{
     getCarouselCardData?.mutate()
@@ -52,17 +57,17 @@ const CardComponent = () => {
     }
   },[getCarouselCardData.error])
 
-  const cardWidth = Dimensions.get('window').width - 150; 
+  const cardWidth = Dimensions.get('window').width - 80; 
   const cardMarginHorizontal = 10; 
-  const padding = (Dimensions.get('window').width - cardWidth - 12 * cardMarginHorizontal) / 1.5;
+  const padding = (Dimensions.get('window').width - cardWidth - 3.5 * cardMarginHorizontal) / 1.5;
 
   const renderItems = ({ item, index }) => {
     return (
         <View style={[styles.card2, { width: cardWidth, marginHorizontal: cardMarginHorizontal }]}>
         <Image
           style={styles.imageView}
-          source={item.type === 'remote' ? { uri: item.uri } : item.uri}
-          resizeMode="contain"
+          source={{ uri: item.uri }}
+          resizeMode="cover"
         />
       </View>
     );
@@ -113,7 +118,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-
   },
   paginationContainer: {
     flexDirection: 'row',
@@ -139,21 +143,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  imageView:{ width: '100%', height: '100%', borderRadius: 35,elevation: 15,shadowOffset: { width: 0, height: 4 },shadowOpacity: 0.25,
-  shadowRadius: 3.84,  },
+  imageView:{ width: '100%', height: '100%', borderRadius: 35,  },
 
   card2: {
     borderRadius: 35,
     marginTop: verticalScale(5),
-    // width: Dimensions.get('window').width - 1000 , 
-    height: verticalScale(140),
+    width: Dimensions.get('window').width - 100, 
+    height: verticalScale(185),
     shadowColor: colors.black,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 10,
-
-   
+    elevation: 5,
   },
 });
 

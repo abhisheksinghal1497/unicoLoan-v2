@@ -3,7 +3,6 @@ import CustomDatepicker from "./Datepicker";
 import DropDown from "./DropDown";
 import InputField from "./InputField";
 import OtpInput from "./OtpInput";
-import SliderAndInputComponent from "./SliderAndInputComponent";
 
 export const component = {
   readOnly: "readOnly",
@@ -16,8 +15,6 @@ export const component = {
   checkbox: "checkbox",
   datetime: "datetime",
   email: "email",
-  sliderAndInput: "sliderAndInput",
-  
 };
 
 export const FormControl = ({ compType, options, ...rest }) => {
@@ -36,7 +33,5 @@ export const FormControl = ({ compType, options, ...rest }) => {
       return <CheckBox {...rest} />;
     case component.datetime:
       return <CustomDatepicker {...rest} />;
-    case component.sliderAndInput:
-      return <SliderAndInputComponent {...rest} />;
   }
 };
