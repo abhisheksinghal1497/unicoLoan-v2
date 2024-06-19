@@ -4,6 +4,56 @@ import {
   useQueries,
 } from "@tanstack/react-query";
 
+import { query } from '../constants/Queries';
+import { net } from 'react-native-force';
+
+// export const getPinCodes = () => {
+//   const mutate = useMutation({
+//     networkMode: "always",
+//     mutationFn: async () => {
+//       return new Promise((resolve, reject) => {
+// net.query(
+//   query.getPincodeMasterData,
+//   (res) => {
+//     resolve(res?.records);
+//     // resolve(res);
+//   },
+//   (error) => {
+//     reject(error);
+//   }
+// );
+//       });
+//     },
+//   });
+//   return mutate;
+// };
+
+export const getPinCodes = () => {
+  const queryRes = useQueries({
+    queries: [
+      {
+        queryKey: ["getPincodeQuery"],
+        queryFn: () =>
+          new Promise((resolve, reject) => {
+            net.query(
+              query.getPincodeMasterData,
+              (res) => {
+                resolve(res?.records);
+                // resolve(res);
+              },
+              (error) => {
+                reject(error);
+              }
+            );
+          }),
+      },
+    ],
+  });
+
+  return queryRes;
+};
+
+
 export const getHomeScreenDetails = () => {
   const mutate = useMutation({
     networkMode: "always",
@@ -380,58 +430,58 @@ export const createTicketMethod = () => {
 };
 
 
-export const uploadAdhaarMethod = () =>{
+export const uploadAdhaarMethod = () => {
   const mutate = useMutation({
-      networkMode:"always",
-      mutationFn:async(AdhaarData)=>{
-      
-         return new Promise((resolve, reject)=>{
-            
-               setTimeout(()=>{
-                  const data = {success:true,response:AdhaarData}
-                  resolve(data)
-                  // reject('Something went wrong')
-              }, 3000)
-          }, )
-      }
+    networkMode: "always",
+    mutationFn: async (AdhaarData) => {
+
+      return new Promise((resolve, reject) => {
+
+        setTimeout(() => {
+          const data = { success: true, response: AdhaarData }
+          resolve(data)
+          // reject('Something went wrong')
+        }, 3000)
+      },)
+    }
   })
 
   return mutate
 }
 
-export const uploadKycMethod = () =>{
+export const uploadKycMethod = () => {
   const mutate = useMutation({
-      networkMode:"always",
-      mutationFn:async(AdhaarData)=>{
-      
-         return new Promise((resolve, reject)=>{
-            
-               setTimeout(()=>{
-                  const data = {success:true,response:AdhaarData}
-                  resolve(data)
-                  // reject('Something went wrong')
-              }, 3000)
-          }, )
-      }
+    networkMode: "always",
+    mutationFn: async (AdhaarData) => {
+
+      return new Promise((resolve, reject) => {
+
+        setTimeout(() => {
+          const data = { success: true, response: AdhaarData }
+          resolve(data)
+          // reject('Something went wrong')
+        }, 3000)
+      },)
+    }
   })
 
   return mutate
 }
 
-export const uploadOtpMethod = () =>{
+export const uploadOtpMethod = () => {
   const mutate = useMutation({
-      networkMode:"always",
-      mutationFn:async(OtpData)=>{
-      
-         return new Promise((resolve, reject)=>{
-            
-               setTimeout(()=>{
-                  const data = {success:true,response:OtpData}
-                  resolve(data)
-                  // reject('Something went wrong')
-              }, 3000)
-          }, )
-      }
+    networkMode: "always",
+    mutationFn: async (OtpData) => {
+
+      return new Promise((resolve, reject) => {
+
+        setTimeout(() => {
+          const data = { success: true, response: OtpData }
+          resolve(data)
+          // reject('Something went wrong')
+        }, 3000)
+      },)
+    }
   })
 
   return mutate
@@ -528,8 +578,8 @@ export const verifyPanApi = () => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (data) => {
-      console.log({data})
-      const {panNumber, success = true} = data
+      console.log({ data })
+      const { panNumber, success = true } = data
       return new Promise((resolve, reject) => {
         setTimeout(() => {
           if (success) {
@@ -550,8 +600,8 @@ export const submitPanApi = () => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (data) => {
-      console.log('DATA 2',{data})
-      const {panNumber, success = true} = data
+      console.log('DATA 2', { data })
+      const { panNumber, success = true } = data
       return new Promise((resolve, reject) => {
         setTimeout(() => {
           if (success) {

@@ -1,3 +1,6 @@
+if (__DEV__) {
+    require("./ReactotronConfig");
+  }
 /*
  * Copyright (c) 2017-present, salesforce.com, inc.
  * All rights reserved.
