@@ -159,8 +159,6 @@ export const App = function () {
                 <QueryClientProvider client={queryClient}>
                     <Reduxprovider store={store}>
                         {isConnected ? <Dashboard /> : <NoInternet />}
-                        {/* <HomeScreen/> */}
-                        {/* <ContactListScreen /> */}
                         <Toast
                             position='bottom'
                             bottomOffset={20}

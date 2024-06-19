@@ -5,6 +5,7 @@ import {
   Text,
   View,
   ScrollView,
+  Keyboard
 } from "react-native";
 import { assets } from "../../assets/assets";
 import React, { useState, useEffect } from "react";
@@ -24,12 +25,13 @@ import ProgressCard from "../../components/ProgressCard";
 import HelpModal from "../ApplicationDetails/component/HelpModal";
 import { verifyPanApi, submitPanApi } from "../../services/ApiUtils";
 import { toast } from "../../utils/functions";
+import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 
-const WIDTH = Dimensions.get("window").width;
+
 const screenName = "PAN Details";
 
 const PanDetails = (props) => {
-  
+
   const [isVerified, setIsVerified] = useState(false);
   const [showModal, setShowModal] = useState(false);
   // const [message, setMessage] = useState('12345');
@@ -57,7 +59,7 @@ const PanDetails = (props) => {
       id: "panNumber",
       label: "PAN Number",
       type: component.textInput,
-      placeHolder: "Enter Pan Card Number",
+      placeHolder: "Enter your PAN Number here",
       validations: validations.pan,
       isRequired: true,
       data: [],
@@ -83,6 +85,11 @@ const PanDetails = (props) => {
 
   const verifyPanBtn = async () => {
     try {
+      Keyboard?.dismiss()
+    } catch (error) {
+
+    }
+    try {
       if (isVerified || isPending) {
         return;
       }
@@ -105,11 +112,11 @@ const PanDetails = (props) => {
 
   const submitPan = async () => {
     try {
-      if(isPendingSubmit){
+      if (isPendingSubmit) {
         return;
       }
       const isValid = await trigger();
-      if(!isValid){
+      if (!isValid) {
         toast('error', "Some error occurred");
       }
       const data = watch();
@@ -122,12 +129,20 @@ const PanDetails = (props) => {
   }
   const handleRightIconPress = (index) => {
     if (index === 0) {
-        props.navigation.navigate(screens.FAQ);
+      props.navigation.navigate(screens.FAQ);
     } else if (index === 1) {
-        props.navigation.navigate(screens.HomeScreen);
-    } 
-};
- 
+      props.navigation.navigate(screens.HomeScreen);
+    }
+  };
+
+  useEffect(() => {
+    const subscription = watch((value, { name, type }) => {
+      setIsVerified(false)
+
+    });
+    return () => subscription.unsubscribe();
+  }, [watch])
+
   return (
     <View style={styles.container}>
       <HelpModal
@@ -135,20 +150,23 @@ const PanDetails = (props) => {
         showModal={showModal}
         setShowModal={setShowModal}
       />
-       <Header        
-       title="PAN Details"
-       left={require('../../images/back.png')}
-       rightImages={[{source: assets.chat,},{source: assets.questionRound,},]}
-       leftStyle={{height: verticalScale(15),width: verticalScale(15),}}
-       leftImageProps={{resizeMode: "contain",}}
-       rightStyle={{height: verticalScale(23),width: verticalScale(23),marginHorizontal:10}}
-       rightImageProps={{ resizeMode: "contain"}}
-       titleStyle={{fontSize: verticalScale(18), }}
-       onPressRight={handleRightIconPress}
-       onPressLeft={() => {props.navigation.navigate(screens.ApplicantDetails);}}
-     />
-      <ScrollView>
+      <Header
+        title="PAN Details"
+        left={require('../../images/back.png')}
+        rightImages={[{ source: assets.chat, }, { source: assets.questionRound, },]}
+        leftStyle={{ height: verticalScale(15), width: verticalScale(15), }}
+        leftImageProps={{ resizeMode: "contain", }}
+        rightStyle={{ height: verticalScale(23), width: verticalScale(23), marginHorizontal: 10 }}
+        rightImageProps={{ resizeMode: "contain" }}
+        titleStyle={{ fontSize: verticalScale(18), }}
+        onPressRight={handleRightIconPress}
+        onPressLeft={() => { props.navigation.navigate(screens.ApplicantDetails); }}
+      />
+      <ScrollView keyboardShouldPersistTaps='handled'>
         <ProgressCard screenName={screenName} />
+        {isPending && (
+          <ActivityIndicatorComponent/>
+        )}
         {mock_data.map((comp, index) => {
           return (
             (index === 0 ||
@@ -167,24 +185,22 @@ const PanDetails = (props) => {
                 data={comp.data}
                 key={comp.id}
                 setValue={setValue}
+                watch={watch}
                 showRightComp={comp.showRightComp || false}
                 rightComp={() =>
-                  !errors[comp.id] && isValid ? (
-                    !isVerified ? (
-                      isPending ? (
-                        <ActivityIndicator size={"small"} />
-                      ) : (
-                        <Text>Verify</Text>
-                      )
-                    ) : (
-                      <Image
-                        source={require("../../images/tick.png")}
-                        style={styles.tickImage}
-                      />
+
+                  !isVerified ? (
+                    (
+                      <Text>Verify</Text>
                     )
                   ) : (
-                    <></>
+                    <Image
+                      source={require("../../images/tick.png")}
+                      style={styles.tickImage}
+                    />
                   )
+
+
                 }
                 rightCompPress={verifyPanBtn}
                 isMultiline={comp.isMultiline}
@@ -194,15 +210,18 @@ const PanDetails = (props) => {
             )
           );
         })}
+        {isVerified &&
+          <CustomButton
+            type="primary"
+            label="Continue"
+
+            buttonContainer={styles.buttonContainer}
+            onPress={submitPan}
+            isLoading={isPendingSubmit}
+          />
+        }
       </ScrollView>
-      <CustomButton
-        type="primary"
-        label="Continue"
-        disable={!isVerified}
-        buttonContainer={styles.buttonContainer}
-        onPress={submitPan}
-        isLoading={isPendingSubmit}
-      />
+      
     </View>
   );
 };
@@ -246,10 +265,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   buttonContainer: {
-    position: "absolute",
-    width: "95%",
-    bottom: 20,
-    alignSelf: "center",
+    flex:1,
+    marginVertical:20
+ 
   },
   homeIcon: {
     width: 47,
