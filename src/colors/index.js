@@ -46,4 +46,5 @@ export const colors = {
   shadowColor:'rgba(0, 0, 0, 0.25)',
   borderColor:'rgba(232, 232, 234, 1.0)',
   MODAL_BG_COLOR: "#0E0E0E94",
+  TEXT_COLOR:'#7C7E8B'
 };

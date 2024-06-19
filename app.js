@@ -25,7 +25,7 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, FlatList,StatusBar, Platform, NativeModules  } from "react-native";
+import { StyleSheet, Text, View, FlatList, StatusBar, Platform, NativeModules } from "react-native";
 import {
     MD3LightTheme as DefaultTheme,
     PaperProvider,
@@ -128,7 +128,14 @@ const styles = StyleSheet.create({
 });
 
 export const App = function () {
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+        defaultOptions: {
+            queries: {
+                retry: 0, //no retry 
+                networkMode: 'online', // always execute in online
+            },
+        },
+    })
     const [isConnected, setIsConnected] = useState(true);
 
     useEffect(() => {
