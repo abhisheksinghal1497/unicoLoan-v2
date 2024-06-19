@@ -12,6 +12,7 @@
         "SalesforceMobileSDK-iOS": "https://github.com/forcedotcom/SalesforceMobileSDK-iOS.git#v11.0.0"
     },
     "dependencies": {
+        "@hookform/resolvers": "^3.6.0",
         "@react-native-async-storage/async-storage": "^1.23.1",
         "@react-native-community/netinfo": "^11.3.1",
         "@react-native-community/slider": "^4.5.2",
@@ -39,7 +40,8 @@
         "react-native-vector-icons": "^10.1.0",
         "react-redux": "^9.1.2",
         "redux-thunk": "^3.1.0",
-        "rn-fetch-blob": "^0.12.0"
+        "rn-fetch-blob": "^0.12.0",
+        "yup": "^1.4.0"
     },
     "devDependencies": {
         "@babel/core": "^7.12.9",
