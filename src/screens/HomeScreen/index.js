@@ -61,7 +61,7 @@ const HomeScreen = ({ navigation }) => {
     async function fetchData() {
       const savedData = await AsyncStorage.getItem('CurrentScreen');
       const currentData = JSON.parse(savedData);
-      // setCurrentScreen(currentData)
+      setCurrentScreen(currentData)
     }
     fetchData();
   }, []);
@@ -168,8 +168,7 @@ const HomeScreen = ({ navigation }) => {
 
           ) : (
             <TouchableOpacity style={styles.seeDetailsresumeJourneyButton} onPress={() => {
-              const ProgressBarPercent = item.ProgressBarPercent || 0;
-              navigation.navigate(screens.ApplicantDetails, { ProgressBarPercent });
+              navigation?.navigation?.navigate(currentScreen)
             }}>
               <Text style={styles.seeDetailsresumeJourneyText}>Resume Journey</Text>
             </TouchableOpacity>
@@ -183,6 +182,11 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1 }}>
+      <StatusBar
+        barStyle="dark-content"
+        hidden={false}
+        backgroundColor={colors.coreCream}
+      />
       <ScrollView>
         {isLoading ? (
           <View style={styles.ActivityStyle}>
@@ -241,8 +245,9 @@ const HomeScreen = ({ navigation }) => {
                     ))}
                   </View></>
               }
-            </View><View style={{ marginTop: verticalScale(20) }}>
-              <Text style={styles.ourSerices}>
+            </View>
+            <View style={{ marginTop: verticalScale(20) }}>
+              <Text style={styles.yourLoan}>
                 Our Services
               </Text>
               <View style={styles.ourSericesCards}>
@@ -274,7 +279,7 @@ const styles = StyleSheet.create({
   cancelButton: {
     alignSelf: "center",
     marginTop: verticalScale(15),
-    padding: 10,
+    padding: verticalScale(10),
     borderRadius: 10,
     backgroundColor: colors.coreBlue,
   },
@@ -287,7 +292,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     textAlign: "center",
-    marginBottom: 10,
+    marginBottom: verticalScale(10),
   },
   dotsContainer: {
     flexDirection: 'row',
@@ -300,7 +305,7 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
     backgroundColor: colors.grey,
-    marginHorizontal: 5,
+    marginHorizontal: horizontalScale(5),
   },
   selectedDot: {
     backgroundColor: colors.coreBlue,
@@ -318,29 +323,29 @@ const styles = StyleSheet.create({
   loanView: { marginTop: verticalScale(13), flexDirection: 'row', justifyContent: 'space-between', paddingLeft: horizontalScale(21), paddingRight: horizontalScale(14), alignItems: 'center' },
   loanTitle: { color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelMedium.fontWeight },
   uhfl: { color: colors.coreBlue, fontSize: 8, fontWeight: customTheme.fonts.labelMedium.fontWeight },
-  profileImageView: { flexDirection: 'row', alignItems: 'center', left: horizontalScale(40), marginBottom: verticalScale(10), marginTop: verticalScale(21) },
-  lanloanview: { marginTop: verticalScale(6), flexDirection: 'row', justifyContent: 'space-between', paddingLeft: 21, paddingRight: 14, alignItems: 'center' },
+  profileImageView: { flexDirection: 'row', alignItems: 'center', left: horizontalScale(25), marginBottom: verticalScale(10), marginTop: verticalScale(40) },
+  lanloanview: { marginTop: verticalScale(6), flexDirection: 'row', justifyContent: 'space-between', paddingLeft: horizontalScale(15), paddingRight: horizontalScale(14), alignItems: 'center' },
   lan: {
     color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelMedium.fontWeight
   },
   loanAmountText: {
-    color: colors.coreBlue, fontSize: 10, fontWeight: customTheme.fonts.labelMedium.fontWeight, paddingRight: 12
+    color: colors.coreBlue, fontSize: 10, fontWeight: customTheme.fonts.labelMedium.fontWeight, paddingRight: horizontalScale(12)
   },
   loanAmount: {
-    alignSelf: 'flex-end', marginRight: horizontalScale(14), color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: 5
+    alignSelf: 'flex-end', marginRight: horizontalScale(14), color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: verticalScale(5)
   },
   bottomLine: { borderBottomWidth: 1, borderColor: colors.coreBlue, width: '20%', alignSelf: 'flex-end', marginRight: horizontalScale(18) },
   roiText: {
-    alignSelf: 'flex-end', color: colors.coreBlue, fontSize: 10, fontWeight: customTheme.fonts.labelMedium.fontWeight, paddingRight: horizontalScale(73.5), marginTop: 4
+    alignSelf: 'flex-end', color: colors.coreBlue, fontSize: 10, fontWeight: customTheme.fonts.labelMedium.fontWeight, paddingRight: horizontalScale(73.5), marginTop: verticalScale(4)
   },
   roi: {
-    alignSelf: 'flex-end', marginRight: horizontalScale(50), color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: 5
+    alignSelf: 'flex-end', marginRight: horizontalScale(50), color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: verticalScale(5)
   },
   tenure: {
-    alignSelf: 'flex-end', marginRight: horizontalScale(44), color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: 5
+    alignSelf: 'flex-end', marginRight: horizontalScale(44), color: colors.coreBlue, fontSize: 14, fontWeight: customTheme.fonts.labelLarge.fontWeight, marginBottom: verticalScale(5)
   },
   tenuretext: {
-    alignSelf: 'flex-end', color: colors.coreBlue, fontSize: 10, fontWeight: customTheme.fonts.labelMedium.fontWeight, paddingRight: horizontalScale(58), marginTop: 4
+    alignSelf: 'flex-end', color: colors.coreBlue, fontSize: 10, fontWeight: customTheme.fonts.labelMedium.fontWeight, paddingRight: horizontalScale(58), marginTop: verticalScale(4)
   },
   belowCardView: {
     position: 'absolute', top: 75, left: 20.5, flexDirection: 'row', alignItems: 'center'
@@ -367,10 +372,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center', top: 50, color: colors.white, fontWeight: customTheme.fonts.labelLarge.fontWeight, letterSpacing: 1.5, fontSize: 18
   },
   profileIcon: {
-    width: 45,
-    height: 45,
-    borderRadius: 30,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     marginRight: 4,
+    backgroundColor: 'rgba(210, 177, 172, 1)'
   },
   imgBackground: {
     width: '100%', height: '100%', resizeMode: 'cover', justifyContent: 'center'
@@ -380,10 +386,9 @@ const styles = StyleSheet.create({
     height: 87,
   },
   profileName: {
-    fontSize: 20,
-    fontWeight: customTheme.fonts.labelLarge.fontWeight,
-    lineHeight: 28,
-    color: colors.black
+    marginTop: 4,
+    textAlign: 'center',
+    ...customTheme.fonts.titleMedium
   },
 
   card: {
@@ -396,10 +401,10 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     height: 206,
-    marginRight: 14,
+    marginRight: horizontalScale(14),
     width: 350,
-    marginBottom: 5,
-    marginLeft: -5
+    marginBottom: verticalScale(5),
+    marginLeft: verticalScale(-5)
   },
 
   ourSerices: {
@@ -418,8 +423,7 @@ const styles = StyleSheet.create({
     { width: 39, height: 39, resizeMode: 'contain', alignSelf: 'center' },
   serviceText: { color: colors.coreBlue, fontSize: 12, fontWeight: customTheme.fonts.labelMedium.fontWeight, alignSelf: 'center', marginTop: verticalScale(9) },
   yourLoan: {
-
-    color: colors.black, fontSize: 18, lineHeight: 28, bottom: verticalScale(5), marginLeft: verticalScale(18),
+    color: colors.black, lineHeight: 28, bottom: verticalScale(5), marginBottom: verticalScale(5), marginLeft: verticalScale(18), ...customTheme.fonts.headerText
   },
   seeDetailsresumeJourneyButton: {
     justifyContent: 'center',
