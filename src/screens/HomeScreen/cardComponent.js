@@ -61,8 +61,8 @@ const CardComponent = () => {
         <View style={[styles.card2, { width: cardWidth, marginHorizontal: cardMarginHorizontal }]}>
         <Image
           style={styles.imageView}
-          source={{ uri: item.uri }}
-          resizeMode="cover"
+          source={item.type === 'remote' ? { uri: item.uri } : item.uri}
+          resizeMode="contain"
         />
       </View>
     );
@@ -152,6 +152,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 10,
+
    
   },
 });

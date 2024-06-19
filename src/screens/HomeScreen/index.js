@@ -182,11 +182,11 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1 }}>
-        <StatusBar
-                barStyle="dark-content"
-                hidden={false}
-                backgroundColor={colors.coreCream}
-            />
+      <StatusBar
+        barStyle="dark-content"
+        hidden={false}
+        backgroundColor={colors.coreCream}
+      />
       <ScrollView>
         {isLoading ? (
           <View style={styles.ActivityStyle}>
@@ -245,7 +245,8 @@ const HomeScreen = ({ navigation }) => {
                     ))}
                   </View></>
               }
-            </View><View style={{ marginTop: verticalScale(20) }}>
+            </View>
+            <View style={{ marginTop: verticalScale(20) }}>
               <Text style={styles.yourLoan}>
                 Our Services
               </Text>
@@ -278,7 +279,7 @@ const styles = StyleSheet.create({
   cancelButton: {
     alignSelf: "center",
     marginTop: verticalScale(15),
-    padding:verticalScale(10),
+    padding: verticalScale(10),
     borderRadius: 10,
     backgroundColor: colors.coreBlue,
   },
@@ -304,7 +305,7 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
     backgroundColor: colors.grey,
-    marginHorizontal:horizontalScale(5),
+    marginHorizontal: horizontalScale(5),
   },
   selectedDot: {
     backgroundColor: colors.coreBlue,
@@ -375,7 +376,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     marginRight: 4,
-    backgroundColor:'rgba(210, 177, 172, 1)'
+    backgroundColor: 'rgba(210, 177, 172, 1)'
   },
   imgBackground: {
     width: '100%', height: '100%', resizeMode: 'cover', justifyContent: 'center'
@@ -385,8 +386,8 @@ const styles = StyleSheet.create({
     height: 87,
   },
   profileName: {
-    marginTop:4,
-    textAlign:'center',
+    marginTop: 4,
+    textAlign: 'center',
     ...customTheme.fonts.titleMedium
   },
 
@@ -422,7 +423,7 @@ const styles = StyleSheet.create({
     { width: 39, height: 39, resizeMode: 'contain', alignSelf: 'center' },
   serviceText: { color: colors.coreBlue, fontSize: 12, fontWeight: customTheme.fonts.labelMedium.fontWeight, alignSelf: 'center', marginTop: verticalScale(9) },
   yourLoan: {
-    color: colors.black, lineHeight: 28, bottom: verticalScale(5),marginBottom: verticalScale(5), marginLeft: verticalScale(18),...customTheme.fonts.headerText
+    color: colors.black, lineHeight: 28, bottom: verticalScale(5), marginBottom: verticalScale(5), marginLeft: verticalScale(18), ...customTheme.fonts.headerText
   },
   seeDetailsresumeJourneyButton: {
     justifyContent: 'center',
