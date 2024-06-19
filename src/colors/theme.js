@@ -20,6 +20,8 @@ const customTheme = {
     primaryText: "#000000",
     seconderyText: "rgba(124, 126, 139, 1)",
     darkGrayText: '#7C7B7B',
+    sliderColor:'#0070D2',
+    sliderRoundPointColor: '#00549E',
     elevation: {
       level3: "rgba(0, 0, 0, 0.25)",
       // level0: "#E6F4FF",

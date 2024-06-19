@@ -142,15 +142,29 @@ export const getHomeScreenCarousel = () => {
     mutationFn: async () => {
       return new Promise((resolve, reject) => {
         setTimeout(() => {
+          // const data = [
+          //   {
+          //     uri: "https://thumbs.dreamstime.com/b/unico-bank-building-marked-treeo-arkansas-unico-bank-building-marked-tree-arkansas-provides-credit-cards-mortgages-commercial-121368162.jpg",
+          //   },
+          //   {
+          //     uri: "https://thumbs.dreamstime.com/b/unico-bank-building-marked-treeo-arkansas-unico-bank-building-marked-tree-arkansas-provides-credit-cards-mortgages-commercial-121368162.jpg",
+          //   },
+          //   {
+          //     uri: "https://thumbs.dreamstime.com/b/unico-bank-building-marked-treeo-arkansas-unico-bank-building-marked-tree-arkansas-provides-credit-cards-mortgages-commercial-121368162.jpg",
+          //   },
+          // ];
           const data = [
             {
-              uri: "https://thumbs.dreamstime.com/b/unico-bank-building-marked-treeo-arkansas-unico-bank-building-marked-tree-arkansas-provides-credit-cards-mortgages-commercial-121368162.jpg",
+              type: 'asset',
+              uri: require('../../src/assets/ad2.png'),
             },
             {
-              uri: "https://thumbs.dreamstime.com/b/unico-bank-building-marked-treeo-arkansas-unico-bank-building-marked-tree-arkansas-provides-credit-cards-mortgages-commercial-121368162.jpg",
-            },
+              type: 'asset',
+              uri: require('../../src/assets/AdCardMain.png'),
+            }, 
             {
-              uri: "https://thumbs.dreamstime.com/b/unico-bank-building-marked-treeo-arkansas-unico-bank-building-marked-tree-arkansas-provides-credit-cards-mortgages-commercial-121368162.jpg",
+              type: 'asset',
+              uri: require('../../src/assets/ad1.png'),
             },
           ];
           resolve(data);
