@@ -46,7 +46,7 @@ public class MainActivity extends SalesforceReactActivity {
 		fragmentManager = getSupportFragmentManager();
 
 		// Call the method to present the opt-in dialog if needed
-		presentBiometricOptInDialog();
+		// presentBiometricOptInDialog();
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class MainActivity extends SalesforceReactActivity {
 
 	@Override
 	public boolean shouldAuthenticate() {
-		return true;
+		return false;
 	}
 
 	/**
