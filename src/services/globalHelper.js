@@ -1,6 +1,7 @@
 // import { INPUT_VALIDATION_RULES } from "react-hook-form/dist/constants";
 
 export const getErrMsg = (err, fieldname = "value") => {
+  console.log(">>>>>>R",err)
   switch (err.type) {
     case "required":
       return `Please enter a valid ${fieldname}`;
@@ -11,6 +12,9 @@ export const getErrMsg = (err, fieldname = "value") => {
 
     // case INPUT_VALIDATION_RULES.required:
     //   return `Please enter a valid ${fieldname ? fieldname : "value"}`;
+
+    case "custom":
+      return err?.message ? err.message : `Please enter a valid ${fieldname}`
 
     default:
       return `Please enter a valid ${fieldname}`;

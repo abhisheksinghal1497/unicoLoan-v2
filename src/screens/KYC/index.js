@@ -1,5 +1,5 @@
-import { Dimensions, Image, ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator } from 'react-native'
-import React, { useState, useEffect, useCallback } from 'react'
+import { Dimensions, Image, ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator, ScrollView } from 'react-native'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { colors } from '../../colors'
 import {
   FormControl,
@@ -17,9 +17,17 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { screens } from '../../constants/screens';
 import { useFocusEffect } from '@react-navigation/native';
 import ProgressCard from '../../components/ProgressCard'
-import { ScrollView } from 'react-native-gesture-handler';
-import { uploadOtpMethod, uploadAdhaarMethod } from "../../services/ApiUtils";
 
+import { uploadOtpMethod, uploadAdhaarMethod } from "../../services/ApiUtils";
+import { uploadAadharPhotos, verifyAadhar } from '../../services/muleService/MuleApiUtils';
+import { log } from '../../utils/ConsoleLogUtils';
+import ActivityIndicatorComponent from '../../components/ActivityIndicator';
+import { toast, } from '../../utils/functions';
+
+
+import Canvas, { Image as CanvasImage } from 'react-native-canvas';
+import { KycScreen } from '../../constants/stringConstants';
+import { ConfiguratonConstants } from '../../constants/ConfigurationConstants';
 
 
 const WIDTH = Dimensions.get('window').width;
@@ -28,20 +36,87 @@ const screenName = "Documents"
 
 const KYC = (props) => {
 
-  const [selectedImage, setSelectedImage] = useState('');
+  const [selectedImage, setSelectedImage] = useState(null);
   const [captcha, setCaptcha] = useState('');
-  const [selectedImageBack, setSelectedImageBack] = useState('');
+  const [selectedImageBack, setSelectedImageBack] = useState(null);
   const [isVerified, setIsVerified] = useState(false);
   const [adharValidation, setAdhaarValidation] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const uploadOtpMethodFn = uploadOtpMethod();
   const uploadAdhaarMethodFn = uploadAdhaarMethod();
+  const uploadAadharToMuleService = uploadAadharPhotos();
+  const verifyAdharApi = verifyAadhar()
+  const canvasRef = useRef(null);
+  const [minutes, setMinutes] = useState(0)
+  const [seconds, setSeconds] = useState(0)
+
+  useEffect(() => {
+
+
+    const timer = setInterval(() => {
+      if (seconds > 0) {
+        setSeconds(seconds - 1);
+      } else if (minutes > 0) {
+        setMinutes(minutes - 1)
+        setSeconds(59)
+      } else {
+        clearInterval(timer)
+      }
+
+    }, 1000)
+
+    return () => {
+      clearInterval(timer)
+    }
+
+  }, [minutes, seconds])
+
+
+  useEffect(() => {
+    if (canvasRef.current && selectedImage && selectedImageBack) {
+      mergeBase64Images(canvasRef, selectedImage?.data, selectedImageBack?.data);
+    }
+  }, [canvasRef.current, selectedImage, selectedImageBack]);
+
+  const mergeBase64Images = (canvasRef, base64Image1, base64Image2) => {
+    const canvas = canvasRef.current;
+    canvas.width = 600
+    canvas.height = 500
+
+
+    const context = canvas.getContext('2d');
+    //context.rotate(45 * Math.PI / 180)
+
+    const image1 = new CanvasImage(canvas);
+    const image2 = new CanvasImage(canvas);
+
+    image1.src = `data:image/png;base64,${base64Image1}`;
+    image2.src = `data:image/png;base64,${base64Image2}`;
+
+    image1.addEventListener('load', () => {
+      // Draw the first image
+      context.save()
+
+
+
+      context.drawImage(image1, 0, 0, canvas.width / 2, canvas.height);
+
+      image2.addEventListener('load', () => {
+        // Draw the second image next to the first image
+        context.drawImage(image2, canvas.width / 2, 0, canvas.width / 2, canvas.height);
+
+        // Optionally, convert the canvas content to base64
+
+
+      });
+    });
+  };
 
   useEffect(() => {
     if (uploadOtpMethodFn?.data) {
       // alert('Success')
       setIsLoading(false)
-      setType(1);
+      //setType(1);
     }
   }, [uploadOtpMethodFn?.data]);
 
@@ -64,7 +139,7 @@ const KYC = (props) => {
     }
   }, [uploadAdhaarMethodFn?.error]);
 
-  console.log(Boolean(selectedImage) && Boolean(selectedImageBack), 'Vaue here')
+  //console.log(selectedImage && Boolean(selectedImageBack), 'Vaue here')
 
   useFocusEffect(
     useCallback(() => {
@@ -76,11 +151,10 @@ const KYC = (props) => {
     await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.KYC));
     const savedData = await AsyncStorage.getItem('FrontAdhaar');
     const currentData = JSON.parse(savedData);
-    console.log(currentData, 'front adhaar');
+
     setSelectedImage(currentData)
     const savedDataBack = await AsyncStorage.getItem('BackAdhaar');
     const currentDataBack = JSON.parse(savedDataBack);
-    console.log(currentData, 'front adhaar');
     setSelectedImageBack(currentDataBack)
   }
 
@@ -98,6 +172,9 @@ const KYC = (props) => {
     getValues,
     getFieldState,
     setValue,
+    setError,
+    trigger,
+    watch
   } = useForm({
     mode: "onBlur",
     defaultValues: {},
@@ -128,7 +205,9 @@ const KYC = (props) => {
   };
   const hideModal = () => setVisible(false);
 
-  console.log(getValues('otp')?.length, "Otp values here-->")
+
+
+
 
 
 
@@ -136,29 +215,97 @@ const KYC = (props) => {
   // const startTimer = React.useCallback()
 
   const TimerContent = () => {
-    const [counter, setCounter] = useState(60);
-    useEffect(() => {
-      counter > 0 && setTimeout(() => setCounter(counter - 1), 1000);
-    }, [counter]);
-    return counter !== 0 ? (
+
+    return (seconds > 0 || minutes > 0) ? (
       <View style={styles.timerContainer}>
         <Image source={require('../../images/timer.png')} style={styles.timerImage} />
         <Text
-          style={[fonts.bodyRegular, { color: 'rgba(124, 126, 139, 1)', marginTop: 3 }]}>00:{counter < 10 ? `0${counter}` : counter}</Text>
+          style={[fonts.bodyRegular, { color: 'rgba(124, 126, 139, 1)', marginTop: 3 }]}>
+          {minutes.toString().padStart(2, '0')}:{seconds.toString().padStart(2, '0')}
+        </Text>
       </View>
     ) : (
-      <TouchableOpacity style={styles.timerContainer} onPress={() => setCounter(60)}>
+      <TouchableOpacity style={styles.timerContainer} onPress={() => {
+        uploadAadhar()
+
+      }}>
         <Text
           style={[fonts.bodyRegular, { color: 'rgba(46, 82, 161, 1)', marginTop: 3 }]}>Resend</Text>
       </TouchableOpacity>
     )
   }
 
-  const onSubmitOtp = () => {
-    hideModal(); setType(0);
-    uploadOtpMethodFn.mutate({ "otp": 1234 });
-    props.navigation.navigate(screens.CaptureSelfie)
+  const uploadAadhar = async () => {
+    try {
+      // 
+
+      let dataURL = await canvasRef.current.toDataURL()
+      // let newData =  dataURL.replace(/^data:image\/?[A-z]*;base64,/);
+      log(dataURL)
+      uploadAadharToMuleService?.mutate(dataURL)
+    } catch (error) {
+      alert(error)
+
+    }
+
   }
+
+  useEffect(() => {
+    if (uploadAadharToMuleService.data) {
+      log("success", uploadAadharToMuleService.data)
+      toast("success", "success")
+
+      setType(1)
+      setVisible(true)
+      setMinutes(ConfiguratonConstants.TIME_OUT_TIME_MINUTES)
+      setSeconds(0)
+
+
+
+    }
+
+    if (uploadAadharToMuleService.error) {
+      log("error>>>", uploadAadharToMuleService.error)
+      toast("error", "Photo not captured correctly")
+    }
+
+
+
+  }, [uploadAadharToMuleService.data, uploadAadharToMuleService.error
+
+  ])
+
+  useEffect(() => {
+    if (verifyAdharApi.data) {
+      toast("success", "Aadhar verified successfully")
+      props.navigation.navigate(screens.CaptureSelfie)
+    }
+
+    if (verifyAdharApi.error) {
+      toast("error", "Aadhar verification failed")
+    }
+  }, [verifyAdharApi.data, verifyAdharApi.error])
+
+  const onSubmitOtp = async (otp) => {
+    // hideModal(); setType(0);
+
+    //uploadOtpMethodFn.mutate({ "otp": 1234 });
+    if (await trigger('otp')) {
+
+      const aadharInitiateResponse = uploadAadharToMuleService?.data?.data
+      verifyAdharApi?.mutate({
+        otp: otp,
+        intitialResponse: aadharInitiateResponse
+      })
+    }
+
+
+
+    //
+
+
+  }
+
   const onSubmitAdhaar = () => {
     setIsLoading(true)
     const AdhaarDetails = getValues('adhaarNumber');
@@ -166,26 +313,28 @@ const KYC = (props) => {
   }
   const handleRightIconPress = (index) => {
     if (index === 0) {
-        props.navigation.navigate(screens.FAQ);
+      props.navigation.navigate(screens.FAQ);
     } else if (index === 1) {
-        props.navigation.navigate(screens.HomeScreen);
-    } 
-};
+      props.navigation.navigate(screens.HomeScreen);
+    }
+  };
   return (
     <View style={{ flex: 1 }}>
       <ScrollView style={styles.container}>
-      <Header        
-       title="Documents"
-       left={require('../../images/back.png')}
-       rightImages={[{source: assets.chat,},{source: assets.questionRound,},]}
-       leftStyle={{height: verticalScale(15),width: verticalScale(15),}}
-       leftImageProps={{resizeMode: "contain",}}
-       rightStyle={{height: verticalScale(23),width: verticalScale(23),marginHorizontal:10}}
-       rightImageProps={{ resizeMode: "contain"}}
-       titleStyle={{fontSize: verticalScale(18), }}
-       onPressRight={handleRightIconPress}
-       onPressLeft={() => {props.navigation.navigate(screens.PanDetails);}}
-     />
+        <Header
+          title="Documents"
+          left={require('../../images/back.png')}
+          rightImages={[{ source: assets.chat, }, { source: assets.questionRound, },]}
+          leftStyle={{ height: verticalScale(15), width: verticalScale(15), }}
+          leftImageProps={{ resizeMode: "contain", }}
+          rightStyle={{ height: verticalScale(23), width: verticalScale(23), marginHorizontal: 10 }}
+          rightImageProps={{ resizeMode: "contain" }}
+          titleStyle={{ fontSize: verticalScale(18), }}
+          onPressRight={handleRightIconPress}
+          onPressLeft={() => { props.navigation.navigate(screens.PanDetails); }}
+        />
+        {(uploadAadharToMuleService?.isPending || verifyAdharApi?.isPending) && <ActivityIndicatorComponent />}
+        {<Canvas ref={canvasRef} style={{ width: 0, height: 0 }} />}
         {isLoading ? (
           <View style={styles.ActivityStyle}>
             <ActivityIndicator size="large" color={colors.coreBlue} />
@@ -194,23 +343,26 @@ const KYC = (props) => {
           <>
             <ProgressCard screenName={screenName} percentage={10} ImageData={require('../../images/Home.png')} />
             <View style={styles.subContainer}>
-              <Text style={[fonts.labelSmall, { width: '100%' }]}>Let's verify your identity quickly</Text>
-              <TouchableOpacity onPress={() => { showModal() }} style={{ alignSelf: 'center', marginTop: 15, }}>
+              <Text style={[styles.smallText, { width: '100%' }]}>{KycScreen.topLabel}</Text>
+              <TouchableOpacity onPress={() => { showModal() }} style={{ alignSelf: 'center', marginTop: 25, width: '55%' }}>
                 <View style={styles.recommendedContainer}>
-                  <Text style={[fonts.smallLightText, { color: colors.white }]}>Recommended</Text>
+                  <Text style={[styles.nunito_11, { color: colors.white, marginVertical: 5 }]}>{KycScreen.recommended}</Text>
                 </View>
                 <View style={styles.cardContainer}>
-                  <Image source={require('../../images/aadhar-front.png')} style={styles.frontImage} />
+                  <Image source={require('../../images/aadhar-front.png')} style={styles.frontImage} resizeMode='cover' />
                 </View>
               </TouchableOpacity>
-              <Text style={[fonts.labelMedium, { marginTop: 10, color: 'rgba(68, 70, 91, 1)' }]}>Generate E-Aadhaar</Text>
-              <Text style={[fonts.labelSmall, { marginTop: 5, lineHeight: 22, textAlign: 'center' }]}>You will receive an OTP on your{'\n'}Aadhaar
-                {'\n'}linked mobile number</Text>
+              <Text style={[fonts.labelMedium, styles.smallText, { color: colors.LIGHT_BLACK, marginTop: 5 }]}>{KycScreen.eCardTitle}</Text>
+              <Text style={[styles.smallText, {
+                marginTop: 5, lineHeight: 22, textAlign: 'center', fontSize: 14, lineHeight: 25,
+
+                color: colors.LIGHT_BLACK
+              }]}>{KycScreen.eCardSubTitle}</Text>
               {adharValidation ? (
                 <>
                   <View style={styles.noteContainerAdhaar}>
                     <Image source={require('../../images/error.png')} style={styles.bulbImage} />
-                    <Text style={fonts.bodySmall}>We couldn’t<Text style={fonts.bodyBold}> connect with Aadhaar server.
+                    <Text style={[fonts.bodySmall, { color: colors.TEXT_COLOR }]}>We couldn’t<Text style={[fonts.bodyBold, { color: colors.TEXT_COLOR }]}> connect with Aadhaar server.
                     </Text>Please retry or upload your Aadhaar to proceed further on Interest Rates!</Text>
                   </View>
                 </>
@@ -225,7 +377,7 @@ const KYC = (props) => {
               )}
               <View style={styles.dividerContainer}>
                 <View style={styles.horizonalDivider} />
-                <Text style={[fonts.labelSmall, { marginTop: 1, marginHorizontal: 10 }]}>OR</Text>
+                <Text style={[fonts.labelSmall, { marginTop: 1, marginHorizontal: 10, color: colors.TEXT_COLOR }]}>Or</Text>
                 <View style={styles.horizonalDivider} />
               </View>
               <View style={styles.rowContainer}>
@@ -247,14 +399,16 @@ const KYC = (props) => {
                 </TouchableOpacity>
               </View>
             </View>
-            <CustomButton
-              type="primary"
-              label="Continue"
-              buttonContainer={styles.buttonContainer}
-              isLoading={isLoading}
-              onPress={() => { showModal() }}
-              disable={Boolean(selectedImage) && Boolean(selectedImageBack) ? false : true}
-            />
+            {selectedImage && selectedImageBack &&
+              <CustomButton
+                type="primary"
+                label="Proceed"
+                buttonContainer={styles.buttonContainer}
+                isLoading={isLoading}
+                onPress={() => { uploadAadhar() }}
+
+              />
+            }
           </>
         )}
 
@@ -330,30 +484,38 @@ const KYC = (props) => {
           </View>
           :
           <View>
-            <TouchableOpacity onPress={hideModal} style={{ height: 20, width: '100%', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
-              <Image source={require('../../images/cross.png')} style={{ height: 20, width: 20 }} />
-            </TouchableOpacity>
-            <Text style={[fonts.labelMedium, { marginTop: 10, color: 'rgba(68, 70, 91, 1)', textAlign: 'center' }]}>OTP Verification</Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', width: '100%' }}>
+              <View />
+              <Text style={[fonts.labelMedium, { color: 'rgba(68, 70, 91, 1)', textAlign: 'center', flex: 1, textAlign: "center" }]}>OTP Verification</Text>
+
+              <TouchableOpacity onPress={hideModal} style={{ height: 20, }}>
+                <Image source={require('../../images/cross.png')} style={{ height: 16, width: 16 }} />
+              </TouchableOpacity>
+            </View>
+
+
             <Text style={[fonts.labelSmall, { marginTop: 5, lineHeight: 18, textAlign: 'center' }]}>One-Time Password has been sent to{'\n'}your registered Mobile Number.</Text>
             <FormControl
               compType={component.otpInput}
               control={control}
+              watch={watch}
               validations={validations.otp}
               name="otp"
-              label="Enter otp"
+              label="otp"
               errors={errors.leadId}
               isRequired
               setValue={setValue}
               style={styles.otpInputContainer}
               maxLength={6}
+              trigger={trigger}
             />
             <TimerContent />
             <CustomButton
               type="primary"
               label="Submit"
               buttonContainer={styles.modalButtonContainer}
-              disable={getValues('otp')?.length !== 6}
-              onPress={() => onSubmitOtp()}
+
+              onPress={() => onSubmitOtp(getValues('otp'))}
             />
           </View>
         }
@@ -370,6 +532,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: colors.bgColor,
     paddingHorizontal: 16,
+    paddingBottom: 24
   },
   subContainer: {
     flexGrow: 1,
@@ -389,8 +552,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   recommendedContainer: {
-    width: 140,
-    height: 20,
+
+
     backgroundColor: '#0076C7',
     justifyContent: 'center',
     alignItems: 'center',
@@ -398,27 +561,32 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
   },
   cardContainer: {
-    width: 140,
-    height: 120,
+
+
     borderWidth: 1,
-    borderColor: 'rgba(189, 197, 208, 0.5)',
-    marginTop: -1,
+    borderColor: colors.coreBlue,
+    height: 140,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   cardContainerTwo: {
     width: 140,
     height: 140,
-    borderWidth: 1,
+
     borderColor: 'rgba(189, 197, 208, 0.5)',
+    borderWidth: 1,
     // marginTop: -1,
     borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   frontImage: {
-    width: '100%',
-    height: '100%',
+    width: '70%',
+    height: '70%',
+    alignSelf: 'center',
     // marginTop: 5,
-    marginLeft: -1,
     borderRadius: 10,
   },
   noteContainer: {
@@ -458,7 +626,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
   },
-  titleText: { marginTop: 10, color: 'rgba(68, 70, 91, 1)', textAlign: 'center' },
+  titleText: {
+    marginTop: 10, color: colors.LIGHT_BLACK, textAlign: 'center', fontFamily: "Nunito",
+    fontSize: 15,
+    fontWeight: "500",
+    fontStyle: "normal",
+  },
   rowContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -547,5 +720,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 40,
+  },
+  smallText: {
+    fontFamily: "Nunito",
+    fontSize: 17,
+    fontWeight: "500",
+    fontStyle: "normal",
+    lineHeight: 20,
+    letterSpacing: -0.16500000655651093,
+    color: colors.labelColor
+  },
+  nunito_11: {
+    fontFamily: "Nunito",
+    fontSize: 11,
+    fontWeight: "500",
+    fontStyle: "normal",
+    lineHeight: 25,
+    letterSpacing: -0.16500000655651093,
+    textAlign: "center",
+    color: colors.white
   }
 })

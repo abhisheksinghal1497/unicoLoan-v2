@@ -45,6 +45,12 @@ export default function CustomButton(props) {
               theme.fonts.buttonText,
               labelStyle,
               disable ? { color: colors.black } : {},
+              {
+                fontFamily: "Inter",
+                fontSize: 16,
+                fontWeight: "500",
+                fontStyle: "normal"
+              },
             ]}
             numberOfLines={1}
           >

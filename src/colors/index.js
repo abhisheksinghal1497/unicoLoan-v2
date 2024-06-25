@@ -44,7 +44,12 @@ export const colors = {
   border: "#606060",
   grey: "grey",
   shadowColor:'rgba(0, 0, 0, 0.25)',
-  borderColor:'rgba(232, 232, 234, 1.0)',
+  borderColor:'rgba(210, 210, 210, 1.0)',
   MODAL_BG_COLOR: "#0E0E0E94",
-  TEXT_COLOR:'#7C7E8B'
+  TEXT_COLOR:'#7C7E8B',
+  LABEL_COLOR:'#888',
+  PLACE_HOLDER_COLOR:'#B1B2B7',
+  LIGHT_BLUE:'#E1F3FF',
+  LIGHT_BLACK:'#44465B',
+  BLUE_BORDER_COLOR:'rgba(46, 82, 161, 1.0)'
 };

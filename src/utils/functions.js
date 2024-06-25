@@ -39,7 +39,7 @@ export const toast = (type, title, subTitle) => {
 
 
 export const isObjEmpty = (obj) => {
-  return Object.keys(obj).length === 0;
+    return Object.keys(obj).length === 0;
 };
 
 
@@ -55,4 +55,15 @@ export function debounce(func, timeout = 2000) {
             timer = undefined;
         }, timeout);
     };
+}
+
+export function validateOtp(otp) {
+    try {
+        let regex = new RegExp(/[6-9]\d{6}/, 'i');
+        return regex.test(otp)
+    } catch (error) {
+        return true
+    }
+
+
 }

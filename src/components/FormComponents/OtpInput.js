@@ -1,10 +1,12 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { TextInput, useTheme } from "react-native-paper";
+import { TextInput, useTheme, Text } from "react-native-paper";
 import { horizontalScale, verticalScale } from "../../utils/matrcis";
 import { colors } from "../../colors/index";
 import customTheme from "../../colors/theme";
 import { Controller } from "react-hook-form";
+import { getErrMsg } from "../../services/globalHelper";
+import CustomShadow from "./CustomShadow";
 
 export default function OtpInput({
   control,
@@ -17,7 +19,7 @@ export default function OtpInput({
   isDisabled = false,
   otpLimit = 6,
   isRequired = false,
-  trigger = () => {},
+  trigger = () => { },
   ...rest
 }) {
   const { colors: themeColor } = useTheme();
@@ -28,14 +30,20 @@ export default function OtpInput({
   const inputRefs = [];
 
   const handleTextChange = (text, index, otp, setOtp) => {
-    const newValue = otp ? otp.split("") : [];
-    newValue[index] = text;
-    // onChange(newValue.join(''));
-    setOtp(newValue.join(""));
-    if (text && index < inputRefs.length - 1) {
-      inputRefs[index + 1]?.focus();
+    try {
+      const newValue = otp ? otp.split("") : [];
+      newValue[index] = text?.split("")[text?.length - 1];
+      // onChange(newValue.join(''));
+      setOtp(newValue.join(""));
+      if (text && index < inputRefs.length - 1) {
+        inputRefs[index + 1]?.focus();
+      }
+
+    } catch (error) {
+
     }
-  };
+  }
+
 
   const handleKeyPress = (e, index, otp) => {
     if (e.nativeEvent.key === "Backspace" && index > 0) {
@@ -56,25 +64,47 @@ export default function OtpInput({
           <View style={styles.container}>
             <View style={styles.otpContainer}>
               {Array.from({ length: otpLimit }, (_, index) => (
+
                 <TextInput
                   key={index}
                   ref={(ref) => (inputRefs[index] = ref)}
                   keyboardType="numeric"
                   underlineColor="transparent"
-                  cursorColor={colors.tertiary}
+                  cursorColor={colors.coreBlue}
                   disabled={isDisabled}
                   onChangeText={(text) =>
                     handleTextChange(text, index, value, onChange)
                   }
                   onKeyPress={(e) => handleKeyPress(e, index, value)}
                   value={value?.charAt(index) || ""}
-                  style={[styles.textInput, index !== 0 && styles.otpInput]}
-                  contentStyle={{ borderBottomWidth: 0 }}
+                  style={[styles.textInput, index !== 0 && styles.otpInput, {
+                    backgroundColor: '#fffff'
+                  }]}
+
+
                   maxLength={1}
+                  mode="outlined"
+
+                  outlineStyle={{
+
+                    backgroundColor: colors.white,
+                    margin: -2,
+
+
+                    borderColor: "rgba(232, 232, 234, 1.0)"
+                  }}
                   {...rest}
                 />
+
               ))}
             </View>
+
+            {error && (
+              <Text style={styles.error}>
+                {" "}
+                &#9432; {getErrMsg(error, label)}
+              </Text>
+            )}
           </View>
         );
       }}
@@ -94,7 +124,12 @@ const styles = StyleSheet.create({
 
   textInput: {
     flex: 1,
-    backgroundColor: customTheme.colors.textInputBackground,
+
+
+  },
+  error: {
+    color: customTheme.colors.error,
+    marginTop: 5,
   },
 
   otpInput: {

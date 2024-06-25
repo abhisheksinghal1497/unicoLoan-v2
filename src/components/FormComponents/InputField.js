@@ -100,7 +100,7 @@ export default InputField = ({
                     styles.textInput,
                     style,
                     isDisabled ? styles.disabledInput : {},
-                    {height:isMultiline ? 100 : 0}
+                    
                   ]}
                   mode="outlined"
                   outlineColor={colors.border}

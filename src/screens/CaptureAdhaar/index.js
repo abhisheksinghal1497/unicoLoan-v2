@@ -19,14 +19,19 @@ const CaptureAdhaar = ({ navigation }) => {
 
     useEffect(() => {
       if (uploadAdhaarMethodFn?.data) {
-        alert('Success')
+        
         console.log('Success came here')
+        try {
+            navigation?.goBack()
+        } catch (error) {
+            
+        }
       }
     }, [uploadAdhaarMethodFn?.data]);
   
     useEffect(() => {
       if (uploadAdhaarMethodFn?.error) {
-        alert("error");
+        
         console.log('Error came here')
       }
     }, [uploadAdhaarMethodFn?.error]);
@@ -41,7 +46,7 @@ const CaptureAdhaar = ({ navigation }) => {
     console.log(method)
     const [selectedImage, setSelectedImage] = useState(null);
     const onCameraPress = async() => {
-        ImagePicker.openCamera({
+        ImagePicker.openPicker({
             cropping: true,
             compressImageQuality: 0.6,
             includeBase64: true
