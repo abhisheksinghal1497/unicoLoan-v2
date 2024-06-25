@@ -8,7 +8,10 @@ export const validations = {
   },
   otp: {
     required: true,
-    minLength: 6,
+    minLength:6,
+    pattern: /\d*/,
+    
+    
   },
   phone: {
     required: true,
@@ -41,7 +44,7 @@ export const validations = {
   aadhar: {
     required: true,
     pattern: /[0-9]{4}[0-9]{4}[0-9]{4}/,
-  }, 
+  },
   email: {
     pattern: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
   },
