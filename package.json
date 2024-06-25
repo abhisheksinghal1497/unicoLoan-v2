@@ -29,6 +29,7 @@
         "react": "18.1.0",
         "react-hook-form": "^7.51.3",
         "react-native": "0.70.6",
+        "react-native-collapsible": "^1.6.1",
         "react-native-canvas": "^0.1.40",
         "react-native-date-picker": "^5.0.2",
         "react-native-dotenv": "^3.4.11",
