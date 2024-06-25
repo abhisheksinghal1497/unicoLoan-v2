@@ -85,7 +85,7 @@ const PanDetails = (props) => {
         const response = verifyPan?.data?.data
         log("panVerify data>>>>", JSON.stringify(response))
         setIsVerified(true);
-        showResponseData(response)
+        showResponseData(response?.results?.name, '')
         toast('success', "Pan Verified");
       } catch (error) {
 
@@ -110,6 +110,7 @@ const PanDetails = (props) => {
         log("uploadPan data>>>>", JSON.stringify(response))
         setUploadIsVerified(true);
         toast('success', "Pan Verified");
+        showResponseData(response?.results?.name, response?.results?.ocrDetails?.[0]?.details?.date?.value)
       } catch (error) {
 
       }
@@ -128,19 +129,31 @@ const PanDetails = (props) => {
 
   const toggleModal = () => setShowModal(!showModal);
 
-  const showResponseData = (response) => {
-
+  const showResponseData = (name, dob) => {
+ 
     setResponseData([{
       id: "name",
       label: "Name",
       type: component.textInput,
-      placeHolder: response?.results?.name,
+      placeHolder: name,
       isRequired: false,
       data: [],
       isEditable: false,
-      isMultiline:true,
+      isMultiline: true,
 
-      value: response?.results?.name,
+      value: name,
+
+    }, {
+      id: "dob",
+      label: "DOB",
+      type: component.textInput,
+      placeHolder: dob,
+      isRequired: false,
+      data: [],
+      isEditable: false,
+      isMultiline: true,
+
+      value: dob,
 
     }])
   }
@@ -215,6 +228,8 @@ const PanDetails = (props) => {
   useEffect(() => {
     const subscription = watch((value, { name, type }) => {
       setIsVerified(false)
+      setUploadIsVerified(false)
+      setSelectedImage(null)
 
 
 
@@ -349,7 +364,7 @@ const PanDetails = (props) => {
           }
 
 
-          {(isVerified || isUploadVerified ) && responseData && responseData.map((comp, index) => {
+          {(isVerified || isUploadVerified) && responseData && responseData.map((comp, index) => {
             return (
 
               <FormControl
@@ -389,7 +404,7 @@ const PanDetails = (props) => {
                 maxLength={comp.maxLength}
                 isDisabled={comp.isDisabled}
                 isUpperCaseRequired={true}
-                isEditable = {comp.isEditable}
+                isEditable={comp.isEditable}
               />
 
             );
@@ -457,7 +472,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   buttonContainer: {
-  
+
     marginVertical: 50
 
   },

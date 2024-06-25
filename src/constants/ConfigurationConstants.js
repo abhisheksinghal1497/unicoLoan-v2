@@ -1,5 +1,5 @@
 export const ConfiguratonConstants = {
-    isPanUploadRequired : false,
+    isPanUploadRequired : true,
     TIME_OUT_TIME_MINUTES: 2,
 
 }
