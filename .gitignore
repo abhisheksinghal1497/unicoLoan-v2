@@ -45,5 +45,5 @@ package-lock.json
 package-lock.json.*
 yarn.lock
 
-mobile_sdk/
+
 ios/Pods/
