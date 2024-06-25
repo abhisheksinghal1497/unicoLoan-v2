@@ -75,7 +75,7 @@ const HomeScreen = ({ navigation }) => {
 
     switch (index) {
       case 0:
-        navigation.navigate(screens.KYCDocuments)
+        navigation.navigate(screens.EmiCalculator)
         break;
       case 1:
         const ProgressBarPercent = 0;
