@@ -119,7 +119,7 @@ const EMICalculatorComponent = ({ navigation }) => {
   };
   return (
     <View style={{ flex: 1, backgroundColor: colors.white }}>
-      <View style={{ marginHorizontal: horizontalScale(12) }}>
+      <View style={{ marginHorizontal: horizontalScale(15),marginTop:20 }}>
         <Header
           title={"EMI Calculator"}
           left={require("../../images/back.png")}

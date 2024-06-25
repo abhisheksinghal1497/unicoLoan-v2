@@ -467,7 +467,8 @@ export default function ApplicationDetails(props) {
     try {
       const isValid = await trigger();
       if (isValid) {
-        props?.navigation?.navigate(screens.PanDetails);
+        // props?.navigation?.navigate(screens.PanDetails);
+        props?.navigation?.navigate(screens.KYC);
       }
     } catch (error) {
       console.log("IN ERROR");

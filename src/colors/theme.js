@@ -207,6 +207,18 @@ const customTheme = {
       lineHeight: 17.25,
       color: "#606060",
     },
+    subHeader: {
+      fontFamily: "Nunito-Bold",
+      fontSize: 18,
+      letterSpacing: 0.15,
+      lineHeight: 24,
+      color: "#000000",
+    },
+    TextMon: {
+      fontFamily: "Montserrat-Medium",
+      fontSize: 12,
+      color: colors.coreBlue,
+    },
   },
 };
 

@@ -34,29 +34,29 @@ import androidx.fragment.app.FragmentManager;
 
 public class MainActivity extends SalesforceReactActivity {
 
-	public FragmentManager fragmentManager;
+	// public FragmentManager fragmentManager;
 
 
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+	// @Override
+	// protected void onCreate(Bundle savedInstanceState) {
+	// 	super.onCreate(savedInstanceState);
 
-		// Initialize fragmentManager
-		fragmentManager = getSupportFragmentManager();
+	// 	// Initialize fragmentManager
+	// 	fragmentManager = getSupportFragmentManager();
 
-		// Call the method to present the opt-in dialog if needed
-		presentBiometricOptInDialog();
-	}
+	// 	// Call the method to present the opt-in dialog if needed
+	// 	presentBiometricOptInDialog();
+	// }
 
-	/**
-	 * Determines if biometric authentication opt-in dialog needs to be presented.
-	 */
-	private void presentBiometricOptInDialog() {
-		SalesforceReactSDKManager.getInstance()
-				.getBiometricAuthenticationManager()
-				.presentOptInDialog(fragmentManager);
-	}
+	// /**
+	//  * Determines if biometric authentication opt-in dialog needs to be presented.
+	//  */
+	// private void presentBiometricOptInDialog() {
+	// 	SalesforceReactSDKManager.getInstance()
+	// 			.getBiometricAuthenticationManager()
+	// 			.presentOptInDialog(fragmentManager);
+	// }
 
 	/**
 	 * Override to control whether login should happen when the application launches.

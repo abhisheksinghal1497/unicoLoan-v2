@@ -23,7 +23,7 @@ const HomeScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDotIndex, setSelectedDotIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
-
+  const [currentScreen, setCurrentScreen] = useState(false);
 
   useEffect(() => {
     getLoanCardData?.mutate()
@@ -75,7 +75,7 @@ const HomeScreen = ({ navigation }) => {
 
     switch (index) {
       case 0:
-        navigation.navigate(screens.EmiCalculator)
+        navigation.navigate(screens.KYCDocuments)
         break;
       case 1:
         const ProgressBarPercent = 0;
@@ -421,9 +421,9 @@ const styles = StyleSheet.create({
     { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: horizontalScale(28), flexWrap: 'wrap', },
   serviceImage:
     { width: 39, height: 39, resizeMode: 'contain', alignSelf: 'center' },
-  serviceText: { color: colors.coreBlue, fontSize: 12, fontWeight: customTheme.fonts.labelMedium.fontWeight, alignSelf: 'center', marginTop: verticalScale(9) },
+  serviceText: {  alignSelf: 'center', marginTop: verticalScale(9),...customTheme.fonts.TextMon },
   yourLoan: {
-    color: colors.black, lineHeight: 28, bottom: verticalScale(5), marginBottom: verticalScale(5), marginLeft: verticalScale(18), ...customTheme.fonts.headerText
+    color: colors.black, lineHeight: 28, bottom: verticalScale(5), marginBottom: verticalScale(5), marginLeft: verticalScale(18), ...customTheme.fonts.subHeader
   },
   seeDetailsresumeJourneyButton: {
     justifyContent: 'center',

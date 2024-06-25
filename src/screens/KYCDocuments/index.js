@@ -64,7 +64,7 @@ const KYCDocuments = ({ navigation }) => {
                   style={styles.cancelButton}>
                   <Text style={styles.cancelButtonText}>Yes</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('CurrentAddress')} style={styles.cancelButton}>
+                <TouchableOpacity onPress={() =>{ navigation.navigate('CurrentAddress'); setShowModal(false);}} style={styles.cancelButton}>
                   <Text style={styles.cancelButtonText}>No</Text>
                 </TouchableOpacity>
               </View>
