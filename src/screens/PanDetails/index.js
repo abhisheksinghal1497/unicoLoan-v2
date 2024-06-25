@@ -30,6 +30,8 @@ import { submitPanApi } from "../../services/ApiUtils";
 import { error, log } from "../../utils/ConsoleLogUtils";
 import ImagePicker from 'react-native-image-crop-picker';
 import AdhaarSection from "../../components/AdhaarSection";
+import { ConfiguratonConstants } from "../../constants/ConfigurationConstants";
+import ErrorConstants from "../../constants/ErrorConstants";
 
 
 
@@ -64,7 +66,7 @@ const PanDetails = (props) => {
       type: component.textInput,
       placeHolder: "Enter your PAN Number here",
       validations: validations.pan,
-      isRequired: true,
+
       data: [],
       value: "",
       showRightComp: true,
@@ -92,10 +94,10 @@ const PanDetails = (props) => {
     }
 
     if (verifyPan?.error) {
-      error('panverifyError>>>>', JSON.stringify(verifyPan?.error))
+      setError('panNumber', { type: 'custom', message: ErrorConstants.PAN_UNVERIFIED });
       setIsVerified(false);
       //setError("panNumbRr", "Pan is not verified");
-      toast("error","PAN  UnVerified")
+
     }
 
   }, [verifyPan?.data, verifyPan?.error])
@@ -118,7 +120,7 @@ const PanDetails = (props) => {
     if (uploadPan?.error) {
       error('panverifyError>>>>', JSON.stringify(uploadPan?.error))
       setIsVerified(false);
-      toast("PAN  UnVerified")
+      toast("error", "PAN  UnVerified")
       //setError("panNumbRr", "Pan is not verified");
     }
 
@@ -136,6 +138,7 @@ const PanDetails = (props) => {
       isRequired: false,
       data: [],
       isEditable: false,
+      isMultiline:true,
 
       value: response?.results?.name,
 
@@ -146,6 +149,7 @@ const PanDetails = (props) => {
 
   const verifyPanBtn = async () => {
     const { panNumber } = watch();
+
     setValue('panNumber', panNumber?.toString()?.toUpperCase())
     try {
       Keyboard?.dismiss()
@@ -159,6 +163,7 @@ const PanDetails = (props) => {
       const isValid = await trigger();
       if (!isValid) {
         // toast("error", "Value is invalid");
+
         return;
       }
       setUploadIsVerified(false)
@@ -271,7 +276,7 @@ const PanDetails = (props) => {
             onPressLeft={() => { props.navigation.navigate(screens.ApplicantDetails); }}
           />
 
-          <ProgressCard screenName={"Pan Verify"} />
+          <ProgressCard screenName={"PAN Details"} />
 
           {(verifyPan?.isPending || uploadPan?.isPending) && (
             <ActivityIndicatorComponent />
@@ -304,7 +309,7 @@ const PanDetails = (props) => {
 
                     !isVerified ? (
                       (
-                        <Text>Verify</Text>
+                        <Text style={styles.verifyTextStyle}>Verify</Text>
                       )
                     ) : (
                       <Image
@@ -325,27 +330,26 @@ const PanDetails = (props) => {
             );
           })}
 
-          <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 12 }}>
-            <Text style={{ color: colors.TEXT_COLOR, fontSize: 18, fontStyle: 'bold' }}>Or</Text>
-          </View>
-          <TouchableOpacity
-            onPress={onCameraPress}
+          {ConfiguratonConstants.isPanUploadRequired &&
+            <>
 
-          >
+              <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 12 }}>
+                <Text style={{ color: colors.TEXT_COLOR, fontSize: 18, fontStyle: 'bold' }}>Or</Text>
+              </View>
+              <TouchableOpacity
+                onPress={onCameraPress}
 
-            {/* <View >
+              >
+
+                <View >
+                  <AdhaarSection AdhaarText={"Upload and Verify your PAN"} image={selectedImage} style={{ height: 250, marginTop: 16, }} />
+                </View>
+              </TouchableOpacity>
+            </>
+          }
 
 
-            <Text style={{ color: colors.TEXT_COLOR, fontSize: 16, fontStyle: 'normal' }} >Upload and Verify your PAN</Text>
-
-          </View> */}
-            <View >
-              <AdhaarSection AdhaarText={"Upload and Verify your PAN"} image={selectedImage} style={{ height: 250, marginTop: 16, }} />
-            </View>
-          </TouchableOpacity>
-
-
-          {(isVerified || isUploadVerified) && responseData && responseData.map((comp, index) => {
+          {(isVerified || isUploadVerified ) && responseData && responseData.map((comp, index) => {
             return (
 
               <FormControl
@@ -385,6 +389,7 @@ const PanDetails = (props) => {
                 maxLength={comp.maxLength}
                 isDisabled={comp.isDisabled}
                 isUpperCaseRequired={true}
+                isEditable = {comp.isEditable}
               />
 
             );
@@ -394,14 +399,16 @@ const PanDetails = (props) => {
 
 
           {(isVerified || isUploadVerified) &&
-            <CustomButton
-              type="primary"
-              label="Proceed"
+            <View>
+              <CustomButton
+                type="primary"
+                label="Proceed"
 
-              buttonContainer={styles.buttonContainer}
-              onPress={submitPan}
-            // isLoading={isPendingSubmit}
-            />
+                buttonContainer={styles.buttonContainer}
+                onPress={submitPan}
+              // isLoading={isPendingSubmit}
+              />
+            </View>
           }
         </View>
       </ScrollView>
@@ -450,8 +457,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   buttonContainer: {
-    flex: 1,
-    marginVertical: 20
+  
+    marginVertical: 50
 
   },
   homeIcon: {
@@ -507,4 +514,12 @@ const styles = StyleSheet.create({
     borderTopColor: "#fff",
     transform: [{ rotateZ: "-135deg" }],
   },
+  verifyTextStyle: {
+    fontFamily: "Montserrat",
+    fontSize: 12,
+    fontWeight: "500",
+    fontStyle: "normal",
+    lineHeight: 12,
+    color: colors.coreBlue
+  }
 });
