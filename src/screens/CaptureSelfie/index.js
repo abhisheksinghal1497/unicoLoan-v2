@@ -1,79 +1,204 @@
-import { Text, View, SafeAreaView, Image } from 'react-native'
-import React, { useState } from 'react'
-import Header from '../../components/Header'
-import SelfieSection from '../../components/SelfieSection'
-import CameraSection from '../../components/CameraSection'
-import ImagePicker from 'react-native-image-crop-picker';
-import { styles } from './style/style';
-import { useTheme } from 'react-native-paper'
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { screens } from '../../constants/screens';
-import CustomButton from '../../components/Button'
+import {
+  Text,
+  View,
+  SafeAreaView,
+  Image,
+  Linking,
+  Alert,
+  Platform,
+  NativeModules,
+} from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import Header from "../../components/Header";
+import SelfieSection from "../../components/SelfieSection";
+import CameraSection from "../../components/CameraSection";
+import { styles } from "./style/style";
+import { useTheme } from "react-native-paper";
+import { screens } from "../../constants/screens";
+import CustomButton from "../../components/Button";
+import { useCameraDevices } from "react-native-vision-camera";
+import { check, PERMISSIONS, RESULTS, request } from "react-native-permissions";
+import FaceDetection, {
+  FaceDetectorContourMode,
+  FaceDetectorLandmarkMode,
+  FaceContourType,
+  FaceLandmarkType,
+  FaceDetectorPerformanceMode,
+  FaceDetectorClassificationMode,
+} from "react-native-face-detection";
 
 const CaptureSelfie = ({ navigation }) => {
-    const { fonts } = useTheme();
-    const [selectedImage, setSelectedImage] = useState(null);
-    const onCameraPress = ({front = false}) => {
-        ImagePicker.openCamera({
-            cropping: true,
-            compressImageQuality: 0.6,
-            useFrontCamera: front
-        })
-            .then((image) => {
-                setSelectedImage(image.path);
-                 AsyncStorage.setItem('selfieCapture', JSON.stringify(image));
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+  const [isFrontCamera, setFrontCamera] = useState("front");
+  const devices = useCameraDevices();
+  const frontDevice = devices[isFrontCamera];
+  const cameraRef = useRef(null);
+  // loading, error, success, initial
+  const [status, setStatus] = useState('initial')
+  const { fonts } = useTheme();
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  useEffect(() => {
+    const onDeniedPermissionCamera = () => {
+      Alert.alert("Please give camera permission from setting");
+      Linking.openSettings();
     };
+    (async () => {
+      if (Platform.OS !== "android") {
+        return;
+      }
+      const granted = await check(PERMISSIONS.ANDROID.CAMERA);
+      if (granted === RESULTS.GRANTED) {
+        return;
+      } else if (granted === RESULTS.DENIED) {
+        const result = await request([PERMISSIONS.ANDROID.CAMERA]);
+        if (result !== RESULTS.GRANTED) {
+          onDeniedPermissionCamera();
+        }
+      } else {
+        onDeniedPermissionCamera();
+      }
+    })();
+    (async () => {
+      if (Platform.OS !== "ios") {
+        return;
+      }
+      const granted = await check(PERMISSIONS.IOS.CAMERA);
+      if (granted === RESULTS.DENIED) {
+        const result = await request([PERMISSIONS.IOS.CAMERA]);
+        if (result !== RESULTS.GRANTED) {
+          onDeniedPermissionCamera();
+        }
+      } else {
+        onDeniedPermissionCamera();
+      }
+    })();
+  }, []);
 
-    const cameraCross = () => {
-        setSelectedImage(null)
+  const cameraCross = () => {
+    setStatus('initial')
+    setSelectedImage(null);
+  };
+
+  const onCameraReload = () => {
+    setFrontCamera(isFrontCamera === "front" ? "back" : "front");
+    // navigation?.navigate(screens.KYCDocuments)
+  };
+
+  const onSubmit = () => {
+    navigation?.navigate(screens.KYCDocuments);
+  };
+
+  const checkIfFaceInCenter = (rightEyeProbability, leftEyeProbability) => {
+    if (rightEyeProbability > 0.7 && leftEyeProbability > 0.7) {
+      return true;
+    } else {
+      return false;
     }
+  };
 
-    const onCameraReload = () => {
-        onCameraPress(true)
-        // navigation?.navigate(screens.KYCDocuments)
+  const processFaces = async (imagePath) => {
+    try {
+      let result = false;
+      const options = {
+        landmarkMode: FaceDetectorLandmarkMode.ALL,
+        contourMode: FaceDetectorContourMode.ALL,
+        performanceMode: FaceDetectorPerformanceMode.ACCURATE,
+        classificationMode: FaceDetectorClassificationMode.ALL,
+      };
+      const faces = await FaceDetection.processImage(imagePath, options);
+      if (!faces.length) {
+        Alert.alert("Can't see any face in the image");
+        return false;
+      }
+
+      if (faces.length > 1) {
+        Alert.alert(faces.length + " faces detected in the image.");
+        return false;
+      }
+
+      faces.forEach((face) => {
+        const res = checkIfFaceInCenter(
+          face.rightEyeOpenProbability,
+          face.leftEyeOpenProbability
+        );
+
+        result = res;
+        if (!result) {
+          Alert.alert("Make sure your head in center and both eyes are open");
+        }
+      });
+      return result;
+    } catch (error) {
+      console.log("Some error while recognizing face", error);
+      return false
     }
+  };
 
-    const onSubmit = () =>{
-        navigation?.navigate(screens.KYCDocuments)
+  const takePicture = async () => {
+    try {
+      setStatus('loading')
+      if (cameraRef.current) {
+        const photo = await cameraRef.current.takePhoto();
+        console.log("Photo taken:", photo);
+        const imagePath = "file://" + photo.path;
+        setSelectedImage(imagePath);
+        const result = await processFaces(imagePath);
+        setStatus(result ? 'success' : 'error')
+      }else{
+        setStatus('initial')
+      }
+    } catch (error) {
+      setStatus('error')
     }
+  };
 
-    return (
-        <>
-            <SafeAreaView style={styles.container}>
-                <Header
-                    title={'Selfie Capture'}
-                    left={require('../../images/back.png')}
-                    onPressLeft={() => { navigation.goBack() }}
-                    onPressRight={() => { }}
-                    colour="white" />
-                <SelfieSection uri={selectedImage} />
-                <CameraSection onCameraPress={onCameraPress} onCameraCross={cameraCross} onCameraReload={onCameraReload} reload={true} cross={true} />
-                <View style={styles.noteContainer}>
-                    <Image source={require('../../images/bulb.png')} style={styles.bulbImage} />
-                    <Text style={fonts.bodySmall}>Place <Text style={fonts.bodyBold}>your</Text>Face within Circle</Text>
-                </View>
+  return (
+    <>
+      <SafeAreaView style={styles.container}>
+        <Header
+          title={"Selfie Capture"}
+          left={require("../../images/back.png")}
+          onPressLeft={() => {
+            navigation.goBack();
+          }}
+          onPressRight={() => {}}
+          colour="white"
+        />
+        <SelfieSection
+          cameraRef={cameraRef}
+          frontDevice={frontDevice}
+          uri={selectedImage}
+        />
+        <CameraSection
+          onCameraPress={takePicture}
+          onCameraCross={cameraCross}
+          onCameraReload={onCameraReload}
+          reload={true}
+          cross={true}
+        />
+        <View style={styles.noteContainer}>
+          <Image
+            source={require("../../images/bulb.png")}
+            style={styles.bulbImage}
+          />
+          <Text style={fonts.bodySmall}>
+            Place <Text style={fonts.bodyBold}>your</Text>Face within Circle
+          </Text>
+        </View>
 
-
-                <CustomButton
-        type="primary"
-        label="Continue"
-        buttonContainer={styles.buttonContainer}
-        onPress={() => { onSubmit() }}
-        disable={Boolean(selectedImage)  ? false : true}
-      />
-            </SafeAreaView>
-        </>
-    )
-}
+        <CustomButton
+          type="primary"
+          label="Continue"
+          buttonContainer={styles.buttonContainer}
+          onPress={() => {
+            onSubmit();
+          }}
+          isLoading={status === 'loading'}
+          disable={status !== 'success'}
+        />
+      </SafeAreaView>
+    </>
+  );
+};
 
 export default CaptureSelfie;
-
-
-
-
-
-
