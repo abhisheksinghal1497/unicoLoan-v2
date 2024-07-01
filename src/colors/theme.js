@@ -54,12 +54,17 @@ const customTheme = {
       color: "rgba(124, 126, 139, 1)",
     },
     regularText: {
-      fontFamily: "Nunito-Regular",
-      color: colors.black,
-      fontSize: 16,
-      fontWeight: "400",
+     
       fontStyle: "normal",
-      color: colors.labelColor
+      
+      fontFamily: "Inter",
+      fontSize: 14,
+      fontWeight: "500",
+      fontStyle: "normal",
+      lineHeight: 25,
+      letterSpacing: -0.16500000655651093,
+      textAlign: "center",
+      color: "#44465B"
     },
     regularLightText: {
       fontFamily: "Nunito-Regular",

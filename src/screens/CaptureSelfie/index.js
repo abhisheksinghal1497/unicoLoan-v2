@@ -13,7 +13,7 @@ import CustomButton from '../../components/Button'
 const CaptureSelfie = ({ navigation }) => {
     const { fonts } = useTheme();
     const [selectedImage, setSelectedImage] = useState(null);
-    const onCameraPress = ({front = false}) => {
+    const onCameraPress = ({ front = false }) => {
         ImagePicker.openCamera({
             cropping: true,
             compressImageQuality: 0.6,
@@ -21,7 +21,7 @@ const CaptureSelfie = ({ navigation }) => {
         })
             .then((image) => {
                 setSelectedImage(image.path);
-                 AsyncStorage.setItem('selfieCapture', JSON.stringify(image));
+                AsyncStorage.setItem('selfieCapture', JSON.stringify(image));
             })
             .catch((error) => {
                 console.log(error);
@@ -37,7 +37,7 @@ const CaptureSelfie = ({ navigation }) => {
         // navigation?.navigate(screens.KYCDocuments)
     }
 
-    const onSubmit = () =>{
+    const onSubmit = () => {
         navigation?.navigate(screens.KYCDocuments)
     }
 
@@ -59,12 +59,12 @@ const CaptureSelfie = ({ navigation }) => {
 
 
                 <CustomButton
-        type="primary"
-        label="Continue"
-        buttonContainer={styles.buttonContainer}
-        onPress={() => { onSubmit() }}
-        disable={Boolean(selectedImage)  ? false : true}
-      />
+                    type="primary"
+                    label="Continue"
+                    buttonContainer={styles.buttonContainer}
+                    onPress={() => { onSubmit() }}
+                    disable={Boolean(selectedImage) ? false : true}
+                />
             </SafeAreaView>
         </>
     )
