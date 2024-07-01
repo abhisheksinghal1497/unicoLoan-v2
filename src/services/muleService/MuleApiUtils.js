@@ -84,15 +84,15 @@ const makeAadharinitiateCall = async (body) => {
             },
 
         })
-   
-        
 
-       
+
+
+
 
 
 
     } catch (error) {
-        
+
         throw error
 
     }
@@ -117,4 +117,14 @@ export const verifyAadhar = () => {
         }
     });
     return mutate;
+}
+
+export const nameMatchCheck = () => {
+    const mutate = useMutation({
+        mutationFn: (body) => {
+            return instance.post('/digital-utility-v1/api/name-match', body)
+        }
+    });
+    return mutate;
+
 }

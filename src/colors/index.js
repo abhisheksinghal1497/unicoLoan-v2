@@ -51,5 +51,6 @@ export const colors = {
   PLACE_HOLDER_COLOR:'#B1B2B7',
   LIGHT_BLUE:'#E1F3FF',
   LIGHT_BLACK:'#44465B',
-  BLUE_BORDER_COLOR:'rgba(46, 82, 161, 1.0)'
+  BLUE_BORDER_COLOR:'rgba(46, 82, 161, 1.0)',
+  GREEN_COLOR:'#0F9D58'
 };

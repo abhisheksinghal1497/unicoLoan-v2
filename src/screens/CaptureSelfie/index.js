@@ -33,7 +33,7 @@ const CaptureSelfie = ({ navigation }) => {
   const frontDevice = devices[isFrontCamera];
   const cameraRef = useRef(null);
   // loading, error, success, initial
-  const [status, setStatus] = useState('initial')
+  const [status, setStatus] = useState("initial");
   const { fonts } = useTheme();
   const [selectedImage, setSelectedImage] = useState(null);
 
@@ -75,7 +75,7 @@ const CaptureSelfie = ({ navigation }) => {
   }, []);
 
   const cameraCross = () => {
-    setStatus('initial')
+    setStatus("initial");
     setSelectedImage(null);
   };
 
@@ -130,25 +130,25 @@ const CaptureSelfie = ({ navigation }) => {
       return result;
     } catch (error) {
       console.log("Some error while recognizing face", error);
-      return false
+      return false;
     }
   };
 
   const takePicture = async () => {
     try {
-      setStatus('loading')
+      setStatus("loading");
       if (cameraRef.current) {
         const photo = await cameraRef.current.takePhoto();
         console.log("Photo taken:", photo);
         const imagePath = "file://" + photo.path;
         setSelectedImage(imagePath);
         const result = await processFaces(imagePath);
-        setStatus(result ? 'success' : 'error')
-      }else{
-        setStatus('initial')
+        setStatus(result ? "success" : "error");
+      } else {
+        setStatus("initial");
       }
     } catch (error) {
-      setStatus('error')
+      setStatus("error");
     }
   };
 
@@ -185,7 +185,6 @@ const CaptureSelfie = ({ navigation }) => {
             Place <Text style={fonts.bodyBold}>your</Text>Face within Circle
           </Text>
         </View>
-
         <CustomButton
           type="primary"
           label="Continue"
@@ -193,8 +192,8 @@ const CaptureSelfie = ({ navigation }) => {
           onPress={() => {
             onSubmit();
           }}
-          isLoading={status === 'loading'}
-          disable={status !== 'success'}
+          isLoading={status === "loading"}
+          disable={status !== "success"}
         />
       </SafeAreaView>
     </>

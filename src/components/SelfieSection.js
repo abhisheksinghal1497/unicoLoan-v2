@@ -9,17 +9,18 @@ export default function AdhaarSection({
   uri,
   cameraRef,
   frontDevice,
+  childStyle
 }) {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container ]}>
       {uri ? (
         <>
-          <View style={styles.emptySection}>
+          <View style={[styles.emptySection, childStyle && childStyle]}>
             <Image source={{ uri }} style={styles.imageContainer} />
           </View>
         </>
       ) : (
-        <View style={styles.emptySection}>
+        <View style={[styles.emptySection, childStyle && childStyle]}>
           {!!frontDevice ? (
             <Camera
               ref={cameraRef}

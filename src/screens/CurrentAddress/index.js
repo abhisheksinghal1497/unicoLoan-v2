@@ -26,23 +26,24 @@ const CurrentAddress = ({ navigation }) => {
   const options = [
     {
       id: 1,
-      title: 'Other Kyc',
+      title: 'Please choose the current Address Proof from Below Options.',
       items: [
         { title: 'Driving License', fields: ['License Number', 'Expiry Date'] },
         { title: 'Passport', fields: ['Passport Number', 'Country of Issue'] },
         { title: 'Voter ID', fields: ['Voter ID Number', 'State of Issue'] },
-        { title: 'NREGA Card', fields: ['Card Number', 'Date of Issue'] }
-      ]
-    },
-    {
-      id: 2,
-      title: 'Temporary Address Proof',
-      items: [
+        { title: 'NREGA Card', fields: ['Card Number', 'Date of Issue'] },
         { title: 'Electricity Bill', fields: ['Bill Number', 'Bill Date'] },
         { title: 'Gas Bill', fields: ['Gas Bill Number', 'Connection Date'] },
         { title: 'Mobile Bill', fields: ['Mobile Bill Number', 'Bill Month'] }
       ]
-    }
+    },
+    // {
+    //   id: 2,
+    //   title: 'Temporary Address Proof',
+    //   items: [
+       
+    //   ]
+    // }
   ];
 
   useEffect(() => {
