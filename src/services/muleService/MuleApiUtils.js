@@ -1,8 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
 import instance from "./ApiService";
 import { fetch, useNetInfo } from "@react-native-community/netinfo";
-import { error, log } from "../../utils/ConsoleLogUtils";
-
+import { errorConsoleLog, log } from "../../utils/ConsoleLogUtils";
+import ErrorConstants from "../../constants/ErrorConstants";
 
 
 
@@ -127,4 +127,75 @@ export const nameMatchCheck = () => {
     });
     return mutate;
 
+}
+
+
+export const doOCRForDL = () => {
+    const mutate = useMutation({
+        mutationFn: (body) => {
+            //return instance.post('/digital-utility-v1/api/name-match', body)
+            return new Promise(async (resolve, reject) => {
+
+                try {
+                    log("request body", body)
+                    const response = await instance.post('/digital-kyc-v1/api/drivers-license', body)
+                    resolve(response?.data)
+                    // resolve("saxasx")
+
+
+                } catch (error) {
+                    errorConsoleLog("verifyDrivingLicence>>", error)
+                    reject(ErrorConstants.SOMETHING_WENT_WRONG)
+                }
+            })
+        }
+    });
+    return mutate;
+}
+
+export const doOCRForPassport = () => {
+    const mutate = useMutation({
+        mutationFn: (body) => {
+            //return instance.post('/digital-utility-v1/api/name-match', body)
+            return new Promise(async (resolve, reject) => {
+
+                try {
+                    log("request body", body)
+                    const response = await instance.post('/digital-kyc-v1/api/passport', body)
+                    resolve(response?.data)
+                    // resolve("saxasx")
+
+
+                } catch (error) {
+                    errorConsoleLog("doOCRForPassport>>", error)
+                    reject(ErrorConstants.SOMETHING_WENT_WRONG)
+                }
+            })
+        }
+    });
+    return mutate;
+}
+
+
+export const doOCRForVoterID = () => {
+    const mutate = useMutation({
+        mutationFn: (body) => {
+            //return instance.post('/digital-utility-v1/api/name-match', body)
+            return new Promise(async (resolve, reject) => {
+
+                try {
+                    log("request body", body)
+                    const response = await instance.post('/digital-kyc-v1/api/voterid', body)
+                    resolve(response?.data)
+                    // resolve("saxasx")
+
+
+                } catch (error) {
+                    errorConsoleLog("verifyDrivingLicence>>", error)
+                    reject(ErrorConstants.SOMETHING_WENT_WRONG)
+                }
+            })
+        }
+    });
+    return mutate;
 }

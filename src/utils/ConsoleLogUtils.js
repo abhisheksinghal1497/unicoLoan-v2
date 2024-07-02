@@ -12,7 +12,7 @@ export const warn = (key, msg) => {
     }
 }
 
-export const error = (key, msg) =>{
+export const errorConsoleLog = (key, msg) =>{
     if (isDebug) {
         console.error(key, msg)
     }
