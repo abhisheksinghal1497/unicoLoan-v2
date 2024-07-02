@@ -1,11 +1,10 @@
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, View, Image } from "react-native";
 import React from "react";
 import { horizontalScale } from "../utils/matrcis";
-import { Camera, useCameraDevices } from "react-native-vision-camera";
+import { Camera } from "react-native-vision-camera";
 import { ActivityIndicator } from "react-native-paper";
 
 export default function AdhaarSection({
-  AdhaarText,
   uri,
   cameraRef,
   frontDevice,
