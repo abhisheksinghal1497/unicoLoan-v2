@@ -12,44 +12,187 @@ import Button from '../../components/Button';
 import { getOtherKycList, getTempAddressKycList } from '../../services/ApiUtils';
 import Accordion from 'react-native-collapsible/Accordion';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import ErrorConstant from '../../constants/ErrorConstants'
+import {
+  FormControl,
+  component,
+} from "../../components/FormComponents/FormControl";
+import { useForm } from "react-hook-form";
+import { CaptureAddressConstants } from '../../constants/stringConstants';
+import { doOCRForDL, doOCRForPassport, doOCRForVoterID } from '../../services/muleService/MuleApiUtils';
+import { toast } from '../../utils/functions';
+import ActivityIndicatorComponent from '../../components/ActivityIndicator';
+import { log } from '../../utils/ConsoleLogUtils';
+
 
 const CurrentAddress = ({ navigation }) => {
   const [imageSelected, setImageSelected] = useState('');
   const [activeSections, setActiveSections] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [inputValue1, setInputValue1] = useState('');
-  const [inputValue2, setInputValue2] = useState('');
 
-  const otherkyc = getOtherKycList();
-  const TempKyc = getTempAddressKycList();
+  const [selectedFields, setSelectedFields] = useState([])
+
+  // const otherkyc = getOtherKycList();
+  // const TempKyc = getTempAddressKycList();
+
+
+  const dlCheck = doOCRForDL()
+  const passportCheck = doOCRForPassport()
+  const voterIdCheck = doOCRForVoterID()
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isValid },
+    getValues,
+    setError,
+    watch,
+    setValue,
+    trigger,
+  } = useForm({
+    mode: "onBlur",
+    defaultValues: {},
+  });
+
 
   const options = [
     {
       id: 1,
-      title: 'Please choose the current Address Proof from Below Options.',
+      title: selectedItem ? selectedItem : 'Documents',
       items: [
-        { title: 'Driving License', fields: ['License Number', 'Expiry Date'] },
-        { title: 'Passport', fields: ['Passport Number', 'Country of Issue'] },
-        { title: 'Voter ID', fields: ['Voter ID Number', 'State of Issue'] },
-        { title: 'NREGA Card', fields: ['Card Number', 'Date of Issue'] },
-        { title: 'Electricity Bill', fields: ['Bill Number', 'Bill Date'] },
-        { title: 'Gas Bill', fields: ['Gas Bill Number', 'Connection Date'] },
-        { title: 'Mobile Bill', fields: ['Mobile Bill Number', 'Bill Month'] }
+        {
+          title: CaptureAddressConstants.DL
+        },
+        { title: CaptureAddressConstants.PASSPORT },
+        {
+          title: CaptureAddressConstants.VOTERID
+        },
+        { title: CaptureAddressConstants.NREGACard },
+        { title: CaptureAddressConstants.EBILL },
+        { title: CaptureAddressConstants.GBILL },
+        { title: CaptureAddressConstants.MBILL }
       ]
     },
-    // {
-    //   id: 2,
-    //   title: 'Temporary Address Proof',
-    //   items: [
-       
-    //   ]
-    // }
+
   ];
 
   useEffect(() => {
-    otherkyc?.mutate();
-    TempKyc?.mutate();
-  }, []);
+    try {
+      if (dlCheck.data) {
+        setValue('address', dlCheck.data?.results?.address?.[0].completeAddress)
+      }
+      if (dlCheck.error) {
+
+
+      }
+    } catch (error) {
+      toast("error", ErrorConstant.SOMETHING_WENT_WRONG)
+    }
+
+
+  }, [dlCheck.data, dlCheck.error]);
+
+
+  useEffect(() => {
+    try {
+      if (passportCheck.data) {
+        // setValue('address', passportCheck.data?.results?.address?.[0].completeAddress)
+      }
+      if (passportCheck.error) {
+
+
+      }
+    } catch (error) {
+      toast("error", ErrorConstant.SOMETHING_WENT_WRONG)
+    }
+
+
+  }, [passportCheck.data, passportCheck.error]);
+
+  useEffect(() => {
+    try {
+      if (voterIdCheck.data) {
+        log("voter id >>>>", JSON.stringify(voterIdCheck.data))
+        // setValue('address', passportCheck.data?.results?.address?.[0].completeAddress)
+      }
+      if (voterIdCheck.error) {
+
+
+      }
+    } catch (error) {
+      toast("error", ErrorConstant.SOMETHING_WENT_WRONG)
+    }
+
+
+  }, [voterIdCheck.data, voterIdCheck.error]);
+
+
+
+  const handleGalleryUpload = () => {
+    ImagePicker.openPicker({
+      compressImageQuality: 0.6,
+      includeBase64: true,
+      cropping: true,
+    }).then(image => {
+
+      if (image?.path) {
+        const fileName = image?.path?.split('/').pop();
+        try {
+
+          setImageSelected(fileName);
+          setSelectedFields([
+            {
+              id: "address",
+              label: "Address",
+              type: component.textInput,
+              placeHolder: "Enter address",
+              isRequired: true,
+              value: "",
+              isMultiline: true,
+            },
+          ])
+          setValue('address', "")
+        } catch (error) {
+
+        }
+
+        makeOCRAPICCall(fileName, image)
+
+
+
+      }
+    }).catch(error => {
+      console.log('Error:', error);
+    });
+  };
+
+  const makeOCRAPICCall = async (fileName, image) => {
+    try {
+      const request = {
+
+        "fileData": {
+          "content": `data:${image.mime};base64,${image.data}`,
+          "title": fileName ? fileName : "Doc.png"
+        },
+        "consent": "Y",
+        "caseId": "eeea90ab-f4e0-4d9e-9efa-c03fffbd22c6",
+      }
+
+
+
+      if (selectedItem === CaptureAddressConstants.DL) {
+        dlCheck?.mutate(request)
+
+      } else if (selectedItem === CaptureAddressConstants.VOTERID) {
+        voterIdCheck?.mutate(request)
+
+      } else if (selectedItem === CaptureAddressConstants.PASSPORT) {
+        passportCheck?.mutate(request)
+      }
+    } catch (error) {
+
+    }
+  }
 
   const handleRightIconPress = (index) => {
     if (index === 0) {
@@ -61,14 +204,12 @@ const CurrentAddress = ({ navigation }) => {
 
   const handleAccordionPress = (index) => {
     setActiveSections(activeSections.includes(index) ? [] : [index]);
-    setSelectedItem(null); // Reset selected item when accordion item is pressed
-    setInputValue1('');
-    setInputValue2('');
+
   };
 
   const renderAccordionHeader = (section, index, isActive) => {
     return (
-      <CustomShadow containerStyle={{ margin: 10 }} shadowColor={colors.gray100}>
+      <CustomShadow>
         <TouchableOpacity
           style={[
             styles.selectContainer,
@@ -105,12 +246,17 @@ const CurrentAddress = ({ navigation }) => {
             onPress={() => handleItemPress(section.id, item)}
             style={[
               styles.item,
-              { backgroundColor: activeSections.includes(section.id) ? 'lightgray' : 'white' },
-              selectedItem === item.title ? styles.selectedItem : null
+
+
             ]}
           >
-            <Text>{item.title}</Text>
+            <Text style={{
+              color: selectedItem === item.title ? colors.coreBlue : '#000000',
+              fontSize: selectedItem === item.title ? 16 : 14
+            }}>{item.title}</Text>
+
           </TouchableOpacity>
+
         ))}
       </ScrollView>
     );
@@ -120,22 +266,14 @@ const CurrentAddress = ({ navigation }) => {
     console.log(`Selected item ${item.title} from option ${optionId}`);
     setSelectedItem(item.title);
     // Set dummy values for inputs based on selected item
-    setInputValue1(`Sample ${item.fields[0]}`);
-    setInputValue2(`Sample ${item.fields[1]}`);
+    setImageSelected('');
+    setActiveSections([])
+    // setInputValue1(`Sample ${item.fields[0]}`);
+    // setInputValue2(`Sample ${item.fields[1]}`);
+    //setSelectedFields(item.fields)
   };
 
-  const handleGalleryUpload = () => {
-    ImagePicker.openPicker({
-      width: 300,
-      height: 400,
-      cropping: true,
-    }).then(image => {
-      console.log('image path--', image.path);
-      setImageSelected(image.path);
-    }).catch(error => {
-      console.log('Error:', error);
-    });
-  };
+
 
   const handleCameraUpload = () => {
     ImagePicker.openCamera({
@@ -149,6 +287,13 @@ const CurrentAddress = ({ navigation }) => {
       console.log('Error:', error);
     });
   };
+
+  const submitDoc = async () => {
+    const isValid = await trigger()
+    if (isValid) {
+      //  dlCheck.mutate(watch())
+    }
+  }
 
   return (
     <ScrollView style={{ backgroundColor: '#ffff' }} >
@@ -167,6 +312,7 @@ const CurrentAddress = ({ navigation }) => {
             onPressLeft={() => { navigation.navigate(screens.KYCDocuments); }}
           />
         </View>
+        {(dlCheck.isPending || voterIdCheck.isPending || passportCheck.isPending) && <ActivityIndicatorComponent />}
 
         <View style={[styles.container, { marginHorizontal: horizontalScale(11) }]}>
           <View style={{ marginTop: verticalScale(15), marginBottom: verticalScale(15) }}>
@@ -182,51 +328,60 @@ const CurrentAddress = ({ navigation }) => {
           />
 
           {/* Text Inputs */}
-          {selectedItem && (
+          {/* {selectedItem && (
             <>
               <TextInput
                 style={styles.input}
-                placeholder={`Enter ${options.find(sec => sec.id === 1).items.find(item => item.title === selectedItem).fields[0]}`}
+
                 value={inputValue1}
                 onChangeText={(text) => setInputValue1(text)}
               />
               <TextInput
                 style={styles.input}
-                placeholder={`Enter ${options.find(sec => sec.id === 1).items.find(item => item.title === selectedItem).fields[1]}`}
+
                 value={inputValue2}
                 onChangeText={(text) => setInputValue2(text)}
               />
             </>
-          )}
+          )} */}
+
+          <View style={{ marginVertical: 16 }}>
+
+
+            {selectedItem &&
+
+              <TouchableOpacity
+                disabled={imageSelected ? true : false}
+                onPress={() => handleGalleryUpload()}
+                style={styles.uploadButton}
+              >
+                <Text style={[styles.uploadButtonText, {
+                  borderColor: imageSelected ? colors.grey : colors.coreBlue,
+                  color: imageSelected ? colors.grey : colors.coreBlue,
+                }]}>
+                  {imageSelected ? 'Uploaded' : 'Upload'}
+                </Text>
+              </TouchableOpacity>
+            }
+
+
+          </View>
 
           {/* Upload Button */}
-          <TouchableOpacity
-            disabled={imageSelected ? true : false}
-            onPress={() => handleCameraUpload()}
-            style={styles.uploadButton}
-          >
-            <Text style={[styles.uploadButtonText, {
-              borderColor: imageSelected ? colors.grey : colors.coreBlue,
-              color: imageSelected ? colors.grey : colors.coreBlue,
-            }]}>
-              {imageSelected ? 'Uploaded' : 'Upload'}
-            </Text>
-          </TouchableOpacity>
 
           {/* Display selected image and option */}
-          {imageSelected !== "" && (
+          {imageSelected && (
             <>
-              <View style={{ borderBottomWidth: 1, borderBottomColor: colors.border, width: '100%', alignSelf: 'center', marginVertical: verticalScale(9) }} />
+              <View style={{ borderBottomWidth: 3, borderBottomColor: colors.coreBlue, width: '100%', alignSelf: 'center', marginVertical: verticalScale(9) }} />
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: horizontalScale(5), marginTop: verticalScale(10) }}>
                 <Text style={{ color: colors.surface, fontSize: 15, fontWeight: '500' }}>
-                  {imageSelected.split('/').pop().slice(0, 24)}
+                  {imageSelected}
                 </Text>
                 <TouchableOpacity
                   onPress={() => {
                     setSelectedItem(null);
-                    setImageSelected('');
-                    setInputValue1('');
-                    setInputValue2('');
+                    setImageSelected(null);
+
                   }}
                 >
                   <Image
@@ -239,19 +394,50 @@ const CurrentAddress = ({ navigation }) => {
           )}
 
         </View>
+        {console.log(selectedFields)}
+
+        {imageSelected && selectedFields && selectedFields.map((comp, index) => {
+          return (
+
+            <FormControl
+              compType={comp.type}
+              control={control}
+              validations={comp.validations}
+              name={comp.id}
+              label={comp.label}
+              errors={errors[comp.id]}
+              isRequired={comp.isRequired}
+              placeholder={comp.placeHolder}
+              data={comp.data}
+              key={comp.id}
+
+              watch={watch}
+
+
+
+              showRightComp={comp.showRightComp || false}
+
+              isMultiline={comp.isMultiline}
+              maxLength={comp.maxLength}
+              isDisabled={comp.isDisabled}
+              isUpperCaseRequired={true}
+              isEditable={comp.isEditable}
+            />
+
+          );
+        })}
       </View>
 
       {/* Submit Button */}
       <View style={styles.buttonview}>
-        <Button
-          onPress={() => {
-            alert('Submit');
-            console.log('imageSelected submit', imageSelected);
-          }}
-          type="primary"
-          label="Submit"
-          disabled={imageSelected !== "" ? false : true}
-        />
+        {selectedItem && imageSelected &&
+          <Button
+            onPress={submitDoc}
+            type="primary"
+            label="Continue"
+            disabled={imageSelected !== "" ? false : true}
+          />
+        }
       </View>
     </ScrollView>
   );
@@ -305,12 +491,10 @@ const styles = StyleSheet.create({
   },
   item: {
     padding: 10,
-    marginVertical: 5,
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: '#ccc',
+    marginVertical: 10,
+
   },
   selectedItem: {
-    backgroundColor: 'lightgray',
+    color: 'red',
   },
 });
