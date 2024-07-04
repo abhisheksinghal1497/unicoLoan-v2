@@ -98,36 +98,22 @@ const CaptureSelfie = ({ navigation }) => {
 
   const processFaces = async (imagePath) => {
     try {
-      let result = false;
       const options = {
         landmarkMode: FaceDetectorLandmarkMode.ALL,
         contourMode: FaceDetectorContourMode.ALL,
-        performanceMode: FaceDetectorPerformanceMode.ACCURATE,
-        classificationMode: FaceDetectorClassificationMode.ALL,
+        // performanceMode: FaceDetectorPerformanceMode.FAST,
+        // classificationMode: FaceDetectorClassificationMode.ALL,
       };
       const faces = await FaceDetection.processImage(imagePath, options);
       if (!faces.length) {
         Alert.alert("Can't see any face in the image");
         return false;
       }
-
       if (faces.length > 1) {
         Alert.alert(faces.length + " faces detected in the image.");
         return false;
       }
-
-      faces.forEach((face) => {
-        const res = checkIfFaceInCenter(
-          face.rightEyeOpenProbability,
-          face.leftEyeOpenProbability
-        );
-
-        result = res;
-        if (!result) {
-          Alert.alert("Make sure your head in center and both eyes are open");
-        }
-      });
-      return result;
+      return true;
     } catch (error) {
       console.log("Some error while recognizing face", error);
       return false;
@@ -139,7 +125,6 @@ const CaptureSelfie = ({ navigation }) => {
       setStatus("loading");
       if (cameraRef.current) {
         const photo = await cameraRef.current.takePhoto();
-        console.log("Photo taken:", photo);
         const imagePath = "file://" + photo.path;
         setSelectedImage(imagePath);
         const result = await processFaces(imagePath);
