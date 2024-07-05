@@ -6,7 +6,7 @@ import uuid from 'react-native-uuid';
 import { MULE_API_DEV_END_POINT, MULE_API_CLIENT_ID, MULE_API_CLIENT_SECRET, MULE_API_SERVICE_TIMEOUT } from "@env"
 const instance = axios.create({
     baseURL: MULE_API_DEV_END_POINT, // mulesoftApi 
-    timeout: 15000, // 25 seconds
+    timeout: 25000, // 25 seconds
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

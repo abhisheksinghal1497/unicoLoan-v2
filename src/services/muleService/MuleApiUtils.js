@@ -156,12 +156,24 @@ export const doOCRForDL = () => {
 export const doOCRForPassport = () => {
     const mutate = useMutation({
         mutationFn: (body) => {
-            //return instance.post('/digital-utility-v1/api/name-match', body)
+
             return new Promise(async (resolve, reject) => {
 
                 try {
-                    log("request body", body)
-                    const response = await instance.post('/digital-kyc-v1/api/passport', body)
+                    var result = body?.substring(1, body.length - 1);
+                    const request = {
+
+                        "consent": "Y",
+                        "caseId": "eeea90ab-f4e0-4d9e-9efa-c03fffbd22c6",
+                        
+                        "fileData": {
+                            "content": `${result}`,
+                            "title": "passport"
+                        },
+
+                    }
+
+                    const response = await instance.post('/digital-kyc-v1/api/passport', request)
                     resolve(response?.data)
                     // resolve("saxasx")
 
@@ -171,6 +183,7 @@ export const doOCRForPassport = () => {
                     reject(ErrorConstants.SOMETHING_WENT_WRONG)
                 }
             })
+
         }
     });
     return mutate;
