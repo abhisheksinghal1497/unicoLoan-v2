@@ -11,7 +11,8 @@ import { getPinCodes, getHomeScreenDetails, getHomeScreenOurServices } from '../
 import CustomModal from '../../components/CustomModal';
 import Button from "../../components/Button";
 import PincodeModal from '../../components/PincodeModal';
-
+import { Logout } from "../../services/Logout";
+import { oauth } from 'react-native-force';
 
 const HomeScreen = ({ navigation }) => {
   const flatListRef = useRef(null);
@@ -69,13 +70,22 @@ const HomeScreen = ({ navigation }) => {
 
   const cardWidth = 350;
 
-
+  const logoutHandler = async () => {
+    // await Logout();
+    return new Promise((resolve, reject) => {
+      oauth.logout(
+        (res) => resolve(res),
+        (err) => reject(err)
+      );
+    });
+  };
 
   const handleNavigation = (index) => {
 
     switch (index) {
       case 0:
-        navigation.navigate(screens.EmiCalculator)
+        // navigation.navigate(screens.EmiCalculator)
+        logoutHandler()
         break;
       case 1:
         const ProgressBarPercent = 0;

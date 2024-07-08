@@ -25,6 +25,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package com.unico_loan.react;
+import android.util.Log;
 
 import com.salesforce.androidsdk.reactnative.app.SalesforceReactSDKManager;
 import com.salesforce.androidsdk.reactnative.ui.SalesforceReactActivity;
@@ -34,29 +35,82 @@ import androidx.fragment.app.FragmentManager;
 
 public class MainActivity extends SalesforceReactActivity {
 
-	// public FragmentManager fragmentManager;
+	public FragmentManager fragmentManager;
 
 
 
-	// @Override
-	// protected void onCreate(Bundle savedInstanceState) {
-	// 	super.onCreate(savedInstanceState);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-	// 	// Initialize fragmentManager
-	// 	fragmentManager = getSupportFragmentManager();
+		fragmentManager = getSupportFragmentManager();
 
-	// 	// Call the method to present the opt-in dialog if needed
-	// 	presentBiometricOptInDialog();
-	// }
+		Log.d("Biometricstatus", "Biometric opted in status: " + SalesforceReactSDKManager.getInstance()
+                 .getBiometricAuthenticationManager().isEnabled() );
+		Log.d("Biometricstatus", "Biometric opted in status: " + SalesforceReactSDKManager.getInstance()
+				.getBiometricAuthenticationManager()
+				.hasBiometricOptedIn() );
 
-	// /**
-	//  * Determines if biometric authentication opt-in dialog needs to be presented.
-	//  */
-	// private void presentBiometricOptInDialog() {
-	// 	SalesforceReactSDKManager.getInstance()
-	// 			.getBiometricAuthenticationManager()
-	// 			.presentOptInDialog(fragmentManager);
-	// }
+        SalesforceReactSDKManager.getInstance()
+                .getBiometricAuthenticationManager().biometricOptIn(true);
+		presentBiometricOptInDialog();
+        enableBiometricLoginButton();
+//        enableBiometricLoginButton();
+//        SalesforceReactSDKManager.getInstance().getBiometricAuthenticationManager().enableNativeBiometricLoginButton(true);
+		// Check if biometric authentication is already opted in
+//		boolean biometricOptedIn = checkBiometricOptedIn();
+
+		
+
+
+		// Call the method to present the opt-in dialog or enable the biometric login button
+//		if (!biometricOptedIn) {
+//			presentBiometricOptInDialog();
+//		} else {
+//			enableBiometricLoginButton();
+//		}
+//
+	// Call the method to present the opt-in dialog if needed
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		// Check and log biometric enabled status in onResume
+		Log.d("Biometricstatus", "Biometric enabled status in onResume: " +
+				SalesforceReactSDKManager.getInstance().getBiometricAuthenticationManager().isEnabled());
+	}
+
+	/**
+	 * Checks if biometric authentication is already opted in.
+	 * @return True if opted in, false otherwise.
+	 */
+	private boolean checkBiometricOptedIn() {
+		return SalesforceReactSDKManager.getInstance()
+				.getBiometricAuthenticationManager()
+				.hasBiometricOptedIn();
+	}
+
+	/**
+	 * Presents the biometric authentication opt-in dialog.
+	 */
+	private void presentBiometricOptInDialog() {
+		SalesforceReactSDKManager.getInstance()
+				.getBiometricAuthenticationManager()
+				.presentOptInDialog(fragmentManager);
+	}
+
+	/**
+	 * Enables the native biometric login button.
+	 */
+	private void enableBiometricLoginButton() {
+		SalesforceReactSDKManager.getInstance()
+				.getBiometricAuthenticationManager()
+				.enableNativeBiometricLoginButton(true);
+	}
+
+
 
 	/**
 	 * Override to control whether login should happen when the application launches.
@@ -66,7 +120,7 @@ public class MainActivity extends SalesforceReactActivity {
 
 	@Override
 	public boolean shouldAuthenticate() {
-		return true;
+		return false;
 	}
 
 	/**

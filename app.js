@@ -51,6 +51,7 @@ import { onlineManager } from "@tanstack/react-query/build/legacy";
 import HomeScreen from "./src/screens/HomeScreen";
 import ApplicationDetails from "./src/screens/ApplicationDetails";
 import ErrorScreen from "./src/screens/ErrorScreen";
+import { isSensorAvailable, biometricPrompt } from 'react-native-biometrics';
 const queryClient = new QueryClient();
 
 const ContactListScreen = () => {
@@ -70,17 +71,56 @@ const ContactListScreen = () => {
     ]);
     const { colors } = useTheme();
 
+    
+
     useEffect(() => {
-        oauth.getAuthCredentials(
-            () => fetchData(), // already logged in
-            () => {
-                oauth.authenticate(
-                    () => fetchData(),
-                    (error) => console.log("Failed to authenticate:" + error)
-                );
-            }
+        console.log("Came hereee")
+        const authenticateWithBiometrics = () => {
+          isSensorAvailable()
+            .then((resultObject) => {
+              if (resultObject.biometryType === 'Biometrics') {
+                biometricPrompt('Authenticate with biometric to continue')
+                  .then(() => {
+                    console.log('Biometric authentication successful');
+                    // Handle successful authentication, e.g., navigate to home screen
+                  })
+                  .catch(() => {
+                    console.error('Biometric authentication failed');
+                    // Handle authentication failure, e.g., show login screen
+                  });
+              } else {
+                console.error('Biometric sensor not available');
+                // Handle case where biometric sensor is not available
+              }
+            })
+            .catch((error) => {
+              console.error(error.message);
+              // Handle error, e.g., show login screen
+            });
+        };
+    
+        // Check if OAuth session exists
+        oauth.authenticate(
+          () => {
+            // OAuth session exists, now authenticate with biometrics
+            authenticateWithBiometrics();
+          },
+          () => {
+            alert("herecame")
+            // No OAuth session, handle accordingly (e.g., show login screen)
+            oauth.getAuthCredentials(
+                () => fetchData(), // already logged in
+                // () => {
+                //     oauth.authenticate(
+                //         () => fetchData(),
+                //         (error) => console.log("Failed to authenticate:" + error)
+                //     );
+                // }
+            );
+            console.log('No OAuth session');
+          }
         );
-    }, []);
+      }, []);
 
     function fetchData() {
         net.query("SELECT Id, Name FROM Contact LIMIT 100", (response) => { });
