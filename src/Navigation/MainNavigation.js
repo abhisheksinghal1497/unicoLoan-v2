@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../screens/HomeScreen';
@@ -30,10 +30,16 @@ import CurrentAddress from '../screens/CurrentAddress';
 import OtpInput from '../components/FormComponents/OtpInput';
 import OtpScreen from '../screens/OtpEnter';
 import PinCodeVerify from '../screens/PinCode';
+import {makeMetadataApiCall} from "../services/sfDataServices/salesforceApiService";
 
 const Stack = createStackNavigator();
 
 const Dashboard = () => {
+  const getData = makeMetadataApiCall()
+  useEffect(() => {
+    getData.mutate()
+
+  }, [])
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}
@@ -125,15 +131,15 @@ const Dashboard = () => {
           name={screens.EmiCalculator}
           component={EmiCalculator}
         />
-         <Stack.Screen
+        <Stack.Screen
           name={screens.CurrentAddress}
           component={CurrentAddress}
         />
-         <Stack.Screen
+        <Stack.Screen
           name={screens.OtpScreen}
           component={OtpScreen}
         />
-         <Stack.Screen
+        <Stack.Screen
           name={screens.PinCodeVerify}
           component={PinCodeVerify}
         />
@@ -151,7 +157,7 @@ const Dashboard = () => {
             headerShown: true,
           }}
         />
-         <Stack.Screen
+        <Stack.Screen
           name={screens.Profile}
           component={Profile}
         />

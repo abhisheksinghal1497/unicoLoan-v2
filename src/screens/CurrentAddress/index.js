@@ -98,28 +98,28 @@ const CurrentAddress = ({ navigation }) => {
       isMultiline: true,
     },]
 
-    const voterIdFields = [
-      {
-        id: "voterID",
-        label: "Voter Id No",
-        type: component.textInput,
-        placeHolder: "Enter Voter Id No",
-        isRequired: true,
-        value: "",
-      },
-    ]
+  const voterIdFields = [
+    {
+      id: "voterID",
+      label: "Voter Id No",
+      type: component.textInput,
+      placeHolder: "Enter Voter Id No",
+      isRequired: true,
+      value: "",
+    },
+  ]
 
-    const neregaFields = [
-      //NREGA ID
-      {
-        id: "neragaID",
-        label: "NREGA ID",
-        type: component.textInput,
-        placeHolder: "Enter NREGA ID",
-        isRequired: true,
-        value: "",
-      },
-    ]
+  const neregaFields = [
+    //NREGA ID
+    {
+      id: "neragaID",
+      label: "NREGA ID",
+      type: component.textInput,
+      placeHolder: "Enter NREGA ID",
+      isRequired: true,
+      value: "",
+    },
+  ]
 
   const electicityFields = [
     // Bill No, Bill Date 
@@ -209,9 +209,9 @@ const CurrentAddress = ({ navigation }) => {
 
           ]
         },
-        { title: CaptureAddressConstants.PASSPORT,fields: [...passPortFields] }, 
+        { title: CaptureAddressConstants.PASSPORT, fields: [...passPortFields] },
         {
-          title: CaptureAddressConstants.VOTERID, fields:[...voterIdFields]
+          title: CaptureAddressConstants.VOTERID, fields: [...voterIdFields]
         },
         { title: CaptureAddressConstants.NREGACard, fields: [...neregaFields] },
         { title: CaptureAddressConstants.EBILL, fields: [...electicityFields] },
@@ -384,8 +384,8 @@ const CurrentAddress = ({ navigation }) => {
           } else if (type === 2) {
             setSecondImageSelected(image)
           }
-         
-         
+
+
 
         } catch (error) {
 
@@ -531,6 +531,7 @@ const CurrentAddress = ({ navigation }) => {
     const isValid = await trigger()
     if (isValid) {
       //  dlCheck.mutate(watch())
+      navigation?.navigate(screens.LoanDetails)
     }
   }
 
