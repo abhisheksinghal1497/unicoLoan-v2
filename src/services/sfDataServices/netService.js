@@ -1,4 +1,4 @@
-import { net } from 'react-native-force';
+import { net, forceClient } from 'react-native-force';
 
 export const QueryObject = (query) => {
   console.log(query,'response here')
@@ -15,3 +15,22 @@ export const QueryObject = (query) => {
     );
   });
 };
+
+
+
+export const getMetaData = (objectType) => {
+  return new Promise((resolve, reject) => {
+    net.describe(
+      objectType,
+      (res) => {
+        resolve(res);
+      },
+      (err) => {
+        reject(err);
+      }
+    );
+  });
+};
+
+
+

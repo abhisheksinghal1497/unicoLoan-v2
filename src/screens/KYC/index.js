@@ -241,7 +241,7 @@ const KYC = (props) => {
 
       let dataURL = await canvasRef.current.toDataURL()
       // let newData =  dataURL.replace(/^data:image\/?[A-z]*;base64,/);
-      log(dataURL)
+      
       uploadAadharToMuleService?.mutate(dataURL)
     } catch (error) {
       alert(error)

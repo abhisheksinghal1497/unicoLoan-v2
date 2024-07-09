@@ -18,7 +18,7 @@ import {
 
 export default function CustomDatepicker({
   control,
-  validations={},
+  validations = {},
   setValue,
   name,
   label,
@@ -26,7 +26,7 @@ export default function CustomDatepicker({
   isDisabled = false,
   isRequired = false,
   isVisible = true,
-  trigger = () => {},
+  trigger = () => { },
   ...rest
 }) {
   const { colors: themeColor } = useTheme();
@@ -37,21 +37,32 @@ export default function CustomDatepicker({
   const jsCoreDateCreator = (dateString) => {
     // dateString *HAS* to be in this format "YYYY-MM-DD HH:MM:SS"
     // console.log('date String', dateString, typeof dateString);
-    if (typeof dateString !== "string") {
-      return dateString;
-    } else {
-      return new Date(dateString);
+    try {
+      if (typeof dateString !== "string") {
+        return dateString;
+      } else {
+        return new Date(dateString);
+      }
+    } catch (error) {
+      return new Date()
     }
+
   };
   const formatDate = (date) => {
-    if (!date) return "";
-    return moment(date).format("DD-MM-YYYY");
+    try {
+      if (!date) return "";
+      const data = moment(date).format("DD-MM-YYYY");
+      if (data?.isValid()) { return data } else { return date }
+    } catch (error) {
+      return date
+    }
+
   };
   return (
     <View>
       <Controller
         control={control}
-        rules={{required: isRequired, ...validations}}
+        rules={{ required: isRequired, ...validations }}
         render={({
           field: { onChange, onBlur, value },
           fieldState: { error },
@@ -92,7 +103,8 @@ export default function CustomDatepicker({
 
               <DatePicker
                 modal
-                date={value ? jsCoreDateCreator(value) : new Date()}
+                // date={value ? jsCoreDateCreator(value) : new Date()}
+                date={new Date()}
                 open={open}
                 onBlur={onBlur}
                 onCancel={() => {
