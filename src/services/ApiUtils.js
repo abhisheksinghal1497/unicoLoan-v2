@@ -6,6 +6,12 @@ import {
 
 import { query } from '../constants/Queries';
 import { net } from 'react-native-force';
+import { log } from "../utils/ConsoleLogUtils";
+import { validations } from "../constants/validations";
+import { component } from "../components/FormComponents/FormControl";
+import { getDateYearsBack } from "../utils/dateUtil";
+import { GetPicklistValues } from "../utils/functions";
+import { getLeadFields } from "./sfDataServices/saleforceApiUtils";
 
 // export const getPinCodes = () => {
 //   const mutate = useMutation({
@@ -161,7 +167,7 @@ export const getHomeScreenCarousel = () => {
             {
               type: 'asset',
               uri: require('../../src/assets/AdCardMain.png'),
-            }, 
+            },
             {
               type: 'asset',
               uri: require('../../src/assets/ad1.png'),
@@ -630,3 +636,340 @@ export const submitPanApi = () => {
 
   return mutate;
 };
+
+
+export const getApplicationDetailsForm = () => {
+  const mutate = useMutation({
+    networkMode: 'always',
+    mutationFn: async (body) => {
+
+      return new Promise(async(resolve, reject) => {
+        try {
+
+          const fieldArray = await getLeadFields()
+
+
+          const mock_data = [
+            {
+              id: "rmUser",
+              label: "RM USER",
+              type: component.dropdown,
+              placeHolder: "Select User",
+              validations: validations.required,
+              maxLength: 10,
+              // keyboardtype: "numeric",
+              isRequired: true,
+              data: [],
+              value: {},
+            },
+            {
+              id: "applicationType",
+              label: "Applicant Type",
+              type: component.textInput,
+              placeHolder: "Applicant Type",
+              validations: validations.text,
+              isRequired: false,
+              value: "",
+            },
+            {
+              id: "customerProfile",
+              label: "Customer Profile",
+              type: component.dropdown,
+              placeHolder: "Select Customer Profile",
+              validations: validations.text,
+              maxLength: 10,
+              keyboardtype: "numeric",
+              isRequired: true,
+              data: GetPicklistValues(fieldArray, "Customer_Profile__c"),
+              value: {},
+            },
+            {
+              id: "firstName",
+              label: "First Name",
+              type: component.textInput,
+              placeHolder: "Enter first Name",
+              validations: validations.name,
+              isRequired: true,
+              value: "",
+            },
+            {
+              id: "middleName",
+              label: "Middle Name",
+              type: component.textInput,
+              placeHolder: "Enter middle Name",
+              validations: validations.nameWithoutRequired,
+              isRequired: false,
+              value: "",
+            },
+            {
+              id: "lastName",
+              label: "Last Name",
+              type: component.textInput,
+              placeHolder: "Enter last Name",
+              validations: validations.name,
+              isRequired: true,
+              value: "",
+            },
+            {
+              id: "dob",
+              label: "Date of Birth",
+              type: component.datetime,
+              placeHolder: "DD-MM-YYYY",
+              validations: validations.text,
+              isRequired: false,
+              value: "",
+              datepickerProps: {
+                minimumDate: getDateYearsBack(18),
+                maximumDate: getDateYearsBack(100),
+              },
+            },
+            {
+              id: "mobileNumber",
+              label: "Mobile number",
+              type: component.textInput,
+              placeHolder: "Enter mobile number",
+              validations: validations.phone,
+              isRequired: true,
+              value: "",
+              isDisabled: true,
+            },
+            {
+              id: "alternateMobileNumber",
+              label: "Alternate mobile number",
+              type: component.textInput,
+              placeHolder: "Enter alternate mobile number",
+              validations: validations.phoneWithoutRequired,
+              isRequired: false,
+              value: "",
+              keyboardtype: "numeric",
+            },
+
+            {
+              id: "email",
+              label: "Email",
+              type: component.textInput,
+              placeHolder: "Enter email",
+              validations: validations.email,
+              isRequired: false,
+              value: "",
+              isDisabled: true,
+            },
+
+            {
+              id: "product",
+              label: "Product",
+              type: component.dropdown,
+              placeHolder: "Select product",
+              validations: validations.text,
+              maxLength: 10,
+              // keyboardtype: "numeric",
+              isRequired: true,
+              data: [
+                {
+                  id: "product_type_1",
+                  label: "Housing Loan",
+                  value: "Housing Loan",
+                },
+
+                {
+                  id: "product_type_2",
+                  label: "Non Housing Loan",
+                  value: "Non Housing Loan",
+                },
+              ],
+              value: {},
+            },
+
+            {
+              id: "tenure",
+              label: "Tenure",
+              type: component.textInput,
+              placeHolder: "Enter requested tenure in months",
+              validations: validations.numberOnly,
+              isRequired: false,
+              keyboardtype: "numeric",
+              value: "",
+            },
+
+            {
+              id: "loanAmount",
+              label: "Loan Amount",
+              type: component.textInput,
+              placeHolder: "Enter required loan amount",
+              validations: validations.numberOnlyRequired,
+              keyboardtype: "numeric",
+              isRequired: true,
+              value: "",
+            },
+
+            {
+              id: "propertyIdentified",
+              label: "Property Identified",
+              type: component.dropdown,
+              placeHolder: "Select answer",
+              validations: validations.text,
+              isRequired: false,
+              data: [
+                {
+                  id: "propertyIdentified_type_1",
+                  label: "Yes",
+                  value: "Yes",
+                },
+
+                {
+                  id: "propertyIdentified_type_2",
+                  label: "No",
+                  value: "No",
+                },
+              ],
+              value: {},
+            },
+
+            {
+              id: "presentAccommodation",
+              label: "Present Accommodation",
+              type: component.dropdown,
+              placeHolder: "Select Present Accommodation",
+              validations: validations.text,
+              isRequired: true,
+              data: [
+                {
+                  id: "presentAccommodation_type_1",
+                  label: "own",
+                  value: "own",
+                },
+
+                {
+                  id: "presentAccommodation_type_2",
+                  label: "family",
+                  value: "family",
+                },
+                {
+                  id: "presentAccommodation_type_3",
+                  label: "rented",
+                  value: "rented",
+                },
+                {
+                  id: "presentAccommodation_type_4",
+                  label: "employer",
+                  value: "employer",
+                },
+              ],
+              value: {},
+            },
+
+            {
+              id: "periodOfStay",
+              label: "Period of stay",
+              type: component.textInput,
+              placeHolder: "YY-MM",
+              validations: validations.yyMMDate,
+              isRequired: true,
+              value: "",
+            },
+            {
+              id: "rentPerMonth",
+              label: "Rent per month",
+              type: component.textInput,
+              placeHolder: "Rent per month",
+              validations: validations.numberOnly,
+              isRequired: true,
+              keyboardtype: "numeric",
+              value: "",
+            },
+            {
+              id: "employmentExperience",
+              label: "Employment experience",
+              type: component.textInput,
+              placeHolder: "YY-MM",
+              validations: validations.yyMMDate,
+              isRequired: true,
+              value: "",
+            },
+            {
+              id: "totalWorkExperience",
+              label: "Total Work experience",
+              type: component.textInput,
+              placeHolder: "YY-MM",
+              validations: validations.yyMMDate,
+              isRequired: true,
+              value: "",
+            },
+            {
+              id: "familyDependant",
+              label: "Family Dependant",
+              type: component.textInput,
+              placeHolder: "Enter Family Dependant",
+              validations: validations.numberOnlyRequired,
+              isRequired: true,
+              keyboardtype: "numeric",
+              value: "",
+            },
+
+            {
+              id: "familyDependantChildren",
+              label: "Family Dependant Children",
+              type: component.textInput,
+              placeHolder: "Enter Family Dependant Children",
+              validations: validations.numberOnlyRequired,
+              isRequired: true,
+              keyboardtype: "numeric",
+              value: "",
+            },
+
+            {
+              id: "familyDependantOther",
+              label: "Family Dependant Other",
+              type: component.textInput,
+              placeHolder: "Enter Family Dependant Other",
+              validations: validations.numberOnlyRequired,
+              isRequired: true,
+              keyboardtype: "numeric",
+              value: "",
+            },
+
+            {
+              id: "totalBusinessExperience",
+              label: "Total Business experience",
+              type: component.textInput,
+              placeHolder: "YY-MM",
+              validations: validations.yyMMDate,
+              isRequired: true,
+              value: "",
+            },
+
+            {
+              id: "address",
+              label: "Address",
+              type: component.textInput,
+              placeHolder: "Enter address",
+              validations: validations.text,
+              isRequired: true,
+              value: "",
+              isMultiline: true,
+            },
+
+            {
+              id: "pincode",
+              label: "Pincode",
+              type: component.textInput,
+              placeHolder: "Enter Pincode",
+              validations: validations.numberOnlyRequired,
+              isRequired: true,
+              value: "",
+              keyboardtype: "numeric",
+            },
+          ];
+         
+          resolve([...mock_data])
+        } catch (error) {
+         
+        }
+      })
+
+    },
+    
+  })
+  return mutate
+
+}

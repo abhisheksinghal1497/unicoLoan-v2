@@ -30,7 +30,7 @@ import CurrentAddress from '../screens/CurrentAddress';
 import OtpInput from '../components/FormComponents/OtpInput';
 import OtpScreen from '../screens/OtpEnter';
 import PinCodeVerify from '../screens/PinCode';
-import {makeMetadataApiCall} from "../services/sfDataServices/salesforceApiService";
+import { makeMetadataApiCall } from "../services/sfDataServices/salesforceApiService";
 
 const Stack = createStackNavigator();
 
@@ -43,7 +43,7 @@ const Dashboard = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}
-        initialRouteName={screens.HomeScreen}>
+        initialRouteName={screens.ApplicantDetails}>
         <Stack.Screen
           name={screens.Splash}
           component={Splash}

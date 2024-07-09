@@ -1,5 +1,6 @@
 import { Alert } from 'react-native';
 import Toast from 'react-native-toast-message';
+import { log } from './ConsoleLogUtils';
 
 export const alert = (title, subTitle, onPressOK, onPressCancel) => {
     if (onPressCancel) {
@@ -67,3 +68,20 @@ export function validateOtp(otp) {
 
 
 }
+
+export const GetPicklistValues = (arr, fieldName) => {
+    try {
+        if (!arr || !fieldName) {
+            return {};
+        }
+        const data = arr?.find((value) => value.name === fieldName)?.picklistValues;
+        console.log("hari>>>>>>>>>>>>>>>>>>>data", data);
+
+        return data
+    } catch (error) {
+        console.log("error>>>>>", error)
+        
+    }
+
+
+};
