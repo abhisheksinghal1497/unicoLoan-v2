@@ -395,21 +395,6 @@ const LoanDetails = (props) => {
 };
   return (
     <View style={styles.container}>
-      {/* <Header
-        title={HeaderTexts.loanDetails}
-        titleStyle={styles.headerTitle}
-        left={require("../../../assets/images/Back.png")}
-        leftImageProps={styles.backImg}
-        onPressLeft={() => {
-          props?.navigation.goBack();
-        }}
-        right={require("../../images/question.png")}
-        onPressRight={() => {
-          toggleModal();
-        }}
-        colour="transparent"
-      /> */}
-
     <Header        
        title="Loan Details"
        left={assets.back}

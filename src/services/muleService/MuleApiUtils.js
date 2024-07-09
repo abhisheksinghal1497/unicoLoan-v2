@@ -212,3 +212,20 @@ export const doOCRForVoterID = () => {
     });
     return mutate;
 }
+
+export const makeAdhaarEKYCCall = () => {
+    const mutate = useMutation({
+        mutationFn: (body) => {
+            //return instance.post('/digital-utility-v1/api/name-match', body)
+            return new Promise(async (resolve, reject) => {
+
+              setTimeout(() => {
+                resolve(body)
+              }, 2000);
+            })
+        }
+    });
+    return mutate;
+}
+
+

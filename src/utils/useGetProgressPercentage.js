@@ -5,7 +5,6 @@ import { screens } from "../constants/screens";
 const useGetProgressPercentage = () => {
   const route = useRoute();
   const routeName = route.name;
-  console.log('ROUTE NAME',route.name);
   const ProgressBarPercent = route?.params?.ProgressBarPercent;
   let percentage = 0;
   if(ProgressBarPercent){
@@ -13,7 +12,13 @@ const useGetProgressPercentage = () => {
   }else if(routeName === screens.ApplicantDetails){
     percentage = 10;
   }else if(routeName === screens.PanDetails){
-    percentage = 25;
+    percentage = 40;
+  }else if(routeName === screens.KYC){
+    percentage = 60;
+  }else if(routeName === screens.LoanDetails){
+    percentage = 80;
+  }else if(routeName === screens.Eligibility){
+    percentage = 100;
   }
   return percentage;
 };

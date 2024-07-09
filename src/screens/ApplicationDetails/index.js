@@ -1,4 +1,10 @@
-import { ScrollView, Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  ScrollView,
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {
@@ -17,13 +23,19 @@ import { assets } from "../../assets/assets";
 import HelpModal from "./component/HelpModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getDateYearsBack } from "../../utils/dateUtil";
-import { getUserDetailQuery } from "./../../services/ApiUtils";
+import {
+  getUserDetailQuery,
+  useSubmitApplicationFormData,
+} from "./../../services/ApiUtils";
 import DimensionUtils from "../../utils/DimensionUtils";
 import CustomModal from "../../components/CustomModal";
 import { Image } from "react-native";
 import { getApplicationDetailsForm } from "./../../services/ApiUtils";
 import { getMetaData } from "../../services/sfDataServices/netService";
 import { log } from "../../utils/ConsoleLogUtils";
+import { useRoute } from "@react-navigation/native";
+import ActivityIndicatorComponent from "../../components/ActivityIndicator";
+import ErrorConstants from "../../constants/ErrorConstants";
 
 const initialData = [
   {
@@ -49,19 +61,20 @@ const initialData = [
 ];
 
 export default function ApplicationDetails(props) {
-
+  const route = useRoute();
+  const { pincode = "400001" } = route.params || {};
   const [isVerified, setIsVerified] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [{ data = {}, error }] = getUserDetailQuery();
   const [modalVisible2, setModalVisible2] = useState(false);
-  const [isChecked, setIsChecked] = useState(true);
-  const getFormData = getApplicationDetailsForm()
-  const [mock_data, setMockData] = useState([])
-
+  const [isChecked, setIsChecked] = useState(false);
+  const getFormData = getApplicationDetailsForm();
+  const [mock_data, setMockData] = useState([]);
+  const applicationFormMutate = useSubmitApplicationFormData();
 
   useEffect(() => {
-    getFormData?.mutate()
-  }, [])
+    getFormData?.mutate({ pincode: pincode });
+  }, []);
 
   const handleRightIconPress = (index) => {
     if (index === 0) {
@@ -73,40 +86,42 @@ export default function ApplicationDetails(props) {
 
   useEffect(() => {
     if (getFormData?.data) {
-      log(">>>>>>", getFormData?.data)
-      setMockData(getFormData?.data)
+      log(">>>>>>", getFormData?.data);
+      setMockData(getFormData?.data);
     }
-  }, [getFormData?.data])
-
-
+  }, [getFormData?.data]);
 
   // const allFields = mock_data.map
 
   const TnC = () => {
     // if (!isChecked){
-    setModalVisible2(true)
+    setModalVisible2(true);
     // }
-  }
+  };
 
   const ok = () => {
-    setModalVisible2(false)
-  }
+    setModalVisible2(false);
+  };
 
   const handleCheckBoxClick = () => {
     setIsChecked(!isChecked);
-    setModalVisible2(true)
+    setModalVisible2(true);
   };
 
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
     watch,
     setValue,
     trigger,
   } = useForm({
     mode: "onBlur",
-    defaultValues: { LeadSource: "Customer Mobile App", branchName: "" },
+    defaultValues: {
+      LeadSource: "Customer Mobile App",
+      branchName: "",
+      Pincode__c: pincode,
+    },
   });
 
   const { colors } = useTheme();
@@ -146,17 +161,34 @@ export default function ApplicationDetails(props) {
     }
   }, [data]);
 
-  const onSubmit = async () => {
+  const onSubmit = async (data) => {
     try {
       const isValid = await trigger();
-      if (isValid) {
-        props?.navigation?.navigate(screens.PanDetails);
-      }
+      if (!isValid) return;
+      const data = new watch();
+      applicationFormMutate.mutate(data);
+      //
     } catch (error) {
       console.log("IN ERROR");
     }
   };
-  console.log(errors, 'isValid erors')
+
+  useEffect(() => {
+    if (applicationFormMutate.data) {
+      props?.navigation?.navigate(screens.PanDetails, {
+        applicationDetails: applicationFormMutate.data,
+      });
+    }
+  }, [applicationFormMutate.data]);
+
+  useEffect(() => {
+    if (applicationFormMutate.error) {
+      log('applicationFormMutate error', applicationFormMutate.error);
+      alert(ErrorConstants.SOMETHING_WENT_WRONG)
+    }
+  }, [applicationFormMutate.error]);
+
+  console.log(errors, "isValid erors");
 
   const ChangeValue = async (value, id) => {
     setValue(id, value);
@@ -202,59 +234,10 @@ export default function ApplicationDetails(props) {
   const toggleModal = () => setShowModal(!showModal);
   const style = styles(colors);
 
+  if (getFormData?.isPending) {
+    return <ActivityIndicatorComponent />;
+  }
 
-
-  const getPercentage = () => {
-    const customerProfile = watch("customerProfile");
-    const isRented = watch("presentAccommodation") === "rented";
-
-    const { totalRequiredFields, filledRequiredFields } = mock_data.reduce(
-      (acc, field) => {
-        if (field.isRequired) {
-          if (!isRented && field.id === "rentPerMonth") {
-            return acc;
-          }
-
-          if (
-            customerProfile !== "salaried" &&
-            (field.id === "employmentExperience" ||
-              field.id === "totalWorkExperience")
-          ) {
-            return acc;
-          }
-
-          if (
-            field.id === "totalBusinessExperience" &&
-            customerProfile !== "self-employed"
-          ) {
-            return acc;
-          }
-
-          acc.totalRequiredFields++;
-          if (!!watch(field.id)) {
-            acc.filledRequiredFields++;
-          }
-        }
-        return acc;
-      },
-      { totalRequiredFields: 0, filledRequiredFields: 0 }
-    );
-
-    let completionPercentage = 0;
-    if (totalRequiredFields > 0) {
-      completionPercentage = (filledRequiredFields / totalRequiredFields) * 100;
-    }
-
-    console.log({
-      totalRequiredFields,
-      completionPercentage,
-      filledRequiredFields,
-    });
-
-    return completionPercentage;
-  };
-
-  const percentage = getPercentage();
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <HelpModal
@@ -271,14 +254,23 @@ export default function ApplicationDetails(props) {
         <Header
           title="Application Details"
           left={assets.back}
-          rightImages={[{ source: assets.chat, }, { source: assets.questionRound, },]}
-          leftStyle={{ height: verticalScale(15), width: verticalScale(15), }}
-          leftImageProps={{ resizeMode: "contain", }}
-          rightStyle={{ height: verticalScale(23), width: verticalScale(23), marginHorizontal: 10 }}
+          rightImages={[
+            { source: assets.chat },
+            { source: assets.questionRound },
+          ]}
+          leftStyle={{ height: verticalScale(15), width: verticalScale(15) }}
+          leftImageProps={{ resizeMode: "contain" }}
+          rightStyle={{
+            height: verticalScale(23),
+            width: verticalScale(23),
+            marginHorizontal: 10,
+          }}
           rightImageProps={{ resizeMode: "contain" }}
-          titleStyle={{ fontSize: verticalScale(18), }}
+          titleStyle={{ fontSize: verticalScale(18) }}
           onPressRight={handleRightIconPress}
-          onPressLeft={() => { props.navigation.goBack(); }}
+          onPressLeft={() => {
+            props?.navigation?.goBack();
+          }}
         />
       </View>
       <ScrollView contentContainerStyle={style.scrollviewStyle}>
@@ -289,6 +281,7 @@ export default function ApplicationDetails(props) {
         <View
           style={{ marginHorizontal: DimensionUtils.pixelSizeHorizontal(15) }}
         >
+          {applicationFormMutate?.isPending && <ActivityIndicatorComponent />}
           {mock_data.map((comp, index) => {
             if (!checkFormCondition(comp.id)) {
               return <></>;
@@ -312,45 +305,62 @@ export default function ApplicationDetails(props) {
                 onChangeText={(value) => ChangeValue(value, comp.id)}
                 type={comp.keyboardtype}
                 trigger={trigger}
-              // showRightComp={true}
-              // rightComp={() =>
-              //   isVerified ? (
-              //     <Text>Verify</Text>
-              //   ) : (
-              //     <Image
-              //       source={require("../../images/tick.png")}
-              //       style={styles.tickImage}
-              //     />
-              //   )
-              // }
-              // rightCompPress={() => {
-              //   setIsVerified(!isVerified);
-              // }}
+                // showRightComp={true}
+                // rightComp={() =>
+                //   isVerified ? (
+                //     <Text>Verify</Text>
+                //   ) : (
+                //     <Image
+                //       source={require("../../images/tick.png")}
+                //       style={styles.tickImage}
+                //     />
+                //   )
+                // }
+                // rightCompPress={() => {
+                //   setIsVerified(!isVerified);
+                // }}
               />
             );
           })}
         </View>
 
-        <View style={{ flexDirection: 'row', alignItems: 'center', maxWidth: '84%', marginHorizontal: horizontalScale(20), marginTop: verticalScale(25), marginBottom: verticalScale(15) }}>
-          <TouchableOpacity
-            style={{
-            }}
-            onPress={() => handleCheckBoxClick()}
-          >
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            maxWidth: "84%",
+            marginHorizontal: horizontalScale(20),
+            marginTop: verticalScale(25),
+            marginBottom: verticalScale(15),
+          }}
+        >
+          <TouchableOpacity style={{}} onPress={() => handleCheckBoxClick()}>
             <Image
-              style={{ width: 22, height: 22, resizeMode: 'contain', }}
-              source={isChecked ? require('../../../assets/images/box.png') : require('../../../assets/images/checked.png')}
+              style={{ width: 22, height: 22, resizeMode: "contain" }}
+              source={
+                isChecked
+                  ? require("../../../assets/images/checked.png")
+                  : require("../../../assets/images/box.png")
+              }
             />
           </TouchableOpacity>
-          <Text style={{ marginLeft: verticalScale(5), fontSize: 14, lineHeight: 18, color: '#000000', }}>Terms and Condition Unico Housing Finance Private Limited.</Text>
-
+          <Text
+            style={{
+              marginLeft: verticalScale(5),
+              fontSize: 14,
+              lineHeight: 18,
+              color: "#000000",
+            }}
+          >
+            Terms and Condition Unico Housing Finance Private Limited.
+          </Text>
         </View>
 
         <View style={{ paddingHorizontal: horizontalScale(30) }}>
           <Button
             type="primary"
             label="Continue"
-            // disable={percentage !== 100}
+            disable={!isValid}
             onPress={onSubmit}
             // onPress={()=>TnC()}
             buttonContainer={{ marginVertical: verticalScale(20) }}
@@ -360,33 +370,60 @@ export default function ApplicationDetails(props) {
           modalStyle={style.modalstyle}
           showModal={modalVisible2}
           //  setShowModal={setModalVisible2}
-          centeredViewStyle={{ backgroundColor: "rgba(0, 0, 0, 0.1)", }}
+          centeredViewStyle={{ backgroundColor: "rgba(0, 0, 0, 0.1)" }}
         >
           <View>
-            <TouchableOpacity
-              onPress={() => setModalVisible2(false)}
-            >
+            <TouchableOpacity onPress={() => setModalVisible2(false)}>
               <Image
-                source={require('../../../assets/images/crossGray.png')}
-                style={{ width: 17, height: 17, resizeMode: 'contain', justifyContent: 'flex-end', marginHorizontal: horizontalScale(330), marginBottom: verticalScale(12.5) }}
+                source={require("../../../assets/images/crossGray.png")}
+                style={{
+                  width: 17,
+                  height: 17,
+                  resizeMode: "contain",
+                  justifyContent: "flex-end",
+                  marginHorizontal: horizontalScale(330),
+                  marginBottom: verticalScale(12.5),
+                }}
               />
             </TouchableOpacity>
 
-            <Text style={{ fontWeight: '600', fontSize: 20, color: '#000000' }}>
+            <Text style={{ fontWeight: "600", fontSize: 20, color: "#000000" }}>
               Terms and Condition
             </Text>
             <ScrollView>
-
-              <View style={{ width: '100%', alignSelf: 'center', marginTop: verticalScale(17.5), marginBottom: verticalScale(-15) }}>
-                <Text style={{ lineHeight: 28, fontSize: 12, color: '#000000', fontWeight: '600', }}>
-                  An Intellectual Property clause will inform users that the contents, logo and other visual media you created is your property and is protected by copyright laws.
-                  {'\n'}
-
-                  1. A Termination clause will inform users that any accounts on your website and mobile app, or users' access to your website and app, can be terminated in case of abuses or at your sole discretion.
-                  {'\n'}
-                  2. A Governing Law clause will inform users which laws govern the agreement. These laws should come from the country in which your company is headquartered or the country from which you operate your website and mobile app.
-                  {'\n'}
-                  3. A Links to Other Websites clause will inform users that you are not responsible for any third party websites that you link to.
+              <View
+                style={{
+                  width: "100%",
+                  alignSelf: "center",
+                  marginTop: verticalScale(17.5),
+                  marginBottom: verticalScale(-15),
+                }}
+              >
+                <Text
+                  style={{
+                    lineHeight: 28,
+                    fontSize: 12,
+                    color: "#000000",
+                    fontWeight: "600",
+                  }}
+                >
+                  An Intellectual Property clause will inform users that the
+                  contents, logo and other visual media you created is your
+                  property and is protected by copyright laws.
+                  {"\n"}
+                  1. A Termination clause will inform users that any accounts on
+                  your website and mobile app, or users' access to your website
+                  and app, can be terminated in case of abuses or at your sole
+                  discretion.
+                  {"\n"}
+                  2. A Governing Law clause will inform users which laws govern
+                  the agreement. These laws should come from the country in
+                  which your company is headquartered or the country from which
+                  you operate your website and mobile app.
+                  {"\n"}
+                  3. A Links to Other Websites clause will inform users that you
+                  are not responsible for any third party websites that you link
+                  to.
                 </Text>
               </View>
             </ScrollView>
@@ -395,7 +432,7 @@ export default function ApplicationDetails(props) {
                 type="primary"
                 label="ok"
                 onPress={() => ok()}
-                buttonContainer={{ width: 154, alignSelf: 'center', }}
+                buttonContainer={{ width: 154, alignSelf: "center" }}
               />
             </View>
           </View>
@@ -404,4 +441,3 @@ export default function ApplicationDetails(props) {
     </View>
   );
 }
-

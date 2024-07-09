@@ -4,8 +4,8 @@ import {
   useQueries,
 } from "@tanstack/react-query";
 
-import { query } from '../constants/Queries';
-import { net } from 'react-native-force';
+import { query } from "../constants/Queries";
+import { net } from "react-native-force";
 import { log } from "../utils/ConsoleLogUtils";
 import { validations } from "../constants/validations";
 import { component } from "../components/FormComponents/FormControl";
@@ -58,7 +58,6 @@ export const getPinCodes = () => {
 
   return queryRes;
 };
-
 
 export const getHomeScreenDetails = () => {
   const mutate = useMutation({
@@ -161,16 +160,16 @@ export const getHomeScreenCarousel = () => {
           // ];
           const data = [
             {
-              type: 'asset',
-              uri: require('../../src/assets/ad2.png'),
+              type: "asset",
+              uri: require("../../src/assets/ad2.png"),
             },
             {
-              type: 'asset',
-              uri: require('../../src/assets/AdCardMain.png'),
+              type: "asset",
+              uri: require("../../src/assets/AdCardMain.png"),
             },
             {
-              type: 'asset',
-              uri: require('../../src/assets/ad1.png'),
+              type: "asset",
+              uri: require("../../src/assets/ad1.png"),
             },
           ];
           resolve(data);
@@ -340,21 +339,21 @@ export const getOtherKycList = () => {
         setTimeout(() => {
           const data = [
             {
-              id: '1',
-              title: "Driving License"
+              id: "1",
+              title: "Driving License",
             },
             {
-              id: '2',
-              title: "Passport"
+              id: "2",
+              title: "Passport",
             },
             {
-              id: '3',
-              title: "Voter ID"
+              id: "3",
+              title: "Voter ID",
             },
             {
-              id: '4',
-              title: "NREGA Card"
-            }
+              id: "4",
+              title: "NREGA Card",
+            },
           ];
           resolve(data);
           reject("Something went wrong");
@@ -374,16 +373,16 @@ export const getTempAddressKycList = () => {
         setTimeout(() => {
           const data = [
             {
-              id: '1',
-              title: "Electricity Bill"
+              id: "1",
+              title: "Electricity Bill",
             },
             {
-              id: '2',
-              title: "Gas Bill"
+              id: "2",
+              title: "Gas Bill",
             },
             {
-              id: '3',
-              title: "Mobile Bill"
+              id: "3",
+              title: "Mobile Bill",
             },
           ];
           resolve(data);
@@ -449,63 +448,56 @@ export const createTicketMethod = () => {
   return mutate;
 };
 
-
 export const uploadAdhaarMethod = () => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (AdhaarData) => {
-
       return new Promise((resolve, reject) => {
-
         setTimeout(() => {
-          const data = { success: true, response: AdhaarData }
-          resolve(data)
+          const data = { success: true, response: AdhaarData };
+          resolve(data);
           // reject('Something went wrong')
-        }, 3000)
-      },)
-    }
-  })
+        }, 3000);
+      });
+    },
+  });
 
-  return mutate
-}
+  return mutate;
+};
 
 export const uploadKycMethod = () => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (AdhaarData) => {
-
       return new Promise((resolve, reject) => {
-
         setTimeout(() => {
-          const data = { success: true, response: AdhaarData }
-          resolve(data)
+          const data = { success: true, response: AdhaarData };
+          resolve(data);
           // reject('Something went wrong')
-        }, 3000)
-      },)
-    }
-  })
+        }, 3000);
+      });
+    },
+  });
 
-  return mutate
-}
+  return mutate;
+};
 
 export const uploadOtpMethod = () => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (OtpData) => {
-
       return new Promise((resolve, reject) => {
-
         setTimeout(() => {
-          const data = { success: true, response: OtpData }
-          resolve(data)
+          const data = { success: true, response: OtpData };
+          resolve(data);
           // reject('Something went wrong')
-        }, 3000)
-      },)
-    }
-  })
+        }, 3000);
+      });
+    },
+  });
 
-  return mutate
-}
+  return mutate;
+};
 
 export const getUserDetailQuery = (error = false) => {
   const query = useQueries({
@@ -598,8 +590,8 @@ export const verifyPanApi = () => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (data) => {
-      console.log({ data })
-      const { panNumber, success = true } = data
+      console.log({ data });
+      const { panNumber, success = true } = data;
       return new Promise((resolve, reject) => {
         setTimeout(() => {
           if (success) {
@@ -614,14 +606,13 @@ export const verifyPanApi = () => {
 
   return mutate;
 };
-
 
 export const submitPanApi = () => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (data) => {
-      console.log('DATA 2', { data })
-      const { panNumber, success = true } = data
+      console.log("DATA 2", { data });
+      const { panNumber, success = true } = data;
       return new Promise((resolve, reject) => {
         setTimeout(() => {
           if (success) {
@@ -637,42 +628,39 @@ export const submitPanApi = () => {
   return mutate;
 };
 
-
 export const getApplicationDetailsForm = () => {
   const mutate = useMutation({
-    networkMode: 'always',
-    mutationFn: async (body) => {
-
-      return new Promise(async(resolve, reject) => {
+    networkMode: "always",
+    mutationFn: async (data) => {
+      return new Promise(async (resolve, reject) => {
         try {
-
-          const fieldArray = await getLeadFields()
-
+          const fieldArray = await getLeadFields();
 
           const mock_data = [
             {
-              id: "rmUser",
-              label: "RM USER",
-              type: component.dropdown,
+              id: "RM_SM_Name__c",
+              label: "RM Name",
+              type: component.textInput,
               placeHolder: "Select User",
               validations: validations.required,
               maxLength: 10,
               // keyboardtype: "numeric",
               isRequired: true,
-              data: [],
-              value: {},
-            },
-            {
-              id: "applicationType",
-              label: "Applicant Type",
-              type: component.textInput,
-              placeHolder: "Applicant Type",
-              validations: validations.text,
-              isRequired: false,
+              data: GetPicklistValues(fieldArray, "RM_SM_Name__c"),
               value: "",
             },
+            // not mention
+            // {
+            //   id: "applicationType",
+            //   label: "Applicant Type",
+            //   type: component.textInput,
+            //   placeHolder: "Applicant Type",
+            //   validations: validations.text,
+            //   isRequired: false,
+            //   value: "",
+            // },
             {
-              id: "customerProfile",
+              id: "Customer_Profile__c",
               label: "Customer Profile",
               type: component.dropdown,
               placeHolder: "Select Customer Profile",
@@ -680,11 +668,22 @@ export const getApplicationDetailsForm = () => {
               maxLength: 10,
               keyboardtype: "numeric",
               isRequired: true,
-              data: GetPicklistValues(fieldArray, "Customer_Profile__c"),
+              data: GetPicklistValues(fieldArray, "Customer_Profile__c", [
+                {
+                  id: "Customer_Profile__1",
+                  label: "Salf-Employed",
+                  value: "Salf-Employed",
+                },
+                {
+                  id: "Customer_Profile__2",
+                  label: "Salaried",
+                  value: "Salaried",
+                },
+              ]),
               value: {},
             },
             {
-              id: "firstName",
+              id: "FirstName",
               label: "First Name",
               type: component.textInput,
               placeHolder: "Enter first Name",
@@ -693,7 +692,7 @@ export const getApplicationDetailsForm = () => {
               value: "",
             },
             {
-              id: "middleName",
+              id: "MiddleName",
               label: "Middle Name",
               type: component.textInput,
               placeHolder: "Enter middle Name",
@@ -702,7 +701,7 @@ export const getApplicationDetailsForm = () => {
               value: "",
             },
             {
-              id: "lastName",
+              id: "LastName",
               label: "Last Name",
               type: component.textInput,
               placeHolder: "Enter last Name",
@@ -710,19 +709,21 @@ export const getApplicationDetailsForm = () => {
               isRequired: true,
               value: "",
             },
-            {
-              id: "dob",
-              label: "Date of Birth",
-              type: component.datetime,
-              placeHolder: "DD-MM-YYYY",
-              validations: validations.text,
-              isRequired: false,
-              value: "",
-              datepickerProps: {
-                minimumDate: getDateYearsBack(18),
-                maximumDate: getDateYearsBack(100),
-              },
-            },
+            // not mention
+            // {
+            //   id: "dob",
+            //   label: "Date of Birth",
+            //   type: component.datetime,
+            //   placeHolder: "DD-MM-YYYY",
+            //   validations: validations.text,
+            //   isRequired: false,
+            //   value: "",
+            //   datepickerProps: {
+            //     minimumDate: getDateYearsBack(18),
+            //     maximumDate: getDateYearsBack(100),
+            //   },
+            // },
+            // missing from backend
             {
               id: "mobileNumber",
               label: "Mobile number",
@@ -730,11 +731,12 @@ export const getApplicationDetailsForm = () => {
               placeHolder: "Enter mobile number",
               validations: validations.phone,
               isRequired: true,
-              value: "",
+              value: data.mobileNumber,
               isDisabled: true,
+              maxLength: 10,
             },
             {
-              id: "alternateMobileNumber",
+              id: "Alternative_Mobile_Number__c",
               label: "Alternate mobile number",
               type: component.textInput,
               placeHolder: "Enter alternate mobile number",
@@ -742,8 +744,9 @@ export const getApplicationDetailsForm = () => {
               isRequired: false,
               value: "",
               keyboardtype: "numeric",
+              maxLength: 10,
             },
-
+            // missing from backend
             {
               id: "email",
               label: "Email",
@@ -754,9 +757,9 @@ export const getApplicationDetailsForm = () => {
               value: "",
               isDisabled: true,
             },
-
+            // no data in picklist from backend
             {
-              id: "product",
+              id: "Product__c",
               label: "Product",
               type: component.dropdown,
               placeHolder: "Select product",
@@ -764,7 +767,7 @@ export const getApplicationDetailsForm = () => {
               maxLength: 10,
               // keyboardtype: "numeric",
               isRequired: true,
-              data: [
+              data: GetPicklistValues(fieldArray, "Product__c", [
                 {
                   id: "product_type_1",
                   label: "Housing Loan",
@@ -776,13 +779,13 @@ export const getApplicationDetailsForm = () => {
                   label: "Non Housing Loan",
                   value: "Non Housing Loan",
                 },
-              ],
+              ]),
               value: {},
             },
 
             {
-              id: "tenure",
-              label: "Tenure",
+              id: "Requested_tenure_in_Months__c",
+              label: "Requested tenure in Months",
               type: component.textInput,
               placeHolder: "Enter requested tenure in months",
               validations: validations.numberOnly,
@@ -792,8 +795,8 @@ export const getApplicationDetailsForm = () => {
             },
 
             {
-              id: "loanAmount",
-              label: "Loan Amount",
+              id: "Requested_loan_amount__c",
+              label: "Requested loan amount",
               type: component.textInput,
               placeHolder: "Enter required loan amount",
               validations: validations.numberOnlyRequired,
@@ -803,13 +806,13 @@ export const getApplicationDetailsForm = () => {
             },
 
             {
-              id: "propertyIdentified",
-              label: "Property Identified",
+              id: "Property_Identified__c",
+              label: "Property Identified?",
               type: component.dropdown,
               placeHolder: "Select answer",
               validations: validations.text,
               isRequired: false,
-              data: [
+              data: GetPicklistValues(fieldArray, "Property_Identified__c", [
                 {
                   id: "propertyIdentified_type_1",
                   label: "Yes",
@@ -821,10 +824,10 @@ export const getApplicationDetailsForm = () => {
                   label: "No",
                   value: "No",
                 },
-              ],
+              ]),
               value: {},
             },
-
+            // missing from backend
             {
               id: "presentAccommodation",
               label: "Present Accommodation",
@@ -832,7 +835,7 @@ export const getApplicationDetailsForm = () => {
               placeHolder: "Select Present Accommodation",
               validations: validations.text,
               isRequired: true,
-              data: [
+              data: GetPicklistValues(fieldArray, "presentAccommodation", [
                 {
                   id: "presentAccommodation_type_1",
                   label: "own",
@@ -854,19 +857,21 @@ export const getApplicationDetailsForm = () => {
                   label: "employer",
                   value: "employer",
                 },
-              ],
+              ]),
               value: {},
             },
-
+            // missing from backend
             {
               id: "periodOfStay",
               label: "Period of stay",
               type: component.textInput,
-              placeHolder: "YY-MM",
+              placeHolder: "YYMM",
               validations: validations.yyMMDate,
               isRequired: true,
               value: "",
+              maxLength: 4,
             },
+            //  missing from backend
             {
               id: "rentPerMonth",
               label: "Rent per month",
@@ -877,24 +882,27 @@ export const getApplicationDetailsForm = () => {
               keyboardtype: "numeric",
               value: "",
             },
+            // missing from backend
             {
               id: "employmentExperience",
               label: "Employment experience",
               type: component.textInput,
-              placeHolder: "YY-MM",
+              placeHolder: "YYMM",
               validations: validations.yyMMDate,
               isRequired: true,
               value: "",
             },
+            // missing from backend
             {
               id: "totalWorkExperience",
               label: "Total Work experience",
               type: component.textInput,
-              placeHolder: "YY-MM",
+              placeHolder: "YYMM",
               validations: validations.yyMMDate,
               isRequired: true,
               value: "",
             },
+            // missing from backend
             {
               id: "familyDependant",
               label: "Family Dependant",
@@ -905,7 +913,7 @@ export const getApplicationDetailsForm = () => {
               keyboardtype: "numeric",
               value: "",
             },
-
+            // missing from backend
             {
               id: "familyDependantChildren",
               label: "Family Dependant Children",
@@ -916,7 +924,7 @@ export const getApplicationDetailsForm = () => {
               keyboardtype: "numeric",
               value: "",
             },
-
+            // missing from backend
             {
               id: "familyDependantOther",
               label: "Family Dependant Other",
@@ -927,19 +935,19 @@ export const getApplicationDetailsForm = () => {
               keyboardtype: "numeric",
               value: "",
             },
-
+            // missing from backend
             {
               id: "totalBusinessExperience",
               label: "Total Business experience",
               type: component.textInput,
-              placeHolder: "YY-MM",
+              placeHolder: "YYMM",
               validations: validations.yyMMDate,
               isRequired: true,
               value: "",
             },
 
             {
-              id: "address",
+              id: "Address",
               label: "Address",
               type: component.textInput,
               placeHolder: "Enter address",
@@ -950,26 +958,52 @@ export const getApplicationDetailsForm = () => {
             },
 
             {
-              id: "pincode",
+              id: "Pincode__c",
               label: "Pincode",
               type: component.textInput,
               placeHolder: "Enter Pincode",
               validations: validations.numberOnlyRequired,
               isRequired: true,
-              value: "",
+              value: data.pincode,
               keyboardtype: "numeric",
+              isDisabled: true,
             },
           ];
-         
-          resolve([...mock_data])
-        } catch (error) {
-         
-        }
-      })
 
+          resolve([...mock_data]);
+        } catch (error) {}
+      });
     },
-    
-  })
-  return mutate
+  });
+  return mutate;
+};
 
-}
+export const useSubmitApplicationFormData = () => {
+  const mutate = useMutation({
+    networkMode: "always",
+    mutationFn: async (data) => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve({ ...data, applicationNumber:'LXC537676727' });
+        }, 3000);
+      });
+    },
+  });
+
+  return mutate;
+};
+
+export const useSubmitPanForm = () => {
+  const mutate = useMutation({
+    networkMode: "always",
+    mutationFn: async (data) => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve({ ...data });
+        }, 3000);
+      });
+    },
+  });
+
+  return mutate;
+};
