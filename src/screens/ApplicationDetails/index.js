@@ -21,6 +21,9 @@ import { getUserDetailQuery } from "./../../services/ApiUtils";
 import DimensionUtils from "../../utils/DimensionUtils";
 import CustomModal from "../../components/CustomModal";
 import { Image } from "react-native";
+import { getApplicationDetailsForm } from "./../../services/ApiUtils";
+import { getMetaData } from "../../services/sfDataServices/netService";
+import { log } from "../../utils/ConsoleLogUtils";
 
 const initialData = [
   {
@@ -46,356 +49,36 @@ const initialData = [
 ];
 
 export default function ApplicationDetails(props) {
-  
+
   const [isVerified, setIsVerified] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [{ data = {}, error }] = getUserDetailQuery();
   const [modalVisible2, setModalVisible2] = useState(false);
   const [isChecked, setIsChecked] = useState(true);
+  const getFormData = getApplicationDetailsForm()
+  const [mock_data, setMockData] = useState([])
+
+
+  useEffect(() => {
+    getFormData?.mutate()
+  }, [])
 
   const handleRightIconPress = (index) => {
     if (index === 0) {
-        props.navigation.navigate(screens.FAQ);
+      props.navigation.navigate(screens.FAQ);
     } else if (index === 1) {
-        props.navigation.navigate(screens.HomeScreen);
-    } 
-};
+      props.navigation.navigate(screens.HomeScreen);
+    }
+  };
 
-  const mock_data = [
-    {
-      id: "rmUser",
-      label: "RM USER",
-      type: component.dropdown,
-      placeHolder: "Select User",
-      validations: validations.required,
-      maxLength: 10,
-      // keyboardtype: "numeric",
-      isRequired: true,
-      data: [
-        {
-          id: "rm_user_1",
-          label: "User 1",
-          value: "user1",
-        },
+  useEffect(() => {
+    if (getFormData?.data) {
+      log(">>>>>>", getFormData?.data)
+      setMockData(getFormData?.data)
+    }
+  }, [getFormData?.data])
 
-        {
-          id: "rm_user_2",
-          label: "User 2",
-          value: "user2",
-        },
-      ],
-      value: {},
-    },
-    {
-      id: "applicationType",
-      label: "Applicant Type",
-      type: component.textInput,
-      placeHolder: "Applicant Type",
-      validations: validations.text,
-      isRequired: false,
-      value: "",
-    },
-    {
-      id: "customerProfile",
-      label: "Customer Profile",
-      type: component.dropdown,
-      placeHolder: "Select Customer Profile",
-      validations: validations.text,
-      maxLength: 10,
-      keyboardtype: "numeric",
-      isRequired: true,
-      data: [
-        {
-          id: "cust_type_1",
-          label: "Salaried",
-          value: "salaried",
-        },
 
-        {
-          id: "cust_type_2",
-          label: "Self-Employed",
-          value: "self-employed",
-        },
-      ],
-      value: {},
-    },
-    {
-      id: "firstName",
-      label: "First Name",
-      type: component.textInput,
-      placeHolder: "Enter first Name",
-      validations: validations.name,
-      isRequired: true,
-      value: "",
-    },
-    {
-      id: "middleName",
-      label: "Middle Name",
-      type: component.textInput,
-      placeHolder: "Enter middle Name",
-      validations: validations.nameWithoutRequired,
-      isRequired: false,
-      value: "",
-    },
-    {
-      id: "lastName",
-      label: "Last Name",
-      type: component.textInput,
-      placeHolder: "Enter last Name",
-      validations: validations.name,
-      isRequired: true,
-      value: "",
-    },
-    {
-      id: "dob",
-      label: "Date of Birth",
-      type: component.datetime,
-      placeHolder: "DD-MM-YYYY",
-      validations: validations.text,
-      isRequired: false,
-      value: "",
-      datepickerProps: {
-        minimumDate: getDateYearsBack(18),
-        maximumDate: getDateYearsBack(100),
-      },
-    },
-    {
-      id: "mobileNumber",
-      label: "Mobile number",
-      type: component.textInput,
-      placeHolder: "Enter mobile number",
-      validations: validations.phone,
-      isRequired: true,
-      value: "",
-      isDisabled: true,
-    },
-    {
-      id: "alternateMobileNumber",
-      label: "Alternate mobile number",
-      type: component.textInput,
-      placeHolder: "Enter alternate mobile number",
-      validations: validations.phoneWithoutRequired,
-      isRequired: false,
-      value: "",
-      keyboardtype: "numeric",
-    },
-
-    {
-      id: "email",
-      label: "Email",
-      type: component.textInput,
-      placeHolder: "Enter email",
-      validations: validations.email,
-      isRequired: false,
-      value: "",
-      isDisabled: true,
-    },
-
-    {
-      id: "product",
-      label: "Product",
-      type: component.dropdown,
-      placeHolder: "Select product",
-      validations: validations.text,
-      maxLength: 10,
-      // keyboardtype: "numeric",
-      isRequired: true,
-      data: [
-        {
-          id: "product_type_1",
-          label: "Housing Loan",
-          value: "Housing Loan",
-        },
-
-        {
-          id: "product_type_2",
-          label: "Non Housing Loan",
-          value: "Non Housing Loan",
-        },
-      ],
-      value: {},
-    },
-
-    {
-      id: "tenure",
-      label: "Tenure",
-      type: component.textInput,
-      placeHolder: "Enter requested tenure in months",
-      validations: validations.numberOnly,
-      isRequired: false,
-      keyboardtype: "numeric",
-      value: "",
-    },
-
-    {
-      id: "loanAmount",
-      label: "Loan Amount",
-      type: component.textInput,
-      placeHolder: "Enter required loan amount",
-      validations: validations.numberOnlyRequired,
-      keyboardtype: "numeric",
-      isRequired: true,
-      value: "",
-    },
-
-    {
-      id: "propertyIdentified",
-      label: "Property Identified",
-      type: component.dropdown,
-      placeHolder: "Select answer",
-      validations: validations.text,
-      isRequired: false,
-      data: [
-        {
-          id: "propertyIdentified_type_1",
-          label: "Yes",
-          value: "Yes",
-        },
-
-        {
-          id: "propertyIdentified_type_2",
-          label: "No",
-          value: "No",
-        },
-      ],
-      value: {},
-    },
-
-    {
-      id: "presentAccommodation",
-      label: "Present Accommodation",
-      type: component.dropdown,
-      placeHolder: "Select Present Accommodation",
-      validations: validations.text,
-      isRequired: true,
-      data: [
-        {
-          id: "presentAccommodation_type_1",
-          label: "own",
-          value: "own",
-        },
-
-        {
-          id: "presentAccommodation_type_2",
-          label: "family",
-          value: "family",
-        },
-        {
-          id: "presentAccommodation_type_3",
-          label: "rented",
-          value: "rented",
-        },
-        {
-          id: "presentAccommodation_type_4",
-          label: "employer",
-          value: "employer",
-        },
-      ],
-      value: {},
-    },
-
-    {
-      id: "periodOfStay",
-      label: "Period of stay",
-      type: component.textInput,
-      placeHolder: "YY-MM",
-      validations: validations.yyMMDate,
-      isRequired: true,
-      value: "",
-    },
-    {
-      id: "rentPerMonth",
-      label: "Rent per month",
-      type: component.textInput,
-      placeHolder: "Rent per month",
-      validations: validations.numberOnly,
-      isRequired: true,
-      keyboardtype: "numeric",
-      value: "",
-    },
-    {
-      id: "employmentExperience",
-      label: "Employment experience",
-      type: component.textInput,
-      placeHolder: "YY-MM",
-      validations: validations.yyMMDate,
-      isRequired: true,
-      value: "",
-    },
-    {
-      id: "totalWorkExperience",
-      label: "Total Work experience",
-      type: component.textInput,
-      placeHolder: "YY-MM",
-      validations: validations.yyMMDate,
-      isRequired: true,
-      value: "",
-    },
-    {
-      id: "familyDependant",
-      label: "Family Dependant",
-      type: component.textInput,
-      placeHolder: "Enter Family Dependant",
-      validations: validations.numberOnlyRequired,
-      isRequired: true,
-      keyboardtype: "numeric",
-      value: "",
-    },
-
-    {
-      id: "familyDependantChildren",
-      label: "Family Dependant Children",
-      type: component.textInput,
-      placeHolder: "Enter Family Dependant Children",
-      validations: validations.numberOnlyRequired,
-      isRequired: true,
-      keyboardtype: "numeric",
-      value: "",
-    },
-
-    {
-      id: "familyDependantOther",
-      label: "Family Dependant Other",
-      type: component.textInput,
-      placeHolder: "Enter Family Dependant Other",
-      validations: validations.numberOnlyRequired,
-      isRequired: true,
-      keyboardtype: "numeric",
-      value: "",
-    },
-
-    {
-      id: "totalBusinessExperience",
-      label: "Total Business experience",
-      type: component.textInput,
-      placeHolder: "YY-MM",
-      validations: validations.yyMMDate,
-      isRequired: true,
-      value: "",
-    },
-
-    {
-      id: "address",
-      label: "Address",
-      type: component.textInput,
-      placeHolder: "Enter address",
-      validations: validations.text,
-      isRequired: true,
-      value: "",
-      isMultiline: true,
-    },
-
-    {
-      id: "pincode",
-      label: "Pincode",
-      type: component.textInput,
-      placeHolder: "Enter Pincode",
-      validations: validations.numberOnlyRequired,
-      isRequired: true,
-      value: "",
-      keyboardtype: "numeric",
-    },
-  ];
 
   // const allFields = mock_data.map
 
@@ -473,7 +156,7 @@ export default function ApplicationDetails(props) {
       console.log("IN ERROR");
     }
   };
-  console.log(errors,'isValid erors')
+  console.log(errors, 'isValid erors')
 
   const ChangeValue = async (value, id) => {
     setValue(id, value);
@@ -518,9 +201,9 @@ export default function ApplicationDetails(props) {
 
   const toggleModal = () => setShowModal(!showModal);
   const style = styles(colors);
-  
- 
- 
+
+
+
   const getPercentage = () => {
     const customerProfile = watch("customerProfile");
     const isRented = watch("presentAccommodation") === "rented";
@@ -585,18 +268,18 @@ export default function ApplicationDetails(props) {
           marginTop: verticalScale(10),
         }}
       >
-        <Header        
-       title="Application Details"
-       left={assets.back}
-       rightImages={[{source: assets.chat,},{source: assets.questionRound,},]}
-       leftStyle={{height: verticalScale(15),width: verticalScale(15),}}
-       leftImageProps={{resizeMode: "contain",}}
-       rightStyle={{height: verticalScale(23),width: verticalScale(23),marginHorizontal:10}}
-       rightImageProps={{ resizeMode: "contain"}}
-       titleStyle={{fontSize: verticalScale(18), }}
-       onPressRight={handleRightIconPress}
-       onPressLeft={() => {props.navigation.goBack();}}
-     />
+        <Header
+          title="Application Details"
+          left={assets.back}
+          rightImages={[{ source: assets.chat, }, { source: assets.questionRound, },]}
+          leftStyle={{ height: verticalScale(15), width: verticalScale(15), }}
+          leftImageProps={{ resizeMode: "contain", }}
+          rightStyle={{ height: verticalScale(23), width: verticalScale(23), marginHorizontal: 10 }}
+          rightImageProps={{ resizeMode: "contain" }}
+          titleStyle={{ fontSize: verticalScale(18), }}
+          onPressRight={handleRightIconPress}
+          onPressLeft={() => { props.navigation.goBack(); }}
+        />
       </View>
       <ScrollView contentContainerStyle={style.scrollviewStyle}>
         <View style={style.container}>
