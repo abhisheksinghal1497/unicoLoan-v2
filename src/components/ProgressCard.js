@@ -6,9 +6,14 @@ import { useTheme } from "react-native-paper";
 import CircularProgress from "./CircularProgress";
 import home from "./../assets/home_icon.png";
 import useGetProgressPercentage from "../utils/useGetProgressPercentage";
+import { useRoute } from "@react-navigation/native";
 
 const ProgressCard = ({ screenName }) => {
   const { fonts } = useTheme();
+  const route = useRoute();
+  const {applicationDetails = {}} = route?.params || {};
+  const {applicationNumber= '', Product__c= ''} = applicationDetails;
+  console.log({applicationDetails});
   const percentage = useGetProgressPercentage()
   return (
     <View style={styles.cardContainer}>
@@ -23,12 +28,12 @@ const ProgressCard = ({ screenName }) => {
             styles.textStyle
           ]}
         >
-          LXC537676727
+          {applicationNumber}
         </Text>
         <Text style={[fonts.labelSmall, { color: "rgba(46, 82, 161, 1)" }, styles.textStyle, {
           fontSize: 12
         }]}>
-          Housing Loan
+          {Product__c}
         </Text>
       </View>
       <View

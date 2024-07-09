@@ -28,7 +28,7 @@ export default DropDown = ({
   label,
   type,
   right,
-  value = "",
+  value = null,
   isDisabled = false,
   isRequired = false,
   tooltipText = "",
@@ -49,10 +49,10 @@ export default DropDown = ({
         style={styles.itemView}
         onPress={() => {
           if (setValue) {
-            setValue(name, item.value);
+            setValue(name, item.value, {shouldValidate: true});
             setValueText(item.label);
           }
-          trigger()
+          // trigger()
           setModalVisible(false);
         }}
       >

@@ -71,9 +71,3 @@ const CaptureSelfie = ({ navigation }) => {
 }
 
 export default CaptureSelfie;
-
-
-
-
-
-
