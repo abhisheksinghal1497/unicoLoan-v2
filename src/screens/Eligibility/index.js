@@ -202,7 +202,7 @@ const Eligibility = (props) => {
             marginBottom: 20,
           }}
         >
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={[
               styles.btnStyle,
               {
@@ -220,7 +220,7 @@ const Eligibility = (props) => {
             >
               Add Co-Aplicant
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           {applicantData?.length
             ? applicantData.map((el, i) => (
                 <CoApplicantCard data={el} key={i} />

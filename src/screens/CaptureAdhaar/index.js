@@ -48,8 +48,8 @@ const CaptureAdhaar = ({ navigation }) => {
     const onCameraPress = async() => {
         ImagePicker.openPicker({
             cropping: true,
-            compressImageQuality: 0.6,
-            includeBase64: true
+            compressImageQuality: 0.4,
+            includeBase64: true,
         })
             .then(async(image) => {
                 console.log(image,'image value')

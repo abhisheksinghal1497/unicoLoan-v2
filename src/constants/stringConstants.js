@@ -16,6 +16,7 @@ export const LOAN_DETAILS_KEYS = {
   isExistingCustomer: "isExistingCustomer",
   custId: "custId",
   bankBalance: "bankBalance",
+  immovableProperty: 'immovableProperty',
   currPF: "currPF",
   valShareSecr: "valShareSecr",
   fd: "fd",

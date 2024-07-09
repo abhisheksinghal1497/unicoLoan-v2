@@ -4,228 +4,219 @@ import { fetch, useNetInfo } from "@react-native-community/netinfo";
 import { errorConsoleLog, log } from "../../utils/ConsoleLogUtils";
 import ErrorConstants from "../../constants/ErrorConstants";
 
-
-
-
-
 export const verifyPanApi = () => {
-    const mutate = useMutation({
-        mutationFn: (body) => {
-            return instance.post('retail-validation-v1/api/pan/status', body)
-        }
-    });
-    return mutate;
-}
-
-export const uploadAndVerifyPan = () => {
-    const mutate = useMutation({
-        mutationFn: (body) => {
-            return instance.post('digital-kyc-v1/api/pan', body)
-        }
-    });
-    return mutate;
-}
-
-
-export const uploadAadharPhotos = () => {
-    const mutate = useMutation({
-        mutationFn: (body) => {
-            return makeAadharinitiateCall(body)
-        }
-    });
-    return mutate;
-}
-
-const makeAadharinitiateCall = async (body) => {
-    try {
-
-        // we need current time stamp
-
-        var timestamp = new Date().getTime();
-        try {
-            timestamp = Math.floor(timestamp / 1000)
-
-        } catch (error) {
-            console.error(error);
-        }
-
-
-        let ipAddress = '192.0.3.146'; // hardcoded for safer side
-
-
-        try {
-            const currentIpAddress = await fetch();
-            log("currentIpAddress", currentIpAddress?.details?.ipAddress)
-            if (currentIpAddress && currentIpAddress?.details?.ipAddress) {
-                ipAddress = currentIpAddress?.details?.ipAddress
-            }
-        } catch (error) {
-
-        }
-
-
-
-
-
-        var result = body?.substring(1, body.length - 1);
-
-
-
-        return instance.post('digital-kyc-v1/api/aadhar-initiate', {
-
-            "consent": "Y",
-            "ipAddress": ipAddress,
-            "consentTime": timestamp?.toString(),
-            "caseId": "eeea90ab-f4e0-4d9e-9efa-c03fffbd22c6",
-            "consentText": "Test",
-            "fileData": {
-                "content": `${result}`,
-                "title": "Aadhar"
-            },
-
-        })
-
-
-
-
-
-
-
-    } catch (error) {
-
-        throw error
-
-    }
+  const mutate = useMutation({
+    mutationFn: (body) => {
+      return instance.post("retail-validation-v1/api/pan/status", body);
+    },
+  });
+  return mutate;
 };
 
-export const verifyAadhar = () => {
-    const mutate = useMutation({
-        mutationFn: (body) => {
+export const uploadAndVerifyPan = () => {
+  const mutate = useMutation({
+    mutationFn: (body) => {
+      return instance.post("digital-kyc-v1/api/pan", body);
+    },
+  });
+  return mutate;
+};
 
-            const request = {
-                "aadhaarTokenValue": body?.intitialResponse?.results?.aadharToken ? body?.intitialResponse?.results?.aadharToken : "",
-                "encryptedAadhar": body?.intitialResponse?.results?.encryptedAadhar,
-                "accessKey": body?.intitialResponse?.results?.accessKey,
-                "consent": "Y",
-                "otp": body?.otp,
-                "shareCode": "1234",
-                "caseId": "eeea90ab-f4e0-4d9e-9efa-c03fffbd22c6"
-            }
+export const uploadAadharPhotos = () => {
+  const mutate = useMutation({
+    mutationFn: (body) => {
+      return makeAadharinitiateCall(body);
+    },
+  });
+  return mutate;
+};
 
+const makeAadharinitiateCall = async (body) => {
+  try {
+    // we need current time stamp
 
-            return instance.post('digital-kyc-v1/api/aadhar-verify', request)
-        }
+    var timestamp = new Date().getTime();
+    try {
+      timestamp = Math.floor(timestamp / 1000);
+    } catch (error) {
+      console.error(error);
+    }
+
+    let ipAddress = "192.0.3.146"; // hardcoded for safer side
+
+    try {
+      const currentIpAddress = await fetch();
+      log("currentIpAddress", currentIpAddress?.details?.ipAddress);
+      if (currentIpAddress && currentIpAddress?.details?.ipAddress) {
+        ipAddress = currentIpAddress?.details?.ipAddress;
+      }
+    } catch (error) {}
+
+    var result = body?.substring(1, body.length - 1);
+
+    return instance.post("digital-kyc-v1/api/aadhar-initiate", {
+      consent: "Y",
+      ipAddress: ipAddress,
+      consentTime: timestamp?.toString(),
+      caseId: "eeea90ab-f4e0-4d9e-9efa-c03fffbd22c6",
+      consentText: "Test",
+      fileData: {
+        content: `${result}`,
+        title: "Aadhar",
+      },
     });
-    return mutate;
-}
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const verifyAadhar = (panName) => {
+  const mutate = useMutation({
+    mutationFn: (body) => {
+      const request = {
+        aadhaarTokenValue: body?.intitialResponse?.results?.aadharToken
+          ? body?.intitialResponse?.results?.aadharToken
+          : "",
+        encryptedAadhar: body?.intitialResponse?.results?.encryptedAadhar,
+        accessKey: body?.intitialResponse?.results?.accessKey,
+        consent: "Y",
+        otp: body?.otp,
+        shareCode: "1234",
+        caseId: "eeea90ab-f4e0-4d9e-9efa-c03fffbd22c6",
+      };
+      console.log("requests", request);
+
+      return new Promise(async (resolve, reject) => {
+        try {
+          const adhaarVerifyResponse = await instance.post(
+            "digital-kyc-v1/api/aadhar-verify",
+            request
+          );
+          const adhaarName = adhaarVerifyResponse?.data?.results?.name;
+          const verifyNamematchRequest = {
+            name1: panName,
+            name2: adhaarName,
+            type: "Individual",
+            caseId: "12345",
+          };
+
+          const namCheckResponse = await instance.post(
+            "/digital-utility-v1/api/name-match",
+            verifyNamematchRequest
+          );
+          if (namCheckResponse?.data?.results?.score < 0.5) {
+            reject("Pan and adhaar names are different please check.");
+          } else {
+            resolve(adhaarVerifyResponse);
+          }
+        } catch (error) {
+          reject("Aadhar verification failed");
+        }
+      });
+
+      // return instance.post("digital-kyc-v1/api/aadhar-verify", request);
+    },
+  });
+  return mutate;
+};
 
 export const nameMatchCheck = () => {
-    const mutate = useMutation({
-        mutationFn: (body) => {
-            return instance.post('/digital-utility-v1/api/name-match', body)
-        }
-    });
-    return mutate;
-
-}
-
+  const mutate = useMutation({
+    mutationFn: (body) => {
+      return instance.post("/digital-utility-v1/api/name-match", body);
+    },
+  });
+  return mutate;
+};
 
 export const doOCRForDL = () => {
-    const mutate = useMutation({
-        mutationFn: (body) => {
-            //return instance.post('/digital-utility-v1/api/name-match', body)
-            return new Promise(async (resolve, reject) => {
-
-                try {
-                    log("request body", body)
-                    const response = await instance.post('/digital-kyc-v1/api/drivers-license', body)
-                    resolve(response?.data)
-                    // resolve("saxasx")
-
-
-                } catch (error) {
-                    errorConsoleLog("verifyDrivingLicence>>", error)
-                    reject(ErrorConstants.SOMETHING_WENT_WRONG)
-                }
-            })
+  const mutate = useMutation({
+    mutationFn: (body) => {
+      //return instance.post('/digital-utility-v1/api/name-match', body)
+      return new Promise(async (resolve, reject) => {
+        try {
+          log("request body", body);
+          const response = await instance.post(
+            "/digital-kyc-v1/api/drivers-license",
+            body
+          );
+          resolve(response?.data);
+          // resolve("saxasx")
+        } catch (error) {
+          errorConsoleLog("verifyDrivingLicence>>", error);
+          reject(ErrorConstants.SOMETHING_WENT_WRONG);
         }
-    });
-    return mutate;
-}
+      });
+    },
+  });
+  return mutate;
+};
 
 export const doOCRForPassport = () => {
-    const mutate = useMutation({
-        mutationFn: (body) => {
+  const mutate = useMutation({
+    mutationFn: (body) => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          var result = body?.substring(1, body.length - 1);
+          const request = {
+            consent: "Y",
+            caseId: "eeea90ab-f4e0-4d9e-9efa-c03fffbd22c6",
 
-            return new Promise(async (resolve, reject) => {
+            fileData: {
+              content: `${result}`,
+              title: "passport",
+            },
+          };
 
-                try {
-                    var result = body?.substring(1, body.length - 1);
-                    const request = {
-
-                        "consent": "Y",
-                        "caseId": "eeea90ab-f4e0-4d9e-9efa-c03fffbd22c6",
-                        
-                        "fileData": {
-                            "content": `${result}`,
-                            "title": "passport"
-                        },
-
-                    }
-
-                    const response = await instance.post('/digital-kyc-v1/api/passport', request)
-                    resolve(response?.data)
-                    // resolve("saxasx")
-
-
-                } catch (error) {
-                    errorConsoleLog("doOCRForPassport>>", error)
-                    reject(ErrorConstants.SOMETHING_WENT_WRONG)
-                }
-            })
-
+          const response = await instance.post(
+            "/digital-kyc-v1/api/passport",
+            request
+          );
+          resolve(response?.data);
+          // resolve("saxasx")
+        } catch (error) {
+          errorConsoleLog("doOCRForPassport>>", error);
+          reject(ErrorConstants.SOMETHING_WENT_WRONG);
         }
-    });
-    return mutate;
-}
-
+      });
+    },
+  });
+  return mutate;
+};
 
 export const doOCRForVoterID = () => {
-    const mutate = useMutation({
-        mutationFn: (body) => {
-            //return instance.post('/digital-utility-v1/api/name-match', body)
-            return new Promise(async (resolve, reject) => {
-
-                try {
-                    log("request body", body)
-                    const response = await instance.post('/digital-kyc-v1/api/voterid', body)
-                    resolve(response?.data)
-                    // resolve("saxasx")
-
-
-                } catch (error) {
-                    errorConsoleLog("verifyDrivingLicence>>", error)
-                    reject(ErrorConstants.SOMETHING_WENT_WRONG)
-                }
-            })
+  const mutate = useMutation({
+    mutationFn: (body) => {
+      //return instance.post('/digital-utility-v1/api/name-match', body)
+      return new Promise(async (resolve, reject) => {
+        try {
+          log("request body", body);
+          const response = await instance.post(
+            "/digital-kyc-v1/api/voterid",
+            body
+          );
+          resolve(response?.data);
+          // resolve("saxasx")
+        } catch (error) {
+          errorConsoleLog("verifyDrivingLicence>>", error);
+          reject(ErrorConstants.SOMETHING_WENT_WRONG);
         }
-    });
-    return mutate;
-}
+      });
+    },
+  });
+  return mutate;
+};
 
 export const makeAdhaarEKYCCall = () => {
-    const mutate = useMutation({
-        mutationFn: (body) => {
-            //return instance.post('/digital-utility-v1/api/name-match', body)
-            return new Promise(async (resolve, reject) => {
-
-              setTimeout(() => {
-                resolve(body)
-              }, 2000);
-            })
-        }
-    });
-    return mutate;
-}
-
-
+  const mutate = useMutation({
+    mutationFn: (body) => {
+      //return instance.post('/digital-utility-v1/api/name-match', body)
+      return new Promise(async (resolve, reject) => {
+        setTimeout(() => {
+          resolve(body);
+        }, 2000);
+      });
+    },
+  });
+  return mutate;
+};

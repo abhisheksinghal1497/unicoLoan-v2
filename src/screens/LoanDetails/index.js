@@ -19,9 +19,15 @@ import {
 import ApplicationCard from "../ApplicationDetails/component/ApplicationCard";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import HelpModal from "../ApplicationDetails/component/HelpModal";
+import { useRoute } from "@react-navigation/native";
+import { useSubmitLoanFormData } from "../../services/ApiUtils";
+import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 
 const LoanDetails = (props) => {
   const [showModal, setShowModal] = useState(false);
+  const submitLoanMutate = useSubmitLoanFormData();
+  const route = useRoute();
+  const { applicationDetails = {}, panDetails = {} } = route?.params || {};
 
   const {
     control,
@@ -39,8 +45,25 @@ const LoanDetails = (props) => {
   const onSubmit = async (data) => {
     // console.log("Form values: ", JSON.stringify(data, null, 2));
     await AsyncStorage.setItem("LoanDetails", JSON.stringify(data));
-    props?.navigation?.navigate(screens.Eligibility);
+    submitLoanMutate.mutate(data);
+    // props?.navigation?.navigate(screens.Eligibility);
   };
+
+  useEffect(() => {
+    if (submitLoanMutate.data) {
+      props?.navigation?.navigate(screens.Eligibility, {
+        applicationDetails,
+        panDetails
+      });
+    }
+  }, [submitLoanMutate.data]);
+
+  useEffect(() => {
+    if (submitLoanMutate.error) {
+      log('submitLoanMutate error', submitLoanMutate.error);
+      alert(ErrorConstants.SOMETHING_WENT_WRONG)
+    }
+  }, [submitLoanMutate.error]);
 
   const bankBalance = watch(LOAN_DETAILS_KEYS.bankBalance);
   const currPF = watch(LOAN_DETAILS_KEYS.currPF);
@@ -49,6 +72,7 @@ const LoanDetails = (props) => {
   const invPlantMachVehi = watch(LOAN_DETAILS_KEYS.invPlantMachVehi);
   const ownContri = watch(LOAN_DETAILS_KEYS.ownContri);
   const assetVal = watch(LOAN_DETAILS_KEYS.assetVal);
+  const immovableProperty = watch(LOAN_DETAILS_KEYS.immovableProperty);
 
   const calcTotalAssetCost = () => {
     try {
@@ -63,7 +87,8 @@ const LoanDetails = (props) => {
         getIntVal(fd) +
         getIntVal(invPlantMachVehi) +
         getIntVal(ownContri) +
-        getIntVal(assetVal);
+        getIntVal(assetVal) +
+        getIntVal(immovableProperty);
 
       setTimeout(() => {
         setValue(
@@ -121,7 +146,7 @@ const LoanDetails = (props) => {
       placeHolder: "Enter Requested Loan Amount ",
       validations: {
         ...validations.required,
-        max: 1000000,
+        max: 90000000,
         min: 50000,
       },
       //   maxLength: 10,
@@ -178,7 +203,7 @@ const LoanDetails = (props) => {
       keyboardtype: "numeric",
       isRequired: true,
       validations: validations.phone,
-      value: 0,
+      value: 9876543210,
       // isDisabled: true,
     },
     {
@@ -219,6 +244,16 @@ const LoanDetails = (props) => {
       label: "Bank Balance",
       type: component.number,
       placeHolder: "Enter Bank Balance",
+      value: 0,
+      keyboardtype: "numeric",
+      isRequired: true,
+      validations: { ...validations.numberOnly, ...validations.required },
+    },
+    {
+      id: LOAN_DETAILS_KEYS.immovableProperty,
+      label: "Immovable Property",
+      type: component.number,
+      placeHolder: "Enter value of immovable property",
       value: 0,
       keyboardtype: "numeric",
       isRequired: true,
@@ -388,25 +423,34 @@ const LoanDetails = (props) => {
   };
   const handleRightIconPress = (index) => {
     if (index === 0) {
-        props.navigation.navigate(screens.FAQ);
+      props.navigation.navigate(screens.FAQ);
     } else if (index === 1) {
-       toggleModal();
-    } 
-};
+      toggleModal();
+    }
+  };
   return (
     <View style={styles.container}>
-    <Header        
-       title="Loan Details"
-       left={assets.back}
-       rightImages={[{source: assets.chat,},{source: assets.questionRound,},]}
-       leftStyle={{height: verticalScale(15),width: verticalScale(15),}}
-       leftImageProps={{resizeMode: "contain",}}
-       rightStyle={{height: verticalScale(23),width: verticalScale(23),marginHorizontal:10}}
-       rightImageProps={{ resizeMode: "contain"}}
-       titleStyle={{fontSize: verticalScale(18), }}
-       onPressRight={handleRightIconPress}
-       onPressLeft={() => { props?.navigation.goBack();}}
-     />
+      <Header
+        title="Loan Details"
+        left={assets.back}
+        rightImages={[
+          { source: assets.chat },
+          { source: assets.questionRound },
+        ]}
+        leftStyle={{ height: verticalScale(15), width: verticalScale(15) }}
+        leftImageProps={{ resizeMode: "contain" }}
+        rightStyle={{
+          height: verticalScale(23),
+          width: verticalScale(23),
+          marginHorizontal: 10,
+        }}
+        rightImageProps={{ resizeMode: "contain" }}
+        titleStyle={{ fontSize: verticalScale(18) }}
+        onPressRight={handleRightIconPress}
+        onPressLeft={() => {
+          props?.navigation.goBack();
+        }}
+      />
       <ScrollView
         contentContainerStyle={{
           paddingBottom: 120,
@@ -416,6 +460,7 @@ const LoanDetails = (props) => {
         <View style={styles.applCard}>
           <ApplicationCard />
         </View>
+        {submitLoanMutate?.isPending && <ActivityIndicatorComponent />}
         {mock_loan_details_data.map((comp) => {
           return (
             <FormControl

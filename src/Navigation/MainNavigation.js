@@ -27,7 +27,6 @@ import StatusCheck from '../screens/StatusCheck';
 import Profile from '../screens/Profile';
 import EmiCalculator from '../screens/EmiCalculator';
 import CurrentAddress from '../screens/CurrentAddress';
-import OtpInput from '../components/FormComponents/OtpInput';
 import OtpScreen from '../screens/OtpEnter';
 import PinCodeVerify from '../screens/PinCode';
 import { makeMetadataApiCall } from "../services/sfDataServices/salesforceApiService";
@@ -43,7 +42,7 @@ const Dashboard = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}
-        initialRouteName={screens.KYC}>
+        initialRouteName={screens.HomeScreen}>
         <Stack.Screen
           name={screens.Splash}
           component={Splash}

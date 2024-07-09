@@ -201,19 +201,7 @@ const PanDetails = (props) => {
 
   const submitPan = async () => {
     try {
-      // if (isPendingSubmit) {
-      //   return;
-      // }
-      // const isValid = await trigger();
-      // if (!isValid) {
-      //   toast('error', "Some error occurred");
-      // }
-      // const data = watch();
-      // const response = await mutateAsyncSubmit(data);
-      // console.log('RESPONSE---', response)
       panSubmitMutate?.mutate(panDetails);
-
-      // props?.navigation?.navigate(screens.KYC);
     } catch (error) {
       toast("error", "Some error occurred");
     }

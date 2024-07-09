@@ -1,22 +1,32 @@
-import { View, Text, ScrollView, Image, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import React, { useState, useEffect, useCallback } from "react";
 import { assets } from "../../assets/assets";
 import customTheme from "../../colors/theme";
 import CustomButton from "../../components/Button";
 import Header from "../../components/Header";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { screens } from '../../constants/screens';
-import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { screens } from "../../constants/screens";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 import CustomModal from "../../components/CustomModal";
 import { horizontalScale, verticalScale } from "../../utils/matrcis";
 import { colors } from "../../colors";
 
 const KYCDocuments = ({ navigation }) => {
-  const [selectedImage, setSelectedImage] = useState('');
-  const [selectedImageBack, setSelectedImageBack] = useState('');
-  const [selectedImageSelfie, setSelectedImageSelfie] = useState('');
-  const [showModal, setShowModal] = useState(false); 
- 
+  const [selectedImage, setSelectedImage] = useState("");
+  const [selectedImageBack, setSelectedImageBack] = useState("");
+  const [selectedImageSelfie, setSelectedImageSelfie] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const route = useRoute();
+  const { applicationDetails = {}, panDetails = {} } = route?.params || {};
+
   useFocusEffect(
     useCallback(() => {
       fetchData();
@@ -24,66 +34,98 @@ const KYCDocuments = ({ navigation }) => {
   );
 
   const fetchData = async () => {
-    await AsyncStorage.setItem('CurrentScreen', JSON.stringify(screens.KYC));
-    const savedData = await AsyncStorage.getItem('FrontAdhaar');
+    await AsyncStorage.setItem("CurrentScreen", JSON.stringify(screens.KYC));
+    const savedData = await AsyncStorage.getItem("FrontAdhaar");
     const currentData = JSON.parse(savedData);
-    console.log(currentData, 'front adhaar');
-    setSelectedImage(currentData)
-    const savedDataBack = await AsyncStorage.getItem('BackAdhaar');
+    console.log(currentData, "front adhaar");
+    setSelectedImage(currentData);
+    const savedDataBack = await AsyncStorage.getItem("BackAdhaar");
     const currentDataBack = JSON.parse(savedDataBack);
-    console.log(currentData, 'front adhaar');
-    setSelectedImageBack(currentDataBack)
-    const savedSelfie = await AsyncStorage.getItem('selfieCapture')
-    const currentDataSelfie = JSON.parse(savedSelfie)
-    setSelectedImageSelfie(currentDataSelfie)
-  }
+    console.log(currentData, "front adhaar");
+    setSelectedImageBack(currentDataBack);
+    const savedSelfie = await AsyncStorage.getItem("selfieCapture");
+    const currentDataSelfie = JSON.parse(savedSelfie);
+    setSelectedImageSelfie(currentDataSelfie);
+  };
   const handleRightIconPress = (index) => {
     if (index === 0) {
-        navigation.navigate(screens.FAQ);
+      navigation.navigate(screens.FAQ);
     } else if (index === 1) {
-        navigation.navigate(screens.HomeScreen);
-    } 
-};
+      navigation.navigate(screens.HomeScreen);
+    }
+  };
   return (
-    <ScrollView style={{backgroundColor:'#ffff'}}>
+    <ScrollView style={{ backgroundColor: "#ffff" }}>
       {/* same address Yes/No selection Modal */}
-      <CustomModal
-        showModal={showModal}
-        setShowModal={setShowModal}
-      >
+      <CustomModal showModal={showModal} setShowModal={setShowModal}>
         <TouchableOpacity style={{}} onPress={() => setShowModal(!showModal)}>
           <View style={[{ paddingVertical: verticalScale(10) }]}>
             <View>
-              <Text style={{ fontWeight: 'bold', fontSize: 18, alignSelf: 'center', textAlign: 'center' }}>Is Current Address is same as in Aadhaar?</Text>
-
-              <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: verticalScale(10) }}>
-                <TouchableOpacity onPress={() => {
-                  navigation.navigate(screens.CongratulationScreen);
-                  setShowModal(false);
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 18,
+                  alignSelf: "center",
+                  textAlign: "center",
                 }}
-                  style={styles.cancelButton}>
+              >
+                Is Current Address is same as in Aadhaar?
+              </Text>
+
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-evenly",
+                  marginTop: verticalScale(10),
+                }}
+              >
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate(screens.LoanDetails, {
+                      panDetails: panDetails,
+                      applicationDetails: applicationDetails,
+                    });
+                    setShowModal(false);
+                  }}
+                  style={styles.cancelButton}
+                >
                   <Text style={styles.cancelButtonText}>Yes</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() =>{ navigation.navigate('CurrentAddress'); setShowModal(false);}} style={styles.cancelButton}>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate("CurrentAddress");
+                    setShowModal(false);
+                  }}
+                  style={styles.cancelButton}
+                >
                   <Text style={styles.cancelButtonText}>No</Text>
                 </TouchableOpacity>
               </View>
             </View>
           </View>
         </TouchableOpacity>
-      </CustomModal>    
-      <Header        
-       title="KYC Documents"
-       left={require('../../images/back.png')}
-       rightImages={[{source: assets.chat,},{source: assets.questionRound,},]}
-       leftStyle={{height: verticalScale(15),width: verticalScale(15),}}
-       leftImageProps={{resizeMode: "contain",}}
-       rightStyle={{height: verticalScale(23),width: verticalScale(23),marginHorizontal:10}}
-       rightImageProps={{ resizeMode: "contain"}}
-       titleStyle={{fontSize: verticalScale(18), }}
-       onPressRight={handleRightIconPress}
-       onPressLeft={() => {navigation.navigate(screens.PanDetails);}}
-     />
+      </CustomModal>
+      <Header
+        title="KYC Documents"
+        left={require("../../images/back.png")}
+        rightImages={[
+          { source: assets.chat },
+          { source: assets.questionRound },
+        ]}
+        leftStyle={{ height: verticalScale(15), width: verticalScale(15) }}
+        leftImageProps={{ resizeMode: "contain" }}
+        rightStyle={{
+          height: verticalScale(23),
+          width: verticalScale(23),
+          marginHorizontal: 10,
+        }}
+        rightImageProps={{ resizeMode: "contain" }}
+        titleStyle={{ fontSize: verticalScale(18) }}
+        onPressRight={handleRightIconPress}
+        onPressLeft={() => {
+          navigation.navigate(screens.PanDetails);
+        }}
+      />
       <View style={styles.topCon}>
         <Image source={assets.protection} />
         <Text>
@@ -96,34 +138,40 @@ const KYCDocuments = ({ navigation }) => {
         <CustomImageContainer selectedImage={selectedImage} />
         <CustomImageContainer selectedImage={selectedImageBack} />
       </View>
-      <SuccessText Successtext ={"E-Addhaar Successfully Verified"} />
+      <SuccessText Successtext={"E-Addhaar Successfully Verified"} />
       <View style={styles.con3} />
       <View style={styles.con4}>
         {/* <CustomImageContainer selectedImage={selectedImageSelfie} /> */}
         {/* <SuccessText /> */}
-          <View style={styles.customCon}>
-      <View
-        style={{
-          borderColor: "#e1e3e8",
-          alignItems: "center",
-          borderWidth: 1,
-          paddingVertical: 50,
-          width: "100%",
-          borderRadius: 20,
-          backgroundColor:'#E6E6E6',borderRadius:10
-        }}
-      >
-        <Image
-        source={selectedImage ? {uri :  `data:${selectedImage?.mime};base64,${selectedImage?.data}` } : require('../../images/aadhar-front.png')}
-        style={{height:100,width:100}}
-        resizeMode="cover"
-        //  source={assets.aadhar_front}
-         />
-      </View>
-      <Text style={styles.conText1}>Upload Your Selfie</Text>
-      
-    </View>
-    <SuccessText Successtext ={"Verified"} /> 
+        <View style={styles.customCon}>
+          <View
+            style={{
+              borderColor: "#e1e3e8",
+              alignItems: "center",
+              borderWidth: 1,
+              paddingVertical: 50,
+              width: "100%",
+              borderRadius: 20,
+              backgroundColor: "#E6E6E6",
+              borderRadius: 10,
+            }}
+          >
+            <Image
+              source={
+                selectedImage
+                  ? {
+                      uri: `data:${selectedImage?.mime};base64,${selectedImage?.data}`,
+                    }
+                  : require("../../images/aadhar-front.png")
+              }
+              style={{ height: 100, width: 100 }}
+              resizeMode="cover"
+              //  source={assets.aadhar_front}
+            />
+          </View>
+          <Text style={styles.conText1}>Upload Your Selfie</Text>
+        </View>
+        <SuccessText Successtext={"Verified"} />
         <CustomButton
           type="primary"
           label="Confirm and Continue"
@@ -140,14 +188,18 @@ const KYCDocuments = ({ navigation }) => {
 const CustomImageContainer = ({ selectedImage }) => {
   return (
     <View style={styles.customCon}>
-      <View
-        style={styles.customInnCon}
-      >
+      <View style={styles.customInnCon}>
         <Image
-          source={selectedImage ? { uri: `data:${selectedImage?.mime};base64,${selectedImage?.data}` } : require('../../images/aadhar-front.png')}
+          source={
+            selectedImage
+              ? {
+                  uri: `data:${selectedImage?.mime};base64,${selectedImage?.data}`,
+                }
+              : require("../../images/aadhar-front.png")
+          }
           style={{ height: 100, width: 100 }}
           resizeMode="cover"
-        //  source={assets.aadhar_front}
+          //  source={assets.aadhar_front}
         />
       </View>
       <Text style={styles.conText1}>Upload Your Aadhaar Front Photo</Text>
@@ -155,7 +207,7 @@ const CustomImageContainer = ({ selectedImage }) => {
   );
 };
 
-const SuccessText = ({Successtext}) => {
+const SuccessText = ({ Successtext }) => {
   return (
     <View style={styles.successCon}>
       <Image source={assets.tick} />
@@ -195,7 +247,7 @@ const styles = StyleSheet.create({
   },
   label: {
     ...customTheme.fonts.regularText,
-    color: customTheme.colors.labelColor
+    color: customTheme.colors.labelColor,
   },
   container: {
     marginHorizontal: 5,
@@ -241,7 +293,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.coreBlue,
   },
   titleText: {
-    alignSelf: 'center'
+    alignSelf: "center",
   },
   conText1: {
     color: "#44465B",
@@ -271,8 +323,6 @@ const styles = StyleSheet.create({
     paddingVertical: 50,
     width: "100%",
     borderRadius: 20,
-    
-
   },
   successCon: {
     flexDirection: "row",

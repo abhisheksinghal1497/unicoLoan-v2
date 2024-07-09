@@ -26,7 +26,7 @@ import { validations } from "../../constants/validations";
 import customTheme from "../../colors/theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { screens } from "../../constants/screens";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 import ProgressCard from "../../components/ProgressCard";
 
 import { uploadOtpMethod, uploadAdhaarMethod } from "../../services/ApiUtils";
@@ -56,8 +56,12 @@ const KYC = (props) => {
   const uploadOtpMethodFn = uploadOtpMethod();
   const uploadAdhaarMethodFn = uploadAdhaarMethod();
   const uploadAadharToMuleService = uploadAadharPhotos();
-  const verifyAdharApi = verifyAadhar();
+  const route = useRoute();
+  const { applicationDetails = {}, panDetails = {} } = route?.params || {};
+  console.log('PanDetails--------------------', panDetails)
+  const verifyAdharApi = verifyAadhar(panDetails.panName);
   const canvasRef = useRef(null);
+
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
   const [adhaarApiType, setAdhaarApiType] = useState(false);
@@ -132,14 +136,24 @@ const KYC = (props) => {
   );
 
   const fetchData = async () => {
-    await AsyncStorage.setItem("CurrentScreen", JSON.stringify(screens.KYC));
-    const savedData = await AsyncStorage.getItem("FrontAdhaar");
-    const currentData = JSON.parse(savedData);
+    try {
+      await AsyncStorage.setItem("CurrentScreen", JSON.stringify(screens.KYC));
+      const savedData = await AsyncStorage.getItem("FrontAdhaar");
+      const currentData = JSON.parse(savedData);
 
-    setSelectedImage(currentData);
-    const savedDataBack = await AsyncStorage.getItem("BackAdhaar");
-    const currentDataBack = JSON.parse(savedDataBack);
-    setSelectedImageBack(currentDataBack);
+      setSelectedImage(currentData);
+    } catch (error) {
+      console.log("error first--------------------------", error);
+    }
+
+    try {
+      const savedDataBack = await AsyncStorage.getItem("BackAdhaar");
+      console.log("---------------savedDataBack", savedDataBack);
+      const currentDataBack = JSON.parse(savedDataBack);
+      setSelectedImageBack(currentDataBack);
+    } catch (error) {
+      console.log("error back--------------------------", error);
+    }
   };
 
   const { fonts } = useTheme();
@@ -250,7 +264,7 @@ const KYC = (props) => {
     setVisible(true);
     setMinutes(ConfiguratonConstants.TIME_OUT_TIME_MINUTES);
     setSeconds(0);
-    setAdhaarApiType(adhaarType)
+    setAdhaarApiType(adhaarType);
   };
 
   useEffect(() => {
@@ -272,7 +286,8 @@ const KYC = (props) => {
     }
 
     if (verifyAdharApi.error) {
-      toast("error", "Aadhar verification failed");
+      toast("error", verifyAdharApi.error);
+      console.log("verifyAdharApi.error", verifyAdharApi.error);
     }
   }, [verifyAdharApi.data, verifyAdharApi.error]);
 
@@ -281,13 +296,15 @@ const KYC = (props) => {
 
     //uploadOtpMethodFn.mutate({ "otp": 1234 });
     if (await trigger("otp")) {
-      const aadharInitiateResponse =
-        !adhaarApiType
-          ? uploadAadharToMuleService?.data?.data
-          : adhaarEkycMutate?.data;
+      const aadharInitiateResponse = !adhaarApiType
+        ? uploadAadharToMuleService?.data?.data
+        : adhaarEkycMutate?.data;
       // will remove later
       if (adhaarApiType) {
-        props.navigation.navigate(screens.CaptureSelfie, {});
+        props.navigation.navigate(screens.CaptureSelfie, {
+          panDetails: panDetails,
+          applicationDetails: applicationDetails,
+        });
         return;
       }
 
@@ -318,10 +335,6 @@ const KYC = (props) => {
   useEffect(() => {
     if (adhaarEkycMutate?.data) {
       onAdhaarInitiateSuccess(true);
-      // props?.navigation?.navigate(screens.KYC, {
-      //   panDetails: panDetails,
-      //   "applicationDetails": applicationDetails
-      // });
     }
   }, [adhaarEkycMutate?.data]);
 
@@ -525,18 +538,18 @@ const KYC = (props) => {
                   </Text>
                 </TouchableOpacity>
               </View>
+              {selectedImage && selectedImageBack && (
+                <CustomButton
+                  type="primary"
+                  label="Proceed"
+                  buttonContainer={styles.buttonContainer}
+                  isLoading={isLoading}
+                  onPress={() => {
+                    uploadAadhar();
+                  }}
+                />
+              )}
             </View>
-            {selectedImage && selectedImageBack && (
-              <CustomButton
-                type="primary"
-                label="Proceed"
-                buttonContainer={styles.buttonContainer}
-                isLoading={isLoading}
-                onPress={() => {
-                  uploadAadhar();
-                }}
-              />
-            )}
           </>
         )}
       </ScrollView>

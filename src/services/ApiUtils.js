@@ -984,7 +984,22 @@ export const useSubmitApplicationFormData = () => {
     mutationFn: async (data) => {
       return new Promise((resolve, reject) => {
         setTimeout(() => {
-          resolve({ ...data, applicationNumber:'LXC537676727' });
+          resolve({ ...data, applicationNumber: "LXC537676727" });
+        }, 3000);
+      });
+    },
+  });
+
+  return mutate;
+};
+
+export const useSubmitLoanFormData = () => {
+  const mutate = useMutation({
+    networkMode: "always",
+    mutationFn: async (data) => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve({ ...data });
         }, 3000);
       });
     },
