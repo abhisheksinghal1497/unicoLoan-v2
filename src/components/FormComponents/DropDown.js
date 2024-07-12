@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Modal,
   FlatList,
+  Image,
 } from "react-native";
 import { useTheme } from "react-native-paper";
 import { Controller } from "react-hook-form";
@@ -36,6 +37,7 @@ export default DropDown = ({
   style = {},
   data = [],
   trigger = () => {},
+  isCheckboxType = false,
   ...rest
 }) => {
   const { colors, fonts } = useTheme();
@@ -57,6 +59,16 @@ export default DropDown = ({
         }}
       >
         <Text style={styles.itemText}>{item?.label}</Text>
+        <TouchableOpacity style={{}} onPress={() => {}}>
+            <Image
+              style={{ width: 22, height: 22, resizeMode: "contain" }}
+              source={
+                true
+                  ? require("../../../assets/images/checked.png")
+                  : require("../../../assets/images/box.png")
+              }
+            />
+          </TouchableOpacity>
       </TouchableOpacity>
     );
   };
