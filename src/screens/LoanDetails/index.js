@@ -43,17 +43,16 @@ const LoanDetails = (props) => {
   });
 
   const onSubmit = async (data) => {
-    // console.log("Form values: ", JSON.stringify(data, null, 2));
     await AsyncStorage.setItem("LoanDetails", JSON.stringify(data));
     submitLoanMutate.mutate(data);
-    // props?.navigation?.navigate(screens.Eligibility);
   };
 
   useEffect(() => {
     if (submitLoanMutate.data) {
       props?.navigation?.navigate(screens.Eligibility, {
         applicationDetails,
-        panDetails
+        panDetails,
+        loanDetail: submitLoanMutate.data
       });
     }
   }, [submitLoanMutate.data]);

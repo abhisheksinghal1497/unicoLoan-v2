@@ -105,7 +105,6 @@ export default function ApplicationDetails(props) {
 
   const handleCheckBoxClick = () => {
     setIsChecked(!isChecked);
-    setModalVisible2(true);
   };
 
   const {
@@ -305,20 +304,6 @@ export default function ApplicationDetails(props) {
                 onChangeText={(value) => ChangeValue(value, comp.id)}
                 type={comp.keyboardtype}
                 trigger={trigger}
-                // showRightComp={true}
-                // rightComp={() =>
-                //   isVerified ? (
-                //     <Text>Verify</Text>
-                //   ) : (
-                //     <Image
-                //       source={require("../../images/tick.png")}
-                //       style={styles.tickImage}
-                //     />
-                //   )
-                // }
-                // rightCompPress={() => {
-                //   setIsVerified(!isVerified);
-                // }}
               />
             );
           })}
@@ -334,11 +319,11 @@ export default function ApplicationDetails(props) {
             marginBottom: verticalScale(15),
           }}
         >
-          <TouchableOpacity style={{}} onPress={() => handleCheckBoxClick()}>
+          <TouchableOpacity style={{}} onPress={handleCheckBoxClick}>
             <Image
               style={{ width: 22, height: 22, resizeMode: "contain" }}
               source={
-                isChecked
+                true
                   ? require("../../../assets/images/checked.png")
                   : require("../../../assets/images/box.png")
               }
@@ -351,6 +336,7 @@ export default function ApplicationDetails(props) {
               lineHeight: 18,
               color: "#000000",
             }}
+            onPress={() => setModalVisible2(true)}
           >
             Terms and Condition Unico Housing Finance Private Limited.
           </Text>
@@ -360,7 +346,7 @@ export default function ApplicationDetails(props) {
           <Button
             type="primary"
             label="Continue"
-            disable={!isValid}
+            disable={!isValid || !isChecked}
             onPress={onSubmit}
             // onPress={()=>TnC()}
             buttonContainer={{ marginVertical: verticalScale(20) }}
@@ -369,7 +355,6 @@ export default function ApplicationDetails(props) {
         <CustomModal
           modalStyle={style.modalstyle}
           showModal={modalVisible2}
-          //  setShowModal={setModalVisible2}
           centeredViewStyle={{ backgroundColor: "rgba(0, 0, 0, 0.1)" }}
         >
           <View>
@@ -390,7 +375,7 @@ export default function ApplicationDetails(props) {
             <Text style={{ fontWeight: "600", fontSize: 20, color: "#000000" }}>
               Terms and Condition
             </Text>
-            <ScrollView>
+            <ScrollView >
               <View
                 style={{
                   width: "100%",

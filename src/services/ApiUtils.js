@@ -59,12 +59,16 @@ export const getPinCodes = () => {
   return queryRes;
 };
 
-export const getHomeScreenDetails = () => {
+export const getHomeScreenDetails = (isEmpty = false) => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async () => {
       return new Promise((resolve, reject) => {
         setTimeout(() => {
+          if (isEmpty) {
+            return [];
+          }
+
           const data = [
             {
               loanTitle: "Home Loan",
@@ -120,16 +124,33 @@ export const getHomeScreenDetails = () => {
 export const getEligibilityDetails = () => {
   const mutate = useMutation({
     networkMode: "always",
-    mutationFn: async () => {
+    mutationFn: async (data) => {
+      const { applicationDetails, loanDetail } = data || {};
       return new Promise((resolve, reject) => {
         setTimeout(() => {
           const data = {
-            Product: "Home Loan",
-            "Request Loan Amount": "50 lac",
+            Product: applicationDetails?.Product__c,
+            "Sub Product": loanDetail?.loanPurpose,
+            "Request Loan Amount":
+              applicationDetails?.Requested_loan_amount__c?.substring(0, 2) +
+              " lac",
+            "Number of Dependents":
+              parseInt(applicationDetails?.familyDependant) +
+              parseInt(applicationDetails?.familyDependantChildren) +
+              parseInt(applicationDetails?.familyDependantOther),
+            "Residential Stability": applicationDetails?.presentAccommodation ,
             "Cibil Score": 846,
+             "DPD Status": true,
+             "Business Vintage": 2,
+             "Net Asset": loanDetail?.totalAsset,
+             "Total Score": 90,
             "Number of Enquiries in the last 6 months": 2,
-            "Eligible Status": "Eligible",
+            "Eligible Status": "Not Eligible",
             "Eligible Loan Amount": "45 lac",
+            "Customer Segment": applicationDetails?.Customer_Profile__c,
+            "Employment Stability": 1,
+            "Qualification": "BCA",
+            "Parameter": 1
           };
           resolve(data);
           reject("Something went wrong");
@@ -611,7 +632,6 @@ export const submitPanApi = () => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (data) => {
-      console.log("DATA 2", { data });
       const { panNumber, success = true } = data;
       return new Promise((resolve, reject) => {
         setTimeout(() => {

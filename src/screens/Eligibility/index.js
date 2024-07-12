@@ -1,5 +1,5 @@
 import { View, ScrollView, StyleSheet, ImageBackground } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import CustomModal from "../../components/CustomModal";
 import InputField from "../../components/FormComponents/InputField";
 import { useForm } from "react-hook-form";
@@ -18,6 +18,8 @@ import {
 import Header from "../../components/Header";
 import { validations } from "../../constants/validations";
 import { getEligibilityDetails } from "../../services/ApiUtils";
+import { useRoute } from "@react-navigation/native";
+import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 
 const formData = [
   {
@@ -111,19 +113,23 @@ const formData = [
 ];
 
 const Eligibility = (props) => {
- 
+  const route = useRoute();
+  const {
+    applicationDetails = {},
+    panDetails = {},
+    loanDetail = {},
+  } = route?.params || {};
   const [showBottomModal, setShowBottomModal] = useState(false);
   const [applicantData, setApplicantData] = useState([]);
   const [cardData, setCardData] = useState();
-
   const eligibilityDetails = getEligibilityDetails();
   const handleRightIconPress = (index) => {
     if (index === 0) {
-        props.navigation.navigate(screens.FAQ);
+      props.navigation.navigate(screens.FAQ);
     } else if (index === 1) {
-        props.navigation.navigate(screens.HomeScreen);
-    } 
-};
+      props.navigation.navigate(screens.HomeScreen);
+    }
+  };
 
   const {
     control,
@@ -139,12 +145,11 @@ const Eligibility = (props) => {
   });
 
   useEffect(() => {
-    eligibilityDetails.mutate();
+    eligibilityDetails.mutate({ applicationDetails, loanDetail });
   }, []);
 
   useEffect(() => {
     if (eligibilityDetails.data) {
-      // alert('Top Cards Success')
       setCardData(eligibilityDetails.data);
     }
   }, [eligibilityDetails.data]);
@@ -164,23 +169,52 @@ const Eligibility = (props) => {
     setShowBottomModal(false);
   };
 
- if(eligibilityDetails?.isPending)  return (<Text>Loading</Text>)
+  if (eligibilityDetails?.isPending) return <ActivityIndicatorComponent />;
 
+  if (cardData && cardData["Eligible Status"] === "Not Eligible") {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <View>
+          <Text style={{marginBottom: verticalScale(5), fontSize: verticalScale(16)}}>You are not eligible for the loan</Text>
+          <CustomButton
+            type="primary"
+            label="Continue"
+            onPress={() => {
+              props.navigation.navigate(screens.HomeScreen);
+            }}
+          />
+        </View>
+      </View>
+    );
+  }
+
+  const onPressContinue = () => {
+    props.navigation.navigate(screens.Sanction);
+  };
 
   return (
-    <ScrollView style={{backgroundColor:'#ffff'}}>
-      <Header        
-       title="Eligibility"
-       left={assets.back}
-       rightImages={[{source: assets.chat,},{source: assets.questionRound,},]}
-       leftStyle={{height: verticalScale(15),width: verticalScale(15),}}
-       leftImageProps={{resizeMode: "contain",}}
-       rightStyle={{height: verticalScale(23),width: verticalScale(23),marginHorizontal:10}}
-       rightImageProps={{ resizeMode: "contain"}}
-       titleStyle={{fontSize: verticalScale(18), }}
-       onPressRight={handleRightIconPress}
-       onPressLeft={() => {props.navigation.goBack();}}
-     />
+    <ScrollView style={{ backgroundColor: "#ffff" }}>
+      <Header
+        title="Eligibility"
+        left={assets.back}
+        rightImages={[
+          { source: assets.chat },
+          { source: assets.questionRound },
+        ]}
+        leftStyle={{ height: verticalScale(15), width: verticalScale(15) }}
+        leftImageProps={{ resizeMode: "contain" }}
+        rightStyle={{
+          height: verticalScale(23),
+          width: verticalScale(23),
+          marginHorizontal: 10,
+        }}
+        rightImageProps={{ resizeMode: "contain" }}
+        titleStyle={{ fontSize: verticalScale(18) }}
+        onPressRight={handleRightIconPress}
+        onPressLeft={() => {
+          props.navigation.goBack();
+        }}
+      />
       <View style={styles.topCon}>
         <Card cardStyle={styles.cardCon}>
           <ImageBackground
@@ -190,7 +224,9 @@ const Eligibility = (props) => {
           >
             <View style={styles.cardInnView}>
               <Text style={styles.cardText1}>You are eligible for upto</Text>
-              <Text style={styles.cardText2}>₹ 1.2 Crore</Text>
+              <Text style={styles.cardText2}>
+                ₹ {cardData ? cardData["Eligible Loan Amount"] : 0}
+              </Text>
               <Text style={styles.cardText3}>@6.75% - 7.25% interest p.a</Text>
             </View>
           </ImageBackground>
@@ -221,16 +257,23 @@ const Eligibility = (props) => {
               Add Co-Aplicant
             </Text>
           </TouchableOpacity> */}
+
           {applicantData?.length
             ? applicantData.map((el, i) => (
                 <CoApplicantCard data={el} key={i} />
               ))
             : null}
-          {cardData && Object.keys(cardData).map((el, i) => (
-            <CustomComponent title={el} key={i} value={cardData[el]} />
-          ))}
+          {cardData &&
+            Object.keys(cardData).length > 0 &&
+            Object.keys(cardData).map((el, i) => (
+              <CustomComponent title={el} key={i} value={cardData[el]} />
+            ))}
         </Card>
-        <CustomButton type="primary" label="Continue" onPress={() => {}} />
+        <CustomButton
+          type="primary"
+          label="Continue"
+          onPress={onPressContinue}
+        />
       </View>
 
       <CustomModal
