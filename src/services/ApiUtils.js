@@ -240,6 +240,11 @@ export const getHomeScreenOurServices = () => {
               title: "FAQs",
               image: require("../../assets/images/FAQ.png"),
             },
+            {
+              key: "Services",
+              title: "Services",
+              image: require("../../assets/images/FAQ.png"),
+            },
           ];
           resolve(data);
           reject("Something went wrong");

@@ -39,5 +39,6 @@ export const screens = {
     OtpScreen: "OtpScreen",
     PinCodeVerify: "PinCodeVerify",
     Profile: 'Profile',
-    Dummy: 'Dummy'
+    Dummy: 'Dummy',
+    Services:'services'
   };

@@ -59,6 +59,7 @@ export default DropDown = ({
         }}
       >
         <Text style={styles.itemText}>{item?.label}</Text>
+        {isCheckboxType &&
         <TouchableOpacity style={{}} onPress={() => {}}>
             <Image
               style={{ width: 22, height: 22, resizeMode: "contain" }}
@@ -69,6 +70,7 @@ export default DropDown = ({
               }
             />
           </TouchableOpacity>
+  }
       </TouchableOpacity>
     );
   };

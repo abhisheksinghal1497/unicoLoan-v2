@@ -29,6 +29,7 @@ import EmiCalculator from '../screens/EmiCalculator';
 import CurrentAddress from '../screens/CurrentAddress';
 import OtpScreen from '../screens/OtpEnter';
 import PinCodeVerify from '../screens/PinCode';
+import Services from '../screens/Services';
 import { makeMetadataApiCall } from "../services/sfDataServices/salesforceApiService";
 
 const Stack = createStackNavigator();
@@ -159,6 +160,11 @@ const Dashboard = () => {
         <Stack.Screen
           name={screens.Profile}
           component={Profile}
+        />
+
+        <Stack.Screen
+          name={screens.Services}
+          component={Services}
         />
       </Stack.Navigator>
     </NavigationContainer>

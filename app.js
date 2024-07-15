@@ -83,7 +83,7 @@ const ContactListScreen = () => {
     }, []);
 
     function fetchData() {
-        net.query("SELECT Id, Name FROM Contact LIMIT 100", (response) => { });
+       // net.query("SELECT Id, Name FROM Contact LIMIT 100", (response) => { });
     }
 
     return (

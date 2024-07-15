@@ -112,7 +112,7 @@ const MyTickets = (props) => {
         title={screenName}
         left={require('../../images/back.png')}
         right={require('../../assets/chat_icon.png')}
-        onPressLeft={() => { props?.navigation?.navigate(screens.ApplicantDetails) }}
+        onPressLeft={() => { props?.navigation?.goBack() }}
         onPressRight={() => { }}
         rightStyle={styles.chatIcon} />
       <FlatList

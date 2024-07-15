@@ -106,6 +106,9 @@ const HomeScreen = ({ navigation }) => {
       case 5:
         navigation.navigate(screens.FAQ);
         break;
+      case 6:
+        navigation.navigate(screens.Services);
+        break;
       default:
         break;
     }
@@ -266,6 +269,7 @@ const HomeScreen = ({ navigation }) => {
             <View style={{ marginTop: verticalScale(78) }}>
               <Text style={styles.yourLoan}>Your Loans</Text>
               {data.length === 0 ? (
+                <View style = {{marginHorizontal:16}}>
                 <TouchableOpacity onPress={openModal}>
                   <ImageBackground
                     style={styles.imgBackground}
@@ -274,6 +278,7 @@ const HomeScreen = ({ navigation }) => {
                     <Text style={styles.applyforloan}>Apply For Loan</Text>
                   </ImageBackground>
                 </TouchableOpacity>
+                </View>
               ) : (
                 <>
                   <View style={styles.secondcards}>
