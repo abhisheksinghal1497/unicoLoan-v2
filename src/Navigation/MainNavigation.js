@@ -38,7 +38,6 @@ const Dashboard = () => {
   const getData = makeMetadataApiCall()
   useEffect(() => {
     getData.mutate()
-
   }, [])
   return (
     <NavigationContainer>

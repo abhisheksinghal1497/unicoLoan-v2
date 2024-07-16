@@ -90,6 +90,7 @@ export default function ApplicationDetails(props) {
       setMockData(getFormData?.data);
     }
   }, [getFormData?.data]);
+  console.log(getFormData?.data, 'getFormData?.data')
 
   // const allFields = mock_data.map
 
@@ -182,8 +183,8 @@ export default function ApplicationDetails(props) {
 
   useEffect(() => {
     if (applicationFormMutate.error) {
-      log('applicationFormMutate error', applicationFormMutate.error);
-      alert(ErrorConstants.SOMETHING_WENT_WRONG)
+      log("applicationFormMutate error", applicationFormMutate.error);
+      alert(ErrorConstants.SOMETHING_WENT_WRONG);
     }
   }, [applicationFormMutate.error]);
 
@@ -195,7 +196,6 @@ export default function ApplicationDetails(props) {
     if (id === "pincode") {
     }
     const prevValue = { ...watch() };
-    console.log("PREV VALUE---------", prevValue);
     prevValue[id] = value;
     await AsyncStorage.setItem("ApplicationDetails", JSON.stringify(prevValue));
   };
@@ -232,10 +232,10 @@ export default function ApplicationDetails(props) {
 
   const toggleModal = () => setShowModal(!showModal);
   const style = styles(colors);
-
-  if (getFormData?.isPending) {
-    return <ActivityIndicatorComponent />;
-  }
+  console.log('getFormData?.isPending', getFormData?.isPending)
+  // if (getFormData?.isPending) {
+  //   return <ActivityIndicatorComponent />;
+  // }
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
@@ -280,7 +280,7 @@ export default function ApplicationDetails(props) {
         <View
           style={{ marginHorizontal: DimensionUtils.pixelSizeHorizontal(15) }}
         >
-          {applicationFormMutate?.isPending && <ActivityIndicatorComponent />}
+          {(applicationFormMutate?.isPending || getFormData?.isPending) && <ActivityIndicatorComponent />}
           {mock_data.map((comp, index) => {
             if (!checkFormCondition(comp.id)) {
               return <></>;
@@ -323,7 +323,7 @@ export default function ApplicationDetails(props) {
             <Image
               style={{ width: 22, height: 22, resizeMode: "contain" }}
               source={
-                true
+                isChecked
                   ? require("../../../assets/images/checked.png")
                   : require("../../../assets/images/box.png")
               }
@@ -375,7 +375,7 @@ export default function ApplicationDetails(props) {
             <Text style={{ fontWeight: "600", fontSize: 20, color: "#000000" }}>
               Terms and Condition
             </Text>
-            <ScrollView >
+            <ScrollView>
               <View
                 style={{
                   width: "100%",
