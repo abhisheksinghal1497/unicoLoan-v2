@@ -10,53 +10,44 @@ import { log } from "../utils/ConsoleLogUtils";
 import { validations } from "../constants/validations";
 import { component } from "../components/FormComponents/FormControl";
 import { getDateYearsBack } from "../utils/dateUtil";
-import { GetPicklistValues } from "../utils/functions";
-import { getLeadFields } from "./sfDataServices/saleforceApiUtils";
+import { GetPicklistValues, toast } from "../utils/functions";
+import {
+  getLeadFields,
+  getPincodeData,
+} from "./sfDataServices/saleforceApiUtils";
+import { oauth } from "react-native-force";
+import LocalStorage from "./LocalStorage";
+import ErrorConstants from "../constants/ErrorConstants";
 
-// export const getPinCodes = () => {
-//   const mutate = useMutation({
-//     networkMode: "always",
-//     mutationFn: async () => {
-//       return new Promise((resolve, reject) => {
-// net.query(
-//   query.getPincodeMasterData,
-//   (res) => {
-//     resolve(res?.records);
-//     // resolve(res);
-//   },
-//   (error) => {
-//     reject(error);
-//   }
-// );
-//       });
-//     },
-//   });
-//   return mutate;
-// };
+export const logoutApi = () => {
+  console.log("LOGOUT API");
+  // oauth.logout(() => {
+  //   LocalStorage.clearAllData();
+  // }, () => {
+  // });
+};
+
+const checkAuth = (asyncFN, ...params) => {
+  return new Promise(async (resolve, reject) => {
+    oauth.getAuthCredentials(
+      async (data) => data && resolve(await asyncFN(...params)),
+      async () => {
+        logoutApi();
+        reject(ErrorConstants.SOMETHING_WENT_WRONG);
+      }
+    );
+  });
+};
 
 export const getPinCodes = () => {
-  const queryRes = useQueries({
-    queries: [
-      {
-        queryKey: ["getPincodeQuery"],
-        queryFn: () =>
-          new Promise((resolve, reject) => {
-            net.query(
-              query.getPincodeMasterData,
-              (res) => {
-                resolve(res?.records);
-                // resolve(res);
-              },
-              (error) => {
-                reject(error);
-              }
-            );
-          }),
-      },
-    ],
+  const mutate = useMutation({
+    networkMode: "always",
+    mutationFn: async () => {
+      return checkAuth(getPincodeData);
+    },
   });
 
-  return queryRes;
+  return mutate;
 };
 
 export const getHomeScreenDetails = (isEmpty = false) => {
@@ -138,19 +129,19 @@ export const getEligibilityDetails = () => {
               parseInt(applicationDetails?.familyDependant) +
               parseInt(applicationDetails?.familyDependantChildren) +
               parseInt(applicationDetails?.familyDependantOther),
-            "Residential Stability": applicationDetails?.presentAccommodation ,
+            "Residential Stability": applicationDetails?.presentAccommodation,
             "Cibil Score": 846,
-             "DPD Status": true,
-             "Business Vintage": 2,
-             "Net Asset": loanDetail?.totalAsset,
-             "Total Score": 90,
+            "DPD Status": true,
+            "Business Vintage": 2,
+            "Net Asset": loanDetail?.totalAsset,
+            "Total Score": 90,
             "Number of Enquiries in the last 6 months": 2,
             "Eligible Status": "Not Eligible",
             "Eligible Loan Amount": "45 lac",
             "Customer Segment": applicationDetails?.Customer_Profile__c,
             "Employment Stability": 1,
-            "Qualification": "BCA",
-            "Parameter": 1
+            Qualification: "BCA",
+            Parameter: 1,
           };
           resolve(data);
           reject("Something went wrong");
@@ -659,8 +650,9 @@ export const getApplicationDetailsForm = () => {
     mutationFn: async (data) => {
       return new Promise(async (resolve, reject) => {
         try {
+          console.log("Comming here----------------");
           const fieldArray = await getLeadFields();
-
+          console.log("here--------------------");
           const mock_data = [
             {
               id: "RM_SM_Name__c",
@@ -994,9 +986,350 @@ export const getApplicationDetailsForm = () => {
               isDisabled: true,
             },
           ];
-
           resolve([...mock_data]);
-        } catch (error) {}
+        } catch (error) {
+          console.log("ERROR----------", error);
+          const mock_data = [
+            {
+              id: "RM_SM_Name__c",
+              label: "RM Name",
+              type: component.textInput,
+              placeHolder: "Select User",
+              validations: validations.required,
+              maxLength: 10,
+              // keyboardtype: "numeric",
+              isRequired: true,
+              data: GetPicklistValues([], "RM_SM_Name__c", [
+                {
+                  id: "RM_SM_Name__1",
+                  label: "Ravindra",
+                  value: "Ravindra",
+                },
+              ]),
+              value: "",
+            },
+            // not mention
+            // {
+            //   id: "applicationType",
+            //   label: "Applicant Type",
+            //   type: component.textInput,
+            //   placeHolder: "Applicant Type",
+            //   validations: validations.text,
+            //   isRequired: false,
+            //   value: "",
+            // },
+            {
+              id: "Customer_Profile__c",
+              label: "Customer Profile",
+              type: component.dropdown,
+              placeHolder: "Select Customer Profile",
+              validations: validations.text,
+              maxLength: 10,
+              keyboardtype: "numeric",
+              isRequired: true,
+              data: GetPicklistValues([], "Customer_Profile__c", [
+                {
+                  id: "Customer_Profile__1",
+                  label: "Salf-Employed",
+                  value: "Salf-Employed",
+                },
+                {
+                  id: "Customer_Profile__2",
+                  label: "Salaried",
+                  value: "Salaried",
+                },
+              ]),
+              value: {},
+            },
+            {
+              id: "FirstName",
+              label: "First Name",
+              type: component.textInput,
+              placeHolder: "Enter first Name",
+              validations: validations.name,
+              isRequired: true,
+              value: "",
+            },
+            {
+              id: "MiddleName",
+              label: "Middle Name",
+              type: component.textInput,
+              placeHolder: "Enter middle Name",
+              validations: validations.nameWithoutRequired,
+              isRequired: false,
+              value: "",
+            },
+            {
+              id: "LastName",
+              label: "Last Name",
+              type: component.textInput,
+              placeHolder: "Enter last Name",
+              validations: validations.name,
+              isRequired: true,
+              value: "",
+            },
+            // not mention
+            // {
+            //   id: "dob",
+            //   label: "Date of Birth",
+            //   type: component.datetime,
+            //   placeHolder: "DD-MM-YYYY",
+            //   validations: validations.text,
+            //   isRequired: false,
+            //   value: "",
+            //   datepickerProps: {
+            //     minimumDate: getDateYearsBack(18),
+            //     maximumDate: getDateYearsBack(100),
+            //   },
+            // },
+            // missing from backend
+            {
+              id: "mobileNumber",
+              label: "Mobile number",
+              type: component.textInput,
+              placeHolder: "Enter mobile number",
+              validations: validations.phone,
+              isRequired: true,
+              value: data.mobileNumber,
+              isDisabled: true,
+              maxLength: 10,
+            },
+            {
+              id: "Alternative_Mobile_Number__c",
+              label: "Alternate mobile number",
+              type: component.textInput,
+              placeHolder: "Enter alternate mobile number",
+              validations: validations.phoneWithoutRequired,
+              isRequired: false,
+              value: "",
+              keyboardtype: "numeric",
+              maxLength: 10,
+            },
+            // missing from backend
+            {
+              id: "email",
+              label: "Email",
+              type: component.textInput,
+              placeHolder: "Enter email",
+              validations: validations.email,
+              isRequired: false,
+              value: "",
+              isDisabled: true,
+            },
+            // no data in picklist from backend
+            {
+              id: "Product__c",
+              label: "Product",
+              type: component.dropdown,
+              placeHolder: "Select product",
+              validations: validations.text,
+              maxLength: 10,
+              // keyboardtype: "numeric",
+              isRequired: true,
+              data: GetPicklistValues([], "Product__c", [
+                {
+                  id: "product_type_1",
+                  label: "Housing Loan",
+                  value: "Housing Loan",
+                },
+
+                {
+                  id: "product_type_2",
+                  label: "Non Housing Loan",
+                  value: "Non Housing Loan",
+                },
+              ]),
+              value: {},
+            },
+
+            {
+              id: "Requested_tenure_in_Months__c",
+              label: "Requested tenure in Months",
+              type: component.textInput,
+              placeHolder: "Enter requested tenure in months",
+              validations: validations.numberOnly,
+              isRequired: false,
+              keyboardtype: "numeric",
+              value: "",
+            },
+
+            {
+              id: "Requested_loan_amount__c",
+              label: "Requested loan amount",
+              type: component.textInput,
+              placeHolder: "Enter required loan amount",
+              validations: validations.numberOnlyRequired,
+              keyboardtype: "numeric",
+              isRequired: true,
+              value: "",
+            },
+
+            {
+              id: "Property_Identified__c",
+              label: "Property Identified?",
+              type: component.dropdown,
+              placeHolder: "Select answer",
+              validations: validations.text,
+              isRequired: false,
+              data: GetPicklistValues([], "Property_Identified__c", [
+                {
+                  id: "propertyIdentified_type_1",
+                  label: "Yes",
+                  value: "Yes",
+                },
+
+                {
+                  id: "propertyIdentified_type_2",
+                  label: "No",
+                  value: "No",
+                },
+              ]),
+              value: {},
+            },
+            // missing from backend
+            {
+              id: "presentAccommodation",
+              label: "Present Accommodation",
+              type: component.dropdown,
+              placeHolder: "Select Present Accommodation",
+              validations: validations.text,
+              isRequired: true,
+              data: GetPicklistValues([], "presentAccommodation", [
+                {
+                  id: "presentAccommodation_type_1",
+                  label: "own",
+                  value: "own",
+                },
+
+                {
+                  id: "presentAccommodation_type_2",
+                  label: "family",
+                  value: "family",
+                },
+                {
+                  id: "presentAccommodation_type_3",
+                  label: "rented",
+                  value: "rented",
+                },
+                {
+                  id: "presentAccommodation_type_4",
+                  label: "employer",
+                  value: "employer",
+                },
+              ]),
+              value: {},
+            },
+            // missing from backend
+            {
+              id: "periodOfStay",
+              label: "Period of stay",
+              type: component.textInput,
+              placeHolder: "YYMM",
+              validations: validations.yyMMDate,
+              isRequired: true,
+              value: "",
+              maxLength: 4,
+            },
+            //  missing from backend
+            {
+              id: "rentPerMonth",
+              label: "Rent per month",
+              type: component.textInput,
+              placeHolder: "Rent per month",
+              validations: validations.numberOnly,
+              isRequired: true,
+              keyboardtype: "numeric",
+              value: "",
+            },
+            // missing from backend
+            {
+              id: "employmentExperience",
+              label: "Employment experience",
+              type: component.textInput,
+              placeHolder: "YYMM",
+              validations: validations.yyMMDate,
+              isRequired: true,
+              value: "",
+            },
+            // missing from backend
+            {
+              id: "totalWorkExperience",
+              label: "Total Work experience",
+              type: component.textInput,
+              placeHolder: "YYMM",
+              validations: validations.yyMMDate,
+              isRequired: true,
+              value: "",
+            },
+            // missing from backend
+            {
+              id: "familyDependant",
+              label: "Family Dependant",
+              type: component.textInput,
+              placeHolder: "Enter Family Dependant",
+              validations: validations.numberOnlyRequired,
+              isRequired: true,
+              keyboardtype: "numeric",
+              value: "",
+            },
+            // missing from backend
+            {
+              id: "familyDependantChildren",
+              label: "Family Dependant Children",
+              type: component.textInput,
+              placeHolder: "Enter Family Dependant Children",
+              validations: validations.numberOnlyRequired,
+              isRequired: true,
+              keyboardtype: "numeric",
+              value: "",
+            },
+            // missing from backend
+            {
+              id: "familyDependantOther",
+              label: "Family Dependant Other",
+              type: component.textInput,
+              placeHolder: "Enter Family Dependant Other",
+              validations: validations.numberOnlyRequired,
+              isRequired: true,
+              keyboardtype: "numeric",
+              value: "",
+            },
+            // missing from backend
+            {
+              id: "totalBusinessExperience",
+              label: "Total Business experience",
+              type: component.textInput,
+              placeHolder: "YYMM",
+              validations: validations.yyMMDate,
+              isRequired: true,
+              value: "",
+            },
+
+            {
+              id: "Address",
+              label: "Address",
+              type: component.textInput,
+              placeHolder: "Enter address",
+              validations: validations.text,
+              isRequired: true,
+              value: "",
+              isMultiline: true,
+            },
+
+            {
+              id: "Pincode__c",
+              label: "Pincode",
+              type: component.textInput,
+              placeHolder: "Enter Pincode",
+              validations: validations.numberOnlyRequired,
+              isRequired: true,
+              value: data.pincode,
+              keyboardtype: "numeric",
+              isDisabled: true,
+            },
+          ];
+          resolve([...mock_data]);
+        }
       });
     },
   });
@@ -1040,6 +1373,363 @@ export const useSubmitPanForm = () => {
       return new Promise((resolve, reject) => {
         setTimeout(() => {
           resolve({ ...data });
+        }, 3000);
+      });
+    },
+  });
+
+  return mutate;
+};
+
+export const getServiceForm = () => {
+  const queryRes = useQueries({
+    queries: [
+      {
+        queryKey: ["serviceForm"],
+        queryFn: () =>
+          new Promise((resolve, reject) => {
+            setTimeout(() => {
+              const data = [
+                {
+                  id: "MainServiceRequest",
+                  label: "Service Request",
+                  type: component.dropdown,
+                  placeHolder: "Service Request",
+                  validations: validations.text,
+                  keyboardtype: "numeric",
+                  isRequired: true,
+                  data: [
+                    {
+                      id: "MakePaymentService",
+                      label: "Make Payment",
+                      value: "MakePayment",
+                    },
+                    {
+                      id: "ViewStatementRequest-service",
+                      label: "View Statement/Request",
+                      value: "ViewStatementRequest",
+                    },
+                    {
+                      id: "RecentTransactions-service",
+                      label: "Recent Transactions",
+                      value: "recentTransaction",
+                    },
+                    {
+                      id: "ServiceRequest",
+                      label: "Service Request",
+                      value: "ServiceRequest",
+                    },
+                    {
+                      id: "ViewDocuments",
+                      label: "View Documents",
+                      value: "ViewDocuments",
+                    },
+                  ],
+                  value: {},
+                },
+                {
+                  id: "MakePayment",
+                  label: "Make Payment",
+                  type: component.dropdown,
+                  placeHolder: "Make Payment",
+                  validations: validations.text,
+                  keyboardtype: "numeric",
+                  isRequired: true,
+                  data: [
+                    {
+                      id: "PartPayment",
+                      label: "Part Payment",
+                      value: "Part Payment",
+                    },
+                    {
+                      id: "AdvanceEMI",
+                      label: "Advance EMI",
+                      value: "Advance EMI",
+                    },
+                    {
+                      id: "OverduePayments",
+                      label: "Overdue Payments",
+                      value: "Overdue Payments",
+                    },
+                    {
+                      id: "EMI/PEMI",
+                      label: "EMI/PEMI",
+                      value: "EMI/PEMI",
+                    },
+                    {
+                      id: "OtherCharges",
+                      label:
+                        "Other Charges - Technical Fees/Field Visit Charges",
+                      value:
+                        "Other Charges - Technical Fees/Field Visit Charges",
+                    },
+                  ],
+                  value: {},
+                },
+                {
+                  id: "ViewStatementRequest",
+                  label: "View Statement/Request",
+                  type: component.dropdown,
+                  placeHolder: "View Statement/Request",
+                  validations: validations.text,
+                  keyboardtype: "numeric",
+                  isRequired: true,
+                  data: [
+                    {
+                      id: "StatementofAccount",
+                      label: "Statement of Account",
+                      value: "Statement of Account",
+                    },
+                    {
+                      id: "WelcomeLetter",
+                      label: "Welcome Letter",
+                      value: "Welcome Letter",
+                    },
+                    {
+                      id: "RepaymentSchedule",
+                      label: "Repayment Schedule",
+                      value: "Repayment Schedule",
+                    },
+                    {
+                      id: "ProvisionalInterestCertificate",
+                      label: "Provisional Interest Certificate",
+                      value: "Provisional Interest Certificate",
+                    },
+                    {
+                      id: "InterestCertificate",
+                      label: "Interest Certificate",
+                      value: "Interest Certificate",
+                    },
+                    {
+                      id: "LoginFee",
+                      label: "Login Fee",
+                      value: "Login Fee",
+                    },
+                    {
+                      id: "AdminFeeReceipts",
+                      label: "Admin Fee Receipts",
+                      value: "Admin Fee Receipts",
+                    },
+                    {
+                      id: "Last6EMIReceipts",
+                      label: "Last 6 EMI Receipts",
+                      value: "Last 6 EMI Receipts",
+                    },
+                    {
+                      id: "PartPaymentReceipts",
+                      label: "Part Payment Receipts",
+                      value: "Part Payment Receipts",
+                    },
+                    {
+                      id: "ForeclosureLetter",
+                      label: "Foreclosure Letter",
+                      value: "Foreclosure Letter",
+                    },
+                    {
+                      id: "LOD",
+                      label: "LOD",
+                      value: "LOD",
+                    },
+                  ],
+                  value: {},
+                },
+                {
+                  id: "recentTransaction",
+                  label: "Recent Transactions",
+                  type: component.dropdown,
+                  placeHolder: "Recent Transactions",
+                  validations: validations.text,
+                  keyboardtype: "numeric",
+                  isRequired: true,
+                  data: [
+                    {
+                      id: "All-the-Latest-3-Months-Transactions",
+                      label: "All the Latest 3 Months Transactions",
+                      value: "All the Latest 3 Months Transactions",
+                    },
+                  ],
+                  value: {},
+                },
+
+                {
+                  id: "ServiceRequest",
+                  label: "Service Request",
+                  type: component.dropdown,
+                  placeHolder: "Service Request",
+                  validations: validations.text,
+                  keyboardtype: "numeric",
+                  isRequired: true,
+                  data: [
+                    {
+                      id: "ForeclosureRequest",
+                      label: "Foreclosure Request",
+                      value: "Foreclosure Request",
+                    },
+                    {
+                      id: "LOD",
+                      label: "LOD",
+                      value: "LOD",
+                    },
+                    {
+                      id: "LifeInsurancePolicy",
+                      label: "Life Insurance Policy",
+                      value: "Life Insurance Policy",
+                    },
+                    {
+                      id: "PropertyInsurancePolicy",
+                      label: "Property Insurance Policy",
+                      value: "Property Insurance Policy",
+                    },
+                    {
+                      id: "TrancheDisbursementRequest",
+                      label: "Tranche Disbursement Request",
+                      value: "Tranche Disbursement Request",
+                    },
+                    {
+                      id: "TopUpLoan",
+                      label: "Top Up Loan",
+                      value: "Top Up Loan",
+                    },
+                    {
+                      id: "NewLoan",
+                      label: "New Loan",
+                      value: "New Loan",
+                    },
+                    {
+                      id: "RepaymentAccountChange",
+                      label: "Repayment Account Change",
+                      value: "Repayment Account Change",
+                    },
+                    {
+                      id: "MobileNumberChange",
+                      label: "Mobile Number Change",
+                      value: "Mobile Number Change",
+                    },
+                    {
+                      id: "AddressChange",
+                      label: "Address Change",
+                      value: "Address Change",
+                    },
+                    {
+                      id: "DemiseIntimation",
+                      label: "Demise Intimation",
+                      value: "Demise Intimation",
+                    },
+                    {
+                      id: "InsuranceClaimRequest",
+                      label: "Insurance Claim Request",
+                      value: "Insurance Claim Request",
+                    },
+                    {
+                      id: "OtherRequests",
+                      label: "Other Requests",
+                      value: "Other Requests",
+                    },
+                  ],
+                  value: {},
+                },
+
+                {
+                  id: "ViewDocuments",
+                  label: "View Documents",
+                  type: component.dropdown,
+                  placeHolder: "View Documents",
+                  validations: validations.text,
+                  keyboardtype: "numeric",
+                  isRequired: true,
+                  data: [
+                    {
+                      id: "SanctionLetter",
+                      label: "Sanction Letter",
+                      value: "Sanction Letter",
+                    },
+                    {
+                      id: "EApplicationForm",
+                      label: "E Application Form",
+                      value: "E Application Form",
+                    },
+                    {
+                      id: "EAgreement",
+                      label: "E Agreement",
+                      value: "E Agreement",
+                    },
+                    {
+                      id: "MITC",
+                      label: "MITC",
+                      value: "MITC",
+                    },
+                    {
+                      id: "DRF",
+                      label: "DRF",
+                      value: "DRF",
+                    },
+                    {
+                      id: "KeyFactSheet",
+                      label: "Key Fact Sheet",
+                      value: "Key Fact Sheet",
+                    },
+                  ],
+                  value: {},
+                },
+
+                {
+                  id: "LoanNumber",
+                  label: "Select your Loan Number",
+                  type: component.dropdown,
+                  placeHolder: "Loan Number",
+                  validations: validations.text,
+                  keyboardtype: "numeric",
+                  isRequired: true,
+                  data: [
+                    {
+                      id: "123456789",
+                      label: "123456790",
+                      value: "123456790",
+                    },
+                    {
+                      id: "ABCDEFGHI",
+                      label: "ABCDEFGHI",
+                      value: "ABCDEFGHI",
+                    },
+                  ],
+                  value: {},
+                },
+              ];
+              resolve(data);
+            }, 2000);
+          }),
+      },
+    ],
+  });
+
+  return queryRes;
+};
+
+export const useSubmitServiceForm = () => {
+  const mutate = useMutation({
+    networkMode: "always",
+    mutationFn: async (data) => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve({ ...data });
+          toast("success", "Otp send to register mobile number");
+        }, 3000);
+      });
+    },
+  });
+
+  return mutate;
+};
+
+export const useVerifyOtpService = (onSuccess = (data) => {}) => {
+  const mutate = useMutation({
+    networkMode: "always",
+    mutationFn: async (data) => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          onSuccess(data);
+          resolve({ ...data });
+          toast("success", "Otp verified successfully");
         }, 3000);
       });
     },

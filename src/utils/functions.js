@@ -73,7 +73,7 @@ export const GetPicklistValues = (arr, fieldName, defaultValues) => {
 
     return data && data?.length > 0 ? data : defaultValues;
   } catch (error) {
-    console.log("error>>>>>", error);
+    console.log("error GetPicklistValues>>>>>", error);
     return defaultValues;
   }
 };

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -19,7 +19,7 @@ import { screens } from "../constants/screens";
 
 const PincodeModal = ({ modalVisible = false, setModalVisible = () => {} }) => {
   const [pinCode, setPinCode] = useState("");
-  const [{ data: pincodeDataRes = [], error }] = getPinCodes();
+  const { data: pincodeDataRes = [], mutate: getPincodeMutate } = getPinCodes();
   const { colors } = useTheme();
   const navigate = useNavigation();
 
@@ -69,6 +69,10 @@ const PincodeModal = ({ modalVisible = false, setModalVisible = () => {} }) => {
   };
 
   const isValid = FilteredPincode.length !== 0 || pinCode.length === 0;
+
+  useEffect(() => {
+    getPincodeMutate();
+  }, []);
 
   return (
     <CustomModal

@@ -26,10 +26,12 @@ import {
   getPinCodes,
   getHomeScreenDetails,
   getHomeScreenOurServices,
+  logoutApi,
 } from "../../services/ApiUtils";
 import CustomModal from "../../components/CustomModal";
 import Button from "../../components/Button";
 import PincodeModal from "../../components/PincodeModal";
+import {oauth} from 'react-native-force'
 
 const HomeScreen = ({ navigation }) => {
   const flatListRef = useRef(null);
@@ -228,7 +230,7 @@ const HomeScreen = ({ navigation }) => {
     );
   };
 
-  console.log({ data2 });
+
 
   return (
     <View style={{ flex: 1 }}>
@@ -249,12 +251,18 @@ const HomeScreen = ({ navigation }) => {
                 style={styles.profileImageView}
                 onPress={() => navigation.navigate(screens.Profile)}
               >
+                <View style={{flexDirection:'row'}}>
                 <Image
                   source={require("../../../assets/images/profileIcon.png")}
                   style={styles.profileIcon}
                 />
-
                 <Text style={styles.profileName}>Bhavesh Rao</Text>
+                </View>
+
+                <TouchableOpacity onPress={() => oauth.logout()}>
+                  <Text>Logout</Text>
+                </TouchableOpacity>
+
               </TouchableOpacity>
               <View style={{ marginBottom: verticalScale(-60) }}>
                 <CardComponent />
@@ -403,6 +411,7 @@ const styles = StyleSheet.create({
   profileImageView: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent:'space-between',
     left: horizontalScale(25),
     marginBottom: verticalScale(10),
     marginTop: verticalScale(40),
