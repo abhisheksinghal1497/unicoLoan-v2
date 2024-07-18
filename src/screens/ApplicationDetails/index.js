@@ -36,6 +36,8 @@ import { log } from "../../utils/ConsoleLogUtils";
 import { useRoute } from "@react-navigation/native";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 import ErrorConstants from "../../constants/ErrorConstants";
+import WebviewComponent from "../../components/WebviewComponent";
+import { ConfiguratonConstants } from "../../constants/ConfigurationConstants";
 
 const initialData = [
   {
@@ -62,15 +64,14 @@ const initialData = [
 
 export default function ApplicationDetails(props) {
   const route = useRoute();
-  const { pincode = "400001" } = route.params || {};
-  const [isVerified, setIsVerified] = useState(false);
+  const { pincode = "400001", pincodeData = {} } = route.params || {};
   const [showModal, setShowModal] = useState(false);
   const [{ data = {}, error }] = getUserDetailQuery();
   const [modalVisible2, setModalVisible2] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const getFormData = getApplicationDetailsForm();
   const [mock_data, setMockData] = useState([]);
-  const applicationFormMutate = useSubmitApplicationFormData();
+  const applicationFormMutate = useSubmitApplicationFormData(pincodeData);
 
   useEffect(() => {
     getFormData?.mutate({ pincode: pincode });
@@ -86,23 +87,9 @@ export default function ApplicationDetails(props) {
 
   useEffect(() => {
     if (getFormData?.data) {
-      log(">>>>>>", getFormData?.data);
       setMockData(getFormData?.data);
     }
   }, [getFormData?.data]);
-  console.log(getFormData?.data, 'getFormData?.data')
-
-  // const allFields = mock_data.map
-
-  const TnC = () => {
-    // if (!isChecked){
-    setModalVisible2(true);
-    // }
-  };
-
-  const ok = () => {
-    setModalVisible2(false);
-  };
 
   const handleCheckBoxClick = () => {
     setIsChecked(!isChecked);
@@ -176,7 +163,7 @@ export default function ApplicationDetails(props) {
   useEffect(() => {
     if (applicationFormMutate.data) {
       props?.navigation?.navigate(screens.PanDetails, {
-        applicationDetails: applicationFormMutate.data,
+        loanData: applicationFormMutate.data,
       });
     }
   }, [applicationFormMutate.data]);
@@ -232,10 +219,11 @@ export default function ApplicationDetails(props) {
 
   const toggleModal = () => setShowModal(!showModal);
   const style = styles(colors);
-  console.log('getFormData?.isPending', getFormData?.isPending)
+  console.log("getFormData?.isPending", getFormData?.isPending);
   // if (getFormData?.isPending) {
   //   return <ActivityIndicatorComponent />;
   // }
+
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
@@ -280,7 +268,9 @@ export default function ApplicationDetails(props) {
         <View
           style={{ marginHorizontal: DimensionUtils.pixelSizeHorizontal(15) }}
         >
-          {(applicationFormMutate?.isPending || getFormData?.isPending) && <ActivityIndicatorComponent />}
+          {(applicationFormMutate?.isPending || getFormData?.isPending) && (
+            <ActivityIndicatorComponent />
+          )}
           {mock_data.map((comp, index) => {
             if (!checkFormCondition(comp.id)) {
               return <></>;
@@ -356,9 +346,9 @@ export default function ApplicationDetails(props) {
           modalStyle={style.modalstyle}
           showModal={modalVisible2}
           centeredViewStyle={{ backgroundColor: "rgba(0, 0, 0, 0.1)" }}
+          withFeedback={false}
         >
-          <View>
-            <TouchableOpacity onPress={() => setModalVisible2(false)}>
+           <TouchableOpacity onPress={() => setModalVisible2(false)}>
               <Image
                 source={require("../../../assets/images/crossGray.png")}
                 style={{
@@ -371,56 +361,9 @@ export default function ApplicationDetails(props) {
                 }}
               />
             </TouchableOpacity>
-
-            <Text style={{ fontWeight: "600", fontSize: 20, color: "#000000" }}>
-              Terms and Condition
-            </Text>
-            <ScrollView>
-              <View
-                style={{
-                  width: "100%",
-                  alignSelf: "center",
-                  marginTop: verticalScale(17.5),
-                  marginBottom: verticalScale(-15),
-                }}
-              >
-                <Text
-                  style={{
-                    lineHeight: 28,
-                    fontSize: 12,
-                    color: "#000000",
-                    fontWeight: "600",
-                  }}
-                >
-                  An Intellectual Property clause will inform users that the
-                  contents, logo and other visual media you created is your
-                  property and is protected by copyright laws.
-                  {"\n"}
-                  1. A Termination clause will inform users that any accounts on
-                  your website and mobile app, or users' access to your website
-                  and app, can be terminated in case of abuses or at your sole
-                  discretion.
-                  {"\n"}
-                  2. A Governing Law clause will inform users which laws govern
-                  the agreement. These laws should come from the country in
-                  which your company is headquartered or the country from which
-                  you operate your website and mobile app.
-                  {"\n"}
-                  3. A Links to Other Websites clause will inform users that you
-                  are not responsible for any third party websites that you link
-                  to.
-                </Text>
-              </View>
-            </ScrollView>
-            <View style={{ marginBottom: verticalScale(10) }}>
-              <Button
-                type="primary"
-                label="ok"
-                onPress={() => ok()}
-                buttonContainer={{ width: 154, alignSelf: "center" }}
-              />
-            </View>
-          </View>
+            <WebviewComponent
+              uri={ConfiguratonConstants.TERMS_AND_CONDITION_URL}
+            />
         </CustomModal>
       </ScrollView>
     </View>

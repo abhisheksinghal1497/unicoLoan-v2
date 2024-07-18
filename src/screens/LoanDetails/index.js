@@ -25,17 +25,15 @@ import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 
 const LoanDetails = (props) => {
   const [showModal, setShowModal] = useState(false);
-  const submitLoanMutate = useSubmitLoanFormData();
-  const route = useRoute();
-  const { applicationDetails = {}, panDetails = {} } = route?.params || {};
 
+  const route = useRoute();
+  const { loanData = {} } = route?.params || {};
+  const submitLoanMutate = useSubmitLoanFormData(loanData);
   const {
     control,
     handleSubmit,
     formState: { errors, isValid },
-    getValues,
     setValue,
-    clearErrors,
     watch,
   } = useForm({
     mode: "onChange",
@@ -50,17 +48,15 @@ const LoanDetails = (props) => {
   useEffect(() => {
     if (submitLoanMutate.data) {
       props?.navigation?.navigate(screens.Eligibility, {
-        applicationDetails,
-        panDetails,
-        loanDetail: submitLoanMutate.data
+        loanData: submitLoanMutate.data,
       });
     }
   }, [submitLoanMutate.data]);
 
   useEffect(() => {
     if (submitLoanMutate.error) {
-      log('submitLoanMutate error', submitLoanMutate.error);
-      alert(ErrorConstants.SOMETHING_WENT_WRONG)
+      log("submitLoanMutate error", submitLoanMutate.error);
+      alert(ErrorConstants.SOMETHING_WENT_WRONG);
     }
   }, [submitLoanMutate.error]);
 
@@ -416,6 +412,7 @@ const LoanDetails = (props) => {
       isMultiline: true,
     },
   ];
+  
 
   const toggleModal = () => {
     setShowModal(!showModal);
@@ -461,6 +458,7 @@ const LoanDetails = (props) => {
         </View>
         {submitLoanMutate?.isPending && <ActivityIndicatorComponent />}
         {mock_loan_details_data.map((comp) => {
+          console.log(comp.id, comp.type)
           return (
             <FormControl
               compType={comp.type}

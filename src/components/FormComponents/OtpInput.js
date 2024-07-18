@@ -31,7 +31,6 @@ export default function OtpInput({
 
   const handleTextChange = (text, index, otp, setOtp) => {
     try {
-      console.log('HERE----------------')
       const newValue = otp ? otp.split("") : [];
       newValue[index] = text?.split("")[text?.length - 1];
       // onChange(newValue.join(''));

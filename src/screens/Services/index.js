@@ -46,46 +46,11 @@ const Services = (props) => {
   });
   const MainServiceRequest = watch(formId.MainServiceRequest);
   const submitFormData = useSubmitServiceForm();
-  const { data, isSuccess = false } = submitFormData;
-  const onOtpVerify = (data) => {
-    props.navigation.navigate(screens.HomeScreen);
-  };
-  const { isPending: isVerifyOtpLoading, mutate: verifyOtpMutate } =
-    useVerifyOtpService(onOtpVerify);
 
   const onSubmit = (data) => {
     if (isValid) {
       submitFormData.mutate(data);
     }
-  };
-
-  const RenderOtpComponent = () => {
-    return (
-      isSuccess && (
-        <View>
-          <View style={style.labelContainer}>
-            <Text style={[style.label]}>
-              <Text style={style.asterisk}>* </Text>
-              Enter otp
-            </Text>
-          </View>
-          <FormControl
-            compType={component.otpInput}
-            control={control}
-            watch={watch}
-            validations={validations.otp}
-            name="otp"
-            label="otp"
-            errors={errors.otp}
-            isRequired
-            setValue={setValue}
-            style={style.otpInputContainer}
-            maxLength={6}
-            trigger={trigger}
-          />
-        </View>
-      )
-    );
   };
 
   const RenderForm = () => {
@@ -122,29 +87,37 @@ const Services = (props) => {
               setValue={setValue}
               isMultiline={comp.isMultiline}
               maxLength={comp.maxLength}
-              isDisabled={comp.isDisabled || isSuccess}
+              isDisabled={comp.isDisabled}
               onChangeText={(value) => ChangeValue(value, comp.id)}
               type={comp.keyboardtype}
               trigger={trigger}
             />
           );
         })}
-        <RenderOtpComponent />
       </View>
     );
   };
 
   const RenderButton = () => {
-    const label = isSuccess ? "Verify" : "Continue";
-    const onPress = isSuccess
-      ? handleSubmit(verifyOtpMutate)
-      : handleSubmit(onSubmit);
+    const label = "Continue";
+    const onPress = handleSubmit(onSubmit);
     return (
       !!MainServiceRequest && (
         <CustomButton type="primary" label={label} onPress={onPress} />
       )
     );
   };
+
+  useEffect(() => {
+    if (submitFormData.data) {
+      console.log({ data: submitFormData.data });
+      const keys = Object.keys(submitFormData.data);
+      props.navigation.navigate(screens.ServiceOtp, {
+        requestedService: submitFormData.data[keys[0]],
+        requestedServiceSubCategory: submitFormData.data[keys[1]],
+      });
+    }
+  }, [submitFormData.data]);
 
   return (
     <ScrollView contentContainerStyle={style.contentContainerStyle}>
@@ -171,7 +144,7 @@ const Services = (props) => {
             props?.navigation?.goBack();
           }}
         />
-        {(isLoading || submitFormData.isPending || isVerifyOtpLoading) && (
+        {(isLoading || submitFormData.isPending) && (
           <ActivityIndicatorComponent />
         )}
         <RenderForm />

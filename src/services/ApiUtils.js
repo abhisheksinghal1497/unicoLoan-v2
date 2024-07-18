@@ -10,14 +10,18 @@ import { log } from "../utils/ConsoleLogUtils";
 import { validations } from "../constants/validations";
 import { component } from "../components/FormComponents/FormControl";
 import { getDateYearsBack } from "../utils/dateUtil";
-import { GetPicklistValues, toast } from "../utils/functions";
+import { GetPicklistValues, getUniqueId, toast } from "../utils/functions";
 import {
   getLeadFields,
   getPincodeData,
+  saveApplicationData,
 } from "./sfDataServices/saleforceApiUtils";
 import { oauth } from "react-native-force";
 import LocalStorage from "./LocalStorage";
 import ErrorConstants from "../constants/ErrorConstants";
+import { soupConfig } from "./sfDBServices/SoupConstants";
+import { getAllSoupEntries } from "./sfDBServices/salesforceDbUtils";
+import { saveApplicationDataSoup } from "./sfDBServices/salesforceDbService";
 
 export const logoutApi = () => {
   console.log("LOGOUT API");
@@ -50,78 +54,41 @@ export const getPinCodes = () => {
   return mutate;
 };
 
-export const getHomeScreenDetails = (isEmpty = false) => {
+export const getHomeScreenDetails = () => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async () => {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (isEmpty) {
-            return [];
+      return new Promise(async (resolve, reject) => {
+        try {
+          const data = await getAllSoupEntries(
+            soupConfig.applicationList.name,
+            soupConfig.applicationList.path
+          );
+          log("HERE IS DATA----------", { data });
+          if (data && data?.length > 0) {
+            resolve(data);
+          } else {
+            resolve([]);
           }
-
-          const data = [
-            {
-              loanTitle: "Home Loan",
-              lan: "H402HHL0622560",
-              loanAmount: "₹ 2,836,000",
-              roi: "9.25%",
-              tenure: "18/100",
-              nextPayment: "₹ 2,836",
-              paymentDate: "29th April 2024",
-              NextPaymentText: "Next Payment",
-              ProgressBarPercent: "50",
-            },
-            {
-              loanTitle: "Home Loan",
-              lan: "H402HHL0622560",
-              loanAmount: "₹ 2,836,000",
-              roi: "9.25%",
-              tenure: "18/100",
-              nextPayment: "₹ 2,836",
-              paymentDate: "29th April 2024",
-              NextPaymentText: "Next Payment",
-              ProgressBarPercent: "30",
-            },
-            {
-              loanTitle: "Home Loan",
-              lan: "H402HHL0622560",
-              loanAmount: "₹ 2,836,000",
-              roi: "9.25%",
-              tenure: "18/100",
-              nextPayment: "₹ 2,836",
-              paymentDate: "29th April 2024",
-              NextPaymentText: "Next Payment",
-              ProgressBarPercent: "75",
-            },
-            {
-              loanTitle: "Home Loan",
-              lan: "H402HHL0622560",
-              loanAmount: "₹ 2,836,000",
-              roi: "9.25%",
-              kyc_Pan: "PAN and KYC",
-              ProgressBarPercent: "0",
-            },
-          ];
-          resolve(data);
-          reject("Something went wrong");
-        }, 3000);
+        } catch (error) {
+          resolve([]);
+        }
       });
     },
   });
 
   return mutate;
 };
-export const getEligibilityDetails = () => {
+export const getEligibilityDetails = (loanData) => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (data) => {
-      const { applicationDetails, loanDetail } = data || {};
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
+      const { applicationDetails, loanDetails } = data || {};
+      return new Promise(async(resolve, reject) => {
+
           const data = {
             Product: applicationDetails?.Product__c,
-            "Sub Product": loanDetail?.loanPurpose,
+            "Sub Product": loanDetails?.loanPurpose,
             "Request Loan Amount":
               applicationDetails?.Requested_loan_amount__c?.substring(0, 2) +
               " lac",
@@ -133,19 +100,26 @@ export const getEligibilityDetails = () => {
             "Cibil Score": 846,
             "DPD Status": true,
             "Business Vintage": 2,
-            "Net Asset": loanDetail?.totalAsset,
+            "Net Asset": loanDetails?.totalAsset,
             "Total Score": 90,
             "Number of Enquiries in the last 6 months": 2,
-            "Eligible Status": "Not Eligible",
+            "Eligible Status": "Eligible", //Not Eligible
             "Eligible Loan Amount": "45 lac",
             "Customer Segment": applicationDetails?.Customer_Profile__c,
             "Employment Stability": 1,
             Qualification: "BCA",
             Parameter: 1,
           };
-          resolve(data);
-          reject("Something went wrong");
-        }, 3000);
+
+          let loanDetail = { ...loanData };
+          loanDetail.eligibilityDetails = data;
+        try {
+          await saveApplicationData(loanDetail);
+          resolve({ ...loanDetail });
+        } catch (error) {
+          reject(ErrorConstants.SOMETHING_WENT_WRONG);
+        }
+   
       });
     },
   });
@@ -650,9 +624,8 @@ export const getApplicationDetailsForm = () => {
     mutationFn: async (data) => {
       return new Promise(async (resolve, reject) => {
         try {
-          console.log("Comming here----------------");
           const fieldArray = await getLeadFields();
-          console.log("here--------------------");
+
           const mock_data = [
             {
               id: "RM_SM_Name__c",
@@ -988,7 +961,6 @@ export const getApplicationDetailsForm = () => {
           ];
           resolve([...mock_data]);
         } catch (error) {
-          console.log("ERROR----------", error);
           const mock_data = [
             {
               id: "RM_SM_Name__c",
@@ -1336,13 +1308,18 @@ export const getApplicationDetailsForm = () => {
   return mutate;
 };
 
-export const useSubmitApplicationFormData = () => {
+export const useSubmitApplicationFormData = (pincodeData) => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (data) => {
-      return new Promise((resolve, reject) => {
+      return new Promise(async (resolve, reject) => {
+        let defaultData = { ...soupConfig.applicationList.default };
+        defaultData.loanId = getUniqueId();
+        defaultData.applicationDetails = { ...data };
+        defaultData.pincodeDetails = { ...pincodeData };
+        await saveApplicationData(defaultData);
         setTimeout(() => {
-          resolve({ ...data, applicationNumber: "LXC537676727" });
+          resolve({ ...defaultData });
         }, 3000);
       });
     },
@@ -1351,14 +1328,19 @@ export const useSubmitApplicationFormData = () => {
   return mutate;
 };
 
-export const useSubmitLoanFormData = () => {
+export const useSubmitLoanFormData = (loanData) => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (data) => {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          resolve({ ...data });
-        }, 3000);
+      return new Promise(async(resolve, reject) => {
+        let loanDetail = { ...loanData };
+        loanDetail.loanDetails = {...data};
+        try {
+          await saveApplicationData(loanDetail);
+          resolve({ ...loanDetail });
+        } catch (error) {
+          reject(ErrorConstants.SOMETHING_WENT_WRONG);
+        }
       });
     },
   });
@@ -1366,14 +1348,19 @@ export const useSubmitLoanFormData = () => {
   return mutate;
 };
 
-export const useSubmitPanForm = () => {
+export const useSubmitPanForm = (loanData) => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (data) => {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          resolve({ ...data });
-        }, 3000);
+      return new Promise(async (resolve, reject) => {
+        let loanDetail = { ...loanData };
+        loanDetail.panDetails = data;
+        try {
+          await saveApplicationData(loanDetail);
+          resolve({ ...loanDetail });
+        } catch (error) {
+          reject(ErrorConstants.SOMETHING_WENT_WRONG);
+        }
       });
     },
   });
@@ -1709,7 +1696,7 @@ export const useSubmitServiceForm = () => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (data) => {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         setTimeout(() => {
           resolve({ ...data });
           toast("success", "Otp send to register mobile number");
@@ -1737,3 +1724,65 @@ export const useVerifyOtpService = (onSuccess = (data) => {}) => {
 
   return mutate;
 };
+
+export const useResendOtpService = () => {
+  const mutate = useMutation({
+    networkMode: "always",
+    mutationFn: async (data) => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve({ ...data });
+          toast("success", "Otp sent successfully");
+        }, 3000);
+      });
+    },
+  });
+
+  return mutate;
+};
+
+export const useSaveSelfie = (loanData) => {
+  const mutate = useMutation({
+    networkMode: "always",
+    mutationFn: async (selfie) => {
+      return new Promise(async (resolve, reject) => {
+        let data = { ...loanData };
+        data.selfieDetails = { ...selfie };
+        try {
+          await saveApplicationData(data);
+          resolve(data);
+        } catch (error) {
+          reject(ErrorConstants.SOMETHING_WENT_WRONG);
+        }
+      });
+    },
+  });
+
+  return mutate;
+};
+
+export const useKycDocument = (loanData) => {
+  const mutate = useMutation({
+    networkMode: "always",
+    mutationFn: async () => {
+      return new Promise(async (resolve, reject) => {
+        let data = { ...loanData };
+        data.currentAddressDetails = { 
+            address: loanData?.adhaarDetails?.address?.splitAddress,
+            fullAddress: loanData?.adhaarDetails?.address?.combinedAddress,
+         };
+         console.log('FULL ADDRESS', data.currentAddressDetails)
+        try {
+          await saveApplicationData(data);
+          resolve(data);
+        } catch (error) {
+          reject(ErrorConstants.SOMETHING_WENT_WRONG);
+        }
+      });
+    },
+  });
+
+  return mutate;
+};
+
+

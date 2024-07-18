@@ -1,28 +1,58 @@
 import React, { useState } from "react";
-import { Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import {
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 import { horizontalScale } from "../utils/matrcis";
 
-const CustomModal = ({type="center",showModal = true, setShowModal = () => {}, children, modalStyle, centeredViewStyle ={}}) => {
-
-  
-  return (
-    
-    // <View style={[styles.centeredView, {justifyContent:type==="center" ? "center" : "flex-end"}]}>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={showModal}
-        onRequestClose={() => {
-          setShowModal(!showModal);
-        }}
+const CustomModal = ({
+  type = "center",
+  showModal = true,
+  setShowModal = () => {},
+  children,
+  modalStyle,
+  centeredViewStyle = {},
+  withFeedback = true,
+}) => {
+  const Content = () => {
+    return (
+      <View
+        style={[
+          styles.centeredView,
+          { justifyContent: type === "center" ? "center" : "flex-end" },
+          centeredViewStyle,
+        ]}
       >
-         <TouchableWithoutFeedback style={{zIndex:0}} onPress={() => setShowModal(!showModal)}>
-        <View style={[styles.centeredView, {justifyContent:type==="center" ? "center" : "flex-end",
-        }, centeredViewStyle]}>
-          <View style={[styles.modalView, modalStyle]}>{children}</View>
-        </View>
+        <View style={[styles.modalView, modalStyle]}>{children}</View>
+      </View>
+    );
+  };
+
+  return (
+    // <View style={[styles.centeredView, {justifyContent:type==="center" ? "center" : "flex-end"}]}>
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={showModal}
+      onRequestClose={() => {
+        setShowModal(!showModal);
+      }}
+    >
+      {withFeedback ? (
+        <TouchableWithoutFeedback
+          style={{ zIndex: 0 }}
+          onPress={() => setShowModal(!showModal)}
+        >
+          <Content />
         </TouchableWithoutFeedback>
-      </Modal>
+      ) : (
+        <Content />
+      )}
+    </Modal>
     //  </View>
   );
 };
@@ -32,7 +62,7 @@ export default CustomModal;
 const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
     // alignSelf:'center'
   },
   modalView: {
@@ -47,7 +77,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    maxHeight:'70%',
-    marginHorizontal: horizontalScale(15)   
+    maxHeight: "70%",
+    marginHorizontal: horizontalScale(15),
   },
 });

@@ -31,7 +31,9 @@ import {
 import CustomModal from "../../components/CustomModal";
 import Button from "../../components/Button";
 import PincodeModal from "../../components/PincodeModal";
-import {oauth} from 'react-native-force'
+import { oauth } from "react-native-force";
+import { brandDetails } from "../../constants/stringConstants";
+import useGetProgressPercentage, { getCurrentScreenNameForResume } from "../../utils/useGetProgressPercentage";
 
 const HomeScreen = ({ navigation }) => {
   const flatListRef = useRef(null);
@@ -131,37 +133,35 @@ const HomeScreen = ({ navigation }) => {
     setModalVisible(true);
   };
 
-  const renderItems = ({ item, index }) => {
+  const ResumeLoanJourney = ({item}) => {
+    const progress = useGetProgressPercentage(item);
+    const screenName = getCurrentScreenNameForResume(item);
+    console.log({progress, screenName})
+    
     return (
-      <View style={[styles.card]}>
+      <View style={{justifyContent:'space-around'}}>
         <View style={styles.loanView}>
-          <Text style={styles.loanTitle}>{item.loanTitle}</Text>
-          <Text style={styles.uhfl}>UNICO HOUSING FINANCE LIMITED</Text>
+          <Text style={styles.loanTitle}>{item?.applicationDetails?.Product__c}</Text>
+          <Text style={styles.uhfl}>{brandDetails.name}</Text>
         </View>
         <View style={styles.lanloanview}>
-          <Text style={styles.lan}>LAN: {item.lan}</Text>
-          <Text style={styles.loanAmountText}>Loan Amount</Text>
+          <Text style={styles.lan}>LAN: {item?.loanId}</Text>
         </View>
-        <View>
-          <Text style={styles.loanAmount}>{item.loanAmount}</Text>
-          <View style={styles.bottomLine}></View>
-          <Text style={styles.roiText}>ROI</Text>
+        <View style={{marginVertical:verticalScale(5)}}>
+        <Text style={styles.loanAmount}>Loan Amount</Text> 
+          <Text style={styles.loanAmount}>{item?.applicationDetails?.Requested_loan_amount__c}</Text>
+          {/* <View style={styles.bottomLine}></View> */}
+          {/* <Text style={styles.roiText}>ROI</Text>
           <Text style={styles.roi}>{item.roi}</Text>
-          <View style={styles.bottomLine}></View>
-          {item.tenure && (
-            <>
-              <Text style={styles.tenuretext}>Tenure</Text>
-              <Text style={styles.tenure}>{item.tenure}</Text>
-            </>
-          )}
+          <View style={styles.bottomLine}></View> */}
         </View>
-        <View style={styles.belowCardView}>
+        <View style={{height:'30%', flexDirection:'row'}}>
           <CircularProgress
             imageStyle={{ width: 40, height: 33 }}
             ImageData={require("../../../assets/images/Home2.png")}
             size={90}
             strokeWidth={12}
-            progressPercent={item.ProgressBarPercent}
+            progressPercent={progress}
             bgColor={colors.progressBg}
             pgColor={colors.coreBlue}
           />
@@ -175,15 +175,17 @@ const HomeScreen = ({ navigation }) => {
                 <Text style={styles.paymentDate}>{item.paymentDate}</Text>
               </>
             )}
-            {item.kyc_Pan && (
-              <Text style={styles.naxtPaymentKyc}>{item.kyc_Pan}</Text>
+            {!!screenName && (
+              <Text style={styles.naxtPaymentKyc}>{screenName}</Text>
             )}
           </View>
         </View>
         <View
           style={[
             styles.cardBottomBar,
-            { marginTop: !item.tenure ? verticalScale(40) : verticalScale(2) },
+            {
+              marginTop: !item.tenure ? verticalScale(40) : verticalScale(2),
+            },
           ]}
         >
           {item.nextPayment && item.paymentDate && item.NextPaymentText ? (
@@ -217,7 +219,7 @@ const HomeScreen = ({ navigation }) => {
             <TouchableOpacity
               style={styles.seeDetailsresumeJourneyButton}
               onPress={() => {
-                navigation?.navigation?.navigate(currentScreen);
+                navigation?.navigate(screenName, {loanData:item});
               }}
             >
               <Text style={styles.seeDetailsresumeJourneyText}>
@@ -230,7 +232,133 @@ const HomeScreen = ({ navigation }) => {
     );
   };
 
+  // const ActiveLoan = () => {
+  //   return (
+  //     <>
+  //       <View style={styles.loanView}>
+  //         <Text style={styles.loanTitle}>{item.loanTitle}</Text>
+  //         <Text style={styles.uhfl}>UNICO HOUSING FINANCE LIMITED</Text>
+  //       </View>
+  //       <View style={styles.lanloanview}>
+  //         <Text style={styles.lan}>LAN: {item.lan}</Text>
+  //         <Text style={styles.loanAmountText}>Loan Amount</Text>
+  //       </View>
+  //       <View>
+  //         <Text style={styles.loanAmount}>{item.loanAmount}</Text>
+  //         <View style={styles.bottomLine}></View>
+  //         <Text style={styles.roiText}>ROI</Text>
+  //         <Text style={styles.roi}>{item.roi}</Text>
+  //         <View style={styles.bottomLine}></View>
+  //         {item.tenure && (
+  //           <>
+  //             <Text style={styles.tenuretext}>Tenure</Text>
+  //             <Text style={styles.tenure}>{item.tenure}</Text>
+  //           </>
+  //         )}
+  //       </View>
+  //       <View style={{marginVertical: verticalScale(10)}}>
+  //         <CircularProgress
+  //           imageStyle={{ width: 40, height: 20 }}
+  //           ImageData={require("../../../assets/images/Home2.png")}
+  //           size={90}
+  //           strokeWidth={12}
+  //           progressPercent={item.ProgressBarPercent}
+  //           bgColor={colors.progressBg}
+  //           pgColor={colors.coreBlue}
+  //         />
+  //         <View style={{ marginLeft: horizontalScale(11.5) }}>
+  //           {item.nextPayment && item.paymentDate && item.NextPaymentText && (
+  //             <>
+  //               <Text style={styles.naxtPaymentKyc}>
+  //                 {item.NextPaymentText}
+  //               </Text>
+  //               <Text style={styles.naxtPaymentKyc2}>{item.nextPayment}</Text>
+  //               <Text style={styles.paymentDate}>{item.paymentDate}</Text>
+  //             </>
+  //           )}
+  //           {item.kyc_Pan && (
+  //             <Text style={styles.naxtPaymentKyc}>{item.kyc_Pan}</Text>
+  //           )}
+  //         </View>
+  //       </View>
+  //       <View
+  //         style={[
+  //           styles.cardBottomBar,
+  //           {
+  //             marginTop: !item.tenure ? verticalScale(40) : verticalScale(2),
+  //           },
+  //         ]}
+  //       >
+  //         {item.nextPayment && item.paymentDate && item.NextPaymentText ? (
+  //           <View
+  //             style={{
+  //               flexDirection: "row",
+  //               justifyContent: "space-between",
+  //               marginHorizontal: horizontalScale(105),
+  //             }}
+  //           >
+  //             <TouchableOpacity
+  //               onPress={() =>
+  //                 navigation.navigate(screens.ApplicantDetails, {
+  //                   ProgressBarPercent: item.ProgressBarPercent,
+  //                 })
+  //               }
+  //               style={styles.seeDetailsresumeJourneyButton}
+  //             >
+  //               <Text style={styles.seeDetailsresumeJourneyText}>
+  //                 See Details
+  //               </Text>
+  //             </TouchableOpacity>
+  //             <TouchableOpacity
+  //               onPress={() => navigation.navigate(screens.PayNow)}
+  //               style={styles.PayNowButton}
+  //             >
+  //               <Text style={styles.PayNowText}>Pay Now</Text>
+  //             </TouchableOpacity>
+  //           </View>
+  //         ) : (
+  //           <TouchableOpacity
+  //             style={styles.seeDetailsresumeJourneyButton}
+  //             onPress={() => {
+  //               navigation?.navigation?.navigate(currentScreen);
+  //             }}
+  //           >
+  //             <Text style={styles.seeDetailsresumeJourneyText}>
+  //               Resume Journey
+  //             </Text>
+  //           </TouchableOpacity>
+  //         )}
+  //       </View>
+  //     </>
+  //   );
+  // };
 
+  const renderItems = ({ item, index }) => {
+    return (
+      <View style={[styles.card, {}]}>
+        {!item?.loanId ? (
+          <ApplyNewLoan />
+        ) : (
+          <ResumeLoanJourney item={item} />
+        )}
+      </View>
+    );
+  };
+
+  const ApplyNewLoan = () => {
+    return (
+      <View style={{ margin: verticalScale(2), maxHeight: '53%' }}>
+        <TouchableOpacity onPress={openModal}>
+          <ImageBackground
+            style={styles.imgBackground}
+            source={require("../../../assets/images/loanapply.png")}
+          >
+            <Text style={styles.applyforloan}>Apply For Loan</Text>
+          </ImageBackground>
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -251,18 +379,17 @@ const HomeScreen = ({ navigation }) => {
                 style={styles.profileImageView}
                 onPress={() => navigation.navigate(screens.Profile)}
               >
-                <View style={{flexDirection:'row'}}>
-                <Image
-                  source={require("../../../assets/images/profileIcon.png")}
-                  style={styles.profileIcon}
-                />
-                <Text style={styles.profileName}>Bhavesh Rao</Text>
+                <View style={{ flexDirection: "row" }}>
+                  <Image
+                    source={require("../../../assets/images/profileIcon.png")}
+                    style={styles.profileIcon}
+                  />
+                  <Text style={styles.profileName}>Bhavesh Rao</Text>
                 </View>
 
                 <TouchableOpacity onPress={() => oauth.logout()}>
                   <Text>Logout</Text>
                 </TouchableOpacity>
-
               </TouchableOpacity>
               <View style={{ marginBottom: verticalScale(-60) }}>
                 <CardComponent />
@@ -277,22 +404,13 @@ const HomeScreen = ({ navigation }) => {
             <View style={{ marginTop: verticalScale(78) }}>
               <Text style={styles.yourLoan}>Your Loans</Text>
               {data.length === 0 ? (
-                <View style = {{marginHorizontal:16}}>
-                <TouchableOpacity onPress={openModal}>
-                  <ImageBackground
-                    style={styles.imgBackground}
-                    source={require("../../../assets/images/loanapply.png")}
-                  >
-                    <Text style={styles.applyforloan}>Apply For Loan</Text>
-                  </ImageBackground>
-                </TouchableOpacity>
-                </View>
+                <ApplyNewLoan />
               ) : (
                 <>
                   <View style={styles.secondcards}>
                     <FlatList
                       ref={flatListRef}
-                      data={data}
+                      data={[...data, { loanId: null }]}
                       keyExtractor={(item, index) => index.toString()}
                       renderItem={renderItems}
                       horizontal
@@ -411,7 +529,7 @@ const styles = StyleSheet.create({
   profileImageView: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent:'space-between',
+    justifyContent: "space-between",
     left: horizontalScale(25),
     marginBottom: verticalScale(10),
     marginTop: verticalScale(40),
@@ -428,6 +546,7 @@ const styles = StyleSheet.create({
     color: colors.coreBlue,
     fontSize: 14,
     fontWeight: customTheme.fonts.labelMedium.fontWeight,
+    // width:'60%'
   },
   loanAmountText: {
     color: colors.coreBlue,
@@ -484,7 +603,7 @@ const styles = StyleSheet.create({
   },
   belowCardView: {
     position: "absolute",
-    top: 75,
+    top: 85,
     left: 20.5,
     flexDirection: "row",
     alignItems: "center",
@@ -535,7 +654,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.bgDark,
     paddingVertical: verticalScale(5),
     paddingHorizontal: horizontalScale(15),
-    borderRadius:10
+    borderRadius: 10,
   },
   profileIcon: {
     width: 40,
@@ -547,7 +666,8 @@ const styles = StyleSheet.create({
   imgBackground: {
     resizeMode: "cover",
     justifyContent: "center",
-    height: verticalScale(180)
+    height: "100%",
+    // height: verticalScale(180),
   },
   ProgressCardImage: {
     width: 87,
@@ -568,11 +688,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    height: 206,
-    marginRight: horizontalScale(14),
-    width: 350,
+    height: 220,
+    // marginRight: horizontalScale(14),
+    width: 300,
     marginBottom: verticalScale(5),
-    marginLeft: verticalScale(-5),
+    marginHorizontal: horizontalScale(10),
+    // marginLeft: verticalScale(-5),
   },
 
   ourSerices: {

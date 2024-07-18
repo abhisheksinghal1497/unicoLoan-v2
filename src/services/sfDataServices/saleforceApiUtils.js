@@ -2,7 +2,7 @@ import ErrorConstants from "../../constants/ErrorConstants";
 import { query } from "../../constants/Queries";
 import { log } from "../../utils/ConsoleLogUtils";
 import LocalStorage from "../LocalStorage";
-import { saveAllLeadFields } from "../sfDBServices/salesforceDbService";
+import { saveAllLeadFields, saveApplicationDataSoup } from "../sfDBServices/salesforceDbService";
 import { getAllSoupEntries } from "../sfDBServices/salesforceDbUtils";
 import { soupConfig } from "../sfDBServices/SoupConstants";
 import { getMetaData, QueryObject } from "./netService";
@@ -101,5 +101,36 @@ export const getPincodeData = async () =>  {
         log("getMetaDataFromSource", error);
         reject(ErrorConstants.SOMETHING_WENT_WRONG);
       });
+  });
+};
+
+export const saveApplicationData = async (data) =>  {
+  return new Promise(async (resolve, reject) => {
+    try {
+      console.log()
+      await saveApplicationDataSoup(soupConfig.applicationList.name, data);
+      resolve(data)
+    } catch (error) {
+        console.log('saveApplicationData',error)
+        reject(ErrorConstants.SOMETHING_WENT_WRONG)
+    }
+   
+    // last option make the SF call
+
+    // QueryObject(query.getPincodeMasterData,)
+    //   .then(async (data) => {
+    //     const metadata = data?.records
+    //     LocalStorage.setPincodeLists(metadata);
+    //     // save the field into the soups
+    //     try {
+    //       await saveAllLeadFields(soupConfig.pincodeList.name, metadata);
+    //     } catch (error) {
+    //     }
+    //     resolve(metadata);
+    //   })
+    //   .catch((error) => {
+    //     log("getMetaDataFromSource", error);
+    //     reject(ErrorConstants.SOMETHING_WENT_WRONG);
+    //   });
   });
 };

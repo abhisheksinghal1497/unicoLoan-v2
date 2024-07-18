@@ -1,5 +1,4 @@
 import {
-  Dimensions,
   Image,
   StyleSheet,
   Text,
@@ -18,7 +17,7 @@ import {
   FormControl,
   component,
 } from "../../components/FormComponents/FormControl";
-import { horizontalScale, verticalScale } from "../../utils/matrcis";
+import { verticalScale } from "../../utils/matrcis";
 import { validations } from "../../constants/validations";
 import { useForm } from "react-hook-form";
 import ProgressCard from "../../components/ProgressCard";
@@ -39,6 +38,8 @@ import ErrorConstants from "../../constants/ErrorConstants";
 import { useRoute } from "@react-navigation/native";
 
 const PanDetails = (props) => {
+  const route = useRoute();
+  const { loanData={}} = route?.params || {};
   const [isVerified, setIsVerified] = useState(false);
   const [isUploadVerified, setUploadIsVerified] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -46,9 +47,8 @@ const PanDetails = (props) => {
   // const [message, setMessage] = useState('12345');
   const [responseData, setResponseData] = useState(null);
   const [panDetails, setPanDetails] = useState(null);
-  const panSubmitMutate = useSubmitPanForm();
-  const route = useRoute();
-  const {applicationDetails = {}} = route?.params || {};
+  const panSubmitMutate = useSubmitPanForm(loanData);
+  
   const {
     control,
     handleSubmit,
@@ -210,8 +210,7 @@ const PanDetails = (props) => {
   useEffect(() => {
     if (panSubmitMutate?.data) {
       props?.navigation?.navigate(screens.KYC, {
-        panDetails: panDetails,
-        "applicationDetails": applicationDetails
+        loanData: panSubmitMutate?.data
       });
     }
   }, [panSubmitMutate?.data]);

@@ -18,6 +18,8 @@ import { useFocusEffect, useRoute } from "@react-navigation/native";
 import CustomModal from "../../components/CustomModal";
 import { horizontalScale, verticalScale } from "../../utils/matrcis";
 import { colors } from "../../colors";
+import { useKycDocument } from "../../services/ApiUtils";
+import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 
 const KYCDocuments = ({ navigation }) => {
   const [selectedImage, setSelectedImage] = useState("");
@@ -25,13 +27,22 @@ const KYCDocuments = ({ navigation }) => {
   const [selectedImageSelfie, setSelectedImageSelfie] = useState("");
   const [showModal, setShowModal] = useState(false);
   const route = useRoute();
-  const { applicationDetails = {}, panDetails = {} } = route?.params || {};
+  const { loanData = {} } = route?.params || {};
+  const kycDocumentMutate = useKycDocument(loanData);
 
   useFocusEffect(
     useCallback(() => {
       fetchData();
     }, [])
   );
+
+  useEffect(() => {
+    if (kycDocumentMutate.data) {
+      navigation?.navigate(screens.LoanDetails, {
+        loanData: kycDocumentMutate.data,
+      });
+    }
+  }, [kycDocumentMutate]);
 
   const fetchData = async () => {
     await AsyncStorage.setItem("CurrentScreen", JSON.stringify(screens.KYC));
@@ -81,10 +92,7 @@ const KYCDocuments = ({ navigation }) => {
               >
                 <TouchableOpacity
                   onPress={() => {
-                    navigation.navigate(screens.LoanDetails, {
-                      panDetails: panDetails,
-                      applicationDetails: applicationDetails,
-                    });
+                    kycDocumentMutate.mutate();
                     setShowModal(false);
                   }}
                   style={styles.cancelButton}
@@ -123,9 +131,10 @@ const KYCDocuments = ({ navigation }) => {
         titleStyle={{ fontSize: verticalScale(18) }}
         onPressRight={handleRightIconPress}
         onPressLeft={() => {
-          navigation.navigate(screens.PanDetails);
+          navigation?.goBack();
         }}
       />
+      {kycDocumentMutate.isPending && <ActivityIndicatorComponent />}
       <View style={styles.topCon}>
         <Image source={assets.protection} />
         <Text>

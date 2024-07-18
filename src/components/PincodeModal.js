@@ -63,7 +63,7 @@ const PincodeModal = ({ modalVisible = false, setModalVisible = () => {} }) => {
       setPinCode("");
       setModalVisible(false);
       setTimeout(() => {
-        navigate.navigate(screens.ApplicantDetails, { pincode: pinCode });
+        navigate.navigate(screens.ApplicantDetails, { pincode: pinCode, pincodeData: FilteredPincode[0] });
       }, 200);
     }
   };
