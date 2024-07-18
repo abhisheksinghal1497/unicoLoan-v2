@@ -1,6 +1,8 @@
 import { Alert } from "react-native";
 import Toast from "react-native-toast-message";
-import { log } from "./ConsoleLogUtils";
+import { errorConsoleLog, log } from "./ConsoleLogUtils";
+import { fetch } from "@react-native-community/netinfo";
+import uuid from 'react-native-uuid';
 
 export const alert = (title, subTitle, onPressOK, onPressCancel) => {
   if (onPressCancel) {
@@ -59,9 +61,12 @@ export function validateOtp(otp) {
 }
 
 export const convertFormArrToObj = (data = []) => {
-    const obj = data.reduce((prev, cur) => ({...prev, [cur.name]: {...cur}}),{});
-    return obj;
-}
+  const obj = data.reduce(
+    (prev, cur) => ({ ...prev, [cur.name]: { ...cur } }),
+    {}
+  );
+  return obj;
+};
 
 export const GetPicklistValues = (arr, fieldName, defaultValues) => {
   try {
@@ -77,3 +82,33 @@ export const GetPicklistValues = (arr, fieldName, defaultValues) => {
     return defaultValues;
   }
 };
+
+export const getConsentTime = () => {
+  let timestamp = new Date().getTime();
+  try {
+    timestamp = Math.floor(timestamp / 1000);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    return timestamp?.toString();
+  }
+};
+
+export const getIpAddress = async () => {
+  let ipAddress = "192.0.3.146"; // hardcoded for safer side
+
+  try {
+    const currentIpAddress = await fetch();
+    log("currentIpAddress", currentIpAddress?.details?.ipAddress);
+    if (currentIpAddress && currentIpAddress?.details?.ipAddress) {
+      ipAddress = currentIpAddress?.details?.ipAddress;
+    }
+  } catch (error) {
+    errorConsoleLog('IP ADDRESS', error)
+  } finally {
+    return ipAddress;
+  }
+};
+
+export const getUniqueId = () =>  uuid?.v4()
+

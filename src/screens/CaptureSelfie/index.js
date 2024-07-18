@@ -1,5 +1,5 @@
 import { Text, View, SafeAreaView, Image } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import SelfieSection from "../../components/SelfieSection";
 import CameraSection from "../../components/CameraSection";
@@ -10,12 +10,15 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { screens } from "../../constants/screens";
 import CustomButton from "../../components/Button";
 import { useRoute } from "@react-navigation/native";
+import { useSaveSelfie } from "../../services/ApiUtils";
+import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 
 const CaptureSelfie = ({ navigation }) => {
   const { fonts } = useTheme();
   const [selectedImage, setSelectedImage] = useState(null);
   const route = useRoute();
-  const { applicationDetails = {}, panDetails = {} } = route?.params || {};
+  const { loanData = {} } = route?.params || {};
+  const selfieMutate = useSaveSelfie(loanData);
   const onCameraPress = ({ front = false }) => {
     ImagePicker.openCamera({
       cropping: true,
@@ -40,12 +43,16 @@ const CaptureSelfie = ({ navigation }) => {
   };
 
   const onSubmit = () => {
-    navigation?.navigate(screens.KYCDocuments, {
-        panDetails: panDetails,
-        applicationDetails: applicationDetails,
-        selectedImage
-      });
+    selfieMutate.mutate(selectedImage);
   };
+
+  useEffect(() => {
+    if (selfieMutate?.data) {
+      navigation?.navigate(screens.KYCDocuments, {
+        loanData: selfieMutate.data,
+      });
+    }
+  }, [selfieMutate?.data]);
 
   return (
     <>
@@ -59,6 +66,7 @@ const CaptureSelfie = ({ navigation }) => {
           onPressRight={() => {}}
           colour="white"
         />
+        {selfieMutate?.isPending && <ActivityIndicatorComponent />}
         <SelfieSection uri={selectedImage} />
         <CameraSection
           onCameraPress={onCameraPress}

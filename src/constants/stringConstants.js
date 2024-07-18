@@ -65,7 +65,8 @@ export const CaptureAddressConstants = {
   EBILL: 'Electricity Bill',
   GBILL: 'Gas Bill',
   MBILL: 'Mobile Bill'
+}
 
-
-
+export const brandDetails = {
+  name: 'UNICO HOUSING FINANCE LIMITED'
 }

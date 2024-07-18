@@ -114,15 +114,13 @@ const formData = [
 
 const Eligibility = (props) => {
   const route = useRoute();
-  const {
-    applicationDetails = {},
-    panDetails = {},
-    loanDetail = {},
-  } = route?.params || {};
+  const { loanData = {} } = route?.params || {};
+  const { applicationDetails = {}, loanDetails = {} } = loanData;
+
   const [showBottomModal, setShowBottomModal] = useState(false);
   const [applicantData, setApplicantData] = useState([]);
   const [cardData, setCardData] = useState();
-  const eligibilityDetails = getEligibilityDetails();
+  const eligibilityDetails = getEligibilityDetails(loanData);
   const handleRightIconPress = (index) => {
     if (index === 0) {
       props.navigation.navigate(screens.FAQ);
@@ -145,12 +143,12 @@ const Eligibility = (props) => {
   });
 
   useEffect(() => {
-    eligibilityDetails.mutate({ applicationDetails, loanDetail });
+    eligibilityDetails.mutate({ applicationDetails, loanDetails });
   }, []);
 
   useEffect(() => {
     if (eligibilityDetails.data) {
-      setCardData(eligibilityDetails.data);
+      setCardData(eligibilityDetails.data?.eligibilityDetails);
     }
   }, [eligibilityDetails.data]);
 
@@ -175,7 +173,14 @@ const Eligibility = (props) => {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <View>
-          <Text style={{marginBottom: verticalScale(5), fontSize: verticalScale(16)}}>You are not eligible for the loan</Text>
+          <Text
+            style={{
+              marginBottom: verticalScale(5),
+              fontSize: verticalScale(16),
+            }}
+          >
+            You are not eligible for the loan
+          </Text>
           <CustomButton
             type="primary"
             label="Continue"
@@ -189,7 +194,11 @@ const Eligibility = (props) => {
   }
 
   const onPressContinue = () => {
-    props.navigation.navigate(screens.Sanction);
+    if (!eligibilityDetails?.isPending) {
+      props.navigation.navigate(screens.Sanction, {
+        loanData: eligibilityDetails.data,
+      });
+    }
   };
 
   return (

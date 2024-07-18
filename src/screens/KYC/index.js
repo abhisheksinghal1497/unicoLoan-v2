@@ -31,6 +31,7 @@ import ProgressCard from "../../components/ProgressCard";
 
 import { uploadOtpMethod, uploadAdhaarMethod } from "../../services/ApiUtils";
 import {
+  checkPanLinkWithAdhaar,
   makeAdhaarEKYCCall,
   uploadAadharPhotos,
   verifyAadhar,
@@ -53,13 +54,18 @@ const KYC = (props) => {
   const [isVerified, setIsVerified] = useState(false);
   const [adharValidation, setAdhaarValidation] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const uploadOtpMethodFn = uploadOtpMethod();
-  const uploadAdhaarMethodFn = uploadAdhaarMethod();
   const uploadAadharToMuleService = uploadAadharPhotos();
   const route = useRoute();
-  const { applicationDetails = {}, panDetails = {} } = route?.params || {};
-  console.log('PanDetails--------------------', panDetails)
-  const verifyAdharApi = verifyAadhar(panDetails.panName);
+  const { loanData = {} } = route?.params || {};
+
+  const {
+    applicationDetails = {},
+    panDetails = { panNumber: "", panName: "" },
+  } = loanData;
+
+  // 'AMUPH7294R'
+  const verifyAdharApi = verifyAadhar(panDetails.panNumber, loanData);
+  // const verifyAdharApi = checkPanLinkWithAdhaar(panDetails.panNumber);
   const canvasRef = useRef(null);
 
   const [minutes, setMinutes] = useState(0);
@@ -148,7 +154,6 @@ const KYC = (props) => {
 
     try {
       const savedDataBack = await AsyncStorage.getItem("BackAdhaar");
-      console.log("---------------savedDataBack", savedDataBack);
       const currentDataBack = JSON.parse(savedDataBack);
       setSelectedImageBack(currentDataBack);
     } catch (error) {
@@ -248,12 +253,13 @@ const KYC = (props) => {
   const uploadAadhar = async () => {
     try {
       //
-
+      console.log("trigger");
       let dataURL = await canvasRef.current.toDataURL();
       // let newData =  dataURL.replace(/^data:image\/?[A-z]*;base64,/);
 
       uploadAadharToMuleService?.mutate(dataURL);
     } catch (error) {
+      console.log("some error");
       alert(error);
     }
   };
@@ -280,9 +286,11 @@ const KYC = (props) => {
   }, [uploadAadharToMuleService.data, uploadAadharToMuleService.error]);
 
   useEffect(() => {
-    if (verifyAdharApi.data) {
+    if (verifyAdharApi?.data) {
       toast("success", "Aadhar verified successfully");
-      props.navigation.navigate(screens.CaptureSelfie, {});
+      props.navigation.navigate(screens.CaptureSelfie, {
+        loanData: verifyAadhar.data
+      });
     }
 
     if (verifyAdharApi.error) {
@@ -300,10 +308,12 @@ const KYC = (props) => {
         ? uploadAadharToMuleService?.data?.data
         : adhaarEkycMutate?.data;
       // will remove later
+      console.log("SUP----------------", {
+        aadharInitiateResponse: JSON.stringify(aadharInitiateResponse),
+      });
       if (adhaarApiType) {
         props.navigation.navigate(screens.CaptureSelfie, {
-          panDetails: panDetails,
-          applicationDetails: applicationDetails,
+          loanData: loanData
         });
         return;
       }

@@ -1,9 +1,6 @@
 import axios from 'axios';
-import uuid from 'react-native-uuid';
-
-
-
 import { MULE_API_DEV_END_POINT, MULE_API_CLIENT_ID, MULE_API_CLIENT_SECRET, MULE_API_SERVICE_TIMEOUT } from "@env"
+import { getUniqueId } from '../../utils/functions';
 const instance = axios.create({
     baseURL: MULE_API_DEV_END_POINT, // mulesoftApi 
     timeout: 25000, // 25 seconds
@@ -22,7 +19,7 @@ instance.interceptors.request.use(async (config) => {
 
 
     // config.headers.x-transaction-id = `Bearer ${TokenStorage.getAccessToken()}`;
-    const randomValue = uuid?.v4()
+    const randomValue = getUniqueId()
 
 
 
