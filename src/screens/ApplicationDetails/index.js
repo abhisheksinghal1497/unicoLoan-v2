@@ -38,6 +38,7 @@ import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 import ErrorConstants from "../../constants/ErrorConstants";
 import WebviewComponent from "../../components/WebviewComponent";
 import { ConfiguratonConstants } from "../../constants/ConfigurationConstants";
+import { useResetRoutes } from "../../utils/functions";
 
 const initialData = [
   {
@@ -72,6 +73,7 @@ export default function ApplicationDetails(props) {
   const getFormData = getApplicationDetailsForm();
   const [mock_data, setMockData] = useState([]);
   const applicationFormMutate = useSubmitApplicationFormData(pincodeData);
+  const resetRoute = useResetRoutes();
 
   useEffect(() => {
     getFormData?.mutate({ pincode: pincode });
@@ -162,7 +164,7 @@ export default function ApplicationDetails(props) {
 
   useEffect(() => {
     if (applicationFormMutate.data) {
-      props?.navigation?.navigate(screens.PanDetails, {
+      resetRoute(screens.PanDetails, {
         loanData: applicationFormMutate.data,
       });
     }
@@ -223,7 +225,6 @@ export default function ApplicationDetails(props) {
   // if (getFormData?.isPending) {
   //   return <ActivityIndicatorComponent />;
   // }
-
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
@@ -348,22 +349,22 @@ export default function ApplicationDetails(props) {
           centeredViewStyle={{ backgroundColor: "rgba(0, 0, 0, 0.1)" }}
           withFeedback={false}
         >
-           <TouchableOpacity onPress={() => setModalVisible2(false)}>
-              <Image
-                source={require("../../../assets/images/crossGray.png")}
-                style={{
-                  width: 17,
-                  height: 17,
-                  resizeMode: "contain",
-                  justifyContent: "flex-end",
-                  marginHorizontal: horizontalScale(330),
-                  marginBottom: verticalScale(12.5),
-                }}
-              />
-            </TouchableOpacity>
-            <WebviewComponent
-              uri={ConfiguratonConstants.TERMS_AND_CONDITION_URL}
+          <TouchableOpacity onPress={() => setModalVisible2(false)}>
+            <Image
+              source={require("../../../assets/images/crossGray.png")}
+              style={{
+                width: 17,
+                height: 17,
+                resizeMode: "contain",
+                justifyContent: "flex-end",
+                marginHorizontal: horizontalScale(330),
+                marginBottom: verticalScale(12.5),
+              }}
             />
+          </TouchableOpacity>
+          <WebviewComponent
+            uri={ConfiguratonConstants.TERMS_AND_CONDITION_URL}
+          />
         </CustomModal>
       </ScrollView>
     </View>

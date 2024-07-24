@@ -2,7 +2,8 @@ import { Alert } from "react-native";
 import Toast from "react-native-toast-message";
 import { errorConsoleLog, log } from "./ConsoleLogUtils";
 import { fetch } from "@react-native-community/netinfo";
-import uuid from 'react-native-uuid';
+import uuid from "react-native-uuid";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 
 export const alert = (title, subTitle, onPressOK, onPressCancel) => {
   if (onPressCancel) {
@@ -104,11 +105,25 @@ export const getIpAddress = async () => {
       ipAddress = currentIpAddress?.details?.ipAddress;
     }
   } catch (error) {
-    errorConsoleLog('IP ADDRESS', error)
+    errorConsoleLog("IP ADDRESS", error);
   } finally {
     return ipAddress;
   }
 };
 
-export const getUniqueId = () =>  uuid?.v4()
+export const getUniqueId = () => uuid?.v4();
 
+export const useResetRoutes = () => {
+  const navigation = useNavigation();
+  const resetRoute = (screenName, params = {}) => {
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          { name: screenName, params },
+        ],
+      })
+    );
+  };
+  return resetRoute;
+};
