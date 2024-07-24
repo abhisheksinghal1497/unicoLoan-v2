@@ -14,14 +14,14 @@ import { verticalScale } from "../utils/matrcis";
 import { getPinCodes } from "../services/ApiUtils";
 import Button from "./Button";
 import { useTheme } from "react-native-paper";
-import { useNavigation } from "@react-navigation/native";
 import { screens } from "../constants/screens";
+import { useResetRoutes } from "../utils/functions";
 
 const PincodeModal = ({ modalVisible = false, setModalVisible = () => {} }) => {
   const [pinCode, setPinCode] = useState("");
   const { data: pincodeDataRes = [], mutate: getPincodeMutate } = getPinCodes();
   const { colors } = useTheme();
-  const navigate = useNavigation();
+  const resetRoute = useResetRoutes()
 
   const HandlePinCode = (value) => {
     setPinCode(value);
@@ -63,7 +63,7 @@ const PincodeModal = ({ modalVisible = false, setModalVisible = () => {} }) => {
       setPinCode("");
       setModalVisible(false);
       setTimeout(() => {
-        navigate.navigate(screens.ApplicantDetails, { pincode: pinCode, pincodeData: FilteredPincode[0] });
+        resetRoute(screens.ApplicantDetails, { pincode: pinCode, pincodeData: FilteredPincode[0] });
       }, 200);
     }
   };

@@ -169,29 +169,29 @@ const Eligibility = (props) => {
 
   if (eligibilityDetails?.isPending) return <ActivityIndicatorComponent />;
 
-  if (cardData && cardData["Eligible Status"] === "Not Eligible") {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <View>
-          <Text
-            style={{
-              marginBottom: verticalScale(5),
-              fontSize: verticalScale(16),
-            }}
-          >
-            You are not eligible for the loan
-          </Text>
-          <CustomButton
-            type="primary"
-            label="Continue"
-            onPress={() => {
-              props.navigation.navigate(screens.HomeScreen);
-            }}
-          />
-        </View>
-      </View>
-    );
-  }
+  // if (cardData && cardData["Eligible Status"] === "Not Eligible") {
+  //   return (
+  //     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+  //       <View>
+  //         <Text
+  //           style={{
+  //             marginBottom: verticalScale(5),
+  //             fontSize: verticalScale(16),
+  //           }}
+  //         >
+  //           You are not eligible for the loan
+  //         </Text>
+  //         <CustomButton
+  //           type="primary"
+  //           label="Continue"
+  //           onPress={() => {
+  //             props.navigation.navigate(screens.HomeScreen);
+  //           }}
+  //         />
+  //       </View>
+  //     </View>
+  //   );
+  // }
 
   const onPressContinue = () => {
     if (!eligibilityDetails?.isPending) {
@@ -225,21 +225,25 @@ const Eligibility = (props) => {
         }}
       />
       <View style={styles.topCon}>
-        <Card cardStyle={styles.cardCon}>
-          <ImageBackground
-            source={assets.Frame2}
-            resizeMode="cover"
-            style={{ height: 168 }}
-          >
-            <View style={styles.cardInnView}>
-              <Text style={styles.cardText1}>You are eligible for upto</Text>
-              <Text style={styles.cardText2}>
-                ₹ {cardData ? cardData["Eligible Loan Amount"] : 0}
-              </Text>
-              <Text style={styles.cardText3}>@6.75% - 7.25% interest p.a</Text>
-            </View>
-          </ImageBackground>
-        </Card>
+        {cardData && cardData["Eligible Status"] === "Eligible" && (
+          <Card cardStyle={styles.cardCon}>
+            <ImageBackground
+              source={assets.Frame2}
+              resizeMode="cover"
+              style={{ height: 168 }}
+            >
+              <View style={styles.cardInnView}>
+                <Text style={styles.cardText1}>You are eligible for upto</Text>
+                <Text style={styles.cardText2}>
+                  ₹ {cardData ? cardData["Eligible Loan Amount"] : 0}
+                </Text>
+                <Text style={styles.cardText3}>
+                  @6.75% - 7.25% interest p.a
+                </Text>
+              </View>
+            </ImageBackground>
+          </Card>
+        )}
         <Card
           cardStyle={{
             paddingHorizontal: 10,
@@ -278,11 +282,13 @@ const Eligibility = (props) => {
               <CustomComponent title={el} key={i} value={cardData[el]} />
             ))}
         </Card>
-        <CustomButton
-          type="primary"
-          label="Continue"
-          onPress={onPressContinue}
-        />
+        {cardData && cardData["Eligible Status"] === "Eligible" && (
+          <CustomButton
+            type="primary"
+            label="Continue"
+            onPress={onPressContinue}
+          />
+        )}
       </View>
 
       <CustomModal

@@ -1,21 +1,324 @@
-import { StyleSheet, Text, View, ScrollView, Image, FlatList,useWindowDimensions } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import Header from '../../components/Header';
-import { colors } from '../../colors';
-import { horizontalScale, verticalScale } from '../../utils/matrcis';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  Image,
+  FlatList,
+  useWindowDimensions,
+} from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import Header from "../../components/Header";
+import { colors } from "../../colors";
+import { horizontalScale, verticalScale } from "../../utils/matrcis";
+import { brandDetails } from "../../constants/stringConstants";
+import { getHomeScreenDetails } from "../../services/ApiUtils";
+import {
+  component,
+  FormControl,
+} from "../../components/FormComponents/FormControl";
+import { validations } from "../../constants/validations";
+import { useForm } from "react-hook-form";
+import CustomButton from "../../components/Button";
+import { useResetRoutes } from "../../utils/functions";
+import PincodeModal from "../../components/PincodeModal";
+import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 
 const data = [
-  { id: '1', title: 'Applicant Details', imagePathActive: require('../../../assets/images/MapPinLineGreen.png'), imagePathUnActive: require('../../../assets/images/MapPinLineGrey.png') },
-  { id: '2', title: 'PAN and KYC Verified', imagePathActive: require('../../../assets/images/MapPinLineGreen.png'), imagePathUnActive: require('../../../assets/images/MapPinLineGrey.png') },
-  { id: '3', title: 'Loan Details', imagePathActive: require('../../../assets/images/MapPinLineGreen.png'), imagePathUnActive: require('../../../assets/images/MapPinLineGrey.png') },
-  { id: '4', title: 'Eligibility', imagePathActive: require('../../../assets/images/MapPinLineGreen.png'), imagePathUnActive: require('../../../assets/images/MapPinLineGrey.png') },
-  { id: '5', title: 'In-Principle Sanction', imagePathActive: require('../../../assets/images/MapPinLineGreen.png'), imagePathUnActive: require('../../../assets/images/MapPinLineGrey.png') },
-  { id: '6', title: '', imagePathActive: require('../../../assets/images/loandone.png'), }
+  {
+    id: "1",
+    title: "Applicant Details",
+    imagePathActive: require("../../../assets/images/MapPinLineGreen.png"),
+    imagePathUnActive: require("../../../assets/images/MapPinLineGrey.png"),
+  },
+  {
+    id: "2",
+    title: "PAN and KYC Verified",
+    imagePathActive: require("../../../assets/images/MapPinLineGreen.png"),
+    imagePathUnActive: require("../../../assets/images/MapPinLineGrey.png"),
+  },
+  {
+    id: "3",
+    title: "Loan Details",
+    imagePathActive: require("../../../assets/images/MapPinLineGreen.png"),
+    imagePathUnActive: require("../../../assets/images/MapPinLineGrey.png"),
+  },
+  {
+    id: "4",
+    title: "Eligibility",
+    imagePathActive: require("../../../assets/images/MapPinLineGreen.png"),
+    imagePathUnActive: require("../../../assets/images/MapPinLineGrey.png"),
+  },
+  {
+    id: "5",
+    title: "In-Principle Sanction",
+    imagePathActive: require("../../../assets/images/MapPinLineGreen.png"),
+    imagePathUnActive: require("../../../assets/images/MapPinLineGrey.png"),
+  },
+  {
+    id: "6",
+    title: "",
+    imagePathActive: require("../../../assets/images/loandone.png"),
+  },
 ];
 
-const StatusCheck = ({navigation}) => {
-  const [orientation, setOrientation] = useState('portrait');
+const RenderLoanDropdown = ({ loanData = [], setSelectedLoan = () => {} }) => {
+  const {
+    control,
+    formState: { errors },
+    setValue,
+    watch,
+  } = useForm({
+    mode: "onBlur",
+    defaultValues: {},
+  });
+
+  const applicationNumber = watch("applicationNumber");
+
+  useEffect(() => {
+    const loan = loanData.find((el) => el.loanId === applicationNumber);
+    if (loan) {
+      setSelectedLoan(loan);
+    }
+  }, [applicationNumber]);
+
+  const data = [
+    {
+      id: "applicationNumber",
+      label: "Loan Application Number",
+      type: component.dropdown,
+      placeHolder: "Loan Application Number",
+      value: "",
+      validations: validations.text,
+      data: loanData.map((el) => ({
+        id: el.loanId,
+        label: el.loanId,
+        value: el.loanId,
+      })),
+    },
+  ];
+
+  return data.map((comp) => {
+    return (
+      <View style={{ marginBottom: verticalScale(10) }}>
+        <FormControl
+          compType={comp.type}
+          control={control}
+          validations={comp.validations}
+          name={comp.id}
+          label={comp.label}
+          errors={errors[comp.id]}
+          isRequired={comp.isRequired}
+          placeholder={comp.placeHolder}
+          data={comp.data}
+          key={comp.id}
+          setValue={setValue}
+          showRightComp={true}
+          isMultiline={comp.isMultiline}
+          maxLength={comp.maxLength}
+          isDisabled={comp.isDisabled}
+          //   value={comp.value}
+        />
+      </View>
+    );
+  });
+};
+
+const RoadMap = ({
+  isTablet,
+  orientation,
+  loanData = [],
+  setSelectedLoan,
+  selectedLoan,
+  dashes,
+}) => {
+  const renderItem = ({ item, index }) => {
+    const isLeft = index % 2 === 0;
+    const itemStyle = isLeft ? styles.itemLeft : styles.itemRight;
+    const itemContainerStyle = isLeft
+      ? styles.itemContainerLeft
+      : styles.itemContainerRight;
+
+    const marginHorizontalPortrait =
+      index === 0
+        ? 36
+        : index === 1
+        ? 10
+        : index === 2
+        ? 60
+        : index === 3
+        ? 82
+        : index === 4
+        ? 15
+        : 75;
+
+    const marginHorizontalLandscape = isTablet
+      ? index === 0
+        ? 230
+        : index === 1
+        ? 205
+        : index === 2
+        ? 254
+        : index === 3
+        ? 272
+        : index === 4
+        ? 210
+        : 267.5
+      : marginHorizontalPortrait;
+
+    const marginHorizontal =
+      orientation === "portrait"
+        ? marginHorizontalPortrait
+        : marginHorizontalLandscape;
+
+    return (
+      <View
+        style={[styles.itemContainer, itemContainerStyle, { marginHorizontal }]}
+      >
+        {index == 0 || index == 2 || index == 4 ? (
+          <View style={[styles.item, itemStyle, { flexDirection: "row" }]}>
+            <Text
+              style={{
+                fontSize: 12,
+                fontWeight: "500",
+                color: colors.black,
+                marginTop: verticalScale(18),
+                right: horizontalScale(6),
+              }}
+            >
+              {item.title}
+            </Text>
+            <Image
+              style={{ width: 25, height: 25, resizeMode: "contain" }}
+              source={item.imagePathActive}
+            />
+          </View>
+        ) : (
+          <View style={[styles.item, itemStyle, { flexDirection: "row" }]}>
+            <Image
+              style={{
+                width: index == 5 ? 50 : 25,
+                height: index == 5 ? 53 : 25,
+                resizeMode: "contain",
+                marginHorizontal: horizontalScale(index == 5 && 20),
+              }}
+              source={item.imagePathActive}
+            />
+            <Text
+              style={{
+                fontSize: 12,
+                fontWeight: "500",
+                color: colors.black,
+                marginTop: verticalScale(18),
+                left: horizontalScale(6),
+              }}
+            >
+              {item.title}
+            </Text>
+          </View>
+        )}
+      </View>
+    );
+  };
+
+  const getKeyPosition = useMemo(() => {
+    if (!selectedLoan || !selectedLoan?.applicationDetails) {
+      return verticalScale(10);
+    } else if (!selectedLoan.adhaarDetails) {
+      return verticalScale(95);
+    } else if (!selectedLoan.loanDetails) {
+      return verticalScale(171);
+    } else if (!selectedLoan.eligibilityDetails) {
+      return verticalScale(245);
+    } else {
+      return verticalScale(400);
+    }
+  }, [selectedLoan]);
+
+  console.log({getKeyPosition})
+
+  return (
+    <View style={{ marginHorizontal: horizontalScale(10) }}>
+      {loanData.length > 1 && (
+        <RenderLoanDropdown
+          loanData={loanData}
+          setSelectedLoan={setSelectedLoan}
+        />
+      )}
+      <View style={styles.card}>
+        <View style={{ justifyContent: "flex-end", flexDirection: "row" }}>
+          <Text style={styles.uhfl}>{brandDetails.name}</Text>
+        </View>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <View>
+            <Image
+              style={styles.loanimage}
+              source={require("../../../assets/images/statuscheckk.png")}
+            />
+          </View>
+          <View style={{ marginLeft: horizontalScale(8), flexWrap: "wrap" }}>
+            <Text style={styles.loantext}>Home Loan</Text>
+            <Text style={[styles.loantext, { maxWidth: "95%" }]}>
+              LAN: {selectedLoan?.loanId}
+            </Text>
+          </View>
+        </View>
+      </View>
+      <Text style={styles.header}>Apply for loan</Text>
+      <View style={{ marginTop: verticalScale(0) }}>
+        <View style={[styles.line, { height: 500 }]}>
+          <Image
+            source={require("../../../assets/images/homekey.png")}
+            style={[styles.key, { marginTop: getKeyPosition }]}
+          />
+          <View style={styles.line2}>
+            <View style={styles.dash1} />
+            {dashes}
+          </View>
+        </View>
+        <FlatList
+          scrollEnable={false}
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+        />
+      </View>
+    </View>
+  );
+};
+
+const ApplyForLoan = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+      }}
+    >
+      <PincodeModal
+        setModalVisible={setModalVisible}
+        modalVisible={modalVisible}
+      />
+      <CustomButton
+        type="primary"
+        label="Apply for loan"
+        buttonContainer={styles.buttonContainer}
+        onPress={() => setModalVisible(true)}
+      />
+      <Text>You don't have any active loan. Start new loan journey.</Text>
+    </View>
+  );
+};
+
+const StatusCheck = ({ navigation }) => {
+  const [orientation, setOrientation] = useState("portrait");
   const { width, height } = useWindowDimensions();
+  const getLoanCardData = getHomeScreenDetails(true);
+  const { data: loanData = [], isPending = false } = getLoanCardData;
+  const [selectedLoan, setSelectedLoan] = useState();
 
   const numberOfDashes = 17;
   const dashes = [];
@@ -26,166 +329,120 @@ const StatusCheck = ({navigation}) => {
 
   useEffect(() => {
     const isPortrait = height > width;
-    setOrientation(isPortrait ? 'portrait' : 'landscape');
+    setOrientation(isPortrait ? "portrait" : "landscape");
   }, [width, height]);
 
-  const isTablet = width >= 600; 
+  useEffect(() => {
+    getLoanCardData.mutate();
+  }, []);
 
-  const renderItem = ({ item, index }) => {
-    const isLeft = index % 2 === 0;
-    const itemStyle = isLeft ? styles.itemLeft : styles.itemRight;
-    const itemContainerStyle = isLeft ? styles.itemContainerLeft : styles.itemContainerRight;
+  useEffect(() => {
+    if (loanData.length === 1) {
+      setSelectedLoan(loanData[0]);
+    }
+  }, [loanData]);
 
-    const marginHorizontalPortrait = index === 0 ? 36 : 
-    index === 1 ? 10 : 
-    index === 2 ? 60 : 
-    index === 3 ? 82 : 
-    index === 4 ? 15 : 75;
-
-  const marginHorizontalLandscape = isTablet ? (
-    index === 0 ? 230 : 
-    index === 1 ? 205 : 
-    index === 2 ? 254 : 
-    index === 3 ? 272 : 
-    index === 4 ? 210 : 267.5
-  ) : marginHorizontalPortrait;
-
-    const marginHorizontal = orientation === 'portrait' ? marginHorizontalPortrait : marginHorizontalLandscape;
-
-    return (
-      <View style={[styles.itemContainer, itemContainerStyle, {  marginHorizontal }]}>
-        {
-          index == 0 || index == 2 || index == 4 ?
-            <View style={[styles.item, itemStyle, { flexDirection: 'row' }]}>
-              <Text style={{ fontSize: 12, fontWeight: '500', color: colors.black, marginTop: verticalScale(18), right: horizontalScale(6) }}>{item.title}</Text>
-              <Image
-                style={{ width: 25, height: 25, resizeMode: 'contain' }}
-                source={item.imagePathActive}
-              />
-            </View> :
-            <View style={[styles.item, itemStyle, { flexDirection: 'row', }]}>
-              <Image
-                style={{ width: index == 5 ? 50 : 25, height: index == 5 ? 53 : 25, resizeMode: 'contain', marginHorizontal: horizontalScale(index == 5 && 20) }}
-                source={item.imagePathActive}
-              />
-              <Text style={{ fontSize: 12, fontWeight: '500', color: colors.black, marginTop: verticalScale(18), left: horizontalScale(6) }}>{item.title}</Text>
-            </View>}
-
-      </View>
-    );
-  };
+  const isTablet = width >= 600;
 
   return (
-    <ScrollView style={{ backgroundColor: colors.white }}>
+    <ScrollView
+      style={{ backgroundColor: colors.white }}
+      contentContainerStyle={{ flex: 1, flexGrow: 1 }}
+    >
       <View style={styles.container}>
-        <View style={{ marginHorizontal: horizontalScale(-10), alignItems: 'center' }}>
+        <View
+          style={{
+            marginHorizontal: horizontalScale(-10),
+            alignItems: "center",
+            flex: 1,
+          }}
+        >
+          {isPending && <ActivityIndicatorComponent />}
           <Header
             onPressLeft={() => navigation.goBack()}
             colour={colors.transparent}
-            left={require('../../../assets/images/Back.png')}
-            leftStyle={{ width: 27, height: 27,marginLeft: isTablet ? horizontalScale(10) : 0 }}
-            title="Loan Status Check"
+            left={require("../../../assets/images/Back.png")}
+            leftStyle={{
+              width: 27,
+              height: 27,
+              marginLeft: isTablet ? horizontalScale(10) : 0,
+            }}
+            title="Loan Status"
           />
+          {loanData?.length ? (
+            <RoadMap
+              orientation={orientation}
+              isTablet={isTablet}
+              loanData={loanData}
+              setSelectedLoan={setSelectedLoan}
+              selectedLoan={selectedLoan}
+              dashes={dashes}
+            />
+          ) : (
+            <ApplyForLoan />
+          )}
         </View>
-        <View style={styles.card}>
-          <View style={{ justifyContent: 'flex-end', flexDirection: 'row' }}>
-            <Text style={styles.uhfl}>
-              UNICO HOUSING FINANCE LIMITED
-            </Text>
-          </View>
-          < View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <View>
-              <Image
-                style={styles.loanimage}
-                source={require('../../../assets/images/statuscheckk.png')}
-              />
-            </View>
-            <View style={{ marginLeft: horizontalScale(8) }}>
-              <Text style={styles.loantext}>
-                Home Loan
-              </Text>
-              <Text style={styles.loantext}>
-                LAN: H402HHL0622560
-              </Text>
-            </View>
-          </View>
-        </View>
-
-{/* case 1 = 10 */}
-{/* case 2 = 90 */}
-{/* case 3 = 171 */}
-{/* case 4 = 251 */}
-{/* case 5 = 333 */}
-{/* case 6 = 420 */}
-
-        <Text style={styles.header}>Apply for loan</Text>
-        <View style={{ marginTop: verticalScale(0) }}>
-          <View style={[styles.line,{ height: orientation === 'portrait' ? 500 : 500 }]}>
-            <Image source={require('../../../assets/images/homekey.png')}
-             style={[styles.key,{marginTop: verticalScale(171)}]} />
-            <View style={styles.line2}>
-            <View style={styles.dash1}/>
-              {dashes}
-            </View>
-
-          </View>
-          <FlatList
-           scrollEnable={false}
-            data={data}
-            renderItem={renderItem}
-            keyExtractor={item => item.id}
-          />
-        </View>
-
       </View>
-     </ScrollView>
-  )
-}
+    </ScrollView>
+  );
+};
 
-export default StatusCheck
+export default StatusCheck;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 16,
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
   },
-  uhfl:{
-    fontWeight: '500', fontSize: 9, color: "#2E52A1", lineHeight: 9.75
+  uhfl: {
+    fontWeight: "500",
+    fontSize: 9,
+    color: "#2E52A1",
+    lineHeight: 9.75,
   },
-  loanimage:{
-    width: 55, height: 55, resizeMode: 'contain', borderRadius: 5
+  loanimage: {
+    width: 55,
+    height: 55,
+    resizeMode: "contain",
+    borderRadius: 5,
   },
-  key:{
-    width: 40, height: 42,
-    resizeMode: 'contain', alignSelf: 'center', zIndex: 999
+  key: {
+    width: 40,
+    height: 42,
+    resizeMode: "contain",
+    alignSelf: "center",
+    zIndex: 999,
   },
-  loantext:{
-    fontWeight: '500', fontSize: 15, color: '#2E52A1'
+  loantext: {
+    fontWeight: "500",
+    fontSize: 15,
+
+    color: "#2E52A1",
   },
   card: {
-    width: '97.5%',
+    width: "97.5%",
     height: 85,
     backgroundColor: colors.coreCream,
-    alignSelf: 'center',
+    alignSelf: "center",
     borderRadius: 10,
     paddingHorizontal: horizontalScale(6),
-    paddingVertical: verticalScale(10.5)
+    paddingVertical: verticalScale(10.5),
   },
   header: {
     fontSize: 12,
-    fontWeight: '500',
-    alignSelf: 'center',
+    fontWeight: "500",
+    alignSelf: "center",
     marginTop: verticalScale(15),
-    color: colors.black
+    color: colors.black,
   },
   line: {
-    position: 'absolute',
+    position: "absolute",
     // height: 500,
     width: 20,
     backgroundColor: colors.black,
-    marginHorizontal: 'auto',
-    alignSelf: 'center',
+    marginHorizontal: "auto",
+    alignSelf: "center",
     marginTop: verticalScale(12),
     borderRadius: 16,
     shadowOffset: { width: 2, height: 2 },
@@ -194,52 +451,56 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   line2: {
-    position: 'absolute',
+    position: "absolute",
     height: 450,
     width: 3,
-    backgroundColor: 'transparent',
-    marginHorizontal: 'auto',
-    alignSelf: 'center',
-    justifyContent: 'center',
+    backgroundColor: "transparent",
+    marginHorizontal: "auto",
+    alignSelf: "center",
+    justifyContent: "center",
     marginTop: verticalScale(20),
-
+  },
+  buttonContainer: {
+    marginTop: 40,
+    marginBottom: verticalScale(20),
+    paddingHorizontal: horizontalScale(15),
   },
   dash: {
-    width: '100%',
+    width: "100%",
     height: 15,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     marginBottom: verticalScale(10),
   },
   dash1: {
-    width: '100%',
+    width: "100%",
     height: 10,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     marginBottom: verticalScale(10),
-    marginTop: verticalScale(10)
+    marginTop: verticalScale(10),
   },
   itemContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   item: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     height: 80,
     marginVertical: 5,
     padding: 10,
   },
   itemContainerLeft: {
-    justifyContent: 'flex-start',
+    justifyContent: "flex-start",
     marginRight: 10,
   },
   itemContainerRight: {
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
     marginLeft: 10,
   },
   itemLeft: {
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
   },
   itemRight: {
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
   },
-})
+});

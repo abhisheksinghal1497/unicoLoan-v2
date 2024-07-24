@@ -96,7 +96,7 @@ const Dashboard = () => {
           name={screens.StatusCheck}
           component={StatusCheck}
           options={{
-            headerShown: true,
+            headerShown: false,
           }}
         />
         <Stack.Screen name={screens.Profile} component={Profile} />

@@ -103,7 +103,7 @@ export const getEligibilityDetails = (loanData) => {
             "Net Asset": loanDetails?.totalAsset,
             "Total Score": 90,
             "Number of Enquiries in the last 6 months": 2,
-            "Eligible Status": "Eligible", //Not Eligible
+            "Eligible Status": "Not Eligible", //Not Eligible
             "Eligible Loan Amount": "45 lac",
             "Customer Segment": applicationDetails?.Customer_Profile__c,
             "Employment Stability": 1,
