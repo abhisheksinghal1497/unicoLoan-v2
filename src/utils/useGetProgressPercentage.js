@@ -6,13 +6,13 @@ export const getCurrentScreenNameForResume = (item) => {
   if (!item?.panDetails) {
     return screens.PanDetails;
   }
-  //  else if (!item?.adhaarDetails) {
-  //   return screens.KYC;
-  // } else if (!item?.selfieDetails) {
-  //   return screens.CaptureSelfie;
-  // } else if (!item?.currentAddressDetails) {
-  //   return screens.KYCDocuments;
-  // } 
+   else if (!item?.adhaarDetails) {
+    return screens.KYC;
+  } else if (!item?.selfieDetails) {
+    return screens.CaptureSelfie;
+  } else if (!item?.currentAddressDetails) {
+    return screens.KYCDocuments;
+  } 
   else if (!item?.loanDetails) {
     return screens.LoanDetails;
   } else if (!item?.eligibilityDetails) {

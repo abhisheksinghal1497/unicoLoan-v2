@@ -35,78 +35,82 @@ const CardComponent = () => {
   );
 
 
-  useEffect(()=>{
+  useEffect(() => {
     getCarouselCardData?.mutate()
-  },[])
+  }, [])
 
-  useEffect(()=>{
-    if(getCarouselCardData.data){
+  useEffect(() => {
+    if (getCarouselCardData.data) {
       // alert('Top Cards Success')
       setData(getCarouselCardData.data)
     }
-  },[getCarouselCardData.data])
+  }, [getCarouselCardData.data])
 
-  useEffect(()=>{
-    if(getCarouselCardData.error){
+  useEffect(() => {
+    if (getCarouselCardData.error) {
       alert(getCarouselCardData.error)
     }
-  },[getCarouselCardData.error])
+  }, [getCarouselCardData.error])
 
-  const cardWidth = Dimensions.get('window').width - 150; 
-  const cardMarginHorizontal = 10; 
+  const cardWidth = Dimensions.get('window').width - 150;
+  const cardMarginHorizontal = 10;
   const padding = (Dimensions.get('window').width - cardWidth - 12 * cardMarginHorizontal) / 1.5;
 
   const renderItems = ({ item, index }) => {
     return (
-        <View style={[styles.card2, { width: cardWidth, marginHorizontal: cardMarginHorizontal }]}>
+      <View style={[styles.card2, { width: cardWidth, marginHorizontal: cardMarginHorizontal }]}>
+        
         <Image
           style={styles.imageView}
-          source={item.type === 'remote' ? { uri: item.uri } : item.uri}
+          source={{ uri: item.uri } }
           resizeMode="contain"
         />
       </View>
     );
   };
 
-  if (data.length === 0) {
-    return (
-      <Image
-          style={{width: 100, height: 100, alignSelf:'center', }}
-          source={require('../../../assets/images/22.gif')}
-          resizeMode="contain"
-        />
-    );
-  }
+  // if (data.length === 0) {
+  //   return (
+  //     <Image
+  //         style={{width: 100, height: 100, alignSelf:'center', }}
+  //         source={require('../../../assets/images/22.gif')}
+  //         resizeMode="contain"
+  //       />
+  //   );
+  // }
 
   return (
-   
+
     <View style={styles.container}>
-    <FlatList
-      ref={flatListRef}
-      data={data}
-      keyExtractor={(item, index) => index.toString()}
-      renderItem={renderItems}
-      contentContainerStyle={[styles.flatListContainer, { paddingLeft: padding, paddingRight: padding }]}
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      pagingEnabled={true}
-      snapToInterval={cardWidth + 4 * cardMarginHorizontal}
-      decelerationRate="fast"
-      snapToAlignment="center"
-      onScroll={(event) => {
-        const contentOffset = event.nativeEvent.contentOffset.x;
-        const index = Math.round(contentOffset / (cardWidth + 4 * cardMarginHorizontal));
-        setCurrentIndex(index);
-      }}
-    />
+      { data && data?.length > 0 && <>
+        <FlatList
+          ref={flatListRef}
+          data={data}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={renderItems}
+          contentContainerStyle={[styles.flatListContainer, { paddingLeft: padding, paddingRight: padding }]}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          pagingEnabled={true}
+          snapToInterval={cardWidth + 4 * cardMarginHorizontal}
+          decelerationRate="fast"
+          snapToAlignment="center"
+          onScroll={(event) => {
+            const contentOffset = event.nativeEvent.contentOffset.x;
+            const index = Math.round(contentOffset / (cardWidth + 4 * cardMarginHorizontal));
+            setCurrentIndex(index);
+          }}
+        />
     {renderPaginationDots()}
-  </View>
-  
+      </>
+}
+    </View>
+
   );
 };
 
 const styles = StyleSheet.create({
-  
+
   flatListContainer: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -139,8 +143,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  imageView:{ width: '100%', height: '100%', borderRadius: 35,elevation: 15,shadowOffset: { width: 0, height: 4 },shadowOpacity: 0.25,
-  shadowRadius: 3.84,  },
+  imageView: {
+    width: '100%', height: '100%', borderRadius: 35, elevation: 15, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
 
   card2: {
     borderRadius: 35,
@@ -153,7 +159,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 10,
 
-   
+
   },
 });
 

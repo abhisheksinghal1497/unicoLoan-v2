@@ -38,6 +38,7 @@ import useGetProgressPercentage, {
 } from "../../utils/useGetProgressPercentage";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 import { useResetRoutes } from "../../utils/functions";
+import { get } from "react-hook-form";
 const screenWidth = Dimensions.get("window").width;
 const HomeScreen = ({ navigation }) => {
   const flatListRef = useRef(null);
@@ -138,6 +139,7 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const ResumeLoanJourney = ({ item }) => {
+    console.log("hari>>>>>>>>", item)
     const progress = useGetProgressPercentage(item);
     const screenName = getCurrentScreenNameForResume(item);
 
@@ -180,7 +182,7 @@ const HomeScreen = ({ navigation }) => {
               justifyContent: "space-between",
             }}
           >
-            <Text style={textStyle(15)}>Home Loan</Text>
+            <Text style={textStyle(15)}>{item?.applicationDetails?.Product__c}</Text>
             <Text style={textStyle(9)}>{brandDetails.name}</Text>
           </View>
           <View
@@ -190,7 +192,7 @@ const HomeScreen = ({ navigation }) => {
               justifyContent: "space-between",
             }}
           >
-            <Text style={textStyle(14)}>LAN: H402HHL0622560</Text>
+            <Text style={textStyle(14)}>LAN: {item?.loanId}</Text>
           </View>
         </View>
       );
@@ -202,7 +204,7 @@ const HomeScreen = ({ navigation }) => {
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <View>
               <CircularProgress
-                imageStyle={{ width: 40, height: 40  }}
+                imageStyle={{ width: 40, height: 40 }}
                 ImageData={require("../../../assets/images/Home2.png")}
                 size={110}
                 strokeWidth={12}
@@ -211,12 +213,12 @@ const HomeScreen = ({ navigation }) => {
                 pgColor={colors.coreBlue}
               />
             </View>
-            <View style={{marginLeft: verticalScale(10)}}>
-              <Text style={[textStyle(13), {marginBottom: verticalScale(5)}]}>Next Payment</Text>
-              <Text style={[textStyle(15), {marginBottom: verticalScale(5)}]}>₹ 2,836</Text>
-              <Text style={textStyle(10, colors.greylight)}>
+            <View style={{ marginLeft: verticalScale(10), alignSelf: 'flex-end' }}>
+              {/* <Text style={[textStyle(13), { marginBottom: verticalScale(5) }]}>Next Payment</Text> */}
+              <Text style={[textStyle(15), { marginBottom: verticalScale(16) }]}>{screenName}</Text>
+              {/* <Text style={textStyle(10, colors.greylight)}>
                 29th April 2024
-              </Text>
+              </Text> */}
             </View>
           </View>
         );
@@ -226,13 +228,13 @@ const HomeScreen = ({ navigation }) => {
         return (
           <View>
             <Text style={textStyle(12.5)}>Loan Amount</Text>
-            <Text style={styles.loanAmountText}>₹ 2,836,000</Text>
+            <Text style={styles.loanAmountText}>₹ {item?.applicationDetails?.Requested_loan_amount__c}</Text>
             <View style={styles.blueLine} />
-            <Text style={textStyle(12.5)}>ROI</Text>
+            {/* <Text style={textStyle(12.5)}>ROI</Text>
             <Text style={styles.loanAmountText}>9.25%</Text>
             <View style={styles.blueLine} />
             <Text style={textStyle(12.5)}>Tenure</Text>
-            <Text style={styles.loanAmountText}>18/100</Text>
+            <Text style={styles.loanAmountText}>18/100</Text> */}
           </View>
         );
       };
@@ -249,7 +251,9 @@ const HomeScreen = ({ navigation }) => {
       <View style={{}}>
         <View style={styles.cardBodyHeaderContainer}>
           <CardHeader />
-          <CardBody />
+          <View style={{ marginVertical: 16 }}>
+            <CardBody />
+          </View>
         </View>
         <ResumeButton />
       </View>
@@ -258,29 +262,40 @@ const HomeScreen = ({ navigation }) => {
 
   const renderItems = ({ item, index }) => {
     return (
-      <View style={[styles.card, {}]}>
-         <ApplyNewLoan />
-        {/* {!item?.loanId ? <ApplyNewLoan /> : <ResumeLoanJourney item={item} />} */}
-      </View>
+      <>
+        {!item?.loanId ? <ApplyNewLoan /> :
+          <View style={[styles.card,]}>
+
+            <ResumeLoanJourney item={item} />
+          </View>
+        }
+      </>
     );
   };
 
   const ApplyNewLoan = () => {
     return (
-      <View style={{ margin: verticalScale(2), maxHeight: "53%" }}>
-        <TouchableOpacity onPress={openModal}>
-          <ImageBackground
-            resizeMode="contain"
-            style={styles.imgBackground}
-            source={require("../../../assets/images/loanapply.png")}
-          >
-            <View>
-            <Text style={styles.applyforloan}>Apply For Loan</Text>
-            </View>
-            
-          </ImageBackground>
-        </TouchableOpacity>
+
+
+      <View style={{
+        width: screenWidth - 40,
+        margin: 10
+      }}>
+        <ImageBackground
+          resizeMode="stretch"
+          style={styles.imgBackground}
+          source={require("../../../assets/images/loanapply.png")}
+        >
+
+
+          <Text style={styles.applyforloan}>Apply For Loan</Text>
+
+
+        </ImageBackground>
+
       </View>
+
+
     );
   };
 
@@ -296,78 +311,84 @@ const HomeScreen = ({ navigation }) => {
         setModalVisible={setModalVisible}
         modalVisible={modalVisible}
       />
-      <ScrollView>
-        <View style={{ backgroundColor: colors.coreCream }}>
-          <TouchableOpacity
-            style={styles.profileImageView}
-            onPress={() => navigation.navigate(screens.Profile)}
-          >
-            <View style={{ flexDirection: "row" }}>
-              <Image
-                source={require("../../../assets/images/profileIcon.png")}
-                style={styles.profileIcon}
-              />
-              <Text style={styles.profileName}>Bhavesh Rao</Text>
-            </View>
 
-            <TouchableOpacity onPress={() => oauth.logout()}>
-              <Text>Logout</Text>
+
+      <ScrollView contentContainerStyle={{ flexGrow: 1, marginBottom: 50 }}>
+        <View style={{ justifyContent: 'space-around', flex: 1 }}>
+
+          <View style={{ backgroundColor: colors.coreCream, flex: 1 }}>
+            <TouchableOpacity
+              style={styles.profileImageView}
+              onPress={() => navigation.navigate(screens.Profile)}
+            >
+              <View style={{ flexDirection: "row" }}>
+                <Image
+                  source={require("../../../assets/images/profileIcon.png")}
+                  style={styles.profileIcon}
+                />
+                <Text style={styles.profileName}>Bhavesh Rao</Text>
+              </View>
+
+              <TouchableOpacity onPress={() => oauth.logout()}>
+                <Text>Logout</Text>
+              </TouchableOpacity>
             </TouchableOpacity>
-          </TouchableOpacity>
-          <View style={{}}>
+
+          </View>
+
+          <View style={{ flex: 1 }}>
             <CardComponent />
           </View>
-        </View>
 
-        <View style={{ marginTop: verticalScale(20) }}>
-          <Text style={styles.yourLoan}>Your Loans</Text>
-          {!data?.length ? (
-            <ApplyNewLoan />
-          ) : (
-            <>
-              <View style={styles.secondcards}>
-                <FlatList
-                  ref={flatListRef}
-                  data={[...data, { loanId: null }]}
-                  keyExtractor={(item, index) => index.toString()}
-                  renderItem={renderItems}
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={{
-                    paddingHorizontal: (screenWidth - cardWidth) / 2,
-                  }}
-                  onScroll={handleScroll}
-                  scrollEventThrottle={16}
+
+          <View style={{ flex: 1 }}>
+            <Text style={styles.yourLoan}>Your Loans</Text>
+
+
+
+            <View style={styles.secondcards}>
+              <FlatList
+
+                ref={flatListRef}
+                data={data?.length > 0 ? [...data, { loanId: null }] : [{ loanId: null }]}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={renderItems}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+
+                onScroll={handleScroll}
+                scrollEventThrottle={16}
+              />
+            </View>
+            <View style={styles.dotsContainer}>
+              {[...data, {}].map((_, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={[
+                    styles.dot,
+                    selectedDotIndex === index && styles.selectedDot,
+                  ]}
+                  onPress={() => scrollToIndex(index)}
                 />
-              </View>
-              <View style={styles.dotsContainer}>
-                {[...data, {}].map((_, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    style={[
-                      styles.dot,
-                      selectedDotIndex === index && styles.selectedDot,
-                    ]}
-                    onPress={() => scrollToIndex(index)}
-                  />
-                ))}
-              </View>
-            </>
-          )}
-        </View>
-        <View style={{ marginTop: verticalScale(20) }}>
-          <Text style={styles.yourLoan}>Our Services</Text>
-          <View style={styles.ourSericesCards}>
-            {data2.map((item, index) => (
-              <TouchableOpacity
-                key={item.key}
-                style={styles.servicesCards}
-                onPress={() => handleNavigation(index)}
-              >
-                <Image style={styles.serviceImage} source={item.image} />
-                <Text style={styles.serviceText}>{item.title}</Text>
-              </TouchableOpacity>
-            ))}
+              ))}
+            </View>
+
+
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.yourLoan}>Our Services</Text>
+            <View style={styles.ourSericesCards}>
+              {data2.map((item, index) => (
+                <TouchableOpacity
+                  key={item.key}
+                  style={styles.servicesCards}
+                  onPress={() => handleNavigation(index)}
+                >
+                  <Image style={styles.serviceImage} source={item.image} />
+                  <Text style={styles.serviceText}>{item.title}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -376,7 +397,7 @@ const HomeScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  cardBodyHeaderContainer:{paddingHorizontal: horizontalScale(16), paddingVertical: verticalScale(14)},
+  cardBodyHeaderContainer: { paddingHorizontal: horizontalScale(16), paddingVertical: verticalScale(14) },
   blueLine: {
     height: verticalScale(1),
     backgroundColor: colors.coreBlue,
@@ -435,16 +456,18 @@ const styles = StyleSheet.create({
   secondcards: {
     justifyContent: "center",
     alignItems: "center",
+
   },
   applyforloan: {
-    alignSelf:'flex-start',
+    alignSelf: 'center',
     color: colors.white,
     fontWeight: customTheme.fonts.labelLarge.fontWeight,
     letterSpacing: 1.5,
     fontSize: 18,
     backgroundColor: colors.bgDark,
     borderRadius: 10,
-    padding:10,
+    padding: 10,
+
     marginBottom: verticalScale(20)
   },
   profileIcon: {
@@ -455,10 +478,11 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(210, 177, 172, 1)",
   },
   imgBackground: {
-    resizeMode: "cover",
-    justifyContent: "flex-end",
-    alignItems:'center',
-    height: '100%',
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    minHeight: 200,
+
   },
 
   profileName: {
@@ -478,8 +502,8 @@ const styles = StyleSheet.create({
     elevation: 5,
     // marginRight: horizontalScale(14),
     width: screenWidth - 40,
-    marginBottom: verticalScale(5),
-    marginRight: horizontalScale(10),
+    margin: 10
+
     // marginLeft: verticalScale(-5),
   },
   servicesCards: {

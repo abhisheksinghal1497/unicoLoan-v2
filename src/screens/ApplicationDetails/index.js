@@ -262,9 +262,9 @@ export default function ApplicationDetails(props) {
         />
       </View>
       <ScrollView contentContainerStyle={style.scrollviewStyle}>
-        <View style={style.container}>
+        {/* <View style={style.container}>
           <ApplicationCard navigation={props?.navigation} />
-        </View>
+        </View> */}
 
         <View
           style={{ marginHorizontal: DimensionUtils.pixelSizeHorizontal(15) }}

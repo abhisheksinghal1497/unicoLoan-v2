@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
         flexDirection: 'row',
         alignItems: 'center',
-        marginVertical: verticalScale(10),
+        marginVertical: verticalScale(15),
     },
     backImage: {
         width: 20,
