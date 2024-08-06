@@ -33,7 +33,6 @@ export default InputField = ({
   onChangeText,
   value: defaultValue,
   isEditable = true,
-  maxLength,
   trigger = () => {},
   ...rest
 }) => {
@@ -69,7 +68,6 @@ export default InputField = ({
                   editable={isEditable}
                   error={error?.message}
                   scrollEnabled={false}
-                  maxLength={maxLength}
                   onChangeText={(value) => {
                     if (onChangeText) {
                       onChangeText(value);

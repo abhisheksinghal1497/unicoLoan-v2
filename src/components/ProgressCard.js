@@ -6,20 +6,13 @@ import { useTheme } from "react-native-paper";
 import CircularProgress from "./CircularProgress";
 import home from "./../assets/home_icon.png";
 import useGetProgressPercentage from "../utils/useGetProgressPercentage";
-import { useRoute } from "@react-navigation/native";
-import { brandDetails } from "../constants/stringConstants";
 
 const ProgressCard = ({ screenName }) => {
   const { fonts } = useTheme();
-  const route = useRoute();
-  const {loanData = {}} = route?.params || {};
-  const {loanId= '', applicationDetails = {}} = loanData;
-  const {Product__c} = applicationDetails;
-
   const percentage = useGetProgressPercentage()
   return (
     <View style={styles.cardContainer}>
-      <View style={{ }}>
+      <View style={{ flexGrow: 1 }}>
         <Text style={[fonts.labelMedium, { color: "rgba(46, 82, 161, 1)" }, styles.textStyle]}>
           {screenName}
         </Text>
@@ -27,15 +20,15 @@ const ProgressCard = ({ screenName }) => {
           style={[
             fonts.labelMedium,
             { color: "rgba(46, 82, 161, 1)", marginVertical: 8, },
-            styles.textStyle, {maxWidth:'60%'}
+            styles.textStyle
           ]}
         >
-          {loanId}
+          LXC537676727
         </Text>
         <Text style={[fonts.labelSmall, { color: "rgba(46, 82, 161, 1)" }, styles.textStyle, {
           fontSize: 12
         }]}>
-          {Product__c}
+          Housing Loan
         </Text>
       </View>
       <View
@@ -56,11 +49,10 @@ const ProgressCard = ({ screenName }) => {
           style={[
             fonts.smallText,
             { color: "rgba(46, 82, 161, 1)", fontSize: 7, marginTop: 10 },
-            styles.textStyle,
-            {fontSize:9}
+            styles.textStyle,{fontSize:9}
           ]}
         >
-          {brandDetails.name}
+          UNICO HOUSING FINANCE LIMITED
         </Text>
       </View>
     </View>
@@ -75,7 +67,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginHorizontal: 5,
     justifyContent: 'space-between',
+
     padding: 15,
+
     borderRadius: 10,
     borderRadius: 6,
     backgroundColor: colors.LIGHT_BLUE,
@@ -89,12 +83,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 1
   },
   textStyle: {
+
     fontFamily: "Montserrat",
     fontSize: 14,
     fontWeight: "500",
     fontStyle: "normal",
     lineHeight: 14,
-    color: colors.coreBlue,
+    color: colors.coreBlue
 
   }
 });

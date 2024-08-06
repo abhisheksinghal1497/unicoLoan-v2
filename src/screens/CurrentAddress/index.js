@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, ScrollView, Alert, TouchableOpacity, TextInput, Image } from 'react-native';
 import ImagePicker from "react-native-image-crop-picker";
 import Header from '../../components/Header';
@@ -23,13 +23,10 @@ import { doOCRForDL, doOCRForPassport, doOCRForVoterID } from '../../services/mu
 import { toast } from '../../utils/functions';
 import ActivityIndicatorComponent from '../../components/ActivityIndicator';
 import { log } from '../../utils/ConsoleLogUtils';
-import Canvas, { Image as CanvasImage } from 'react-native-canvas';
 
 
 const CurrentAddress = ({ navigation }) => {
   const [imageSelected, setImageSelected] = useState('');
-  const [firstImageSelected, setFirstImageSelected] = useState(null)
-  const [secondImageSelected, setSecondImageSelected] = useState(null)
   const [activeSections, setActiveSections] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -42,147 +39,6 @@ const CurrentAddress = ({ navigation }) => {
   const dlCheck = doOCRForDL()
   const passportCheck = doOCRForPassport()
   const voterIdCheck = doOCRForVoterID()
-  const canvasRef = useRef(null);
-
-  const dlFields = [
-    {
-      id: "dl",
-      label: "DL No",
-      type: component.textInput,
-      placeHolder: "Enter DL Number",
-      isRequired: true,
-      value: "",
-    },
-    {
-      id: "dlExpiry",
-      label: "Expiry Date",
-      type: component.datetime,
-      placeHolder: "Enter Expiry Date",
-      isRequired: true,
-      value: "",
-    },
-    {
-      id: "address",
-      label: "Address",
-      type: component.textInput,
-      placeHolder: "Enter address",
-      isRequired: true,
-      value: "",
-      isMultiline: true,
-    },]
-  //Passport No, Expiry Date
-  const passPortFields = [
-    {
-      id: "passportNo",
-      label: "Passport No",
-      type: component.textInput,
-      placeHolder: "Enter Passport No",
-      isRequired: true,
-      value: "",
-    },
-    {
-      id: "passportExpiry",
-      label: "Expiry Date",
-      type: component.datetime,
-      placeHolder: "Enter Expiry Date",
-      isRequired: true,
-      value: "",
-    },
-    {
-      id: "address",
-      label: "Address",
-      type: component.textInput,
-      placeHolder: "Enter address",
-      isRequired: true,
-      value: "",
-      isMultiline: true,
-    },]
-
-  const voterIdFields = [
-    {
-      id: "voterID",
-      label: "Voter Id No",
-      type: component.textInput,
-      placeHolder: "Enter Voter Id No",
-      isRequired: true,
-      value: "",
-    },
-  ]
-
-  const neregaFields = [
-    //NREGA ID
-    {
-      id: "neragaID",
-      label: "NREGA ID",
-      type: component.textInput,
-      placeHolder: "Enter NREGA ID",
-      isRequired: true,
-      value: "",
-    },
-  ]
-
-  const electicityFields = [
-    // Bill No, Bill Date 
-    {
-      id: "electricBillNumber",
-      label: "Bill No",
-      type: component.textInput,
-      placeHolder: "Enter Bill No",
-      isRequired: true,
-      value: "",
-    },
-
-    {
-      id: "electricBillDate",
-      label: "Bill Date",
-      type: component.textInput,
-      placeHolder: "Enter Bill Date",
-      isRequired: true,
-      value: "",
-    },
-  ]
-
-  const gasFields = [
-    // Bill No, Bill Date 
-    {
-      id: "gasBillNumber",
-      label: "Bill No",
-      type: component.textInput,
-      placeHolder: "Enter Bill No",
-      isRequired: true,
-      value: "",
-    },
-
-    {
-      id: "gasBillDate",
-      label: "Bill Date",
-      type: component.textInput,
-      placeHolder: "Enter Bill Date",
-      isRequired: true,
-      value: "",
-    },
-  ]
-
-  const mobileFields = [
-    // Bill No, Bill Date 
-    {
-      id: "mobileBillNumber",
-      label: "Bill No",
-      type: component.textInput,
-      placeHolder: "Enter Bill No",
-      isRequired: true,
-      value: "",
-    },
-
-    {
-      id: "mobileBillDate",
-      label: "Bill Date",
-      type: component.textInput,
-      placeHolder: "Enter Bill Date",
-      isRequired: true,
-      value: "",
-    },
-  ]
 
   const {
     control,
@@ -205,18 +61,16 @@ const CurrentAddress = ({ navigation }) => {
       title: selectedItem ? selectedItem : 'Documents',
       items: [
         {
-          title: CaptureAddressConstants.DL, fields: [
-
-          ]
+          title: CaptureAddressConstants.DL
         },
-        { title: CaptureAddressConstants.PASSPORT, fields: [...passPortFields] },
+        { title: CaptureAddressConstants.PASSPORT },
         {
-          title: CaptureAddressConstants.VOTERID, fields: [...voterIdFields]
+          title: CaptureAddressConstants.VOTERID
         },
-        { title: CaptureAddressConstants.NREGACard, fields: [...neregaFields] },
-        { title: CaptureAddressConstants.EBILL, fields: [...electicityFields] },
-        { title: CaptureAddressConstants.GBILL, fields: [...gasFields] },
-        { title: CaptureAddressConstants.MBILL, fields: [...mobileFields] }
+        { title: CaptureAddressConstants.NREGACard },
+        { title: CaptureAddressConstants.EBILL },
+        { title: CaptureAddressConstants.GBILL },
+        { title: CaptureAddressConstants.MBILL }
       ]
     },
 
@@ -226,30 +80,6 @@ const CurrentAddress = ({ navigation }) => {
     try {
       if (dlCheck.data) {
         setValue('address', dlCheck.data?.results?.address?.[0].completeAddress)
-        setValue('dl', dlCheck.data?.results?.dlNumber)
-        try {
-          // need to get DL expiry 
-          // will get the response like this "nonTransport": "13-02-2019 to 12-02-2039",
-          let expiryResponse = dlCheck.data?.results?.validity
-          if (expiryResponse && expiryResponse.nonTransport) {
-            if (expiryResponse.nonTransport?.toString()?.toLowerCase()?.includes("to")) {
-              const expiry = expiryResponse.nonTransport?.toString()?.toLowerCase()?.split('to')?.pop()
-
-              setValue('dlExpiry', expiry?.trim())
-
-            }
-
-          } else if (expiryResponse && expiryResponse.transport) {
-            if (expiryResponse.transport?.toString()?.toLowerCase()?.includes("to")) {
-              const expiry = expiryResponse.transport?.toString()?.toLowerCase()?.split('to')?.pop()
-              setValue('dlExpiry', expiry?.trim())
-
-            }
-          }
-
-        } catch (error) {
-
-        }
       }
       if (dlCheck.error) {
 
@@ -262,79 +92,11 @@ const CurrentAddress = ({ navigation }) => {
 
   }, [dlCheck.data, dlCheck.error]);
 
-  useEffect(() => {
-    // alert(canvasRef.current && firstImageSelected?.data && secondImageSelected?.data)
-    if (canvasRef.current && firstImageSelected && secondImageSelected) {
-      //alert('dsj')
-      mergeBase64Images(canvasRef, firstImageSelected?.data, secondImageSelected?.data);
-      setTimeout(() => {
-        uploadMultipleFiles()
-      }, 500)
-    }
-    // wait for 2 seconds
-
-  }, [canvasRef.current, firstImageSelected, secondImageSelected]);
-
-  const uploadMultipleFiles = async () => {
-    try {
-      let dataURL = await canvasRef.current.toDataURL()
-      log("uploadMultipleFiles>>>>>", dataURL)
-      if (dataURL) {
-        if (selectedItem === CaptureAddressConstants.PASSPORT) {
-          passportCheck?.mutate(dataURL)
-        }
-      }
-    } catch (error) {
-
-    }
-  }
-
-  const mergeBase64Images = (canvasRef, base64Image1, base64Image2) => {
-    const canvas = canvasRef.current;
-
-
-
-    const context = canvas.getContext('2d');
-    //context.rotate(45 * Math.PI / 180)
-
-    const image1 = new CanvasImage(canvas);
-    const image2 = new CanvasImage(canvas);
-
-    image1.src = `data:image/jpeg;base64,${base64Image1}`;
-    image2.src = `data:image/jpeg;base64,${base64Image2}`;
-
-    image1.addEventListener('load', () => {
-      // Draw the first image
-      context.save()
-
-
-
-      //  context.drawImage(image1, 0, 0, canvas.width / 2, canvas.height);
-
-      image2.addEventListener('load', () => {
-        canvas.width = Math.max(image1.width, image2.width)
-        canvas.height = image1.height + image2.height
-        // Draw the second image next to the first image
-        context.drawImage(image1, 0, 0, image1.width, image1.height);
-        context.drawImage(image2, 0, image1.height + 50, image2.width, image2.height);
-
-        // Optionally, convert the canvas content to base64
-
-
-      });
-    });
-  };
-
 
   useEffect(() => {
     try {
       if (passportCheck.data) {
-        setValue('passportNo', passportCheck.data?.results?.passportNumber?.passportNumberFromSource)
-        setValue('passportExpiry', passportCheck.data?.results?.ocrDetails?.[0]?.details?.doe?.value)
-        setValue('address', passportCheck.data?.results?.ocrDetails?.[1]?.details?.address?.value)
-        //passportExpiry, address
-
-
+        // setValue('address', passportCheck.data?.results?.address?.[0].completeAddress)
       }
       if (passportCheck.error) {
 
@@ -366,7 +128,7 @@ const CurrentAddress = ({ navigation }) => {
 
 
 
-  const handleGalleryUpload = (type) => {
+  const handleGalleryUpload = () => {
     ImagePicker.openPicker({
       compressImageQuality: 0.6,
       includeBase64: true,
@@ -377,16 +139,19 @@ const CurrentAddress = ({ navigation }) => {
         const fileName = image?.path?.split('/').pop();
         try {
 
-          if (type === 0) {
-            setImageSelected(image);
-          } else if (type === 1) {
-            setFirstImageSelected(image)
-          } else if (type === 2) {
-            setSecondImageSelected(image)
-          }
-
-
-
+          setImageSelected(fileName);
+          setSelectedFields([
+            {
+              id: "address",
+              label: "Address",
+              type: component.textInput,
+              placeHolder: "Enter address",
+              isRequired: true,
+              value: "",
+              isMultiline: true,
+            },
+          ])
+          setValue('address', "")
         } catch (error) {
 
         }
@@ -422,8 +187,7 @@ const CurrentAddress = ({ navigation }) => {
         voterIdCheck?.mutate(request)
 
       } else if (selectedItem === CaptureAddressConstants.PASSPORT) {
-        // alert(request)
-        //  passportCheck?.mutate(request)
+        passportCheck?.mutate(request)
       }
     } catch (error) {
 
@@ -503,10 +267,7 @@ const CurrentAddress = ({ navigation }) => {
     setSelectedItem(item.title);
     // Set dummy values for inputs based on selected item
     setImageSelected('');
-    setFirstImageSelected(null)
-    setSecondImageSelected(null)
     setActiveSections([])
-    setSelectedFields(item.fields)
     // setInputValue1(`Sample ${item.fields[0]}`);
     // setInputValue2(`Sample ${item.fields[1]}`);
     //setSelectedFields(item.fields)
@@ -531,7 +292,6 @@ const CurrentAddress = ({ navigation }) => {
     const isValid = await trigger()
     if (isValid) {
       //  dlCheck.mutate(watch())
-      navigation?.navigate(screens.LoanDetails)
     }
   }
 
@@ -552,7 +312,6 @@ const CurrentAddress = ({ navigation }) => {
             onPressLeft={() => { navigation.navigate(screens.KYCDocuments); }}
           />
         </View>
-        {<Canvas ref={canvasRef} style={{ width: 1, height: 1 }} />}
         {(dlCheck.isPending || voterIdCheck.isPending || passportCheck.isPending) && <ActivityIndicatorComponent />}
 
         <View style={[styles.container, { marginHorizontal: horizontalScale(11) }]}>
@@ -590,100 +349,19 @@ const CurrentAddress = ({ navigation }) => {
 
 
             {selectedItem &&
-              <>
-                {selectedItem !== CaptureAddressConstants.PASSPORT ?
 
-
-                  <TouchableOpacity
-                    disabled={imageSelected ? true : false}
-                    onPress={() => handleGalleryUpload(0)}
-                    style={styles.uploadButton}
-                  >
-                    <Text style={[styles.uploadButtonText, {
-                      borderColor: imageSelected ? colors.grey : colors.coreBlue,
-                      color: imageSelected ? colors.grey : colors.coreBlue,
-                    }]}>
-                      {imageSelected ? 'Uploaded' : 'Upload'}
-                    </Text>
-                  </TouchableOpacity>
-
-                  :
-                  <View>
-                    <TouchableOpacity
-                      disabled={imageSelected ? true : false}
-                      onPress={() => handleGalleryUpload(1)}
-                      style={styles.uploadButton}
-                    >
-                      <Text style={[styles.uploadButtonText, {
-                        borderColor: imageSelected ? colors.grey : colors.coreBlue,
-                        color: imageSelected ? colors.grey : colors.coreBlue,
-                      }]}>
-                        {firstImageSelected ? 'Uploaded' : 'Upload'} {selectedItem} FirstPage
-                      </Text>
-                    </TouchableOpacity>
-
-                    {firstImageSelected && (
-                      <View style={{ marginVertical: 16 }}>
-                        <View style={{ borderBottomWidth: 3, borderBottomColor: colors.coreBlue, width: '100%', alignSelf: 'center', marginVertical: verticalScale(16) }} />
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: horizontalScale(5), marginTop: verticalScale(10) }}>
-                          <Text style={{ color: colors.surface, fontSize: 15, fontWeight: '500' }}>
-                            {firstImageSelected?.path?.split('/').pop()}
-                          </Text>
-                          <TouchableOpacity
-                            onPress={() => {
-
-                              setFirstImageSelected(null);
-
-                            }}
-                          >
-                            <Image
-                              source={require('../../../src/assets/cross.png')}
-                              resizeMode="contain"
-                            />
-                          </TouchableOpacity>
-                        </View>
-                      </View>
-                    )}
-
-
-                    <TouchableOpacity
-                      disabled={imageSelected ? true : false}
-                      onPress={() => handleGalleryUpload(2)}
-                      style={styles.uploadButton}
-                    >
-                      <Text style={[styles.uploadButtonText, {
-                        borderColor: imageSelected ? colors.grey : colors.coreBlue,
-                        color: imageSelected ? colors.grey : colors.coreBlue,
-                      }]}>
-                        {firstImageSelected ? 'Uploaded' : 'Upload'} {selectedItem} SecondPage
-                      </Text>
-                    </TouchableOpacity>
-
-                    {secondImageSelected && (
-                      <View style={{ marginVertical: 16 }}>
-                        <View style={{ borderBottomWidth: 3, borderBottomColor: colors.coreBlue, width: '100%', alignSelf: 'center', marginVertical: 16 }} />
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: horizontalScale(5), marginTop: verticalScale(10) }}>
-                          <Text style={{ color: colors.surface, fontSize: 15, fontWeight: '500' }}>
-                            {secondImageSelected?.path?.split('/').pop()}
-                          </Text>
-                          <TouchableOpacity
-                            onPress={() => {
-
-                              setSecondImageSelected(null);
-
-                            }}
-                          >
-                            <Image
-                              source={require('../../../src/assets/cross.png')}
-                              resizeMode="contain"
-                            />
-                          </TouchableOpacity>
-                        </View>
-                      </View>
-                    )}
-                  </View>
-                }
-              </>
+              <TouchableOpacity
+                disabled={imageSelected ? true : false}
+                onPress={() => handleGalleryUpload()}
+                style={styles.uploadButton}
+              >
+                <Text style={[styles.uploadButtonText, {
+                  borderColor: imageSelected ? colors.grey : colors.coreBlue,
+                  color: imageSelected ? colors.grey : colors.coreBlue,
+                }]}>
+                  {imageSelected ? 'Uploaded' : 'Upload'}
+                </Text>
+              </TouchableOpacity>
             }
 
 
@@ -697,7 +375,7 @@ const CurrentAddress = ({ navigation }) => {
               <View style={{ borderBottomWidth: 3, borderBottomColor: colors.coreBlue, width: '100%', alignSelf: 'center', marginVertical: verticalScale(9) }} />
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: horizontalScale(5), marginTop: verticalScale(10) }}>
                 <Text style={{ color: colors.surface, fontSize: 15, fontWeight: '500' }}>
-                  {imageSelected?.path?.split('/').pop()}
+                  {imageSelected}
                 </Text>
                 <TouchableOpacity
                   onPress={() => {
@@ -715,15 +393,10 @@ const CurrentAddress = ({ navigation }) => {
             </>
           )}
 
-
-
-
-
-
         </View>
         {console.log(selectedFields)}
 
-        {(imageSelected || (firstImageSelected && secondImageSelected)) && selectedFields && selectedFields.map((comp, index) => {
+        {imageSelected && selectedFields && selectedFields.map((comp, index) => {
           return (
 
             <FormControl
@@ -757,7 +430,7 @@ const CurrentAddress = ({ navigation }) => {
 
       {/* Submit Button */}
       <View style={styles.buttonview}>
-        {selectedItem && (imageSelected || (firstImageSelected && secondImageSelected)) &&
+        {selectedItem && imageSelected &&
           <Button
             onPress={submitDoc}
             type="primary"

@@ -1,10 +1,10 @@
 export const screens = {
     Splash: 'Splash',
-    PanDetails: 'PAN and KYC',
+    PanDetails: 'PanDetails',
     MyTickets: 'My Tickets',
-    KYC: 'Adhaar KYC',
+    KYC: 'KYC',
     CaptureAdhaar: 'CaptureAdhaar',
-    CaptureSelfie: 'Capture Selfie',
+    CaptureSelfie: 'CaptureSelfie',
     HomeScreen: 'HomeScreen',
     ApplicantDetails: 'ApplicantDetails',
     ApplyForLoan: 'ApplyForLoan',
@@ -27,7 +27,7 @@ export const screens = {
     KYCDocuments:"KYCDocuments",
     ProfileImageScreen: "ProfileImageScreen",
     Sanction:"Sanction",
-    LoanDetails:"Loan Details",
+    LoanDetails:"LoanDetails",
     RaiseTicket:'RaiseTicket',
     CreateTicket: "CreateTicket",
     FAQ:"FAQ",
@@ -39,7 +39,5 @@ export const screens = {
     OtpScreen: "OtpScreen",
     PinCodeVerify: "PinCodeVerify",
     Profile: 'Profile',
-    Dummy: 'Dummy',
-    Services:'services',
-    ServiceOtp: 'ServiceOtp'
+    Dummy: 'Dummy'
   };

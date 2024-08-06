@@ -19,7 +19,7 @@ export default function OtpInput({
   isDisabled = false,
   otpLimit = 6,
   isRequired = false,
-  trigger = () => {},
+  trigger = () => { },
   ...rest
 }) {
   const { colors: themeColor } = useTheme();
@@ -38,11 +38,14 @@ export default function OtpInput({
       if (text && index < inputRefs.length - 1) {
         inputRefs[index + 1]?.focus();
       }
-    } catch (error) {}
-  };
+
+    } catch (error) {
+
+    }
+  }
+
 
   const handleKeyPress = (e, index, otp) => {
-    console.log('-------------------',e, index, otp)
     if (e.nativeEvent.key === "Backspace" && index > 0) {
       inputRefs[index - 1]?.focus();
     }
@@ -61,6 +64,7 @@ export default function OtpInput({
           <View style={styles.container}>
             <View style={styles.otpContainer}>
               {Array.from({ length: otpLimit }, (_, index) => (
+
                 <TextInput
                   key={index}
                   ref={(ref) => (inputRefs[index] = ref)}
@@ -73,23 +77,25 @@ export default function OtpInput({
                   }
                   onKeyPress={(e) => handleKeyPress(e, index, value)}
                   value={value?.charAt(index) || ""}
-                  style={[
-                    styles.textInput,
-                    index !== 0 && styles.otpInput,
-                    {
-                      backgroundColor: "#fffff",
-                    },
-                  ]}
+                  style={[styles.textInput, index !== 0 && styles.otpInput, {
+                    backgroundColor: '#fffff'
+                  }]}
+
+
                   maxLength={1}
                   mode="outlined"
+
                   outlineStyle={{
+
                     backgroundColor: colors.white,
                     margin: -2,
 
-                    borderColor: "rgba(232, 232, 234, 1.0)",
+
+                    borderColor: "rgba(232, 232, 234, 1.0)"
                   }}
                   {...rest}
                 />
+
               ))}
             </View>
 
@@ -118,6 +124,8 @@ const styles = StyleSheet.create({
 
   textInput: {
     flex: 1,
+
+
   },
   error: {
     color: customTheme.colors.error,

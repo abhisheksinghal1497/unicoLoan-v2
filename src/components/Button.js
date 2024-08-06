@@ -49,7 +49,7 @@ export default function CustomButton(props) {
                 fontFamily: "Inter",
                 fontSize: 16,
                 fontWeight: "500",
-                fontStyle: "normal",
+                fontStyle: "normal"
               },
             ]}
             numberOfLines={1}
@@ -84,7 +84,6 @@ export default function CustomButton(props) {
     </TouchableRipple>
   ) : type === "circle" ? (
     <TouchableRipple
-      onPress={onPress}
       disabled={disable || isLoading}
       style={[styles.circleButtonContainer, buttonContainer]}
     >

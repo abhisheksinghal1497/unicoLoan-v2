@@ -5,7 +5,7 @@ import { assets } from "../../../assets/assets";
 import CircularProgress from "../../../components/CircularProgress";
 import DimensionUtils from "./../../../utils/DimensionUtils";
 import { useRoute } from "@react-navigation/native";
-import useGetProgressPercentage, { getCurrentScreenNameForResume } from "../../../utils/useGetProgressPercentage";
+import useGetProgressPercentage from "../../../utils/useGetProgressPercentage";
 const horizontalScale = DimensionUtils.pixelSizeHorizontal;
 const verticalScale = DimensionUtils.pixelSizeVertical;
 
@@ -13,6 +13,7 @@ const ApplicationCard = () => {
   const { colors } = useTheme();
   const styles = style(colors);
   const percentage = useGetProgressPercentage();
+
   return (
     <View style={styles.applicationContainer}>
       <View style={styles.loanContentContainer}>

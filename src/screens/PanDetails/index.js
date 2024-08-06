@@ -1,11 +1,12 @@
 import {
+  Dimensions,
   Image,
   StyleSheet,
   Text,
   View,
   ScrollView,
   Keyboard,
-  TouchableOpacity,
+  TouchableOpacity
 } from "react-native";
 import { assets } from "../../assets/assets";
 import React, { useState, useEffect } from "react";
@@ -17,38 +18,33 @@ import {
   FormControl,
   component,
 } from "../../components/FormComponents/FormControl";
-import { verticalScale } from "../../utils/matrcis";
+import { horizontalScale, verticalScale } from "../../utils/matrcis";
 import { validations } from "../../constants/validations";
 import { useForm } from "react-hook-form";
 import ProgressCard from "../../components/ProgressCard";
 import HelpModal from "../ApplicationDetails/component/HelpModal";
 import { toast } from "../../utils/functions";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
-import {
-  verifyPanApi,
-  uploadAndVerifyPan,
-  nameMatchCheck,
-} from "../../services/muleService/MuleApiUtils";
-import { submitPanApi, useSubmitPanForm } from "../../services/ApiUtils";
+import { verifyPanApi, uploadAndVerifyPan } from "../../services/muleService/MuleApiUtils";
+import { submitPanApi } from "../../services/ApiUtils";
 import { error, log } from "../../utils/ConsoleLogUtils";
-import ImagePicker from "react-native-image-crop-picker";
+import ImagePicker from 'react-native-image-crop-picker';
 import AdhaarSection from "../../components/AdhaarSection";
 import { ConfiguratonConstants } from "../../constants/ConfigurationConstants";
 import ErrorConstants from "../../constants/ErrorConstants";
-import { useRoute } from "@react-navigation/native";
+
+
+
 
 const PanDetails = (props) => {
-  const route = useRoute();
-  const { loanData={}} = route?.params || {};
+
+
   const [isVerified, setIsVerified] = useState(false);
   const [isUploadVerified, setUploadIsVerified] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   // const [message, setMessage] = useState('12345');
-  const [responseData, setResponseData] = useState(null);
-  const [panDetails, setPanDetails] = useState(null);
-  const panSubmitMutate = useSubmitPanForm(loanData);
-  
+  const [responseData, setResponseData] = useState(null)
   const {
     control,
     handleSubmit,
@@ -76,6 +72,8 @@ const PanDetails = (props) => {
       showRightComp: true,
       maxLength: 10,
     },
+
+
   ];
   const verifyPan = verifyPanApi();
   const uploadPan = uploadAndVerifyPan();
@@ -84,95 +82,93 @@ const PanDetails = (props) => {
   useEffect(() => {
     if (verifyPan?.data) {
       try {
-        const { panNumber } = watch();
-
-        const panCapital = panNumber?.toString()?.toUpperCase();
-        const response = verifyPan?.data?.data;
-        log("panVerify data>>>>", JSON.stringify(response));
+        const response = verifyPan?.data?.data
+        log("panVerify data>>>>", JSON.stringify(response))
         setIsVerified(true);
-        showResponseData(response?.results?.name, "");
-        toast("success", "Pan Verified");
-        setPanDetails({
-          panNumber: panCapital,
-          panName: response?.results?.name,
-        });
-      } catch (error) {}
+        showResponseData(response?.results?.name, '')
+        toast('success', "Pan Verified");
+      } catch (error) {
+
+      }
+
     }
 
     if (verifyPan?.error) {
-      setError("panNumber", {
-        type: "custom",
-        message: ErrorConstants.PAN_UNVERIFIED,
-      });
+      setError('panNumber', { type: 'custom', message: ErrorConstants.PAN_UNVERIFIED });
       setIsVerified(false);
       //setError("panNumbRr", "Pan is not verified");
+
     }
-  }, [verifyPan?.data, verifyPan?.error]);
+
+  }, [verifyPan?.data, verifyPan?.error])
+
 
   useEffect(() => {
     if (uploadPan?.data) {
       try {
         const response = uploadPan?.data?.data;
-        log("uploadPan data>>>>", JSON.stringify(response));
+        log("uploadPan data>>>>", JSON.stringify(response))
         setUploadIsVerified(true);
-        toast("success", "Pan Verified");
-        showResponseData(
-          response?.results?.name,
-          response?.results?.ocrDetails?.[0]?.details?.date?.value
-        );
-        setPanDetails({
-          panNumber: response?.results?.ocrDetails?.[0]?.details?.panNo?.value,
-          panName: response?.results?.name,
-        });
-      } catch (error) {}
+        toast('success', "Pan Verified");
+        showResponseData(response?.results?.name, response?.results?.ocrDetails?.[0]?.details?.date?.value)
+      } catch (error) {
+
+      }
+
+
     }
 
     if (uploadPan?.error) {
-      error("panverifyError>>>>", JSON.stringify(uploadPan?.error));
+      error('panverifyError>>>>', JSON.stringify(uploadPan?.error))
       setIsVerified(false);
-      toast("error", "PAN  UnVerified");
+      toast("error", "PAN  UnVerified")
       //setError("panNumbRr", "Pan is not verified");
     }
-  }, [uploadPan?.data, uploadPan?.error]);
+
+  }, [uploadPan?.data, uploadPan?.error])
 
   const toggleModal = () => setShowModal(!showModal);
 
   const showResponseData = (name, dob) => {
-    setResponseData([
-      {
-        id: "name",
-        label: "Name",
-        type: component.textInput,
-        placeHolder: name,
-        isRequired: false,
-        data: [],
-        isEditable: false,
-        isMultiline: true,
+ 
+    setResponseData([{
+      id: "name",
+      label: "Name",
+      type: component.textInput,
+      placeHolder: name,
+      isRequired: false,
+      data: [],
+      isEditable: false,
+      isMultiline: true,
 
-        value: name,
-      },
-      // {
-      //   id: "dob",
-      //   label: "DOB",
-      //   type: component.textInput,
-      //   placeHolder: dob,
-      //   isRequired: false,
-      //   data: [],
-      //   isEditable: false,
-      //   isMultiline: true,
+      value: name,
 
-      //   value: dob,
-      // },
-    ]);
-  };
+    }, {
+      id: "dob",
+      label: "DOB",
+      type: component.textInput,
+      placeHolder: dob,
+      isRequired: false,
+      data: [],
+      isEditable: false,
+      isMultiline: true,
+
+      value: dob,
+
+    }])
+  }
+
+
 
   const verifyPanBtn = async () => {
     const { panNumber } = watch();
 
-    setValue("panNumber", panNumber?.toString()?.toUpperCase());
+    setValue('panNumber', panNumber?.toString()?.toUpperCase())
     try {
-      Keyboard?.dismiss();
-    } catch (error) {}
+      Keyboard?.dismiss()
+    } catch (error) {
+
+    }
     try {
       if (isVerified || verifyPan?.isPending) {
         return;
@@ -183,14 +179,19 @@ const PanDetails = (props) => {
 
         return;
       }
-      setUploadIsVerified(false);
-      setIsVerified(false);
+      setUploadIsVerified(false)
+      setIsVerified(false)
+
 
       verifyPan.mutate({
-        pan: panNumber?.toString()?.toUpperCase(),
-        consent: "Y",
-        caseId: "eeea90ab-f4e0-4d9e-9efa-c03fffbd22c7",
-      });
+        "pan": panNumber?.toString()?.toUpperCase(),
+        "consent": "Y",
+        "caseId": "eeea90ab-f4e0-4d9e-9efa-c03fffbd22c7"
+      })
+
+
+
+
     } catch (error) {
       const { message } = error;
       const errorMsg = message || "Pan is not valid";
@@ -201,27 +202,21 @@ const PanDetails = (props) => {
 
   const submitPan = async () => {
     try {
-      panSubmitMutate?.mutate(panDetails);
+      // if (isPendingSubmit) {
+      //   return;
+      // }
+      // const isValid = await trigger();
+      // if (!isValid) {
+      //   toast('error', "Some error occurred");
+      // }
+      // const data = watch();
+      // const response = await mutateAsyncSubmit(data);
+      // console.log('RESPONSE---', response)
+      props?.navigation?.navigate(screens.KYC);
     } catch (error) {
-      toast("error", "Some error occurred");
+      toast('error', "Some error occurred");
     }
-  };
-
-  useEffect(() => {
-    if (panSubmitMutate?.data) {
-      props?.navigation?.navigate(screens.KYC, {
-        loanData: panSubmitMutate?.data
-      });
-    }
-  }, [panSubmitMutate?.data]);
-
-  useEffect(() => {
-    if (panSubmitMutate?.error) {
-      log("applicationFormMutate error", panSubmitMutate?.error);
-      alert(ErrorConstants.SOMETHING_WENT_WRONG);
-    }
-  }, [panSubmitMutate?.error]);
-
+  }
   const handleRightIconPress = (index) => {
     if (index === 0) {
       props.navigation.navigate(screens.FAQ);
@@ -232,34 +227,41 @@ const PanDetails = (props) => {
 
   useEffect(() => {
     const subscription = watch((value, { name, type }) => {
-      setIsVerified(false);
-      setUploadIsVerified(false);
-      setSelectedImage(null);
+      setIsVerified(false)
+      setUploadIsVerified(false)
+      setSelectedImage(null)
+
+
+
     });
     return () => subscription.unsubscribe();
-  }, [watch]);
+  }, [watch])
+
 
   const onCameraPress = async () => {
-    setUploadIsVerified(false);
-    setIsVerified(false);
+    setUploadIsVerified(false)
+    setIsVerified(false)
     ImagePicker.openPicker({
       multiple: false,
       cropping: true,
       compressImageQuality: 0.6,
       includeBase64: true,
-      mediaType: "photo",
+      mediaType: 'photo'
     })
       .then(async (image) => {
-        console.log(image, "image value");
+        console.log(image, 'image value')
         setSelectedImage(image);
-        uploadPan.mutate({
-          fileData: {
-            content: `data:${image.mime};base64,${image.data}`,
-            title: "PAN",
-          },
-          consent: "Y",
-          caseId: "eeea90ab-f4e0-4d9e-9efa-c03fffbd22c7",
-        });
+        uploadPan.mutate(
+          {
+            "fileData": {
+              "content": `data:${image.mime};base64,${image.data}`,
+              "title": "PAN"
+            },
+            "consent": "Y",
+            "caseId": "eeea90ab-f4e0-4d9e-9efa-c03fffbd22c7"
+          }
+        )
+
       })
       .catch((error) => {
         console.log(error);
@@ -274,40 +276,26 @@ const PanDetails = (props) => {
         setShowModal={setShowModal}
       />
 
-      <ScrollView
-        style={{ marginBottom: 25 }}
-        nestedScrollEnabled={true}
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ flexGrow: 1 }}
-      >
-        <View style={{ flex: 1, paddingHorizontal: 16 }}>
+      <ScrollView style={{ marginBottom: 25 }} nestedScrollEnabled={true} keyboardShouldPersistTaps='handled' contentContainerStyle={{ flexGrow: 1 }}>
+        <View style={{ flex: 1, paddingHorizontal: 16, }}>
           <Header
             title="PAN Details"
-            left={require("../../images/back.png")}
-            rightImages={[
-              { source: assets.chat },
-              { source: assets.questionRound },
-            ]}
-            leftStyle={{ height: verticalScale(15), width: verticalScale(15) }}
-            leftImageProps={{ resizeMode: "contain" }}
-            rightStyle={{
-              height: verticalScale(23),
-              width: verticalScale(23),
-              marginHorizontal: 10,
-            }}
+            left={require('../../images/back.png')}
+            rightImages={[{ source: assets.chat, }, { source: assets.questionRound, },]}
+            leftStyle={{ height: verticalScale(15), width: verticalScale(15), }}
+            leftImageProps={{ resizeMode: "contain", }}
+            rightStyle={{ height: verticalScale(23), width: verticalScale(23), marginHorizontal: 10 }}
             rightImageProps={{ resizeMode: "contain" }}
-            titleStyle={{ fontSize: verticalScale(18) }}
+            titleStyle={{ fontSize: verticalScale(18), }}
             onPressRight={handleRightIconPress}
-            onPressLeft={() => {
-              props?.navigation?.goBack();
-            }}
+            onPressLeft={() => { props.navigation.navigate(screens.ApplicantDetails); }}
           />
 
           <ProgressCard screenName={"PAN Details"} />
 
-          {(verifyPan?.isPending ||
-            uploadPan?.isPending ||
-            panSubmitMutate?.isPending) && <ActivityIndicatorComponent />}
+          {(verifyPan?.isPending || uploadPan?.isPending) && (
+            <ActivityIndicatorComponent />
+          )}
 
           {mock_data.map((comp, index) => {
             return (
@@ -326,17 +314,26 @@ const PanDetails = (props) => {
                   placeholder={comp.placeHolder}
                   data={comp.data}
                   key={comp.id}
+
                   watch={watch}
+
+
+
                   showRightComp={comp.showRightComp || false}
                   rightComp={() =>
+
                     !isVerified ? (
-                      <Text style={styles.verifyTextStyle}>Verify</Text>
+                      (
+                        <Text style={styles.verifyTextStyle}>Verify</Text>
+                      )
                     ) : (
                       <Image
                         source={require("../../images/tick.png")}
                         style={styles.tickImage}
                       />
                     )
+
+
                   }
                   rightCompPress={verifyPanBtn}
                   isMultiline={comp.isMultiline}
@@ -348,88 +345,91 @@ const PanDetails = (props) => {
             );
           })}
 
-          {ConfiguratonConstants.isPanUploadRequired && (
+          {ConfiguratonConstants.isPanUploadRequired &&
             <>
-              <View
-                style={{
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginTop: 12,
-                }}
-              >
-                <Text
-                  style={{
-                    color: colors.TEXT_COLOR,
-                    fontSize: 18,
-                    fontStyle: "bold",
-                  }}
-                >
-                  Or
-                </Text>
+
+              <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 12 }}>
+                <Text style={{ color: colors.TEXT_COLOR, fontSize: 18, fontStyle: 'bold' }}>Or</Text>
               </View>
-              <TouchableOpacity onPress={onCameraPress}>
-                <View>
-                  <AdhaarSection
-                    AdhaarText={"Upload and Verify your PAN"}
-                    image={selectedImage}
-                    style={{ height: 250, marginTop: 16 }}
-                  />
+              <TouchableOpacity
+                onPress={onCameraPress}
+
+              >
+
+                <View >
+                  <AdhaarSection AdhaarText={"Upload and Verify your PAN"} image={selectedImage} style={{ height: 250, marginTop: 16, }} />
                 </View>
               </TouchableOpacity>
             </>
-          )}
+          }
+
+
+          {(isVerified || isUploadVerified) && responseData && responseData.map((comp, index) => {
+            return (
+
+              <FormControl
+                compType={comp.type}
+                control={control}
+                validations={comp.validations}
+                name={comp.id}
+                label={comp.label}
+                errors={errors[comp.id]}
+                isRequired={comp.isRequired}
+                placeholder={comp.placeHolder}
+                data={comp.data}
+                key={comp.id}
+
+                watch={watch}
+
+
+
+                showRightComp={comp.showRightComp || false}
+                rightComp={() =>
+
+                  !isVerified ? (
+                    (
+                      <Text>Verify</Text>
+                    )
+                  ) : (
+                    <Image
+                      source={require("../../images/tick.png")}
+                      style={styles.tickImage}
+                    />
+                  )
+
+
+                }
+                rightCompPress={verifyPanBtn}
+                isMultiline={comp.isMultiline}
+                maxLength={comp.maxLength}
+                isDisabled={comp.isDisabled}
+                isUpperCaseRequired={true}
+                isEditable={comp.isEditable}
+              />
+
+            );
+          })}
+
+
+
 
           {(isVerified || isUploadVerified) &&
-            responseData &&
-            responseData.map((comp, index) => {
-              return (
-                <FormControl
-                  compType={comp.type}
-                  control={control}
-                  validations={comp.validations}
-                  name={comp.id}
-                  label={comp.label}
-                  errors={errors[comp.id]}
-                  isRequired={comp.isRequired}
-                  placeholder={comp.placeHolder}
-                  data={comp.data}
-                  key={comp.id}
-                  watch={watch}
-                  showRightComp={comp.showRightComp || false}
-                  rightComp={() =>
-                    !isVerified ? (
-                      <Text>Verify</Text>
-                    ) : (
-                      <Image
-                        source={require("../../images/tick.png")}
-                        style={styles.tickImage}
-                      />
-                    )
-                  }
-                  rightCompPress={verifyPanBtn}
-                  isMultiline={comp.isMultiline}
-                  maxLength={comp.maxLength}
-                  isDisabled={comp.isDisabled}
-                  isUpperCaseRequired={true}
-                  isEditable={comp.isEditable}
-                />
-              );
-            })}
-
-          {(isVerified || isUploadVerified) && (
             <View>
               <CustomButton
                 type="primary"
                 label="Proceed"
+
                 buttonContainer={styles.buttonContainer}
                 onPress={submitPan}
-                // isLoading={isPendingSubmit}
+              // isLoading={isPendingSubmit}
               />
             </View>
-          )}
+          }
         </View>
       </ScrollView>
     </View>
+
+
   );
 };
 
@@ -439,6 +439,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
+
   },
   inputContainer: {
     backgroundColor: colors.bgColor,
@@ -471,7 +472,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   buttonContainer: {
-    marginVertical: 50,
+
+    marginVertical: 50
+
   },
   homeIcon: {
     width: 47,
@@ -532,6 +535,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     fontStyle: "normal",
     lineHeight: 12,
-    color: colors.coreBlue,
-  },
+    color: colors.coreBlue
+  }
 });

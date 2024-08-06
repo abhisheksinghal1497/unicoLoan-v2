@@ -1,6 +1,6 @@
 import { net, oauth } from "react-native-force"
-import ErrorConstants from "../../constants/ErrorConstants"
-import { error, log } from "../../utils/ConsoleLogUtils"
+import ErrorConstants from "../constants/ErrorConstants"
+import { error, log } from "../utils/ConsoleLogUtils"
 
 export const getAuthDetails = async () => {
     return new Promise((resolve, reject) => {

@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.unico_loan.react;
+package com.unico;
 
 import android.app.Application;
 
@@ -87,8 +87,7 @@ public class MainApplication extends Application implements ReactApplication {
         /*
 		 * Un-comment the line below to enable push notifications in this app.
 		 * Replace 'pnInterface' with your implementation of 'PushNotificationInterface'.
-		 * Add your Google package ID in 'bootconfig.xml', as the value
-		 * for the key 'androidPushNotificationClientId'.
+		 * Add your Firebase 'google-services.json' file to the 'app' folder of your project.
 		 */
         // SalesforceReactSDKManager.getInstance().setPushNotificationReceiver(pnInterface);
 	}

@@ -26,7 +26,6 @@ export const styles = (themeColor) =>
     },
     modalstyle:{
       borderRadius: 10,
-      flex:1
       // marginBottomBottom: verticalScale(30)
     }
   });

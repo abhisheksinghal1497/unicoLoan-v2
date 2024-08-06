@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -14,14 +14,14 @@ import { verticalScale } from "../utils/matrcis";
 import { getPinCodes } from "../services/ApiUtils";
 import Button from "./Button";
 import { useTheme } from "react-native-paper";
+import { useNavigation } from "@react-navigation/native";
 import { screens } from "../constants/screens";
-import { useResetRoutes } from "../utils/functions";
 
 const PincodeModal = ({ modalVisible = false, setModalVisible = () => {} }) => {
   const [pinCode, setPinCode] = useState("");
-  const { data: pincodeDataRes = [], mutate: getPincodeMutate } = getPinCodes();
+  const [{ data: pincodeDataRes = [], error }] = getPinCodes();
   const { colors } = useTheme();
-  const resetRoute = useResetRoutes()
+  const navigate = useNavigation();
 
   const HandlePinCode = (value) => {
     setPinCode(value);
@@ -62,17 +62,11 @@ const PincodeModal = ({ modalVisible = false, setModalVisible = () => {} }) => {
     if (FilteredPincode?.length >= 1) {
       setPinCode("");
       setModalVisible(false);
-      setTimeout(() => {
-        resetRoute(screens.ApplicantDetails, { pincode: pinCode, pincodeData: FilteredPincode[0] });
-      }, 200);
+      navigate.navigate(screens.ApplicantDetails, { pincode: pinCode });
     }
   };
 
   const isValid = FilteredPincode.length !== 0 || pinCode.length === 0;
-
-  useEffect(() => {
-    getPincodeMutate();
-  }, []);
 
   return (
     <CustomModal

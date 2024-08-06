@@ -43,15 +43,13 @@ export const validations = {
   },
   aadhar: {
     required: true,
-    pattern: /\d*/,
-    maxLength: 12,
-    minLength:12
+    pattern: /[0-9]{4}[0-9]{4}[0-9]{4}/,
   },
   email: {
     pattern: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
   },
   yyMMDate: {
-    pattern: /^\d{4}$/,
+    pattern: /^\d{2}-\d{2}$/,
     required: true,
   }
 };

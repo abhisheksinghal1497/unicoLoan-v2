@@ -16,7 +16,6 @@ export const LOAN_DETAILS_KEYS = {
   isExistingCustomer: "isExistingCustomer",
   custId: "custId",
   bankBalance: "bankBalance",
-  immovableProperty: 'immovableProperty',
   currPF: "currPF",
   valShareSecr: "valShareSecr",
   fd: "fd",
@@ -65,8 +64,7 @@ export const CaptureAddressConstants = {
   EBILL: 'Electricity Bill',
   GBILL: 'Gas Bill',
   MBILL: 'Mobile Bill'
-}
 
-export const brandDetails = {
-  name: 'UNICO HOUSING FINANCE LIMITED'
+
+
 }
