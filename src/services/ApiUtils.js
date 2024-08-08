@@ -66,6 +66,7 @@ export const getHomeScreenDetails = () => {
           );
           log("HERE IS DATA----------", { data });
           if (data && data?.length > 0) {
+            log("homeScrenn", data.length)
             resolve(data);
           } else {
             resolve([]);
@@ -109,13 +110,14 @@ export const getEligibilityDetails = (loanData) => {
             "Employment Stability": 1,
             Qualification: "BCA",
             Parameter: 1,
+            'Eligible Status': "Eligible"
           };
 
           let loanDetail = { ...loanData };
           loanDetail.eligibilityDetails = data;
         try {
           await saveApplicationData(loanDetail);
-          resolve({ ...loanDetail });
+          resolve({ ...loanDetail,  });
         } catch (error) {
           reject(ErrorConstants.SOMETHING_WENT_WRONG);
         }
@@ -1314,7 +1316,7 @@ export const useSubmitApplicationFormData = (pincodeData) => {
     mutationFn: async (data) => {
       return new Promise(async (resolve, reject) => {
         let defaultData = { ...soupConfig.applicationList.default };
-        defaultData.loanId = getUniqueId();
+        defaultData.loanId = new Date().getTime().toString();
         defaultData.applicationDetails = { ...data };
         defaultData.pincodeDetails = { ...pincodeData };
         await saveApplicationData(defaultData);

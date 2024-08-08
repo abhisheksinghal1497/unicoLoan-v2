@@ -78,6 +78,7 @@ export default function OtpInput({
                     index !== 0 && styles.otpInput,
                     {
                       backgroundColor: "#fffff",
+                     
                     },
                   ]}
                   maxLength={1}
@@ -109,7 +110,7 @@ export default function OtpInput({
 const styles = StyleSheet.create({
   container: {
     marginHorizontal: horizontalScale(8),
-    marginVertical: verticalScale(6),
+    marginVertical: verticalScale(2),
   },
   otpContainer: {
     flexDirection: "row",

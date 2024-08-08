@@ -107,7 +107,7 @@ export const getPincodeData = async () =>  {
 export const saveApplicationData = async (data) =>  {
   return new Promise(async (resolve, reject) => {
     try {
-      console.log()
+  
       await saveApplicationDataSoup(soupConfig.applicationList.name, data);
       resolve(data)
     } catch (error) {

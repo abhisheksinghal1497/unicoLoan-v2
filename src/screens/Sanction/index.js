@@ -19,6 +19,7 @@ import Card from "../../components/Card";
 import customTheme from "../../colors/theme";
 import Header from "../../components/Header";
 import CustomShadow from "../../components/FormComponents/CustomShadow";
+import CustomButton from "../../components/Button";
 
 const { width: devicWidth } = Dimensions.get("window");
 
@@ -75,25 +76,25 @@ const Sanction = (props) => {
   };
   const handleRightIconPress = (index) => {
     if (index === 0) {
-       props.navigation.navigate(screens.FAQ);
+      props.navigation.navigate(screens.FAQ);
     } else if (index === 1) {
-        navigation.navigate(screens.HomeScreen);
-    } 
-};
+      navigation.navigate(screens.HomeScreen);
+    }
+  };
   return (
     <View style={styles.container}>
-      <Header        
-       title="IN-Principle Sanction"
-       left={require('../../images/back.png')}
-       rightImages={[{source: assets.chat,},{source: assets.questionRound,},]}
-       leftStyle={{height: verticalScale(15),width: verticalScale(15),}}
-       leftImageProps={{resizeMode: "contain",}}
-       rightStyle={{height: verticalScale(23),width: verticalScale(23),marginHorizontal:10}}
-       rightImageProps={{ resizeMode: "contain"}}
-       titleStyle={{fontSize: verticalScale(18), }}
-       onPressRight={handleRightIconPress}
-       onPressLeft={() => {props?.navigation.goBack();}}
-     />
+      <Header
+        title="IN-Principle Sanction"
+        left={require('../../images/back.png')}
+        rightImages={[{ source: assets.chat, }, { source: assets.questionRound, },]}
+        leftStyle={{ height: verticalScale(15), width: verticalScale(15), }}
+        leftImageProps={{ resizeMode: "contain", }}
+        rightStyle={{ height: verticalScale(23), width: verticalScale(23), marginHorizontal: 10 }}
+        rightImageProps={{ resizeMode: "contain" }}
+        titleStyle={{ fontSize: verticalScale(18), }}
+        onPressRight={handleRightIconPress}
+        onPressLeft={() => { props?.navigation.goBack(); }}
+      />
 
       <Card cardStyle={styles.cardContainer}>
         <ImageBackground
@@ -169,6 +170,18 @@ const Sanction = (props) => {
           </TouchableOpacity>
         </View>
       </CustomShadow>
+
+      <View style={{ marginVertical: 24 }} />
+
+      <CustomButton
+        type="primary"
+        label="Continue"
+        buttonContainer={styles.buttonContainer}
+        // buttonContainer={{}}
+        onPress={() => {
+          props?.navigation?.navigate?.(screens.CongratulationScreen)
+
+        }} />
     </View>
   );
 };

@@ -45,18 +45,24 @@ const KYCDocuments = ({ navigation }) => {
   }, [kycDocumentMutate]);
 
   const fetchData = async () => {
-    await AsyncStorage.setItem("CurrentScreen", JSON.stringify(screens.KYC));
-    const savedData = await AsyncStorage.getItem("FrontAdhaar");
-    const currentData = JSON.parse(savedData);
-    console.log(currentData, "front adhaar");
-    setSelectedImage(currentData);
-    const savedDataBack = await AsyncStorage.getItem("BackAdhaar");
-    const currentDataBack = JSON.parse(savedDataBack);
-    console.log(currentData, "front adhaar");
-    setSelectedImageBack(currentDataBack);
-    const savedSelfie = await AsyncStorage.getItem("selfieCapture");
-    const currentDataSelfie = JSON.parse(savedSelfie);
-    setSelectedImageSelfie(currentDataSelfie);
+    try {
+      await AsyncStorage.setItem("CurrentScreen", JSON.stringify(screens.KYC));
+      const savedData = await AsyncStorage.getItem("FrontAdhaar");
+      const currentData = JSON.parse(savedData);
+      console.log(currentData, "front adhaar");
+      setSelectedImage(currentData);
+      const savedDataBack = await AsyncStorage.getItem("BackAdhaar");
+      const currentDataBack = JSON.parse(savedDataBack);
+      console.log(currentData, "front adhaar");
+      setSelectedImageBack(currentDataBack);
+      const savedSelfie = await AsyncStorage.getItem("selfieCapture");
+      const currentDataSelfie = JSON.parse(savedSelfie);
+    
+      setSelectedImageSelfie(currentDataSelfie);
+    } catch (error) {
+      
+    }
+ 
   };
   const handleRightIconPress = (index) => {
     if (index === 0) {
@@ -167,15 +173,15 @@ const KYCDocuments = ({ navigation }) => {
           >
             <Image
               source={
-                selectedImage
+                selectedImageSelfie
                   ? {
-                      uri: `data:${selectedImage?.mime};base64,${selectedImage?.data}`,
-                    }
+                    uri: selectedImageSelfie?.path,
+                  }
                   : require("../../images/aadhar-front.png")
               }
-              style={{ height: 100, width: 100 }}
+              style={{ height: 150, width: 150 }}
               resizeMode="cover"
-              //  source={assets.aadhar_front}
+            //  source={assets.aadhar_front}
             />
           </View>
           <Text style={styles.conText1}>Upload Your Selfie</Text>
@@ -202,13 +208,13 @@ const CustomImageContainer = ({ selectedImage }) => {
           source={
             selectedImage
               ? {
-                  uri: `data:${selectedImage?.mime};base64,${selectedImage?.data}`,
-                }
+                uri: `data:${selectedImage?.mime};base64,${selectedImage?.data}`,
+              }
               : require("../../images/aadhar-front.png")
           }
           style={{ height: 100, width: 100 }}
           resizeMode="cover"
-          //  source={assets.aadhar_front}
+        //  source={assets.aadhar_front}
         />
       </View>
       <Text style={styles.conText1}>Upload Your Aadhaar Front Photo</Text>

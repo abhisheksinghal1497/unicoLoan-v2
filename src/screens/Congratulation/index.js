@@ -1,8 +1,10 @@
 import React from 'react';
 import { View, Image, Text } from 'react-native';
 import { styles } from './style/style';
+import CustomButton from '../../components/Button';
+import { screens } from '../../constants/screens';
 
-const CongratulationScreen = () => {
+const CongratulationScreen = (props) => {
     return (
         <View style={styles.container}>
             <Image
@@ -11,11 +13,27 @@ const CongratulationScreen = () => {
                 resizeMode="contain"
             />
             <Text style={styles.Nointernet}>
-               Congratulations !
+                Congratulations !
             </Text>
             <Text style={styles.connection}>
-               Your loan application has been successfully submitted, RM will connect with you shortly.
+                Your loan application has been successfully submitted, RM will connect with you shortly.
             </Text>
+            <View style={{ marginVertical: 16, width: "60%" }}>
+                <CustomButton
+                    type="primary"
+                    label="Continue"
+                    buttonContainer={styles.buttonContainer}
+                    // buttonContainer={{}}
+                    onPress={() => {
+                        props?.navigation?.reset?.({
+                            index: 0,
+                            routes: [{
+                                name:screens.HomeScreen
+                            }],
+                        });
+                    }} />
+            </View>
+
         </View>
     )
 }

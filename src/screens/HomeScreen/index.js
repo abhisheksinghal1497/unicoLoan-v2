@@ -60,6 +60,7 @@ const HomeScreen = ({ navigation }) => {
   useEffect(() => {
     if (getLoanCardData.data) {
       setIsLoading(false);
+
       setData(getLoanCardData.data);
     }
   }, [getLoanCardData.data]);
@@ -263,7 +264,10 @@ const HomeScreen = ({ navigation }) => {
   const renderItems = ({ item, index }) => {
     return (
       <>
-        {!item?.loanId ? <ApplyNewLoan /> :
+        {!item?.loanId ?
+
+          <ApplyNewLoan />
+          :
           <View style={[styles.card,]}>
 
             <ResumeLoanJourney item={item} />
@@ -276,22 +280,25 @@ const HomeScreen = ({ navigation }) => {
   const ApplyNewLoan = () => {
     return (
 
-
+      
       <View style={{
         width: screenWidth - 40,
         margin: 10
       }}>
-        <ImageBackground
-          resizeMode="stretch"
-          style={styles.imgBackground}
-          source={require("../../../assets/images/loanapply.png")}
-        >
+       
+          <ImageBackground
+            resizeMode="stretch"
+            style={styles.imgBackground}
+            source={require("../../../assets/images/loanapply.png")}
+          >
+
+            <TouchableOpacity onPress={() => setModalVisible(true)}>
+            <Text style={styles.applyforloan}>Apply For Loan</Text>
+            </TouchableOpacity>
 
 
-          <Text style={styles.applyforloan}>Apply For Loan</Text>
-
-
-        </ImageBackground>
+          </ImageBackground>
+        
 
       </View>
 
@@ -345,7 +352,7 @@ const HomeScreen = ({ navigation }) => {
             <Text style={styles.yourLoan}>Your Loans</Text>
 
 
-
+            {console.log("data length" + data.length)}
             <View style={styles.secondcards}>
               <FlatList
 

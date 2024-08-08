@@ -18,7 +18,7 @@ const Header = (props) => {
     };
 
     return (
-        <View style={[styles.container, props.containerStyle, { backgroundColor: props?.colour ? props?.colour : colors.bgColor, }]}>
+        <View style={[styles.container, props.containerStyle, { backgroundColor: props?.colour ? props?.colour : 'transparent' }]}>
             {props.left && (
                 <TouchableOpacity onPress={() => debounce(onPressLeft())}>
                     <Image source={props.left} style={[styles.backImage, props.leftStyle]} {...props.leftImageProps} />

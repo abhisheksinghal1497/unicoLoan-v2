@@ -26,7 +26,7 @@ const CaptureSelfie = ({ navigation }) => {
       useFrontCamera: front,
     })
       .then((image) => {
-        setSelectedImage(image.path);
+        setSelectedImage(image);
         AsyncStorage.setItem("selfieCapture", JSON.stringify(image));
       })
       .catch((error) => {
@@ -67,7 +67,7 @@ const CaptureSelfie = ({ navigation }) => {
           colour="white"
         />
         {selfieMutate?.isPending && <ActivityIndicatorComponent />}
-        <SelfieSection uri={selectedImage} />
+        <SelfieSection uri={selectedImage?.path} />
         <CameraSection
           onCameraPress={onCameraPress}
           onCameraCross={cameraCross}

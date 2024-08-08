@@ -28,6 +28,7 @@ const LoanDetails = (props) => {
 
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
+  console.log("hari>>>loanData", loanData)
   const submitLoanMutate = useSubmitLoanFormData(loanData);
   const {
     control,
@@ -35,12 +36,30 @@ const LoanDetails = (props) => {
     formState: { errors, isValid },
     setValue,
     watch,
+    trigger
   } = useForm({
     mode: "onChange",
-    defaultValues: {},
+    defaultValues: {
+      [LOAN_DETAILS_KEYS.reqLoanAmt]: loanData?.applicationDetails?.Requested_loan_amount__c,
+      [LOAN_DETAILS_KEYS.reqTenure]: loanData?.applicationDetails?.Requested_tenure_in_Months__c,
+      [LOAN_DETAILS_KEYS.loanPurpose]: '',
+      [LOAN_DETAILS_KEYS.mobile]: loanData?.applicationDetails?.mobileNumber,
+      [LOAN_DETAILS_KEYS.resAddr]: loanData?.adhaarDetails?.address?.combinedAddress,
+      [LOAN_DETAILS_KEYS.currAddr]: loanData?.currentAddressDetails?.fullAddress,
+    },
   });
 
-  const onSubmit = async (data) => {
+
+
+
+  const onSubmit = async () => {
+    const isValid = await trigger();
+    if (!isValid) {
+      // toast("error", "Value is invalid");
+
+      return;
+    }
+    const data =  watch()
     await AsyncStorage.setItem("LoanDetails", JSON.stringify(data));
     submitLoanMutate.mutate(data);
   };
@@ -147,7 +166,7 @@ const LoanDetails = (props) => {
       //   maxLength: 10,
       keyboardtype: "numeric",
       isRequired: true,
-      value: 0,
+      defaultValue: 0,
       // isDisabled: true,
     },
     {
@@ -199,7 +218,7 @@ const LoanDetails = (props) => {
       isRequired: true,
       validations: validations.phone,
       value: 9876543210,
-      // isDisabled: true,
+      isDisabled: true,
     },
     {
       id: LOAN_DETAILS_KEYS.isExistingCustomer,
@@ -402,6 +421,7 @@ const LoanDetails = (props) => {
       placeHolder: "Enter Residential Address",
       value: "",
       isMultiline: true,
+      isDisabled: true
     },
     {
       id: LOAN_DETAILS_KEYS.currAddr,
@@ -410,9 +430,10 @@ const LoanDetails = (props) => {
       placeHolder: "Enter Current Address",
       value: "",
       isMultiline: true,
+      isDisabled: true
     },
   ];
-  
+
 
   const toggleModal = () => {
     setShowModal(!showModal);
@@ -486,8 +507,8 @@ const LoanDetails = (props) => {
           label="Continue"
           buttonContainer={styles.buttonContainer}
           // buttonContainer={{}}
-          onPress={handleSubmit(onSubmit)}
-          disable={!isValid}
+          onPress={onSubmit}
+
         />
       </ScrollView>
 

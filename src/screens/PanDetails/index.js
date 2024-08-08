@@ -299,7 +299,13 @@ const PanDetails = (props) => {
             titleStyle={{ fontSize: verticalScale(18) }}
             onPressRight={handleRightIconPress}
             onPressLeft={() => {
-              props?.navigation?.goBack();
+             
+                props?.navigation?.reset({
+                  index: 0,
+                  routes: [{ name: screens.HomeScreen 
+                  }],
+                });
+              
             }}
           />
 
