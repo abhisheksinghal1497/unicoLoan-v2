@@ -61,6 +61,7 @@ const HomeScreen = ({ navigation }) => {
     if (getLoanCardData.data) {
       setIsLoading(false);
 
+
       setData(getLoanCardData.data);
     }
   }, [getLoanCardData.data]);
@@ -229,7 +230,7 @@ const HomeScreen = ({ navigation }) => {
         return (
           <View>
             <Text style={textStyle(12.5)}>Loan Amount</Text>
-            <Text style={styles.loanAmountText}>₹ {item?.applicationDetails?.Requested_loan_amount__c}</Text>
+            <Text style={styles.loanAmountText}>₹ {item?.applicationDetails?.ReqLoanAmt__c}</Text>
             <View style={styles.blueLine} />
             {/* <Text style={textStyle(12.5)}>ROI</Text>
             <Text style={styles.loanAmountText}>9.25%</Text>
@@ -280,25 +281,25 @@ const HomeScreen = ({ navigation }) => {
   const ApplyNewLoan = () => {
     return (
 
-      
+
       <View style={{
         width: screenWidth - 40,
         margin: 10
       }}>
-       
-          <ImageBackground
-            resizeMode="stretch"
-            style={styles.imgBackground}
-            source={require("../../../assets/images/loanapply.png")}
-          >
 
-            <TouchableOpacity onPress={() => setModalVisible(true)}>
+        <ImageBackground
+          resizeMode="stretch"
+          style={styles.imgBackground}
+          source={require("../../../assets/images/loanapply.png")}
+        >
+
+          <TouchableOpacity onPress={() => setModalVisible(true)}>
             <Text style={styles.applyforloan}>Apply For Loan</Text>
-            </TouchableOpacity>
+          </TouchableOpacity>
 
 
-          </ImageBackground>
-        
+        </ImageBackground>
+
 
       </View>
 
@@ -352,7 +353,7 @@ const HomeScreen = ({ navigation }) => {
             <Text style={styles.yourLoan}>Your Loans</Text>
 
 
-            {console.log("data length" + data.length)}
+
             <View style={styles.secondcards}>
               <FlatList
 

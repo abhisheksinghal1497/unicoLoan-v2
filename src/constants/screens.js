@@ -1,3 +1,5 @@
+import LoginComponent from "../screens/login/LoginComponent";
+
 export const screens = {
     Splash: 'Splash',
     PanDetails: 'PAN and KYC',
@@ -41,5 +43,6 @@ export const screens = {
     Profile: 'Profile',
     Dummy: 'Dummy',
     Services:'services',
-    ServiceOtp: 'ServiceOtp'
+    ServiceOtp: 'ServiceOtp',
+    LoginComponent:"LoginComponent"
   };

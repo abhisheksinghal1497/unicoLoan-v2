@@ -12,14 +12,14 @@ import { brandDetails } from "../constants/stringConstants";
 const ProgressCard = ({ screenName }) => {
   const { fonts } = useTheme();
   const route = useRoute();
-  const {loanData = {}} = route?.params || {};
-  const {loanId= '', applicationDetails = {}} = loanData;
-  const {Product__c} = applicationDetails;
+  const { loanData = {} } = route?.params || {};
+  const { loanId = '', applicationDetails = {} } = loanData;
+  const { Product__c } = applicationDetails;
 
   const percentage = useGetProgressPercentage()
   return (
     <View style={styles.cardContainer}>
-      <View style={{ }}>
+      <View style={{}}>
         <Text style={[fonts.labelMedium, { color: "rgba(46, 82, 161, 1)" }, styles.textStyle]}>
           {screenName}
         </Text>
@@ -27,10 +27,10 @@ const ProgressCard = ({ screenName }) => {
           style={[
             fonts.labelMedium,
             { color: "rgba(46, 82, 161, 1)", marginVertical: 8, },
-            styles.textStyle, {maxWidth:'60%'}
+            styles.textStyle,
           ]}
         >
-          {loanId}
+          LAN:-  {loanId}
         </Text>
         <Text style={[fonts.labelSmall, { color: "rgba(46, 82, 161, 1)" }, styles.textStyle, {
           fontSize: 12
@@ -57,7 +57,7 @@ const ProgressCard = ({ screenName }) => {
             fonts.smallText,
             { color: "rgba(46, 82, 161, 1)", fontSize: 7, marginTop: 10 },
             styles.textStyle,
-            {fontSize:9}
+            { fontSize: 10 }
           ]}
         >
           {brandDetails.name}

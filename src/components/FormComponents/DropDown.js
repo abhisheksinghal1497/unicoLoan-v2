@@ -23,7 +23,7 @@ import {
 
 export default DropDown = ({
   control,
-  validations={},
+  validations = {},
   setValue,
   name,
   label,
@@ -36,7 +36,7 @@ export default DropDown = ({
   placeholder,
   style = {},
   data = [],
-  trigger = () => {},
+  trigger = () => { },
   isCheckboxType = false,
   ...rest
 }) => {
@@ -44,6 +44,7 @@ export default DropDown = ({
   const [modalVisible, setModalVisible] = useState(false);
 
   const [valueText, setValueText] = useState("");
+  console.log("dropdown value>>", label)
 
   const renderOptions = ({ item }) => {
     return (
@@ -51,26 +52,41 @@ export default DropDown = ({
         style={styles.itemView}
         onPress={() => {
           if (setValue) {
-            setValue(name, item.value, {shouldValidate: true});
+            setValue(name, item.value, { shouldValidate: true });
             setValueText(item.label);
           }
           // trigger()
           setModalVisible(false);
         }}
       >
-        <Text style={styles.itemText}>{item?.label}</Text>
-        {isCheckboxType &&
-        <TouchableOpacity style={{}} onPress={() => {}}>
-            <Image
-              style={{ width: 22, height: 22, resizeMode: "contain" }}
-              source={
-                true
-                  ? require("../../../assets/images/checked.png")
-                  : require("../../../assets/images/box.png")
-              }
-            />
+        {isCheckboxType ?
+          <TouchableOpacity style={{}} onPress={() => {
+            if (setValue) {
+              setValue(name, item.value, { shouldValidate: true });
+              setValueText(item.label);
+            }
+            // trigger()
+            setModalVisible(false);
+          }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+              <Image
+                style={{ width: 22, height: 22, resizeMode: "contain" }}
+                source={
+                  valueText && valueText === item?.label
+                    ? require("../../../assets/images/checked.png")
+                    : require("../../../assets/images/box.png")
+                }
+              />
+              <Text style={[styles.itemText, { marginStart: 16 }]}>{item?.label}</Text>
+            </View>
           </TouchableOpacity>
-  }
+          : <Text style={styles.itemText}>{item?.label}</Text>
+        }
+
+
+
+
       </TouchableOpacity>
     );
   };
@@ -153,20 +169,25 @@ export default DropDown = ({
       />
 
       <CustomModal
-        type="bottom"
+
         showModal={modalVisible}
         setShowModal={setModalVisible}
         centeredViewStyle={{ backgroundColor: "rgba(0, 0, 0, 0.1)" }}
       >
         <View>
           <View style={styles.modalHeader}>
+            <View />
+
             <Text style={styles.modalHeaderTxt}> Select {label}</Text>
+            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.crossButton}>
+              <Image source={require('../../../assets/images/cross.png')} style={{ width: 20, height: 20 }} />
+            </TouchableOpacity>
           </View>
           <FlatList
             data={data}
             keyExtractor={(item) => item?.id?.toString()}
             renderItem={renderOptions}
-            // ItemSeparatorComponent={<View style={styles.itemSeparator} />}
+          // ItemSeparatorComponent={<View style={styles.itemSeparator} />}
           />
         </View>
       </CustomModal>
@@ -228,13 +249,20 @@ const styles = StyleSheet.create({
   itemText: {
     ...customTheme.fonts.regularText,
     color: colors.black,
+    textAlign: 'left'
   },
   modalHeader: {
+    flexDirection: "row",
     paddingVertical: 10,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%'
+
   },
   modalHeaderTxt: {
     fontWeight: "bold",
-    fontSize: 18,
+    fontSize: 15,
+    textAlign: 'center'
   },
   itemSeparator: {
     borderTopWidth: 1,

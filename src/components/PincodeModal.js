@@ -6,6 +6,7 @@ import {
   Text,
   TextInput,
   ScrollView,
+  FlatList,
   TouchableOpacity,
 } from "react-native";
 import CustomModal from "./CustomModal";
@@ -20,10 +21,11 @@ import { useNavigation } from "@react-navigation/native";
 
 const PincodeModal = ({ modalVisible = false, setModalVisible = () => { } }) => {
   const [pinCode, setPinCode] = useState("");
-  const { data: pincodeDataRes = [], mutate: getPincodeMutate } = getPinCodes();
+  const { data, mutate: getPincodeMutate } = getPinCodes();
   const { colors } = useTheme();
   const resetRoute = useResetRoutes()
   const navigation = useNavigation()
+  const [pincodeDataRes, setPinCodeRes] = useState(false)
 
   const HandlePinCode = (value) => {
     setPinCode(value);
@@ -41,7 +43,7 @@ const PincodeModal = ({ modalVisible = false, setModalVisible = () => { } }) => 
     function filterDuplicatePincode(pinData) {
       const uniquePins = new Set();
       const uniquePinData = [];
-      pinData.forEach((item) => {
+      pinData?.forEach?.((item) => {
         if (item && item.PinCode__r && item.PinCode__r.PIN__c) {
           const pinCode = item.PinCode__r.PIN__c;
           if (!uniquePins.has(pinCode)) {
@@ -52,13 +54,37 @@ const PincodeModal = ({ modalVisible = false, setModalVisible = () => { } }) => 
       });
       return uniquePinData;
     }
+
+
     const matchingPincodes = filterDuplicatePincode(pincodeDataRes)?.filter(
       (pin) =>
         pinCode?.length > 0 &&
         pin?.PinCode__r?.PIN__c.toString().includes(pinCode)
     );
-    return matchingPincodes;
+    if (pincodeDataRes) {
+
+      return matchingPincodes;
+    } else {
+      return []
+    }
+
   }, [pinCode, pincodeDataRes]);
+
+  useEffect(() => {
+
+    if (data) {
+      setPinCodeRes(data)
+    }
+  }, [data])
+
+  useEffect(() => {
+    if (pincodeDataRes?.length > 0) {
+
+    } else {
+      getPincodeMutate()
+    }
+
+  }, [pincodeDataRes])
 
   const handleOkPress = () => {
     if (FilteredPincode?.length >= 1) {
@@ -72,9 +98,7 @@ const PincodeModal = ({ modalVisible = false, setModalVisible = () => { } }) => 
 
   const isValid = FilteredPincode.length !== 0 || pinCode.length === 0;
 
-  useEffect(() => {
-    getPincodeMutate();
-  }, []);
+
 
   return (
     <CustomModal
@@ -112,6 +136,9 @@ const PincodeModal = ({ modalVisible = false, setModalVisible = () => { } }) => 
           </Text>
         </View>
       )}
+
+
+
 
       <ScrollView style={styles.scrollView} propagateSwipe={true}>
         {FilteredPincode.map((pincode, index) => (

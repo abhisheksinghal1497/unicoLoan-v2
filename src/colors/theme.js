@@ -20,7 +20,7 @@ const customTheme = {
     primaryText: "#000000",
     seconderyText: "rgba(124, 126, 139, 1)",
     darkGrayText: '#7C7B7B',
-    sliderColor:'#0070D2',
+    sliderColor: '#0070D2',
     sliderRoundPointColor: '#00549E',
     elevation: {
       level3: "rgba(0, 0, 0, 0.25)",
@@ -31,7 +31,7 @@ const customTheme = {
       // level5: "#E6F4FF",
     },
     border: "#D2D2D2",
-    disableBg: "#D3D3D3",
+    disableBg: "#E8E8EA",
     black: "#000000",
     labelColor: 'rgba(136, 136, 136, 1)'
   },
@@ -54,9 +54,9 @@ const customTheme = {
       color: "rgba(124, 126, 139, 1)",
     },
     regularText: {
-     
+
       fontStyle: "normal",
-      
+
       fontFamily: "Inter",
       fontSize: 14,
       fontWeight: "500",

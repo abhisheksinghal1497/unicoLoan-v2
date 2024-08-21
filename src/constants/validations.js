@@ -8,10 +8,10 @@ export const validations = {
   },
   otp: {
     required: true,
-    minLength:6,
+    minLength: 6,
     pattern: /\d*/,
-    
-    
+
+
   },
   phone: {
     required: true,
@@ -45,13 +45,23 @@ export const validations = {
     required: true,
     pattern: /\d*/,
     maxLength: 12,
-    minLength:12
+    minLength: 12
   },
   email: {
-    pattern: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
+    pattern: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+
   },
   yyMMDate: {
     pattern: /^\d{4}$/,
     required: true,
+  },
+  currency: {
+    pattern: /^\d{1,16}(\.\d{0,2})?$/,
+    required: true
+  },
+  numberWith4digitsAndNoDecimal: {
+
+    pattern: /^ [0 - 9]{ 1, 4}$/,
+    required: true
   }
 };

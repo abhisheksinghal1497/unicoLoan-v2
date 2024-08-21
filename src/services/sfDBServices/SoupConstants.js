@@ -1,11 +1,19 @@
 export const soupConfig = {
   leadPicklist: {
     name: "Lead",
-    path: "name",
+    path: "Applicant_Mob_No__c",
   },
   pincodeList: {
     name: "Pincode",
     path: "Id",
+  },
+  LoanApplicantFields:{
+    name: "LoanAppl__c",
+    path:"Applicant_Mob_No__c"
+  },
+  ApplicantFields: {
+    name: "Applicant__c",
+    path: "FName__c"
   },
   applicationList: {
     name: "LoanApplication",

@@ -32,6 +32,7 @@ import PinCodeVerify from "../screens/PinCode";
 import Services from "../screens/Services";
 import { makeMetadataApiCall } from "../services/sfDataServices/salesforceApiService";
 import ServiceOtp from "../screens/ServiceOtp";
+import LoginComponent from "../screens/login/LoginComponent";
 
 const Stack = createStackNavigator();
 
@@ -104,6 +105,8 @@ const Dashboard = () => {
         <Stack.Screen name={screens.Services} component={Services} />
 
         <Stack.Screen name={screens.ServiceOtp} component={ServiceOtp} />
+        <Stack.Screen name={screens.LoginComponent} component={LoginComponent} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

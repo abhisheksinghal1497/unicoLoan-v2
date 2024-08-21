@@ -39,7 +39,7 @@ export const isObjEmpty = (obj) => {
   return Object.keys(obj).length === 0;
 };
 
-export function debounce(func, timeout = 2000) {
+export function debounce(func, timeout = 1000) {
   let timer;
   return (...args) => {
     if (!timer) {
@@ -71,15 +71,16 @@ export const convertFormArrToObj = (data = []) => {
 
 export const GetPicklistValues = (arr, fieldName, defaultValues) => {
   try {
+
     if (!arr || !fieldName) {
       return {};
     }
     const data = arr?.find((value) => value.name === fieldName)?.picklistValues;
-    console.log("hari>>>>>>>>>>>>>>>>>>>data", data);
+    console.log("array length>>>", arr?.length)
 
     return data && data?.length > 0 ? data : defaultValues;
   } catch (error) {
-    console.log("error GetPicklistValues>>>>>", error);
+
     return defaultValues;
   }
 };

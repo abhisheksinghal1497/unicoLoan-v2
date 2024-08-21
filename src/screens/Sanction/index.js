@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dimensions,
   Image,
@@ -20,14 +20,26 @@ import customTheme from "../../colors/theme";
 import Header from "../../components/Header";
 import CustomShadow from "../../components/FormComponents/CustomShadow";
 import CustomButton from "../../components/Button";
+import { useRoute } from "@react-navigation/native";
 
 const { width: devicWidth } = Dimensions.get("window");
+import { getSanctionPdf } from "../../services/ApiUtils";
+import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 
 const Sanction = (props) => {
   const { colors, fonts } = useTheme();
+  const route = useRoute();
+  const { loanData = {} } = route?.params || {};
+
   const [isComplete, setIsComplete] = useState(false);
   const [progress, setProgress] = useState(0);
   const pdfUrl = "http://www.clickdimensions.com/links/TestPDFfile.pdf";
+
+  const getData = getSanctionPdf(loanData)
+
+  useEffect(() => {
+    getData?.mutate()
+  }, [])
 
   const downloadPDF = async () => {
     let dirs = RNFetchBlob.fs.dirs;
@@ -95,6 +107,8 @@ const Sanction = (props) => {
         onPressRight={handleRightIconPress}
         onPressLeft={() => { props?.navigation.goBack(); }}
       />
+
+      {getData?.isPending && <ActivityIndicatorComponent />}
 
       <Card cardStyle={styles.cardContainer}>
         <ImageBackground

@@ -38,16 +38,13 @@ public class MainActivity extends SalesforceReactActivity {
 
 
 
-	// @Override
-	// protected void onCreate(Bundle savedInstanceState) {
-	// 	super.onCreate(savedInstanceState);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-	// 	// Initialize fragmentManager
-	// 	fragmentManager = getSupportFragmentManager();
-
-	// 	// Call the method to present the opt-in dialog if needed
-	// 	presentBiometricOptInDialog();
-	// }
+		// Initialize fragmentManager
+		
+	}
 
 	// /**
 	//  * Determines if biometric authentication opt-in dialog needs to be presented.
@@ -66,7 +63,7 @@ public class MainActivity extends SalesforceReactActivity {
 
 	@Override
 	public boolean shouldAuthenticate() {
-		return false;
+		return true;
 	}
 
 	/**
