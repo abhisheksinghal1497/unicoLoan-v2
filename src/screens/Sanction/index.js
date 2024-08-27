@@ -33,7 +33,7 @@ const Sanction = (props) => {
 
   const [isComplete, setIsComplete] = useState(false);
   const [progress, setProgress] = useState(0);
-  const pdfUrl = "http://www.clickdimensions.com/links/TestPDFfile.pdf";
+  const pdfUrl = "https://pdfobject.com/pdf/sample.pdf";
 
   const getData = getSanctionPdf(loanData)
 

@@ -44,7 +44,7 @@ export default DropDown = ({
   const [modalVisible, setModalVisible] = useState(false);
 
   const [valueText, setValueText] = useState("");
-  console.log("dropdown value>>", label)
+
 
   const renderOptions = ({ item }) => {
     return (
@@ -184,6 +184,7 @@ export default DropDown = ({
             </TouchableOpacity>
           </View>
           <FlatList
+            style={{ marginVertical: 24 }}
             data={data}
             keyExtractor={(item) => item?.id?.toString()}
             renderItem={renderOptions}

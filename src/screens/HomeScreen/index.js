@@ -141,7 +141,7 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const ResumeLoanJourney = ({ item }) => {
-    console.log("hari>>>>>>>>", item)
+   
     const progress = useGetProgressPercentage(item);
     const screenName = getCurrentScreenNameForResume(item);
 

@@ -121,6 +121,22 @@ const Services = (props) => {
 
   return (
     <ScrollView contentContainerStyle={style.contentContainerStyle}>
+      <Header
+        title="Services"
+        left={assets.back}
+        leftStyle={{ height: verticalScale(15), width: verticalScale(15) }}
+        leftImageProps={{ resizeMode: "contain" }}
+        rightStyle={{
+          height: verticalScale(23),
+          width: verticalScale(23),
+          marginHorizontal: 10,
+        }}
+        rightImageProps={{ resizeMode: "contain" }}
+        titleStyle={{ fontSize: verticalScale(18) }}
+        onPressLeft={() => {
+          props?.navigation?.goBack();
+        }}
+      />
       <View
         style={{
           flex: 1,
@@ -128,22 +144,7 @@ const Services = (props) => {
           backgroundColor: colors.white,
         }}
       >
-        <Header
-          title="Services"
-          left={assets.back}
-          leftStyle={{ height: verticalScale(15), width: verticalScale(15) }}
-          leftImageProps={{ resizeMode: "contain" }}
-          rightStyle={{
-            height: verticalScale(23),
-            width: verticalScale(23),
-            marginHorizontal: 10,
-          }}
-          rightImageProps={{ resizeMode: "contain" }}
-          titleStyle={{ fontSize: verticalScale(18) }}
-          onPressLeft={() => {
-            props?.navigation?.goBack();
-          }}
-        />
+
         {(isLoading || submitFormData.isPending) && (
           <ActivityIndicatorComponent />
         )}

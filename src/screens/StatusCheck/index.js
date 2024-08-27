@@ -478,7 +478,7 @@ const StatusCheck = ({ navigation }) => {
       <View style={styles.container}>
         <View
           style={{
-            marginHorizontal: horizontalScale(10),
+
 
             flex: 1,
           }}

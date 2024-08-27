@@ -7,6 +7,7 @@ import { screens } from '../../constants/screens'
 import CustomButton from '../../components/Button'
 import moment from 'moment'
 import { getListOfTickets } from '../../services/ApiUtils'
+import Container from '../../components/Container'
 
 const WIDTH = Dimensions.get('window').width;
 const screenName = "My Tickets"
@@ -16,20 +17,24 @@ const MyTickets = (props) => {
   const getTicketsData = getListOfTickets();
   const [data, setData] = useState([]);
 
-  useEffect(()=>{
-    getTicketsData?.mutate()
-  },[])
+  useEffect(() => {
 
-  useEffect(()=>{
-    if(getTicketsData?.data){
+    getTicketsData?.mutate()
+  }, [])
+
+  useEffect(() => {
+    if (getTicketsData?.data) {
+
       setData(getTicketsData?.data)
     }
-  },[getTicketsData?.data])
+  }, [getTicketsData?.data])
 
   const Card = ({ item, index }) => {
     const [rating, setRating] = useState(item?.rating - 1 || 0);
+
     return (
       <View key={index.toString()} style={[styles.cardContainer, { marginTop: index !== 0 ? 10 : 0 }]}>
+
         <View style={styles.rowContainer}>
           <View style={[styles.circleContainer, {
             backgroundColor: item.status === 0 ? '#2012F9' : '#1EC239',
@@ -72,7 +77,7 @@ const MyTickets = (props) => {
             label="TRACK"
             buttonContainer={styles.buttonContainer}
             labelStyle={[fonts.smallText, styles.buttonLabel]}
-            onPress={() => {props?.navigation?.navigate(screens.TrackTicket)}} />
+            onPress={() => { props?.navigation?.navigate(screens.TrackTicket) }} />
         </View> :
           <CustomButton
             type="secondery"
@@ -107,20 +112,19 @@ const MyTickets = (props) => {
   );
 
   return (
-    <View style={styles.container}>
-      <Header
-        title={screenName}
-        left={require('../../images/back.png')}
-        right={require('../../assets/chat_icon.png')}
-        onPressLeft={() => { props?.navigation?.goBack() }}
-        onPressRight={() => { }}
-        rightStyle={styles.chatIcon} />
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.ticket_no.toString()}
-      />
-    </View>
+
+    <Container>
+
+
+
+      <View style={styles.container}>
+        <FlatList
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => index.toString()}
+        />
+      </View>
+    </Container>
   )
 }
 
@@ -141,6 +145,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FEF9EB',
     padding: 15,
     borderRadius: 10,
+    marginBottom:10
   },
   rowContainer: {
     flexDirection: 'row',

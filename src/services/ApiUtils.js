@@ -71,7 +71,7 @@ export const getHomeScreenDetails = () => {
           );
           log("HERE IS DATA----------", { data });
           if (data && data?.length > 0) {
-            log("homeScrenn", data.length)
+            alert(data.length)
             resolve(data);
           } else {
             resolve([]);
@@ -99,9 +99,7 @@ export const getEligibilityDetails = (loanData) => {
             applicationDetails?.ReqLoanAmt__c?.substring(0, 2) +
             " lac",
           "Number of Dependents":
-            parseInt(applicationDetails?.No_of_Family_Dependants_Other__c) +
-            parseInt(applicationDetails?.No_of_Family_Dependants_Children__c) +
-            parseInt(applicationDetails?.Number_of_Family_Dependants__c),
+            11,
           "Residential Stability": "",
           "Cibil Score": 846,
           "DPD Status": true,
@@ -186,8 +184,8 @@ export const getHomeScreenOurServices = () => {
         setTimeout(() => {
           const data = [
             {
-              key: "calculators",
-              title: "Calculators",
+              key: "EMI calculators",
+              title: "EMI Calculators",
               image: require("../../assets/images/Calculators.png"),
             },
             {
@@ -222,8 +220,8 @@ export const getHomeScreenOurServices = () => {
             },
           ];
           resolve(data);
-          reject("Something went wrong");
-        }, 3000);
+
+        }, 100);
       });
     },
   });
@@ -811,7 +809,7 @@ export const getApplicationDetailsForm = () => {
               label: "Property Identified?",
               type: component.dropdown,
               placeHolder: "Select answer",
-             
+
               isRequired: false,
               data: GetPicklistValues(fieldArray, "Property_Identified__c", [
                 {
@@ -982,346 +980,6 @@ export const getApplicationDetailsForm = () => {
           resolve([...mock_data]);
         } catch (error) {
           reject(error)
-          // const mock_data = [
-          //   {
-          //     id: "RM__c",
-          //     label: "RM Name",
-          //     type: component.textInput,
-          //     placeHolder: "Select User",
-          //     validations: validations.required,
-          //     maxLength: 10,
-          //     // keyboardtype: "numeric",
-          //     isRequired: true,
-          //     data: GetPicklistValues([], "RM_SM_Name__c", [
-          //       {
-          //         id: "RM_SM_Name__1",
-          //         label: "Ravindra",
-          //         value: "Ravindra",
-          //       },
-          //     ]),
-          //     value: "",
-          //   },
-          //   // not mention
-          //   // {
-          //   //   id: "applicationType",
-          //   //   label: "Applicant Type",
-          //   //   type: component.textInput,
-          //   //   placeHolder: "Applicant Type",
-          //   //   validations: validations.text,
-          //   //   isRequired: false,
-          //   //   value: "",
-          //   // },
-          //   {
-          //     id: "Customer_Profile__c",
-          //     label: "Customer Profile",
-          //     type: component.dropdown,
-          //     placeHolder: "Select Customer Profile",
-          //     validations: validations.text,
-          //     maxLength: 10,
-          //     keyboardtype: "numeric",
-          //     isRequired: true,
-          //     data: GetPicklistValues([], "Customer_Profile__c", [
-          //       {
-          //         id: "Customer_Profile__1",
-          //         label: "Salf-Employed",
-          //         value: "Salf-Employed",
-          //       },
-          //       {
-          //         id: "Customer_Profile__2",
-          //         label: "Salaried",
-          //         value: "Salaried",
-          //       },
-          //     ]),
-          //     value: {},
-          //   },
-          //   {
-          //     id: "FirstName",
-          //     label: "First Name",
-          //     type: component.textInput,
-          //     placeHolder: "Enter first Name",
-          //     validations: validations.name,
-          //     isRequired: true,
-          //     value: "",
-          //   },
-          //   {
-          //     id: "MiddleName",
-          //     label: "Middle Name",
-          //     type: component.textInput,
-          //     placeHolder: "Enter middle Name",
-          //     validations: validations.nameWithoutRequired,
-          //     isRequired: false,
-          //     value: "",
-          //   },
-          //   {
-          //     id: "LastName",
-          //     label: "Last Name",
-          //     type: component.textInput,
-          //     placeHolder: "Enter last Name",
-          //     validations: validations.name,
-          //     isRequired: true,
-          //     value: "",
-          //   },
-          //   // not mention
-          //   // {
-          //   //   id: "dob",
-          //   //   label: "Date of Birth",
-          //   //   type: component.datetime,
-          //   //   placeHolder: "DD-MM-YYYY",
-          //   //   validations: validations.text,
-          //   //   isRequired: false,
-          //   //   value: "",
-          //   //   datepickerProps: {
-          //   //     minimumDate: getDateYearsBack(18),
-          //   //     maximumDate: getDateYearsBack(100),
-          //   //   },
-          //   // },
-          //   // missing from backend
-          //   {
-          //     id: "mobileNumber",
-          //     label: "Mobile number",
-          //     type: component.textInput,
-          //     placeHolder: "Enter mobile number",
-          //     validations: validations.phone,
-          //     isRequired: true,
-          //     value: data.mobileNumber,
-          //     isDisabled: true,
-          //     maxLength: 10,
-          //   },
-          //   {
-          //     id: "Alternative_Mobile_Number__c",
-          //     label: "Alternate mobile number",
-          //     type: component.textInput,
-          //     placeHolder: "Enter alternate mobile number",
-          //     validations: validations.phoneWithoutRequired,
-          //     isRequired: false,
-          //     value: "",
-          //     keyboardtype: "numeric",
-          //     maxLength: 10,
-          //   },
-          //   // missing from backend
-          //   {
-          //     id: "email",
-          //     label: "Email",
-          //     type: component.textInput,
-          //     placeHolder: "Enter email",
-          //     validations: validations.email,
-          //     isRequired: false,
-          //     value: "",
-          //     isDisabled: true,
-          //   },
-          //   // no data in picklist from backend
-          //   {
-          //     id: "Product__c",
-          //     label: "Product",
-          //     type: component.dropdown,
-          //     placeHolder: "Select product",
-          //     validations: validations.text,
-          //     maxLength: 10,
-          //     // keyboardtype: "numeric",
-          //     isRequired: true,
-          //     data: GetPicklistValues([], "Product__c", [
-          //       {
-          //         id: "product_type_1",
-          //         label: "Housing Loan",
-          //         value: "Housing Loan",
-          //       },
-
-          //       {
-          //         id: "product_type_2",
-          //         label: "Non Housing Loan",
-          //         value: "Non Housing Loan",
-          //       },
-          //     ]),
-          //     value: {},
-          //   },
-
-          //   {
-          //     id: "ReqTenInMonths__c",
-          //     label: "Requested tenure in Months",
-          //     type: component.textInput,
-          //     placeHolder: "Enter requested tenure in months",
-          //     validations: validations.numberWith4digitsAndNoDecimal,
-          //     isRequired: false,
-          //     keyboardtype: "numeric",
-          //     value: "",
-          //   },
-
-          //   {
-          //     id: "Requested_loan_amount__c",
-          //     label: "Requested loan amount",
-          //     type: component.textInput,
-          //     placeHolder: "Enter required loan amount",
-          //     validations: validations.currency,
-          //     keyboardtype: "numeric",
-          //     isRequired: true,
-          //     value: "",
-          //   },
-
-          //   {
-          //     id: "Property_Identified__c",
-          //     label: "Property Identified?",
-          //     type: component.dropdown,
-          //     placeHolder: "Select answer",
-          //     validations: validations.text,
-          //     isRequired: false,
-          //     data: GetPicklistValues([], "Property_Identified__c", [
-          //       {
-          //         id: "propertyIdentified_type_1",
-          //         label: "Yes",
-          //         value: "Yes",
-          //       },
-
-          //       {
-          //         id: "propertyIdentified_type_2",
-          //         label: "No",
-          //         value: "No",
-          //       },
-          //     ]),
-          //     value: {},
-          //   },
-          //   // missing from backend
-          //   {
-          //     id: "presentAccommodation",
-          //     label: "Present Accommodation",
-          //     type: component.dropdown,
-          //     placeHolder: "Select Present Accommodation",
-          //     validations: validations.text,
-          //     isRequired: true,
-          //     data: GetPicklistValues([], "presentAccommodation", [
-          //       {
-          //         id: "presentAccommodation_type_1",
-          //         label: "own",
-          //         value: "own",
-          //       },
-
-          //       {
-          //         id: "presentAccommodation_type_2",
-          //         label: "family",
-          //         value: "family",
-          //       },
-          //       {
-          //         id: "presentAccommodation_type_3",
-          //         label: "rented",
-          //         value: "rented",
-          //       },
-          //       {
-          //         id: "presentAccommodation_type_4",
-          //         label: "employer",
-          //         value: "employer",
-          //       },
-          //     ]),
-          //     value: {},
-          //   },
-          //   // missing from backend
-          //   {
-          //     id: "periodOfStay",
-          //     label: "Period of stay",
-          //     type: component.textInput,
-          //     placeHolder: "YYMM",
-          //     validations: validations.yyMMDate,
-          //     isRequired: true,
-          //     value: "",
-          //     maxLength: 4,
-          //   },
-          //   //  missing from backend
-          //   {
-          //     id: "rentPerMonth",
-          //     label: "Rent per month",
-          //     type: component.textInput,
-          //     placeHolder: "Rent per month",
-          //     validations: validations.numberOnly,
-          //     isRequired: true,
-          //     keyboardtype: "numeric",
-          //     value: "",
-          //   },
-          //   // missing from backend
-          //   {
-          //     id: "employmentExperience",
-          //     label: "Employment experience",
-          //     type: component.textInput,
-          //     placeHolder: "YYMM",
-          //     validations: validations.yyMMDate,
-          //     isRequired: true,
-          //     value: "",
-          //   },
-          //   // missing from backend
-          //   {
-          //     id: "totalWorkExperience",
-          //     label: "Total Work experience",
-          //     type: component.textInput,
-          //     placeHolder: "YYMM",
-          //     validations: validations.yyMMDate,
-          //     isRequired: true,
-          //     value: "",
-          //   },
-          //   // missing from backend
-          //   {
-          //     id: "familyDependant",
-          //     label: "Family Dependant",
-          //     type: component.textInput,
-          //     placeHolder: "Enter Family Dependant",
-          //     validations: validations.numberOnlyRequired,
-          //     isRequired: true,
-          //     keyboardtype: "numeric",
-          //     value: "",
-          //   },
-          //   // missing from backend
-          //   {
-          //     id: "familyDependantChildren",
-          //     label: "Family Dependant Children",
-          //     type: component.textInput,
-          //     placeHolder: "Enter Family Dependant Children",
-          //     validations: validations.numberOnlyRequired,
-          //     isRequired: true,
-          //     keyboardtype: "numeric",
-          //     value: "",
-          //   },
-          //   // missing from backend
-          //   {
-          //     id: "familyDependantOther",
-          //     label: "Family Dependant Other",
-          //     type: component.textInput,
-          //     placeHolder: "Enter Family Dependant Other",
-          //     validations: validations.numberOnlyRequired,
-          //     isRequired: true,
-          //     keyboardtype: "numeric",
-          //     value: "",
-          //   },
-          //   // missing from backend
-          //   {
-          //     id: "totalBusinessExperience",
-          //     label: "Total Business experience",
-          //     type: component.textInput,
-          //     placeHolder: "YYMM",
-          //     validations: validations.yyMMDate,
-          //     isRequired: true,
-          //     value: "",
-          //   },
-
-          //   {
-          //     id: "Address",
-          //     label: "Address",
-          //     type: component.textInput,
-          //     placeHolder: "Enter address",
-          //     validations: validations.text,
-          //     isRequired: true,
-          //     value: "",
-          //     isMultiline: true,
-          //   },
-
-          //   {
-          //     id: "Pincode__c",
-          //     label: "Pincode",
-          //     type: component.textInput,
-          //     placeHolder: "Enter Pincode",
-          //     validations: validations.numberOnlyRequired,
-          //     isRequired: true,
-          //     value: data.pincode,
-          //     keyboardtype: "numeric",
-          //     isDisabled: true,
-          //   },
-          // ];
-          // resolve([...mock_data]);
         }
       });
     },

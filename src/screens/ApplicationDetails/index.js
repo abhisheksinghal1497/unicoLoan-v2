@@ -39,6 +39,7 @@ import ErrorConstants from "../../constants/ErrorConstants";
 import WebviewComponent from "../../components/WebviewComponent";
 import { ConfiguratonConstants } from "../../constants/ConfigurationConstants";
 import { debounce, useResetRoutes } from "../../utils/functions";
+import Container from "../../components/Container";
 
 
 
@@ -258,152 +259,154 @@ export default function ApplicationDetails(props) {
   // }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#fff" }}>
-      <HelpModal
-        toggleModal={toggleModal}
-        showModal={showModal}
-        setShowModal={setShowModal}
-      />
-      <View
-        style={{
-          paddingHorizontal: horizontalScale(15),
-          marginTop: verticalScale(10),
-        }}
-      >
-        <Header
-          title="Application Details"
-          left={assets.back}
-          rightImages={[
-            { source: assets.chat },
-            { source: assets.questionRound },
-          ]}
-          leftStyle={{ height: verticalScale(15), width: verticalScale(15) }}
-          leftImageProps={{ resizeMode: "contain" }}
-          rightStyle={{
-            height: verticalScale(23),
-            width: verticalScale(23),
-            marginHorizontal: 10,
-          }}
-          rightImageProps={{ resizeMode: "contain" }}
-          titleStyle={{ fontSize: verticalScale(18) }}
-          onPressRight={handleRightIconPress}
-          onPressLeft={() => {
-            props?.navigation?.goBack();
-          }}
+    <Container>
+      <View style={{ flex: 1, backgroundColor: "#fff" }}>
+        <HelpModal
+          toggleModal={toggleModal}
+          showModal={showModal}
+          setShowModal={setShowModal}
         />
-      </View>
-      <ScrollView contentContainerStyle={style.scrollviewStyle}>
-        {/* <View style={style.container}>
+        <View
+          style={{
+            paddingHorizontal: horizontalScale(15),
+            marginTop: verticalScale(10),
+          }}
+        >
+          <Header
+            title="Application Details"
+            left={assets.back}
+            rightImages={[
+              { source: assets.chat },
+              { source: assets.questionRound },
+            ]}
+            leftStyle={{ height: verticalScale(15), width: verticalScale(15) }}
+            leftImageProps={{ resizeMode: "contain" }}
+            rightStyle={{
+              height: verticalScale(23),
+              width: verticalScale(23),
+              marginHorizontal: 10,
+            }}
+            rightImageProps={{ resizeMode: "contain" }}
+            titleStyle={{ fontSize: verticalScale(18) }}
+            onPressRight={handleRightIconPress}
+            onPressLeft={() => {
+              props?.navigation?.goBack();
+            }}
+          />
+        </View>
+        <ScrollView contentContainerStyle={style.scrollviewStyle}>
+          {/* <View style={style.container}>
           <ApplicationCard navigation={props?.navigation} />
         </View> */}
 
-        <View
-          style={{ marginHorizontal: DimensionUtils.pixelSizeHorizontal(15) }}
-        >
-          {(applicationFormMutate?.isPending || getFormData?.isPending) && (
-            <ActivityIndicatorComponent />
-          )}
-          {mock_data.map((comp, index) => {
-            if (!checkFormCondition(comp.id)) {
-              return <></>;
-            }
-            return (
-              <FormControl
-                compType={comp.type}
-                control={control}
-                validations={comp.validations}
-                name={comp.id}
-                label={comp.label}
-                errors={errors[comp.id]}
-                isRequired={comp.isRequired}
-                placeholder={comp.placeHolder}
-                data={comp.data}
-                keyIndex={comp.id}
-                setValue={setValue}
-                isMultiline={comp.isMultiline}
-                maxLength={comp.maxLength}
-                isDisabled={comp.isDisabled}
-                isCheckboxType={comp.isCheckboxType}
-                onChangeText={(value) => ChangeValue(value, comp.id)}
-                type={comp.keyboardtype}
-                trigger={trigger}
-              />
-            );
-          })}
-        </View>
-
-        {mock_data && mock_data?.length > 0 &&
-          <>
-
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                maxWidth: "84%",
-                marginHorizontal: horizontalScale(20),
-                marginTop: verticalScale(25),
-                marginBottom: verticalScale(15),
-              }}
-            >
-              <TouchableOpacity style={{}} onPress={handleCheckBoxClick}>
-                <Image
-                  style={{ width: 22, height: 22, resizeMode: "contain" }}
-                  source={
-                    isChecked
-                      ? require("../../../assets/images/checked.png")
-                      : require("../../../assets/images/box.png")
-                  }
+          <View
+            style={{ marginHorizontal: DimensionUtils.pixelSizeHorizontal(15) }}
+          >
+            {(applicationFormMutate?.isPending || getFormData?.isPending) && (
+              <ActivityIndicatorComponent />
+            )}
+            {mock_data.map((comp, index) => {
+              if (!checkFormCondition(comp.id)) {
+                return <></>;
+              }
+              return (
+                <FormControl
+                  compType={comp.type}
+                  control={control}
+                  validations={comp.validations}
+                  name={comp.id}
+                  label={comp.label}
+                  errors={errors[comp.id]}
+                  isRequired={comp.isRequired}
+                  placeholder={comp.placeHolder}
+                  data={comp.data}
+                  keyIndex={comp.id}
+                  setValue={setValue}
+                  isMultiline={comp.isMultiline}
+                  maxLength={comp.maxLength}
+                  isDisabled={comp.isDisabled}
+                  isCheckboxType={comp.isCheckboxType}
+                  onChangeText={(value) => ChangeValue(value, comp.id)}
+                  type={comp.keyboardtype}
+                  trigger={trigger}
                 />
-              </TouchableOpacity>
-              <Text
-                style={{
-                  marginLeft: verticalScale(5),
-                  fontSize: 14,
-                  lineHeight: 18,
-                  color: "#000000",
-                }}
-                onPress={() => setModalVisible2(true)}
-              >
-                Terms and Condition Unico Housing Finance Private Limited.
-              </Text>
-            </View>
+              );
+            })}
+          </View>
 
-            <View style={{ paddingHorizontal: horizontalScale(30) }}>
-              <Button
-                type="primary"
-                label="Continue"
-                disable={!isChecked}
-                onPress={onSubmit}
-                // onPress={()=>TnC()}
-                buttonContainer={{ marginVertical: verticalScale(20) }}
+          {mock_data && mock_data?.length > 0 &&
+            <>
+
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  maxWidth: "84%",
+                  marginHorizontal: horizontalScale(20),
+                  marginTop: verticalScale(25),
+                  marginBottom: verticalScale(15),
+                }}
+              >
+                <TouchableOpacity style={{}} onPress={handleCheckBoxClick}>
+                  <Image
+                    style={{ width: 22, height: 22, resizeMode: "contain" }}
+                    source={
+                      isChecked
+                        ? require("../../../assets/images/checked.png")
+                        : require("../../../assets/images/box.png")
+                    }
+                  />
+                </TouchableOpacity>
+                <Text
+                  style={{
+                    marginLeft: verticalScale(5),
+                    fontSize: 14,
+                    lineHeight: 18,
+                    color: "#000000",
+                  }}
+                  onPress={() => setModalVisible2(true)}
+                >
+                  Terms and Condition Unico Housing Finance Private Limited.
+                </Text>
+              </View>
+
+              <View style={{ paddingHorizontal: horizontalScale(30) }}>
+                <Button
+                  type="primary"
+                  label="Continue"
+                  disable={!isChecked}
+                  onPress={onSubmit}
+                  // onPress={()=>TnC()}
+                  buttonContainer={{ marginVertical: verticalScale(20) }}
+                />
+              </View>
+            </>
+          }
+          <CustomModal
+            modalStyle={style.modalstyle}
+            showModal={modalVisible2}
+            centeredViewStyle={{ backgroundColor: "rgba(0, 0, 0, 0.1)" }}
+            withFeedback={false}
+          >
+            <TouchableOpacity onPress={() => setModalVisible2(false)}>
+              <Image
+                source={require("../../../assets/images/crossGray.png")}
+                style={{
+                  width: 17,
+                  height: 17,
+                  resizeMode: "contain",
+                  justifyContent: "flex-end",
+                  marginHorizontal: horizontalScale(330),
+                  marginBottom: verticalScale(12.5),
+                }}
               />
-            </View>
-          </>
-        }
-        <CustomModal
-          modalStyle={style.modalstyle}
-          showModal={modalVisible2}
-          centeredViewStyle={{ backgroundColor: "rgba(0, 0, 0, 0.1)" }}
-          withFeedback={false}
-        >
-          <TouchableOpacity onPress={() => setModalVisible2(false)}>
-            <Image
-              source={require("../../../assets/images/crossGray.png")}
-              style={{
-                width: 17,
-                height: 17,
-                resizeMode: "contain",
-                justifyContent: "flex-end",
-                marginHorizontal: horizontalScale(330),
-                marginBottom: verticalScale(12.5),
-              }}
+            </TouchableOpacity>
+            <WebviewComponent
+              uri={ConfiguratonConstants.TERMS_AND_CONDITION_URL}
             />
-          </TouchableOpacity>
-          <WebviewComponent
-            uri={ConfiguratonConstants.TERMS_AND_CONDITION_URL}
-          />
-        </CustomModal>
-      </ScrollView>
-    </View>
+          </CustomModal>
+        </ScrollView>
+      </View>
+    </Container>
   );
 }

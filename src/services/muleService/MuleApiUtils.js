@@ -61,7 +61,7 @@ const makeAadharinitiateCall = async (body) => {
   }
 };
 
-export const verifyAadhar = (panNumber,loanData) => {
+export const verifyAadhar = (panNumber, loanData) => {
   const mutate = useMutation({
     mutationFn: (body) => {
       const adhaarToken = body?.intitialResponse?.results?.aadharToken
@@ -89,11 +89,11 @@ export const verifyAadhar = (panNumber,loanData) => {
 
           try {
             checkPanAdhaarLinked(adhaarToken, panNumber, adhaarName)
-              .then(async() => {
+              .then(async () => {
                 try {
-                  
+
                   console.log('here------------------1', loanData)
-                  let loanDetails = {...loanData};
+                  let loanDetails = { ...loanData };
                   loanDetails.adhaarDetails = adhaarVerifyResponse.data?.results;
                   console.log('here------------------12')
                   await saveApplicationData(loanDetails)
@@ -102,9 +102,9 @@ export const verifyAadhar = (panNumber,loanData) => {
                   log('ERRor, ', error)
                   reject(ErrorConstants.SOMETHING_WENT_WRONG)
                 }
-             
+
               })
-              .catch((error) => reject(error));
+              .catch((error) => reject(ErrorConstants.SOMETHING_WENT_WRONG));
           } catch (error) {
             reject(ErrorConstants.SOMETHING_WENT_WRONG);
           }
@@ -282,13 +282,25 @@ export const doOCRForVoterID = () => {
 
 export const makeAdhaarEKYCCall = () => {
   const mutate = useMutation({
-    mutationFn: (body) => {
-      //return instance.post('/digital-utility-v1/api/name-match', body)
-      return new Promise(async (resolve, reject) => {
-        setTimeout(() => {
-          resolve(body);
-        }, 2000);
-      });
+    mutationFn: async (body) => {
+      const ipaddress = await getIpAddress();
+
+
+      const requestBody = {
+        "consent": "Y",
+        "ipAddress": ipaddress,
+        "consentTime": getConsentTime(),
+        "consentText": "Test",
+        "caseId": getUniqueId(),
+        "aadharNumber": body?.toString(),
+        "aadharName": "Harikrishna kv"
+      }
+      return instance.post('/digital-kyc-v1/api/aadhar-initiate-by-number', requestBody)
+      // return new Promise(async (resolve, reject) => {
+      //   setTimeout(() => {
+      //     resolve(body);
+      //   }, 2000);
+      // });
     },
   });
   return mutate;
