@@ -1,3 +1,5 @@
+import LoginComponent from "../screens/login/LoginComponent";
+
 export const screens = {
     Splash: 'Splash',
     PanDetails: 'PAN and KYC',
@@ -33,13 +35,14 @@ export const screens = {
     FAQ:"FAQ",
     TrackTicket: 'TrackTicket',
     PayNow: 'PayNow',
-    StatusCheck: "StatusCheck",
-    EmiCalculator: "EmiCalculator",
+    StatusCheck: "Loan Status",
+  EmiCalculator: "EMI Calculator",
     CurrentAddress: "CurrentAddress",
     OtpScreen: "OtpScreen",
     PinCodeVerify: "PinCodeVerify",
     Profile: 'Profile',
     Dummy: 'Dummy',
     Services:'services',
-    ServiceOtp: 'ServiceOtp'
+    ServiceOtp: 'ServiceOtp',
+    LoginComponent:"LoginComponent"
   };

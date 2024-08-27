@@ -9,7 +9,7 @@ import { net } from "react-native-force";
 import { log } from "../utils/ConsoleLogUtils";
 import { validations } from "../constants/validations";
 import { component } from "../components/FormComponents/FormControl";
-import { getDateYearsBack } from "../utils/dateUtil";
+
 import { GetPicklistValues, getUniqueId, toast } from "../utils/functions";
 import {
   getLeadFields,
@@ -17,11 +17,12 @@ import {
   saveApplicationData,
 } from "./sfDataServices/saleforceApiUtils";
 import { oauth } from "react-native-force";
-import LocalStorage from "./LocalStorage";
+
 import ErrorConstants from "../constants/ErrorConstants";
 import { soupConfig } from "./sfDBServices/SoupConstants";
 import { getAllSoupEntries } from "./sfDBServices/salesforceDbUtils";
-import { saveApplicationDataSoup } from "./sfDBServices/salesforceDbService";
+
+import { LOAN_DETAILS_KEYS } from "../constants/stringConstants";
 
 export const logoutApi = () => {
   console.log("LOGOUT API");
@@ -60,13 +61,17 @@ export const getHomeScreenDetails = () => {
     mutationFn: async () => {
       return new Promise(async (resolve, reject) => {
         try {
+          // FETCH THE PINCODE DATA
+
+
+
           const data = await getAllSoupEntries(
             soupConfig.applicationList.name,
             soupConfig.applicationList.path
           );
           log("HERE IS DATA----------", { data });
           if (data && data?.length > 0) {
-            log("homeScrenn", data.length)
+            alert(data.length)
             resolve(data);
           } else {
             resolve([]);
@@ -85,43 +90,44 @@ export const getEligibilityDetails = (loanData) => {
     networkMode: "always",
     mutationFn: async (data) => {
       const { applicationDetails, loanDetails } = data || {};
-      return new Promise(async(resolve, reject) => {
+      return new Promise(async (resolve, reject) => {
 
-          const data = {
-            Product: applicationDetails?.Product__c,
-            "Sub Product": loanDetails?.loanPurpose,
-            "Request Loan Amount":
-              applicationDetails?.Requested_loan_amount__c?.substring(0, 2) +
-              " lac",
-            "Number of Dependents":
-              parseInt(applicationDetails?.familyDependant) +
-              parseInt(applicationDetails?.familyDependantChildren) +
-              parseInt(applicationDetails?.familyDependantOther),
-            "Residential Stability": applicationDetails?.presentAccommodation,
-            "Cibil Score": 846,
-            "DPD Status": true,
-            "Business Vintage": 2,
-            "Net Asset": loanDetails?.totalAsset,
-            "Total Score": 90,
-            "Number of Enquiries in the last 6 months": 2,
-            "Eligible Status": "Not Eligible", //Not Eligible
-            "Eligible Loan Amount": "45 lac",
-            "Customer Segment": applicationDetails?.Customer_Profile__c,
-            "Employment Stability": 1,
-            Qualification: "BCA",
-            Parameter: 1,
-            'Eligible Status': "Eligible"
-          };
+        const data = {
+          Product: applicationDetails?.Product__c,
+          "Sub Product": loanDetails?.loanPurpose,
+          "Request Loan Amount":
+            applicationDetails?.ReqLoanAmt__c?.substring(0, 2) +
+            " lac",
+          "Number of Dependents":
+            11,
+          "Residential Stability": "",
+          "Cibil Score": 846,
+          "DPD Status": true,
+          "Business Vintage": 2,
+          "Net Asset": loanDetails?.totalAsset,
+          "Total Score": 90,
+          "Number of Enquiries in the last 6 months": 2,
+          "Eligible Status": "Not Eligible", //Not Eligible
+          "Eligible Loan Amount": "45 lac",
+          "Customer Segment": applicationDetails?.Customer_Profile__c,
+          "Employment Stability": 1,
+          Qualification: "BCA",
+          Parameter: 1,
+          'Eligible Status': "Eligible"
+        };
 
-          let loanDetail = { ...loanData };
-          loanDetail.eligibilityDetails = data;
+        let loanDetail = { ...loanData };
+        loanDetail.eligibilityDetails = { ...data };
+
+        console.log("hari>>>>loanDetail", loanDetail)
         try {
-          await saveApplicationData(loanDetail);
-          resolve({ ...loanDetail,  });
+          await saveApplicationData({ ...loanDetail });
+          resolve(loanDetail);
         } catch (error) {
-          reject(ErrorConstants.SOMETHING_WENT_WRONG);
+          log("hari>>>>elgible error", error)
+          reject(error);
         }
-   
+
       });
     },
   });
@@ -161,7 +167,7 @@ export const getHomeScreenCarousel = () => {
           //   },
           // ];
           resolve(data);
-         // reject("Something went wrong");
+          // reject("Something went wrong");
         }, 3000);
       });
     },
@@ -178,8 +184,8 @@ export const getHomeScreenOurServices = () => {
         setTimeout(() => {
           const data = [
             {
-              key: "calculators",
-              title: "Calculators",
+              key: "EMI calculators",
+              title: "EMI Calculators",
               image: require("../../assets/images/Calculators.png"),
             },
             {
@@ -214,8 +220,8 @@ export const getHomeScreenOurServices = () => {
             },
           ];
           resolve(data);
-          reject("Something went wrong");
-        }, 3000);
+
+        }, 100);
       });
     },
   });
@@ -630,7 +636,7 @@ export const getApplicationDetailsForm = () => {
 
           const mock_data = [
             {
-              id: "RM_SM_Name__c",
+              id: "RM__c",
               label: "RM Name",
               type: component.textInput,
               placeHolder: "Select User",
@@ -693,12 +699,13 @@ export const getApplicationDetailsForm = () => {
               value: "",
             },
             {
-              id: "LastName",
+              id: "LName__c",
               label: "Last Name",
               type: component.textInput,
               placeHolder: "Enter last Name",
               validations: validations.name,
               isRequired: true,
+              maxLength: 255,
               value: "",
             },
             // not mention
@@ -717,18 +724,18 @@ export const getApplicationDetailsForm = () => {
             // },
             // missing from backend
             {
-              id: "mobileNumber",
+              id: "MobNumber__c",
               label: "Mobile number",
               type: component.textInput,
               placeHolder: "Enter mobile number",
               validations: validations.phone,
               isRequired: true,
-              value: data.mobileNumber,
+              value: "",
               isDisabled: true,
               maxLength: 10,
             },
             {
-              id: "Alternative_Mobile_Number__c",
+              id: "AltMobile__c",
               label: "Alternate mobile number",
               type: component.textInput,
               placeHolder: "Enter alternate mobile number",
@@ -740,7 +747,7 @@ export const getApplicationDetailsForm = () => {
             },
             // missing from backend
             {
-              id: "email",
+              id: "EmailId__c",
               label: "Email",
               type: component.textInput,
               placeHolder: "Enter email",
@@ -776,7 +783,7 @@ export const getApplicationDetailsForm = () => {
             },
 
             {
-              id: "Requested_tenure_in_Months__c",
+              id: "ReqTenInMonths__c",
               label: "Requested tenure in Months",
               type: component.textInput,
               placeHolder: "Enter requested tenure in months",
@@ -787,22 +794,22 @@ export const getApplicationDetailsForm = () => {
             },
 
             {
-              id: "Requested_loan_amount__c",
+              id: "ReqLoanAmt__c",
               label: "Requested loan amount",
               type: component.textInput,
               placeHolder: "Enter required loan amount",
-              validations: validations.numberOnlyRequired,
+              validations: validations.currency,
               keyboardtype: "numeric",
               isRequired: true,
               value: "",
             },
 
             {
-              id: "Property_Identified__c",
+              id: "PropertyIdentified__c",
               label: "Property Identified?",
               type: component.dropdown,
               placeHolder: "Select answer",
-              validations: validations.text,
+
               isRequired: false,
               data: GetPicklistValues(fieldArray, "Property_Identified__c", [
                 {
@@ -821,40 +828,46 @@ export const getApplicationDetailsForm = () => {
             },
             // missing from backend
             {
-              id: "presentAccommodation",
+              id: "Present_Accomodation__c",
               label: "Present Accommodation",
               type: component.dropdown,
               placeHolder: "Select Present Accommodation",
               validations: validations.text,
+              isCheckboxType: true,
               isRequired: true,
-              data: GetPicklistValues(fieldArray, "presentAccommodation", [
+              data: GetPicklistValues(fieldArray, "Present_Accomodation__c", [
                 {
                   id: "presentAccommodation_type_1",
-                  label: "own",
-                  value: "own",
+                  label: "Employer123",
+                  value: "Employer123",
                 },
 
                 {
                   id: "presentAccommodation_type_2",
-                  label: "family",
-                  value: "family",
+                  label: "Family",
+                  value: "Family",
                 },
                 {
                   id: "presentAccommodation_type_3",
-                  label: "rented",
-                  value: "rented",
+                  label: "Owned",
+                  value: "Owned",
                 },
                 {
                   id: "presentAccommodation_type_4",
-                  label: "employer",
-                  value: "employer",
+                  label: "Rented More than 5 years",
+                  value: "Rented More than 5 years",
+                },
+                {
+                  id: "presentAccommodation_type_5",
+                  label: "Rented Less than Equal to 5 Years",
+                  value: "Rented Less than Equal to 5 Years",
                 },
               ]),
               value: {},
             },
             // missing from backend
             {
-              id: "periodOfStay",
+              id: "Period_of_stay__c",
               label: "Period of stay",
               type: component.textInput,
               placeHolder: "YYMM",
@@ -865,7 +878,7 @@ export const getApplicationDetailsForm = () => {
             },
             //  missing from backend
             {
-              id: "rentPerMonth",
+              id: "If_rented_rent_per_month__c",
               label: "Rent per month",
               type: component.textInput,
               placeHolder: "Rent per month",
@@ -876,7 +889,7 @@ export const getApplicationDetailsForm = () => {
             },
             // missing from backend
             {
-              id: "employmentExperience",
+              id: "Employment_experience__c",
               label: "Employment experience",
               type: component.textInput,
               placeHolder: "YYMM",
@@ -886,7 +899,7 @@ export const getApplicationDetailsForm = () => {
             },
             // missing from backend
             {
-              id: "totalWorkExperience",
+              id: "Total_Work_Experience__c",
               label: "Total Work experience",
               type: component.textInput,
               placeHolder: "YYMM",
@@ -895,41 +908,44 @@ export const getApplicationDetailsForm = () => {
               value: "",
             },
             // missing from backend
+
+            // missing from backend
             {
-              id: "familyDependant",
-              label: "Family Dependant",
+              id: "No_of_Family_Dependants_Children__c",
+              label: "No of Family Dependants -Children",
+              type: component.textInput,
+              placeHolder: "Enter No of Family Dependant Children",
+              validations: validations.numberOnlyRequired,
+              isRequired: true,
+              keyboardtype: "numeric",
+              value: "",
+            },
+            // missing from backend
+            {
+              id: "No_of_Family_Dependants_Other__c",
+              label: "No of Family Dependants -Other",
+              type: component.textInput,
+              placeHolder: "Enter No of Family Dependants -Other",
+              validations: validations.numberOnlyRequired,
+              isRequired: true,
+              keyboardtype: "numeric",
+              value: "",
+            },
+
+            {
+              id: "Number_of_Family_Dependants__c",
+              label: "Number of Family Dependants",
               type: component.textInput,
               placeHolder: "Enter Family Dependant",
               validations: validations.numberOnlyRequired,
               isRequired: true,
+              isDisabled: true,
               keyboardtype: "numeric",
               value: "",
             },
             // missing from backend
             {
-              id: "familyDependantChildren",
-              label: "Family Dependant Children",
-              type: component.textInput,
-              placeHolder: "Enter Family Dependant Children",
-              validations: validations.numberOnlyRequired,
-              isRequired: true,
-              keyboardtype: "numeric",
-              value: "",
-            },
-            // missing from backend
-            {
-              id: "familyDependantOther",
-              label: "Family Dependant Other",
-              type: component.textInput,
-              placeHolder: "Enter Family Dependant Other",
-              validations: validations.numberOnlyRequired,
-              isRequired: true,
-              keyboardtype: "numeric",
-              value: "",
-            },
-            // missing from backend
-            {
-              id: "totalBusinessExperience",
+              id: "Total_Business_Experience__c",
               label: "Total Business experience",
               type: component.textInput,
               placeHolder: "YYMM",
@@ -939,7 +955,7 @@ export const getApplicationDetailsForm = () => {
             },
 
             {
-              id: "Address",
+              id: "Address__c",
               label: "Address",
               type: component.textInput,
               placeHolder: "Enter address",
@@ -963,346 +979,7 @@ export const getApplicationDetailsForm = () => {
           ];
           resolve([...mock_data]);
         } catch (error) {
-          const mock_data = [
-            {
-              id: "RM_SM_Name__c",
-              label: "RM Name",
-              type: component.textInput,
-              placeHolder: "Select User",
-              validations: validations.required,
-              maxLength: 10,
-              // keyboardtype: "numeric",
-              isRequired: true,
-              data: GetPicklistValues([], "RM_SM_Name__c", [
-                {
-                  id: "RM_SM_Name__1",
-                  label: "Ravindra",
-                  value: "Ravindra",
-                },
-              ]),
-              value: "",
-            },
-            // not mention
-            // {
-            //   id: "applicationType",
-            //   label: "Applicant Type",
-            //   type: component.textInput,
-            //   placeHolder: "Applicant Type",
-            //   validations: validations.text,
-            //   isRequired: false,
-            //   value: "",
-            // },
-            {
-              id: "Customer_Profile__c",
-              label: "Customer Profile",
-              type: component.dropdown,
-              placeHolder: "Select Customer Profile",
-              validations: validations.text,
-              maxLength: 10,
-              keyboardtype: "numeric",
-              isRequired: true,
-              data: GetPicklistValues([], "Customer_Profile__c", [
-                {
-                  id: "Customer_Profile__1",
-                  label: "Salf-Employed",
-                  value: "Salf-Employed",
-                },
-                {
-                  id: "Customer_Profile__2",
-                  label: "Salaried",
-                  value: "Salaried",
-                },
-              ]),
-              value: {},
-            },
-            {
-              id: "FirstName",
-              label: "First Name",
-              type: component.textInput,
-              placeHolder: "Enter first Name",
-              validations: validations.name,
-              isRequired: true,
-              value: "",
-            },
-            {
-              id: "MiddleName",
-              label: "Middle Name",
-              type: component.textInput,
-              placeHolder: "Enter middle Name",
-              validations: validations.nameWithoutRequired,
-              isRequired: false,
-              value: "",
-            },
-            {
-              id: "LastName",
-              label: "Last Name",
-              type: component.textInput,
-              placeHolder: "Enter last Name",
-              validations: validations.name,
-              isRequired: true,
-              value: "",
-            },
-            // not mention
-            // {
-            //   id: "dob",
-            //   label: "Date of Birth",
-            //   type: component.datetime,
-            //   placeHolder: "DD-MM-YYYY",
-            //   validations: validations.text,
-            //   isRequired: false,
-            //   value: "",
-            //   datepickerProps: {
-            //     minimumDate: getDateYearsBack(18),
-            //     maximumDate: getDateYearsBack(100),
-            //   },
-            // },
-            // missing from backend
-            {
-              id: "mobileNumber",
-              label: "Mobile number",
-              type: component.textInput,
-              placeHolder: "Enter mobile number",
-              validations: validations.phone,
-              isRequired: true,
-              value: data.mobileNumber,
-              isDisabled: true,
-              maxLength: 10,
-            },
-            {
-              id: "Alternative_Mobile_Number__c",
-              label: "Alternate mobile number",
-              type: component.textInput,
-              placeHolder: "Enter alternate mobile number",
-              validations: validations.phoneWithoutRequired,
-              isRequired: false,
-              value: "",
-              keyboardtype: "numeric",
-              maxLength: 10,
-            },
-            // missing from backend
-            {
-              id: "email",
-              label: "Email",
-              type: component.textInput,
-              placeHolder: "Enter email",
-              validations: validations.email,
-              isRequired: false,
-              value: "",
-              isDisabled: true,
-            },
-            // no data in picklist from backend
-            {
-              id: "Product__c",
-              label: "Product",
-              type: component.dropdown,
-              placeHolder: "Select product",
-              validations: validations.text,
-              maxLength: 10,
-              // keyboardtype: "numeric",
-              isRequired: true,
-              data: GetPicklistValues([], "Product__c", [
-                {
-                  id: "product_type_1",
-                  label: "Housing Loan",
-                  value: "Housing Loan",
-                },
-
-                {
-                  id: "product_type_2",
-                  label: "Non Housing Loan",
-                  value: "Non Housing Loan",
-                },
-              ]),
-              value: {},
-            },
-
-            {
-              id: "Requested_tenure_in_Months__c",
-              label: "Requested tenure in Months",
-              type: component.textInput,
-              placeHolder: "Enter requested tenure in months",
-              validations: validations.numberOnly,
-              isRequired: false,
-              keyboardtype: "numeric",
-              value: "",
-            },
-
-            {
-              id: "Requested_loan_amount__c",
-              label: "Requested loan amount",
-              type: component.textInput,
-              placeHolder: "Enter required loan amount",
-              validations: validations.numberOnlyRequired,
-              keyboardtype: "numeric",
-              isRequired: true,
-              value: "",
-            },
-
-            {
-              id: "Property_Identified__c",
-              label: "Property Identified?",
-              type: component.dropdown,
-              placeHolder: "Select answer",
-              validations: validations.text,
-              isRequired: false,
-              data: GetPicklistValues([], "Property_Identified__c", [
-                {
-                  id: "propertyIdentified_type_1",
-                  label: "Yes",
-                  value: "Yes",
-                },
-
-                {
-                  id: "propertyIdentified_type_2",
-                  label: "No",
-                  value: "No",
-                },
-              ]),
-              value: {},
-            },
-            // missing from backend
-            {
-              id: "presentAccommodation",
-              label: "Present Accommodation",
-              type: component.dropdown,
-              placeHolder: "Select Present Accommodation",
-              validations: validations.text,
-              isRequired: true,
-              data: GetPicklistValues([], "presentAccommodation", [
-                {
-                  id: "presentAccommodation_type_1",
-                  label: "own",
-                  value: "own",
-                },
-
-                {
-                  id: "presentAccommodation_type_2",
-                  label: "family",
-                  value: "family",
-                },
-                {
-                  id: "presentAccommodation_type_3",
-                  label: "rented",
-                  value: "rented",
-                },
-                {
-                  id: "presentAccommodation_type_4",
-                  label: "employer",
-                  value: "employer",
-                },
-              ]),
-              value: {},
-            },
-            // missing from backend
-            {
-              id: "periodOfStay",
-              label: "Period of stay",
-              type: component.textInput,
-              placeHolder: "YYMM",
-              validations: validations.yyMMDate,
-              isRequired: true,
-              value: "",
-              maxLength: 4,
-            },
-            //  missing from backend
-            {
-              id: "rentPerMonth",
-              label: "Rent per month",
-              type: component.textInput,
-              placeHolder: "Rent per month",
-              validations: validations.numberOnly,
-              isRequired: true,
-              keyboardtype: "numeric",
-              value: "",
-            },
-            // missing from backend
-            {
-              id: "employmentExperience",
-              label: "Employment experience",
-              type: component.textInput,
-              placeHolder: "YYMM",
-              validations: validations.yyMMDate,
-              isRequired: true,
-              value: "",
-            },
-            // missing from backend
-            {
-              id: "totalWorkExperience",
-              label: "Total Work experience",
-              type: component.textInput,
-              placeHolder: "YYMM",
-              validations: validations.yyMMDate,
-              isRequired: true,
-              value: "",
-            },
-            // missing from backend
-            {
-              id: "familyDependant",
-              label: "Family Dependant",
-              type: component.textInput,
-              placeHolder: "Enter Family Dependant",
-              validations: validations.numberOnlyRequired,
-              isRequired: true,
-              keyboardtype: "numeric",
-              value: "",
-            },
-            // missing from backend
-            {
-              id: "familyDependantChildren",
-              label: "Family Dependant Children",
-              type: component.textInput,
-              placeHolder: "Enter Family Dependant Children",
-              validations: validations.numberOnlyRequired,
-              isRequired: true,
-              keyboardtype: "numeric",
-              value: "",
-            },
-            // missing from backend
-            {
-              id: "familyDependantOther",
-              label: "Family Dependant Other",
-              type: component.textInput,
-              placeHolder: "Enter Family Dependant Other",
-              validations: validations.numberOnlyRequired,
-              isRequired: true,
-              keyboardtype: "numeric",
-              value: "",
-            },
-            // missing from backend
-            {
-              id: "totalBusinessExperience",
-              label: "Total Business experience",
-              type: component.textInput,
-              placeHolder: "YYMM",
-              validations: validations.yyMMDate,
-              isRequired: true,
-              value: "",
-            },
-
-            {
-              id: "Address",
-              label: "Address",
-              type: component.textInput,
-              placeHolder: "Enter address",
-              validations: validations.text,
-              isRequired: true,
-              value: "",
-              isMultiline: true,
-            },
-
-            {
-              id: "Pincode__c",
-              label: "Pincode",
-              type: component.textInput,
-              placeHolder: "Enter Pincode",
-              validations: validations.numberOnlyRequired,
-              isRequired: true,
-              value: data.pincode,
-              keyboardtype: "numeric",
-              isDisabled: true,
-            },
-          ];
-          resolve([...mock_data]);
+          reject(error)
         }
       });
     },
@@ -1334,9 +1011,9 @@ export const useSubmitLoanFormData = (loanData) => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (data) => {
-      return new Promise(async(resolve, reject) => {
+      return new Promise(async (resolve, reject) => {
         let loanDetail = { ...loanData };
-        loanDetail.loanDetails = {...data};
+        loanDetail.loanDetails = { ...data };
         try {
           await saveApplicationData(loanDetail);
           resolve({ ...loanDetail });
@@ -1710,7 +1387,7 @@ export const useSubmitServiceForm = () => {
   return mutate;
 };
 
-export const useVerifyOtpService = (onSuccess = (data) => {}) => {
+export const useVerifyOtpService = (onSuccess = (data) => { }) => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (data) => {
@@ -1750,8 +1427,10 @@ export const useSaveSelfie = (loanData) => {
       return new Promise(async (resolve, reject) => {
         let data = { ...loanData };
         data.selfieDetails = { ...selfie };
+        log("data>>", data)
+
         try {
-          await saveApplicationData(data);
+          const response = await saveApplicationData(data);
           resolve(data);
         } catch (error) {
           reject(ErrorConstants.SOMETHING_WENT_WRONG);
@@ -1769,11 +1448,11 @@ export const useKycDocument = (loanData) => {
     mutationFn: async () => {
       return new Promise(async (resolve, reject) => {
         let data = { ...loanData };
-        data.currentAddressDetails = { 
-            address: loanData?.adhaarDetails?.address?.splitAddress,
-            fullAddress: loanData?.adhaarDetails?.address?.combinedAddress,
-         };
-         console.log('FULL ADDRESS', data.currentAddressDetails)
+        data.currentAddressDetails = {
+          address: loanData?.adhaarDetails?.address?.splitAddress,
+          fullAddress: loanData?.adhaarDetails?.address?.combinedAddress,
+        };
+        console.log('FULL ADDRESS', data.currentAddressDetails)
         try {
           await saveApplicationData(data);
           resolve(data);
@@ -1786,5 +1465,332 @@ export const useKycDocument = (loanData) => {
 
   return mutate;
 };
+
+
+export const getAllRawData = () => {
+  const mutate = useMutation({
+    networkMode: 'online',
+    mutationFn: () => {
+      let compositeRequest = [];
+
+    }
+  })
+}
+
+export const getLoanDetailsForm = () => {
+  const mutate = useMutation({
+    networkMode: "always",
+    mutationFn: async (data) => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const fieldArray = await getLeadFields();
+
+          const mock_data = [
+            {
+              id: "ReqLoanAmt__c",
+              label: "Requested loan amount",
+              type: component.textInput,
+              placeHolder: "Enter required loan amount",
+              validations: validations.currency,
+              keyboardtype: "numeric",
+              isRequired: true,
+              value: "",
+            },
+
+            {
+              id: "ReqTenInMonths__c",
+              label: "Requested tenure in Months",
+              type: component.textInput,
+              placeHolder: "Enter requested tenure in months",
+              validations: validations.numberOnly,
+              isRequired: true,
+              keyboardtype: "numeric",
+              value: "",
+            },
+
+
+            {
+              id: LOAN_DETAILS_KEYS.loanPurpose,
+              label: "Loan Purpose",
+              type: component.textInput,
+              placeHolder: "Select Loan Purpose",
+              isRequired: true,
+              validations: {
+                ...validations.required,
+              },
+              data: [
+
+              ],
+              value: {},
+            },
+
+
+            {
+              id: "MobNumber__c",
+              label: "Mobile number",
+              type: component.textInput,
+              placeHolder: "Enter mobile number",
+              validations: validations.phone,
+              isRequired: true,
+              value: "",
+              isDisabled: true,
+              maxLength: 10,
+            },
+
+            {
+              id: LOAN_DETAILS_KEYS.isExistingCustomer,
+              label: "Existing Customer",
+              type: component.dropdown,
+              placeHolder: "Select Existing Customer",
+              isRequired: true,
+              validations: {
+                ...validations.required,
+              },
+              data: [
+                {
+                  id: "existCustomer-y",
+                  label: "Yes",
+                  value: "yes",
+                },
+                {
+                  id: "existCustomer-n",
+                  label: "No",
+                  value: "no",
+                },
+              ],
+              value: {},
+            },
+
+            {
+              id: LOAN_DETAILS_KEYS.custId,
+              label: "Customer ID",
+              type: component.number,
+              placeHolder: "Enter Customer ID",
+              value: 0,
+              keyboardtype: "numeric",
+              validations: validations.numberOnly,
+            },
+            {
+              id: LOAN_DETAILS_KEYS.bankBalance,
+              label: "Bank Balance",
+              type: component.number,
+              placeHolder: "Enter Bank Balance",
+              value: 0,
+              keyboardtype: "numeric",
+              isRequired: true,
+              validations: { ...validations.numberOnly, ...validations.required },
+            },
+            {
+              id: LOAN_DETAILS_KEYS.immovableProperty,
+              label: "Immovable Property",
+              type: component.number,
+              placeHolder: "Enter value of immovable property",
+              value: 0,
+              keyboardtype: "numeric",
+              isRequired: true,
+              validations: { ...validations.numberOnly, ...validations.required },
+            },
+            {
+              id: LOAN_DETAILS_KEYS.currPF,
+              label: "Current balance in Pf",
+              type: component.number,
+              placeHolder: "Enter Current balance in Pf",
+              value: 0,
+              keyboardtype: "numeric",
+              isRequired: true,
+              validations: { ...validations.numberOnly, ...validations.required },
+            },
+            {
+              id: LOAN_DETAILS_KEYS.valShareSecr,
+              label: "Value of shares and securities",
+              type: component.number,
+              placeHolder: "Enter Value of shares and securities",
+              value: 0,
+              keyboardtype: "numeric",
+              isRequired: true,
+              validations: { ...validations.numberOnly, ...validations.required },
+            },
+            {
+              id: LOAN_DETAILS_KEYS.fd,
+              label: "Fixed Deposits",
+              type: component.number,
+              placeHolder: "Enter Fixed Deposits",
+              value: 0,
+              keyboardtype: "numeric",
+              isRequired: true,
+              validations: { ...validations.numberOnly, ...validations.required },
+            },
+            {
+              id: LOAN_DETAILS_KEYS.invPlantMachVehi,
+              label: "Investment in Plants /Machinery/Vehicles",
+              type: component.number,
+              placeHolder: "Enter Investment in Plants /Machinery/Vehicles",
+              value: 0,
+              keyboardtype: "numeric",
+              isRequired: true,
+              validations: { ...validations.numberOnly, ...validations.required },
+            },
+            {
+              id: LOAN_DETAILS_KEYS.ownContri,
+              label: "Own Contribution",
+              type: component.number,
+              placeHolder: "Enter Own Contribution",
+              value: 0,
+              keyboardtype: "numeric",
+              isRequired: true,
+              validations: { ...validations.numberOnly, ...validations.required },
+            },
+            {
+              id: LOAN_DETAILS_KEYS.assetVal,
+              label: "Other Asst Value",
+              type: component.number,
+              placeHolder: "Enter Other Asst Value",
+              value: 0,
+              keyboardtype: "numeric",
+              isRequired: true,
+              validations: { ...validations.numberOnly, ...validations.required },
+            },
+            {
+              id: LOAN_DETAILS_KEYS.totalAsset,
+              label: "Total Assets",
+              type: component.number,
+              placeHolder: "Enter Total Assets",
+              value: 0,
+              keyboardtype: "numeric",
+              // isRequired: true,
+              // validations: { ...validations.numberOnly, ...validations.required },
+              isDisabled: true,
+            },
+            {
+              id: LOAN_DETAILS_KEYS.amtConstructPurchase,
+              label: "Amount spent for Construction/Purchase",
+              type: component.number,
+              placeHolder: "Enter Amount spent for Construction/Purchase",
+              value: 0,
+              keyboardtype: "numeric",
+              isRequired: true,
+              validations: { ...validations.numberOnly, ...validations.required },
+            },
+            {
+              id: LOAN_DETAILS_KEYS.savings,
+              label: "Savings",
+              type: component.number,
+              placeHolder: "Enter Savings",
+              value: 0,
+              keyboardtype: "numeric",
+              isRequired: true,
+              validations: { ...validations.numberOnly, ...validations.required },
+            },
+            {
+              id: LOAN_DETAILS_KEYS.dispAsset,
+              label: "Disposal of Asset",
+              type: component.number,
+              placeHolder: "Enter Disposal of Asset",
+              value: 0,
+              keyboardtype: "numeric",
+              isRequired: true,
+              validations: { ...validations.numberOnly, ...validations.required },
+            },
+            {
+              id: LOAN_DETAILS_KEYS.familyFund,
+              label: "Fund from Family",
+              type: component.number,
+              placeHolder: "Enter Fund from Family",
+              value: 0,
+              keyboardtype: "numeric",
+              isRequired: true,
+              validations: { ...validations.numberOnly, ...validations.required },
+            },
+            {
+              id: LOAN_DETAILS_KEYS.srvcFund,
+              label: "Fund from other services",
+              type: component.number,
+              placeHolder: "Enter Fund from other services",
+              value: 0,
+              keyboardtype: "numeric",
+              isRequired: true,
+              validations: { ...validations.numberOnly, ...validations.required },
+            },
+            {
+              id: LOAN_DETAILS_KEYS.totalIncome,
+              label: "Total Income",
+              type: component.number,
+              placeHolder: "Enter Total Income",
+              value: 0,
+              keyboardtype: "numeric",
+              isRequired: true,
+              validations: { ...validations.numberOnly, ...validations.required },
+            },
+            {
+              id: LOAN_DETAILS_KEYS.totalObligation,
+              label: "Total Obligation",
+              type: component.number,
+              placeHolder: "Enter Total Obligation",
+              value: 0,
+              keyboardtype: "numeric",
+              isRequired: true,
+              validations: { ...validations.numberOnly, ...validations.required },
+            },
+            {
+              id: LOAN_DETAILS_KEYS.resAddr,
+              label: "Residential Address",
+              type: component.textInput,
+              placeHolder: "Enter Residential Address",
+              value: "",
+              isMultiline: true,
+              isDisabled: true
+            },
+            {
+              id: LOAN_DETAILS_KEYS.currAddr,
+              label: "Current Address",
+              type: component.textInput,
+              placeHolder: "Enter Current Address",
+              value: "",
+              isMultiline: true,
+              isDisabled: true
+            },
+
+
+
+
+
+          ];
+          resolve([...mock_data]);
+        } catch (error) {
+          reject(error)
+
+        }
+      });
+    },
+  });
+  return mutate;
+};
+
+export const getSanctionPdf = (loanData) => {
+
+  const mutate = useMutation({
+    networkMode: 'always',
+    mutationFn: () => {
+      return new Promise(async (resolve, reject) => {
+        let data = { ...loanData };
+        data.sanctionDetails = {
+          "sanctioned": "true",
+        };
+
+        try {
+          console.log("data>>>", "success")
+          await saveApplicationData(data);
+          resolve({ url: "http://www.clickdimensions.com/links/TestPDFfile.pdf" });
+        } catch (error) {
+          reject(ErrorConstants.SOMETHING_WENT_WRONG);
+        }
+      })
+
+    }
+  })
+
+  return mutate;
+
+}
 
 

@@ -118,8 +118,8 @@ const EMICalculatorComponent = ({ navigation }) => {
     }
   };
   return (
-    <View style={{ flex: 1, backgroundColor: colors.white }}>
-      <View style={{ marginHorizontal: horizontalScale(15),marginTop:20 }}>
+    <View style={{ flex: 1, backgroundColor: colors.white}}>
+      {/* <View style={{ marginHorizontal: horizontalScale(15),marginTop:20 }}>
         <Header
           title={"EMI Calculator"}
           left={require("../../images/back.png")}
@@ -129,9 +129,9 @@ const EMICalculatorComponent = ({ navigation }) => {
           onPressRight={() => {}}
           colour="white"
         />
-      </View>
+      </View> */}
 
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, margin:16 }}>
         <View>
           <FormControl
             compType={component.sliderAndInput}

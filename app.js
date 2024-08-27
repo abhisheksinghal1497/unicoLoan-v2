@@ -25,7 +25,8 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, FlatList, StatusBar, Platform, NativeModules } from "react-native";
+import { } from 'react-native-force'
+import { StyleSheet, Text, View, FlatList, StatusBar, Platform, NativeModules, LogBox } from "react-native";
 import {
     MD3LightTheme as DefaultTheme,
     PaperProvider,
@@ -70,20 +71,20 @@ const ContactListScreen = () => {
     ]);
     const { colors } = useTheme();
 
-    useEffect(() => {
-        oauth.getAuthCredentials(
-            () => fetchData(), // already logged in
-            () => {
-                oauth.authenticate(
-                    () => fetchData(),
-                    (error) => console.log("Failed to authenticate:" + error)
-                );
-            }
-        );
-    }, []);
+    // useEffect(() => {
+    //     oauth.getAuthCredentials(
+    //         () => fetchData(), // already logged in
+    //         () => {
+    //             oauth.authenticate(
+    //                 () => fetchData(),
+    //                 (error) => console.log("Failed to authenticate:" + error)
+    //             );
+    //         }
+    //     );
+    // }, []);
 
     function fetchData() {
-       // net.query("SELECT Id, Name FROM Contact LIMIT 100", (response) => { });
+        // net.query("SELECT Id, Name FROM Contact LIMIT 100", (response) => { });
     }
 
     return (
@@ -139,6 +140,7 @@ export const App = function () {
     const [isConnected, setIsConnected] = useState(true);
 
     useEffect(() => {
+        LogBox.ignoreAllLogs();
         const unsubscribe = NetInfo.addEventListener((state) => {
             setIsConnected(state.isConnected);
             try {

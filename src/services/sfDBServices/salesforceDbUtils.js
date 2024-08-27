@@ -50,6 +50,13 @@ export const upsertSoupEntries = async (soupName, records) => {
 export const getAllSoupEntries = async (soupName, path) => {
   return new Promise(async (resolve, reject) => {
     try {
+      const checkSoupExistsOrNot = await checkSoupExists(soupName)
+      if (!checkSoupExistsOrNot) {
+        // register for the soup
+        await registerSoup(soupName, [{ path: soupName, type: 'string' }])
+        reject("Not found")
+      }
+
       const querySpec = smartstore.buildAllQuerySpec(path, "ascending", 1000);
       let allRecords = [];
 

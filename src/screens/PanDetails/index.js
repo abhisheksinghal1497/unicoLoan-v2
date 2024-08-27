@@ -273,7 +273,34 @@ const PanDetails = (props) => {
         showModal={showModal}
         setShowModal={setShowModal}
       />
+      <Header
+        title="PAN Details"
+        left={require("../../images/back.png")}
+        rightImages={[
+          { source: assets.chat },
+          { source: assets.questionRound },
+        ]}
+        leftStyle={{ height: verticalScale(15), width: verticalScale(15) }}
+        leftImageProps={{ resizeMode: "contain" }}
+        rightStyle={{
+          height: verticalScale(23),
+          width: verticalScale(23),
+          marginHorizontal: 10,
+        }}
+        rightImageProps={{ resizeMode: "contain" }}
+        titleStyle={{ fontSize: verticalScale(18) }}
+        onPressRight={handleRightIconPress}
+        onPressLeft={() => {
 
+          props?.navigation?.reset({
+            index: 0,
+            routes: [{
+              name: screens.HomeScreen
+            }],
+          });
+
+        }}
+      />
       <ScrollView
         style={{ marginBottom: 25 }}
         nestedScrollEnabled={true}
@@ -281,33 +308,7 @@ const PanDetails = (props) => {
         contentContainerStyle={{ flexGrow: 1 }}
       >
         <View style={{ flex: 1, paddingHorizontal: 16 }}>
-          <Header
-            title="PAN Details"
-            left={require("../../images/back.png")}
-            rightImages={[
-              { source: assets.chat },
-              { source: assets.questionRound },
-            ]}
-            leftStyle={{ height: verticalScale(15), width: verticalScale(15) }}
-            leftImageProps={{ resizeMode: "contain" }}
-            rightStyle={{
-              height: verticalScale(23),
-              width: verticalScale(23),
-              marginHorizontal: 10,
-            }}
-            rightImageProps={{ resizeMode: "contain" }}
-            titleStyle={{ fontSize: verticalScale(18) }}
-            onPressRight={handleRightIconPress}
-            onPressLeft={() => {
-             
-                props?.navigation?.reset({
-                  index: 0,
-                  routes: [{ name: screens.HomeScreen 
-                  }],
-                });
-              
-            }}
-          />
+         
 
           <ProgressCard screenName={"PAN Details"} />
 

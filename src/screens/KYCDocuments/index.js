@@ -57,12 +57,12 @@ const KYCDocuments = ({ navigation }) => {
       setSelectedImageBack(currentDataBack);
       const savedSelfie = await AsyncStorage.getItem("selfieCapture");
       const currentDataSelfie = JSON.parse(savedSelfie);
-    
+
       setSelectedImageSelfie(currentDataSelfie);
     } catch (error) {
-      
+
     }
- 
+
   };
   const handleRightIconPress = (index) => {
     if (index === 0) {
@@ -184,7 +184,7 @@ const KYCDocuments = ({ navigation }) => {
             //  source={assets.aadhar_front}
             />
           </View>
-          <Text style={styles.conText1}>Upload Your Selfie</Text>
+          <Text style={styles.conText1}> Selfie</Text>
         </View>
         <SuccessText Successtext={"Verified"} />
         <CustomButton
@@ -217,7 +217,7 @@ const CustomImageContainer = ({ selectedImage }) => {
         //  source={assets.aadhar_front}
         />
       </View>
-      <Text style={styles.conText1}>Upload Your Aadhaar Front Photo</Text>
+      <Text style={styles.conText1}> Aadhaar Front Photo</Text>
     </View>
   );
 };

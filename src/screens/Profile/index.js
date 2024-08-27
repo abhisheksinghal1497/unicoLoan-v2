@@ -99,7 +99,7 @@ export default function ApplicationDetails(props) {
             marginTop: verticalScale(10),
           }}
         >
-          <Header
+          {/* <Header
             colour="#fff"
             title="Profile"
             left={assets.back}
@@ -114,7 +114,7 @@ export default function ApplicationDetails(props) {
               fontSize: verticalScale(18),
             }}
             onPressLeft={goBack}
-          />
+          /> */}
         </View>
         {isError ? <Text>Some error occurred</Text> : children}
       </View>

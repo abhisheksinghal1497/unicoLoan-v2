@@ -6,19 +6,19 @@ export const getCurrentScreenNameForResume = (item) => {
   if (!item?.panDetails) {
     return screens.PanDetails;
   }
-   else if (!item?.adhaarDetails) {
+  else if (!item?.adhaarDetails) {
     return screens.KYC;
   } else if (!item?.selfieDetails) {
     return screens.CaptureSelfie;
   } else if (!item?.currentAddressDetails) {
     return screens.KYCDocuments;
-  } 
+  }
   else if (!item?.loanDetails) {
     return screens.LoanDetails;
   } else if (!item?.eligibilityDetails) {
     return screens.Eligibility;
   } else {
-    return screens.Eligibility;
+    return screens.Sanction;
   }
 };
 
@@ -40,13 +40,18 @@ const useGetProgressPercentage = (item) => {
     percentage = 40;
   } else if (routeName === screens.CaptureSelfie) {
     percentage = 50;
-  } else if(routeName === screens.KYCDocuments){
+  } else if (routeName === screens.KYCDocuments) {
     percentage = 60;
   } else if (routeName === screens.LoanDetails) {
     percentage = 80;
   } else if (routeName === screens.Eligibility) {
     percentage = 100;
-  } else if (routeName === "COMPLETED") {
+  }
+  else if (routeName === screens.Sanction) {
+    percentage = 100;
+  }
+
+  else if (routeName === "COMPLETED") {
     percentage = 100;
   }
   return percentage;

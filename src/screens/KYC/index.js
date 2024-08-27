@@ -43,6 +43,7 @@ import { toast } from "../../utils/functions";
 import Canvas, { Image as CanvasImage } from "react-native-canvas";
 import { KycScreen } from "../../constants/stringConstants";
 import { ConfiguratonConstants } from "../../constants/ConfigurationConstants";
+import ErrorConstants from "../../constants/ErrorConstants";
 
 const WIDTH = Dimensions.get("window").width;
 const screenName = "Documents";
@@ -306,17 +307,17 @@ const KYC = (props) => {
     if (await trigger("otp")) {
       const aadharInitiateResponse = !adhaarApiType
         ? uploadAadharToMuleService?.data?.data
-        : adhaarEkycMutate?.data;
+        : adhaarEkycMutate?.data?.data;
       // will remove later
       console.log("SUP----------------", {
         aadharInitiateResponse: JSON.stringify(aadharInitiateResponse),
       });
-      if (adhaarApiType) {
-        props.navigation.navigate(screens.CaptureSelfie, {
-          loanData: loanData
-        });
-        return;
-      }
+      // if (adhaarApiType) {
+      //   props.navigation.navigate(screens.CaptureSelfie, {
+      //     loanData: loanData
+      //   });
+      //   return;
+      // }
 
       verifyAdharApi?.mutate({
         otp: otp,
@@ -329,6 +330,7 @@ const KYC = (props) => {
     const AdhaarDetails = watch("adhaarNumber");
     log("adhaar", AdhaarDetails?.toString()?.length);
     if (AdhaarDetails?.toString()?.length === 12) {
+
       adhaarEkycMutate?.mutate(AdhaarDetails);
     } else {
       setError("adhaarNumber", "Please enter valid adhaar number");
@@ -513,8 +515,8 @@ const KYC = (props) => {
                       source={
                         selectedImage
                           ? {
-                              uri: `data:${selectedImage.mime};base64,${selectedImage.data}`,
-                            }
+                            uri: `data:${selectedImage.mime};base64,${selectedImage.data}`,
+                          }
                           : require("../../images/aadhar-front.png")
                       }
                       style={[styles.frontImage]}
@@ -536,8 +538,8 @@ const KYC = (props) => {
                       source={
                         selectedImageBack
                           ? {
-                              uri: `data:${selectedImageBack.mime};base64,${selectedImageBack.data}`,
-                            }
+                            uri: `data:${selectedImageBack.mime};base64,${selectedImageBack.data}`,
+                          }
                           : require("../../images/aadhar-back.png")
                       }
                       style={[styles.frontImage]}

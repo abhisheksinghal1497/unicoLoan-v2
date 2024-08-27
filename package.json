@@ -5,7 +5,8 @@
     "scripts": {
         "start": "node node_modules/react-native/local-cli/cli.js start",
         "test": "jest",
-        "android": "react-native run-android"
+        "android": "react-native run-android",
+        "debug": "react-native bundle --platform android --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --dev true --reset-cache --assets-dest android/app/src/main/res/"
     },
     "sdkDependencies": {
         "SalesforceMobileSDK-Android": "https://github.com/forcedotcom/SalesforceMobileSDK-Android.git#v11.0.0",

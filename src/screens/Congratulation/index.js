@@ -7,11 +7,11 @@ import { screens } from '../../constants/screens';
 const CongratulationScreen = (props) => {
     return (
         <View style={styles.container}>
-            <Image
+            {/* <Image
                 source={require('../../../assets/images/Congratulations.png')}
                 style={styles.image}
                 resizeMode="contain"
-            />
+            /> */}
             <Text style={styles.Nointernet}>
                 Congratulations !
             </Text>

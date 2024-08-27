@@ -41,7 +41,7 @@ export const saveApplicationDataSoup = async (soupName, data) => {
             const checkSoupExistsOrNot = await checkSoupExists(soupName)
             if (!checkSoupExistsOrNot) {
                 // register for the soup
-                await registerSoup(soupName, [{ path: soupConfig.applicationList.path, type: 'string' }])
+                await registerSoup(soupName, [{ path: soupConfig.applicationList.path, type: 'string', unique:true }])
             }
 
             await upsertSoupEntries(soupName, [{...data}])

@@ -58,11 +58,12 @@ const data = [
   {
     id: "6",
     title: "",
+    imagePathUnActive: require("../../../assets/images/loandone.png"),
     imagePathActive: require("../../../assets/images/loandone.png"),
   },
 ];
 
-const RenderLoanDropdown = ({ loanData = [], setSelectedLoan = () => {} }) => {
+const RenderLoanDropdown = ({ loanData = [], setSelectedLoan = () => { } }) => {
   const {
     control,
     formState: { errors },
@@ -80,6 +81,7 @@ const RenderLoanDropdown = ({ loanData = [], setSelectedLoan = () => {} }) => {
     if (loan) {
       setSelectedLoan(loan);
     }
+
   }, [applicationNumber]);
 
   const data = [
@@ -112,12 +114,13 @@ const RenderLoanDropdown = ({ loanData = [], setSelectedLoan = () => {} }) => {
           placeholder={comp.placeHolder}
           data={comp.data}
           key={comp.id}
+
           setValue={setValue}
           showRightComp={true}
           isMultiline={comp.isMultiline}
           maxLength={comp.maxLength}
           isDisabled={comp.isDisabled}
-          //   value={comp.value}
+        //   value={comp.value}
         />
       </View>
     );
@@ -132,94 +135,213 @@ const RoadMap = ({
   selectedLoan,
   dashes,
 }) => {
-  const renderItem = ({ item, index }) => {
+
+  const renderItems = ({ item, index }) => {
     const isLeft = index % 2 === 0;
-    const itemStyle = isLeft ? styles.itemLeft : styles.itemRight;
-    const itemContainerStyle = isLeft
-      ? styles.itemContainerLeft
-      : styles.itemContainerRight;
-
-    const marginHorizontalPortrait =
-      index === 0
-        ? 36
-        : index === 1
-        ? 10
-        : index === 2
-        ? 60
-        : index === 3
-        ? 82
-        : index === 4
-        ? 15
-        : 75;
-
-    const marginHorizontalLandscape = isTablet
-      ? index === 0
-        ? 230
-        : index === 1
-        ? 205
-        : index === 2
-        ? 254
-        : index === 3
-        ? 272
-        : index === 4
-        ? 210
-        : 267.5
-      : marginHorizontalPortrait;
-
-    const marginHorizontal =
-      orientation === "portrait"
-        ? marginHorizontalPortrait
-        : marginHorizontalLandscape;
-
+    var isFinished = getFieldOsCompletedOrNot(index)
+    var getCurrentScreen = false
+    console.log("getCurrentScreenIndex>>>>>", getCurrentScreenIndex())
+    if (index == getCurrentScreenIndex()) {
+      getCurrentScreen = true
+    }
     return (
-      <View
-        style={[styles.itemContainer, itemContainerStyle, { marginHorizontal }]}
-      >
-        {index == 0 || index == 2 || index == 4 ? (
-          <View style={[styles.item, itemStyle, { flexDirection: "row" }]}>
-            <Text
-              style={{
-                fontSize: 12,
-                fontWeight: "500",
-                color: colors.black,
-                marginTop: verticalScale(18),
-                right: horizontalScale(6),
-              }}
-            >
-              {item.title}
-            </Text>
+      <View style={{ flexDirection: 'row', }}>
+        <View style={{ width: "45%", justifyContent: 'flex-end', alignItems: 'flex-start' }} >
+          {isLeft &&
+            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+              <Image
+                style={{ width: 25, height: 25, resizeMode: "contain" }}
+                source={isFinished ? item.imagePathActive : item.imagePathUnActive}
+              />
+              <Text
+                style={{
+
+                  textAlign: 'center',
+                  fontSize: 12,
+                  fontWeight: "500",
+                  color: colors.black,
+                  marginLeft: 8
+
+                }}
+              >
+                {item.title}
+              </Text>
+            </View>
+          }
+        </View>
+        <View style={{ width: "5%", height: 70, backgroundColor: '#000000', alignItems: 'center', justifyContent: 'space-around' }}>
+          <View style={{ width: "30%", height: 13, backgroundColor: "white", }} />
+          <View style={{ width: "30%", height: 13, backgroundColor: "white", marginVertical: 4 }} />
+          {!getCurrentScreen &&
+            <View style={{ width: "30%", height: 13, backgroundColor: "white", }} />
+          }
+          {getCurrentScreen &&
             <Image
-              style={{ width: 25, height: 25, resizeMode: "contain" }}
-              source={item.imagePathActive}
+              source={require("../../../assets/images/homekey.png")}
+              style={[styles.key]}
             />
-          </View>
-        ) : (
-          <View style={[styles.item, itemStyle, { flexDirection: "row" }]}>
-            <Image
-              style={{
-                width: index == 5 ? 50 : 25,
-                height: index == 5 ? 53 : 25,
-                resizeMode: "contain",
-                marginHorizontal: horizontalScale(index == 5 && 20),
-              }}
-              source={item.imagePathActive}
-            />
-            <Text
-              style={{
-                fontSize: 12,
-                fontWeight: "500",
-                color: colors.black,
-                marginTop: verticalScale(18),
-                left: horizontalScale(6),
-              }}
-            >
-              {item.title}
-            </Text>
-          </View>
-        )}
+          }
+
+
+        </View>
+        <View style={{ width: "45%", justifyContent: 'flex-end', alignItems: 'flex-start' }}>
+
+
+          {!isLeft &&
+            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', margin: 8 }}>
+
+
+              <Image
+                style={{ width: 25, height: 25, resizeMode: "contain" }}
+                source={isFinished ? item.imagePathActive : item.imagePathUnActive}
+              />
+              <Text
+                style={{
+
+                  textAlign: 'center',
+                  fontSize: 12,
+                  fontWeight: "500",
+                  color: colors.black,
+                  marginLeft: 8
+
+                }}
+              >
+                {item.title}
+              </Text>
+            </View>
+          }
+        </View>
       </View>
-    );
-  };
+    )
+  }
+  // const renderItem = ({ item, index }) => {
+  //   const isLeft = index % 2 === 0;
+  //   const itemStyle = isLeft ? styles.itemLeft : styles.itemRight;
+  //   const itemContainerStyle = isLeft
+  //     ? styles.itemContainerLeft
+  //     : styles.itemContainerRight;
+
+  //   const marginHorizontalPortrait =
+  //     index === 0
+  //       ? 36
+  //       : index === 1
+  //         ? 10
+  //         : index === 2
+  //           ? 60
+  //           : index === 3
+  //             ? 82
+  //             : index === 4
+  //               ? 15
+  //               : 75;
+
+  //   const marginHorizontalLandscape = isTablet
+  //     ? index === 0
+  //       ? 230
+  //       : index === 1
+  //         ? 205
+  //         : index === 2
+  //           ? 254
+  //           : index === 3
+  //             ? 272
+  //             : index === 4
+  //               ? 210
+  //               : 267.5
+  //     : marginHorizontalPortrait;
+
+  //   const marginHorizontal =
+  //     orientation === "portrait"
+  //       ? marginHorizontalPortrait
+  //       : marginHorizontalLandscape;
+
+  //   return (
+  //     <View
+  //       style={[styles.itemContainer, itemContainerStyle, { marginHorizontal }]}
+  //     >
+  //       {index == 0 || index == 2 || index == 4 ? (
+  //         <View style={[styles.item, itemStyle, { flexDirection: "row" }]}>
+  // <Text
+  //   style={{
+  //     fontSize: 12,
+  //     fontWeight: "500",
+  //     color: colors.black,
+  //     marginTop: verticalScale(18),
+  //     right: horizontalScale(6),
+  //   }}
+  // >
+  //   {item.title}
+  // </Text>
+  // <Image
+  //   style={{ width: 25, height: 25, resizeMode: "contain" }}
+  //   source={item.imagePathActive}
+  // />
+  //         </View>
+  //       ) : (
+  //         <View style={[styles.item, itemStyle, { flexDirection: "row" }]}>
+  //           <Image
+  //             style={{
+  //               width: index == 5 ? 50 : 25,
+  //               height: index == 5 ? 53 : 25,
+  //               resizeMode: "contain",
+  //               marginHorizontal: horizontalScale(index == 5 && 20),
+  //             }}
+  //             source={item.imagePathActive}
+  //           />
+  //           <Text
+  //             style={{
+  //               fontSize: 12,
+  //               fontWeight: "500",
+  //               color: colors.black,
+  //               marginTop: verticalScale(18),
+  //               left: horizontalScale(6),
+  //             }}
+  //           >
+  //             {item.title}
+  //           </Text>
+  //         </View>
+  //       )}
+  //     </View>
+  //   );
+  // };
+
+  const getFieldOsCompletedOrNot = (index) => {
+    if (index === 0 && (!selectedLoan || !selectedLoan?.applicationDetails)) {
+      return false;
+    } else if (index === 1 && !selectedLoan.adhaarDetails) {
+      return false;
+    } else if (index === 2 && !selectedLoan.loanDetails) {
+      return false;
+    } else if (index === 3 && !selectedLoan.eligibilityDetails) {
+      return false;
+    } else if (index === 4 && !selectedLoan.sanctionDetails) {
+      return false;
+    } else if (index === 5 && !selectedLoan.isLoanActive) {
+      return false;
+    }
+
+    else {
+      return true;
+    }
+  }
+
+  const getCurrentScreenIndex = () => {
+    if ((!selectedLoan || !selectedLoan?.applicationDetails)) {
+      return 0;
+    } else if (!selectedLoan.adhaarDetails) {
+      return 1;
+    } else if (!selectedLoan.loanDetails) {
+      return 2;
+    } else if (!selectedLoan.eligibilityDetails) {
+      return 3;
+    } else if (!selectedLoan.sanctionDetails) {
+      return 4;
+    } else if (!selectedLoan.isLoanActive) {
+      return 5;
+    }
+
+    else {
+      return 6;
+    }
+  }
 
   const getKeyPosition = useMemo(() => {
     if (!selectedLoan || !selectedLoan?.applicationDetails) {
@@ -235,17 +357,17 @@ const RoadMap = ({
     }
   }, [selectedLoan]);
 
-  console.log({getKeyPosition})
 
   return (
-    <View style={{ marginHorizontal: horizontalScale(10) }}>
-      {loanData.length > 1 && (
+    <View >
+      {(
         <RenderLoanDropdown
           loanData={loanData}
           setSelectedLoan={setSelectedLoan}
+
         />
       )}
-      <View style={styles.card}>
+      {/* <View style={styles.card}>
         <View style={{ justifyContent: "flex-end", flexDirection: "row" }}>
           <Text style={styles.uhfl}>{brandDetails.name}</Text>
         </View>
@@ -263,10 +385,11 @@ const RoadMap = ({
             </Text>
           </View>
         </View>
-      </View>
-      <Text style={styles.header}>Apply for loan</Text>
+      </View> */}
+      {selectedLoan &&
+        <Text style={styles.header}>Apply for loan</Text>}
       <View style={{ marginTop: verticalScale(0) }}>
-        <View style={[styles.line, { height: 500 }]}>
+        {/* <View style={[styles.line, { height: 500 }]}>
           <Image
             source={require("../../../assets/images/homekey.png")}
             style={[styles.key, { marginTop: getKeyPosition }]}
@@ -275,13 +398,16 @@ const RoadMap = ({
             <View style={styles.dash1} />
             {dashes}
           </View>
-        </View>
-        <FlatList
-          scrollEnable={false}
-          data={data}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-        />
+        </View> */}
+        {selectedLoan &&
+          <FlatList
+            style={{ marginVertical: 16 }}
+            scrollEnable={true}
+            data={data}
+            renderItem={renderItems}
+            keyExtractor={(item) => item.id}
+          />
+        }
       </View>
     </View>
   );
@@ -336,11 +462,11 @@ const StatusCheck = ({ navigation }) => {
     getLoanCardData.mutate();
   }, []);
 
-  useEffect(() => {
-    if (loanData.length === 1) {
-      setSelectedLoan(loanData[0]);
-    }
-  }, [loanData]);
+  // useEffect(() => {
+  //   if (loanData.length === 1) {
+  //     setSelectedLoan(loanData[0]);
+  //   }
+  // }, [loanData]);
 
   const isTablet = width >= 600;
 
@@ -352,8 +478,8 @@ const StatusCheck = ({ navigation }) => {
       <View style={styles.container}>
         <View
           style={{
-            marginHorizontal: horizontalScale(-10),
-            alignItems: "center",
+
+
             flex: 1,
           }}
         >
@@ -378,9 +504,12 @@ const StatusCheck = ({ navigation }) => {
               selectedLoan={selectedLoan}
               dashes={dashes}
             />
-          ) : (
-            <ApplyForLoan />
-          )}
+          ) :
+            <>
+              {!isPending &&
+                <ApplyForLoan />}
+            </>
+          }
         </View>
       </View>
     </ScrollView>

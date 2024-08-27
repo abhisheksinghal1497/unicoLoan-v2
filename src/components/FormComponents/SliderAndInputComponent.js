@@ -42,7 +42,7 @@ export default function SliderAndInputComponent({
         return (
           <View style={styles.container}>
             <View style={styles.labelContainer}>
-              <Text style={{ marginLeft: horizontalScale(24) }}>
+              <Text style={{ }}>
                 {required && <Text style={styles.asterisk}>* </Text>}
                 {label}
               </Text>
@@ -68,7 +68,7 @@ export default function SliderAndInputComponent({
 
               <Text style={{ fontSize: 12 }}>{maxValue}</Text>
             </View>
-            <View style={{marginHorizontal: horizontalScale(30)}}>
+            <View >
               <TextInput
                 onBlur={onBlur}
                 keyboardType={type}
