@@ -10,7 +10,7 @@ import { log } from "../utils/ConsoleLogUtils";
 import { validations } from "../constants/validations";
 import { component } from "../components/FormComponents/FormControl";
 
-import { GetPicklistValues, getUniqueId, toast } from "../utils/functions";
+import { getLeadCreationRequest, GetPicklistValues, getUniqueId, toast } from "../utils/functions";
 import {
   getLeadFields,
   getPincodeData,
@@ -23,6 +23,7 @@ import { soupConfig } from "./sfDBServices/SoupConstants";
 import { getAllSoupEntries } from "./sfDBServices/salesforceDbUtils";
 
 import { LOAN_DETAILS_KEYS } from "../constants/stringConstants";
+import { DedupeApi, postObjectData } from "./sfDataServices/netService";
 
 export const logoutApi = () => {
   console.log("LOGOUT API");
@@ -635,6 +636,8 @@ export const getApplicationDetailsForm = () => {
           const fieldArray = await getLeadFields();
 
           const mock_data = [
+
+
             {
               id: "RM__c",
               label: "RM Name",
@@ -646,6 +649,7 @@ export const getApplicationDetailsForm = () => {
               isRequired: true,
               data: GetPicklistValues(fieldArray, "RM_SM_Name__c"),
               value: "",
+              isDisabled: true,
             },
             // not mention
             // {
@@ -893,6 +897,7 @@ export const getApplicationDetailsForm = () => {
               label: "Employment experience",
               type: component.textInput,
               placeHolder: "YYMM",
+              maxLength: 4,
               validations: validations.yyMMDate,
               isRequired: true,
               value: "",
@@ -905,6 +910,7 @@ export const getApplicationDetailsForm = () => {
               placeHolder: "YYMM",
               validations: validations.yyMMDate,
               isRequired: true,
+              maxLength: 4,
               value: "",
             },
             // missing from backend
@@ -951,6 +957,7 @@ export const getApplicationDetailsForm = () => {
               placeHolder: "YYMM",
               validations: validations.yyMMDate,
               isRequired: true,
+              maxLength: 4,
               value: "",
             },
 
@@ -972,7 +979,7 @@ export const getApplicationDetailsForm = () => {
               placeHolder: "Enter Pincode",
               validations: validations.numberOnlyRequired,
               isRequired: true,
-              value: data.pincode,
+              value: data?.PinCode__r?.PIN__c,
               keyboardtype: "numeric",
               isDisabled: true,
             },
@@ -992,14 +999,36 @@ export const useSubmitApplicationFormData = (pincodeData) => {
     networkMode: "always",
     mutationFn: async (data) => {
       return new Promise(async (resolve, reject) => {
-        let defaultData = { ...soupConfig.applicationList.default };
+      let defaultData = { ...soupConfig.applicationList.default };
         defaultData.loanId = new Date().getTime().toString();
         defaultData.applicationDetails = { ...data };
         defaultData.pincodeDetails = { ...pincodeData };
+        const data = await DedupeApi("00QBi000009t1rAMAQ")
+        
+       
         await saveApplicationData(defaultData);
         setTimeout(() => {
-          resolve({ ...defaultData });
-        }, 3000);
+          //resolve({ ...defaultData });
+          reject(SOMETHING_WENT_WRONG)
+        }, 3000); 
+        // const leadRequest = getLeadCreationRequest(data)
+        
+        // if (leadRequest){
+        //   log("leadRequest", leadRequest )
+        //   try {
+        //     const leadresponse = await postObjectData("Lead", leadRequest )
+        //     if (leadresponse){
+        //       console.log("leadresponse", leadresponse)
+        //     }
+        //   } catch (error) {
+            
+        //   }
+        // }
+        
+
+
+
+       // reject(ErrorConstants.SOMETHING_WENT_WRONG)
       });
     },
   });

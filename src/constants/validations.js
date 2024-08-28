@@ -52,7 +52,7 @@ export const validations = {
 
   },
   yyMMDate: {
-    pattern: /^\d{4}$/,
+    pattern: /^(?:[0-9]{2})(?:[0-9]{2})$/,
     required: true,
   },
   currency: {
@@ -65,3 +65,5 @@ export const validations = {
     required: true
   }
 };
+
+
