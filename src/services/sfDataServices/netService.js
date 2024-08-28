@@ -49,3 +49,42 @@ export const getMetaData = (objectType) => {
     oauth.getAuthCredentials(successCB, errorCallback(reject));
   });
 };
+
+export const DedupeApi = (LeadId) => {
+ 
+  return new Promise((resolve, reject) => {
+    net.sendRequest(
+      "/services/apexrest",
+      `/DedupeLead?recordId=${LeadId}`,
+      (res) => {
+        // console.log("Entered");
+        console.log("res", res);
+        resolve(res);
+      },
+      (error) => {
+        alert("error")
+        reject(error);
+      },
+      "GET"
+    );
+  });
+
+};
+
+
+export const postObjectData = (objectName, data) => {
+  return new Promise((resolve, reject) => {
+    net.sendRequest(
+      "/services/data/",
+      `${net.getApiVersion()}/sobjects/${objectName}`,
+      (res) => {
+        resolve(res);
+      },
+      (error) => {
+        reject(error);
+      },
+      "POST",
+      data
+    );
+  });
+};

@@ -128,3 +128,33 @@ export const useResetRoutes = () => {
   };
   return resetRoute;
 };
+
+export const getLeadCreationRequest = (data) =>{
+  try{
+    return {
+      FirstName: data?.FirstName ,
+      MiddleName: data?.MiddleName,
+      LastName: data?.LName__c,
+      MobilePhone: data?.MobNumber__c,
+      Email: data?.EmailId__c,
+      Bulk_Lead__c:false,
+      Status:'New Lead',
+      Alternative_Mobile_Number__c: data?.AltMobile__c,
+      Customer_Profile__c: data?.Customer_Profile__c,
+      LeadSource: data?.LeadSource__c,
+      Residential_Address__c: data?.Address__c,
+      PostalCode: '',
+      Pincode__c: data?.Pincode__c,
+      Product__c: data?.Product__c,
+      ProductLookup__c:"",
+      Bank_Branch__c:'',
+      Requested_loan_amount__c: data?.ReqLoanAmt__c,
+      Requested_tenure_in_Months__c: data?.ReqTenInMonths__c,
+      Property_Identified__c: data?.PropertyIdentified__c,
+      Company: data?.LName__c
+    }
+
+  }catch(error){
+    return null;
+  }
+}

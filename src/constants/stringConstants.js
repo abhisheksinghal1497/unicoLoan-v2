@@ -70,3 +70,6 @@ export const CaptureAddressConstants = {
 export const brandDetails = {
   name: 'UNICO HOUSING FINANCE LIMITED'
 }
+
+export const Mobile = "9743063887"
+export const EMAIL_CC = "ABC@gmail.com"

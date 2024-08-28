@@ -9,20 +9,18 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {
   FormControl,
-  component,
+
 } from "../../components/FormComponents/FormControl";
 import { useTheme } from "react-native-paper";
-import { validations } from "../../constants/validations";
 import { screens } from "../../constants/screens";
 import Button from "././../../components/Button";
 import { horizontalScale, verticalScale } from "../../utils/matrcis";
-import ApplicationCard from "./component/ApplicationCard";
+
 import { styles } from "./styles/ApplicationDetailStyle";
 import Header from "../../components/Header";
 import { assets } from "../../assets/assets";
 import HelpModal from "./component/HelpModal";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getDateYearsBack } from "../../utils/dateUtil";
+
 import {
   getUserDetailQuery,
   useSubmitApplicationFormData,
@@ -31,21 +29,23 @@ import DimensionUtils from "../../utils/DimensionUtils";
 import CustomModal from "../../components/CustomModal";
 import { Image } from "react-native";
 import { getApplicationDetailsForm } from "./../../services/ApiUtils";
-import { getMetaData } from "../../services/sfDataServices/netService";
+
 import { log } from "../../utils/ConsoleLogUtils";
 import { useRoute } from "@react-navigation/native";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 import ErrorConstants from "../../constants/ErrorConstants";
 import WebviewComponent from "../../components/WebviewComponent";
 import { ConfiguratonConstants } from "../../constants/ConfigurationConstants";
-import { debounce, useResetRoutes } from "../../utils/functions";
+import { useResetRoutes } from "../../utils/functions";
 import Container from "../../components/Container";
+import { EMAIL_CC, Mobile } from "../../constants/stringConstants";
+
 
 
 
 export default function ApplicationDetails(props) {
   const route = useRoute();
-  const { pincode = "561207", pincodeData = {} } = route.params || {};
+  const { pincode = "", pincodeData = {} } = route.params || {};
   const [showModal, setShowModal] = useState(false);
   const [{ data = {}, error }] = getUserDetailQuery();
   const [modalVisible2, setModalVisible2] = useState(false);
@@ -55,8 +55,10 @@ export default function ApplicationDetails(props) {
   const applicationFormMutate = useSubmitApplicationFormData(pincodeData);
   const resetRoute = useResetRoutes();
 
+  
+
   useEffect(() => {
-    getFormData?.mutate({ pincode: pincode });
+    getFormData?.mutate({ pincode: pincodeData });
   }, []);
 
   const handleRightIconPress = (index) => {
@@ -87,45 +89,33 @@ export default function ApplicationDetails(props) {
   } = useForm({
     mode: "onBlur",
     defaultValues: {
-      LeadSource: "Customer Mobile App",
+    
       branchName: "",
       Pincode__c: pincode,
+      RM__c:"RM",
+      LeadSource__c:"Customer Mobile App",
+      Bank_Branch_Name: pincodeData?.Bank_Branch__r?.Name,
+      Consent_Status__c:"Verified"
     },
   });
 
   const { colors } = useTheme();
 
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     await AsyncStorage.setItem(
-  //       "CurrentScreen",
-  //       JSON.stringify(screens.ApplicantDetails)
-  //     );
-  //     const savedData = await AsyncStorage.getItem("ApplicationDetails");
-  //     const currentData = JSON.parse(savedData);
 
-  //     // if (currentData) {
-  //     //   Object.keys(currentData).forEach((item) =>
-  //     //     setValue(item, currentData[item])
-  //     //   );
-  //     // }
-  //   }
-  //   fetchData();
-  // }, []);
 
   useEffect(() => {
     if (data) {
       const { mobileNumber, email, userId } = data;
       if (mobileNumber) {
-        setValue("MobNumber__c", "97423964998");
+        setValue("MobNumber__c", Mobile);
       }
 
       if (email) {
-        setValue("EmailId__c", "ABC@123gmail.com");
+        setValue("EmailId__c", EMAIL_CC);
       }
 
       if (userId) {
-        setValue("rmName", userId);
+       // setValue("rmName", userId);
       }
     }
   }, [data]);
@@ -139,6 +129,7 @@ export default function ApplicationDetails(props) {
 
       const data = new watch();
       applicationFormMutate.mutate(data);
+      log("application Data", data)
 
 
       //
@@ -171,7 +162,7 @@ export default function ApplicationDetails(props) {
     }
     const prevValue = { ...watch() };
     prevValue[id] = value;
-    await AsyncStorage.setItem("ApplicationDetails", JSON.stringify(prevValue));
+    
   };
 
   // DATA THAT IS GOING TO BE POPULATED
@@ -210,7 +201,7 @@ export default function ApplicationDetails(props) {
         }
 
       } catch (error) {
-        console.log("totalDependent>>>>error", error)
+       
       }
 
     });
