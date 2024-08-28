@@ -1,16 +1,15 @@
 import {
-  UseMutateFunction,
+  
   useMutation,
   useQueries,
 } from "@tanstack/react-query";
 
-import { query } from "../constants/Queries";
-import { net } from "react-native-force";
+
 import { log } from "../utils/ConsoleLogUtils";
 import { validations } from "../constants/validations";
 import { component } from "../components/FormComponents/FormControl";
 
-import { getLeadCreationRequest, GetPicklistValues, getUniqueId, toast } from "../utils/functions";
+import { createLoanAndAppplicantCompositeRequest, getLeadCreationRequest, GetPicklistValues, getUniqueId, toast } from "../utils/functions";
 import {
   getLeadFields,
   getPincodeData,
@@ -23,7 +22,7 @@ import { soupConfig } from "./sfDBServices/SoupConstants";
 import { getAllSoupEntries } from "./sfDBServices/salesforceDbUtils";
 
 import { LOAN_DETAILS_KEYS } from "../constants/stringConstants";
-import { DedupeApi, postObjectData } from "./sfDataServices/netService";
+import { compositeRequest, DedupeApi, postObjectData } from "./sfDataServices/netService";
 
 export const logoutApi = () => {
   console.log("LOGOUT API");
@@ -72,7 +71,7 @@ export const getHomeScreenDetails = () => {
           );
           log("HERE IS DATA----------", { data });
           if (data && data?.length > 0) {
-            alert(data.length)
+
             resolve(data);
           } else {
             resolve([]);
@@ -773,14 +772,14 @@ export const getApplicationDetailsForm = () => {
               data: GetPicklistValues(fieldArray, "Product__c", [
                 {
                   id: "product_type_1",
-                  label: "Housing Loan",
-                  value: "Housing Loan",
+                  label: "HOUSING LOAN",
+                  value: "HOUSING LOAN",
                 },
 
                 {
                   id: "product_type_2",
-                  label: "Non Housing Loan",
-                  value: "Non Housing Loan",
+                  label: "NON HOUSING LOAN",
+                  value: "NON HOUSING LOAN",
                 },
               ]),
               value: {},
@@ -999,36 +998,62 @@ export const useSubmitApplicationFormData = (pincodeData) => {
     networkMode: "always",
     mutationFn: async (data) => {
       return new Promise(async (resolve, reject) => {
-      let defaultData = { ...soupConfig.applicationList.default };
-        defaultData.loanId = new Date().getTime().toString();
-        defaultData.applicationDetails = { ...data };
-        defaultData.pincodeDetails = { ...pincodeData };
-        const data = await DedupeApi("00QBi000009t1rAMAQ")
-        
-       
-        await saveApplicationData(defaultData);
+
+
+        try {
+          // lead create
+          const leadcreateResponse = await postObjectData("Lead", getLeadCreationRequest(data))
+          if (leadcreateResponse && leadcreateResponse.id) {
+            // make the dedupe call
+            const dedupeRes = await DedupeApi(leadcreateResponse?.id);
+            if (dedupeRes && (dedupeRes === "Dedupe failed" || dedupeRes === "EXACT_MATCH")) {
+              reject("Not able to create the loan");
+            } else {
+
+              // loan create
+
+              const compositeRequestResponse = await compositeRequest(createLoanAndAppplicantCompositeRequest(data, leadcreateResponse?.id))
+              if (compositeRequestResponse){
+                log("compositeRequestResponse>>>", JSON.stringify(compositeRequestResponse))
+              }
+
+
+            }
+
+
+
+          }
+
+          // loan creation
+
+
+        } catch (error) {
+          reject(ErrorConstants.SOMETHING_WENT_WRONG);
+        }
+
+        // make the leadCreation API
+
+
+
+
+
+
+
+
+
+
+        //  await saveApplicationData(defaultData);
         setTimeout(() => {
           //resolve({ ...defaultData });
-          reject(SOMETHING_WENT_WRONG)
-        }, 3000); 
-        // const leadRequest = getLeadCreationRequest(data)
-        
-        // if (leadRequest){
-        //   log("leadRequest", leadRequest )
-        //   try {
-        //     const leadresponse = await postObjectData("Lead", leadRequest )
-        //     if (leadresponse){
-        //       console.log("leadresponse", leadresponse)
-        //     }
-        //   } catch (error) {
-            
-        //   }
-        // }
-        
+          reject(ErrorConstants.SOMETHING_WENT_WRONG)
+        }, 3000);
+        //
 
 
 
-       // reject(ErrorConstants.SOMETHING_WENT_WRONG)
+
+
+        // reject(ErrorConstants.SOMETHING_WENT_WRONG)
       });
     },
   });

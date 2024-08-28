@@ -39,6 +39,7 @@ import useGetProgressPercentage, {
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 import { useResetRoutes } from "../../utils/functions";
 import { get } from "react-hook-form";
+import LocalStorage from "../../services/LocalStorage";
 const screenWidth = Dimensions.get("window").width;
 const HomeScreen = ({ navigation }) => {
   const flatListRef = useRef(null);
@@ -334,7 +335,7 @@ const HomeScreen = ({ navigation }) => {
                   source={require("../../../assets/images/profileIcon.png")}
                   style={styles.profileIcon}
                 />
-                <Text style={styles.profileName}>Bhavesh Rao</Text>
+                <Text style={styles.profileName}>{LocalStorage?.getUserData()?.FirstName} {LocalStorage?.getUserData()?.LastName}</Text>
               </View>
 
               <TouchableOpacity onPress={() => oauth.logout()}>

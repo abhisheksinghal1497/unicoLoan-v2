@@ -1,6 +1,7 @@
 import { net, oauth } from "react-native-force";
 import { logoutApi } from "../ApiUtils";
 import ErrorConstants from "../../constants/ErrorConstants";
+import LocalStorage from "../LocalStorage";
 
 const errorCallback = (reject) => () => {
   logoutApi();
@@ -12,7 +13,7 @@ export const QueryObject = (query) => {
   return new Promise((resolve, reject) => {
     const successCB = (data) => {
       console.log('inside success')
-      if(data){
+      if (data) {
         net.query(
           query,
           (res) => {
@@ -24,7 +25,7 @@ export const QueryObject = (query) => {
           }
         );
       }
-      
+
     };
     oauth.getAuthCredentials(successCB, () => {
       console.log("INSIDE ERROR CB");
@@ -51,7 +52,7 @@ export const getMetaData = (objectType) => {
 };
 
 export const DedupeApi = (LeadId) => {
- 
+
   return new Promise((resolve, reject) => {
     net.sendRequest(
       "/services/apexrest",
@@ -85,6 +86,52 @@ export const postObjectData = (objectName, data) => {
       },
       "POST",
       data
+    );
+  });
+};
+
+
+export const compositeRequest = (requests) => {
+  return new Promise((resolve, reject) => {
+    // console.log('compositeGraphApi data', graphs);
+    let requestData = {
+      "allOrNone": true,
+      "compositeRequest": requests
+    };
+    net.sendRequest(
+      '/services/data/',
+      `${net.getApiVersion()}/composite`,
+      (res) => {
+        resolve(res);
+      },
+      (error) => {
+        console.log('Error', error);
+        reject(error);
+      },
+      'POST',
+      requestData
+    );
+  });
+};
+
+
+export const getUserData = (userId) => {
+  return new Promise((resolve, reject) => {
+    // console.log('compositeGraphApi data', graphs);
+   
+    net.query(
+      `SELECT FIELDS(ALL) FROM User WHERE Id = '${userId}'`
+     ,
+      (res) => {
+        LocalStorage?.setUserdata(res?.records?.[0])
+        resolve(res);
+
+      },
+      (error) => {
+        console.log('Error', error);
+        reject(error);
+      },
+      
     );
   });
 };

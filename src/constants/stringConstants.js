@@ -1,3 +1,5 @@
+import LocalStorage from "../services/LocalStorage";
+
 export const AadharBasicDetails = {
   firstButtonName: "Retry",
   lastButtonName: "Use this Photo",
@@ -71,5 +73,5 @@ export const brandDetails = {
   name: 'UNICO HOUSING FINANCE LIMITED'
 }
 
-export const Mobile = "9743063887"
-export const EMAIL_CC = "ABC@gmail.com"
+export const Mobile = LocalStorage?.getUserData()?.Phone
+export const EMAIL_CC = LocalStorage?.getUserData()?.Email

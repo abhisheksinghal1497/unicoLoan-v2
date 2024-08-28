@@ -39,6 +39,7 @@ import { ConfiguratonConstants } from "../../constants/ConfigurationConstants";
 import { useResetRoutes } from "../../utils/functions";
 import Container from "../../components/Container";
 import { EMAIL_CC, Mobile } from "../../constants/stringConstants";
+import LocalStorage from "../../services/LocalStorage";
 
 
 
@@ -54,8 +55,9 @@ export default function ApplicationDetails(props) {
   const [mock_data, setMockData] = useState([]);
   const applicationFormMutate = useSubmitApplicationFormData(pincodeData);
   const resetRoute = useResetRoutes();
+ 
 
-  
+
 
   useEffect(() => {
     getFormData?.mutate({ pincode: pincodeData });
@@ -89,13 +91,13 @@ export default function ApplicationDetails(props) {
   } = useForm({
     mode: "onBlur",
     defaultValues: {
-    
+
       branchName: "",
       Pincode__c: pincode,
-      RM__c:"RM",
-      LeadSource__c:"Customer Mobile App",
-      Bank_Branch_Name: pincodeData?.Bank_Branch__r?.Name,
-      Consent_Status__c:"Verified"
+      RM__c: "RM",
+      LeadSource__c: "Customer Mobile App",
+      Bank_Branch_Name: pincodeData?.Bank_Branch__c,
+      Consent_Status__c: "Verified"
     },
   });
 
@@ -107,15 +109,15 @@ export default function ApplicationDetails(props) {
     if (data) {
       const { mobileNumber, email, userId } = data;
       if (mobileNumber) {
-        setValue("MobNumber__c", Mobile);
+        setValue("MobNumber__c", LocalStorage?.getUserData()?.Phone);
       }
 
       if (email) {
-        setValue("EmailId__c", EMAIL_CC);
+        setValue("EmailId__c", LocalStorage?.getUserData()?.Email);
       }
 
       if (userId) {
-       // setValue("rmName", userId);
+        // setValue("rmName", userId);
       }
     }
   }, [data]);
@@ -162,7 +164,7 @@ export default function ApplicationDetails(props) {
     }
     const prevValue = { ...watch() };
     prevValue[id] = value;
-    
+
   };
 
   // DATA THAT IS GOING TO BE POPULATED
@@ -201,7 +203,7 @@ export default function ApplicationDetails(props) {
         }
 
       } catch (error) {
-       
+
       }
 
     });
@@ -244,7 +246,7 @@ export default function ApplicationDetails(props) {
 
   const toggleModal = () => setShowModal(!showModal);
   const style = styles(colors);
-  console.log("getFormData?.isPending", getFormData?.isPending);
+  //console.log("getFormData?.isPending", getFormData?.isPending);
   // if (getFormData?.isPending) {
   //   return <ActivityIndicatorComponent />;
   // }
@@ -302,6 +304,7 @@ export default function ApplicationDetails(props) {
               }
               return (
                 <FormControl
+                  key={index?.toString()}
                   compType={comp.type}
                   control={control}
                   validations={comp.validations}

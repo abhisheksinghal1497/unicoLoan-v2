@@ -1,6 +1,7 @@
 
 let leadFields = null
 let pincodeData = null
+let userData = null
 const LocalStorage = {
     setLeadFields(data) {
         leadFields = data
@@ -22,9 +23,21 @@ const LocalStorage = {
     clearPincodeLists() {
         pincodeData = null
     },
+    setUserdata(data) {
+      userData = data
+    },
+
+    getUserData(){
+        return userData;
+    },
+
+    clearUserData() {
+        userData = null
+    },
     clearAllData() {
         leadFields = null
-         pincodeData = null
+        pincodeData = null
+        userData = null
     }
 };
 
