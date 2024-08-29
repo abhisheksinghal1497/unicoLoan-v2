@@ -2,6 +2,7 @@ import { net, oauth } from "react-native-force";
 import { logoutApi } from "../ApiUtils";
 import ErrorConstants from "../../constants/ErrorConstants";
 import LocalStorage from "../LocalStorage";
+import { query } from "../../constants/Queries";
 
 const errorCallback = (reject) => () => {
   logoutApi();
@@ -120,7 +121,7 @@ export const getUserData = (userId) => {
     // console.log('compositeGraphApi data', graphs);
    
     net.query(
-      `SELECT FIELDS(ALL) FROM User WHERE Id = '${userId}'`
+      query.getUserInfo(userId)
      ,
       (res) => {
         LocalStorage?.setUserdata(res?.records?.[0])
@@ -132,6 +133,29 @@ export const getUserData = (userId) => {
         reject(error);
       },
       
+    );
+  });
+};
+
+
+
+export const getLeadList = (phone) => {
+  return new Promise((resolve, reject) => {
+    // console.log('compositeGraphApi data', graphs);
+
+    net.query(
+      query.getLeadList('9743063887')
+      ,
+      (res) => {
+        
+        resolve(res);
+
+      },
+      (error) => {
+        console.log('Error', error);
+        reject(error);
+      },
+
     );
   });
 };

@@ -19,50 +19,59 @@ const ProgressCard = ({ screenName }) => {
   const percentage = useGetProgressPercentage()
   return (
     <View style={styles.cardContainer}>
-      <View style={{}}>
-        <Text style={[fonts.labelMedium, { color: "rgba(46, 82, 161, 1)" }, styles.textStyle]}>
-          {screenName}
-        </Text>
-        <Text
-          style={[
-            fonts.labelMedium,
-            { color: "rgba(46, 82, 161, 1)", marginVertical: 8, },
-            styles.textStyle,
-          ]}
+      <View style={{
+        flexDirection: 'row', alignItems: "center",
+        marginHorizontal: 5,
+        justifyContent: 'space-between',
+      }}>
+        <View style={{}}>
+          <Text style={[fonts.labelMedium, { color: "rgba(46, 82, 161, 1)" }, styles.textStyle]}>
+            {screenName}
+          </Text>
+          <Text
+            style={[
+              fonts.labelMedium,
+              { color: "rgba(46, 82, 161, 1)", marginVertical: 8, },
+              styles.textStyle,
+            ]}
+          >
+            LAN:-  {loanId}
+          </Text>
+          <Text style={[fonts.labelSmall, { color: "rgba(46, 82, 161, 1)" }, styles.textStyle, {
+            fontSize: 12
+          }]}>
+            {Product__c}
+          </Text>
+
+        </View>
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
-          LAN:-  {loanId}
-        </Text>
-        <Text style={[fonts.labelSmall, { color: "rgba(46, 82, 161, 1)" }, styles.textStyle, {
-          fontSize: 12
-        }]}>
-          {Product__c}
-        </Text>
+          <CircularProgress
+            size={90}
+            strokeWidth={8}
+            ImageData={home}
+            progressPercent={percentage}
+            bgColor={"#FFFFFF"}
+            pgColor={"#2E52A1"}
+          />
+
+        </View>
+
       </View>
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-        }}
+      <Text
+        style={[
+          fonts.smallText,
+          { marginTop: 10 },
+          styles.textStyle,
+          { fontSize: 10, alignSelf:'flex-end' }
+        ]}
       >
-        <CircularProgress
-          size={90}
-          strokeWidth={8}
-          ImageData={home}
-          progressPercent={percentage}
-          bgColor={"#FFFFFF"}
-          pgColor={"#2E52A1"}
-        />
-        <Text
-          style={[
-            fonts.smallText,
-            { color: "rgba(46, 82, 161, 1)", fontSize: 7, marginTop: 10 },
-            styles.textStyle,
-            { fontSize: 10 }
-          ]}
-        >
-          {brandDetails.name}
-        </Text>
-      </View>
+        {brandDetails.name}
+      </Text>
     </View>
   );
 };
@@ -71,10 +80,8 @@ export default ProgressCard;
 
 const styles = StyleSheet.create({
   cardContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginHorizontal: 5,
-    justifyContent: 'space-between',
+
+
     padding: 15,
     borderRadius: 10,
     borderRadius: 6,

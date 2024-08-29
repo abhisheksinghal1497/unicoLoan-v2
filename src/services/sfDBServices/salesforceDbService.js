@@ -1,5 +1,5 @@
 import { log } from "../../utils/ConsoleLogUtils"
-import { checkSoupExists, registerSoup, upsertSoupEntries, getAllSoupEntries, clearAllSoupEntries } from "./salesforceDbUtils"
+import { checkSoupExists, registerSoup, upsertSoupEntries, getAllSoupEntries, clearAllSoupEntries, upsertSoupEntriesWithExternalId } from "./salesforceDbUtils"
 import { soupConfig } from "./SoupConstants"
 
 
@@ -15,7 +15,7 @@ export const saveAllLeadFields = async (soupName, data) => {
             try {
                 await clearAllSoupEntries(soupName)
             } catch (error) {
-                
+
             }
 
             await upsertSoupEntries(soupName, data)
@@ -36,15 +36,20 @@ export const getAllSavedRecords = async (soupName, path) => {
 
 
 export const saveApplicationDataSoup = async (soupName, data) => {
+    data[soupConfig.applicationList.externalId] = data?.loanId
     return new Promise(async (resolve, reject) => {
         try {
             const checkSoupExistsOrNot = await checkSoupExists(soupName)
             if (!checkSoupExistsOrNot) {
                 // register for the soup
-                await registerSoup(soupName, [{ path: soupConfig.applicationList.path, type: 'string', unique:true }])
+                await registerSoup(soupName, [{ path: soupConfig.applicationList.path, type: 'string', unique: true },
+                { path: soupConfig.applicationList.externalId, type: 'string', unique: true }
+                ])
             }
 
-            await upsertSoupEntries(soupName, [{...data}])
+
+            console.log("saveApplicationDataSoup", [{ ...data, }])
+            await upsertSoupEntriesWithExternalId(soupName, { ...data })
             resolve("Data saved successfully")
 
 

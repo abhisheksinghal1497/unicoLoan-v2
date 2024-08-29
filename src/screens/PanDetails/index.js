@@ -79,7 +79,7 @@ const PanDetails = (props) => {
   ];
   const verifyPan = verifyPanApi();
   const uploadPan = uploadAndVerifyPan();
-  const savePan = submitPanApi();
+  // const savePan = submitPanApi();
 
   useEffect(() => {
     if (verifyPan?.data) {

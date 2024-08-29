@@ -95,7 +95,7 @@ const HomeScreen = ({ navigation }) => {
     fetchData();
   }, []);
 
-  const cardWidth = 350;
+
 
   const handleNavigation = (index) => {
     switch (index) {
@@ -178,6 +178,7 @@ const HomeScreen = ({ navigation }) => {
     const CardHeader = () => {
       return (
         <View style={{}}>
+          <Text style={[textStyle(9),{alignSelf:'flex-end'}]}>{brandDetails.name}</Text>
           <View
             style={{
               flexDirection: "row",
@@ -186,7 +187,7 @@ const HomeScreen = ({ navigation }) => {
             }}
           >
             <Text style={textStyle(15)}>{item?.applicationDetails?.Product__c}</Text>
-            <Text style={textStyle(9)}>{brandDetails.name}</Text>
+            
           </View>
           <View
             style={{
@@ -204,6 +205,7 @@ const HomeScreen = ({ navigation }) => {
     const CardBody = () => {
       const ProgressBardSection = () => {
         return (
+          <View>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <View>
               <CircularProgress
@@ -223,6 +225,7 @@ const HomeScreen = ({ navigation }) => {
                 29th April 2024
               </Text> */}
             </View>
+          </View>
           </View>
         );
       };

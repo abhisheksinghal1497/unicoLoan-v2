@@ -18,6 +18,7 @@ export const soupConfig = {
   applicationList: {
     name: "LoanApplication",
     path: "loanId",
+    externalId:"External_ID",
     default: {
       loanId : null,
       pincodeDetails: null, // get from homescreen

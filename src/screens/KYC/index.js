@@ -31,7 +31,7 @@ import ProgressCard from "../../components/ProgressCard";
 
 import { uploadOtpMethod, uploadAdhaarMethod } from "../../services/ApiUtils";
 import {
-  checkPanLinkWithAdhaar,
+  
   makeAdhaarEKYCCall,
   uploadAadharPhotos,
   verifyAadhar,
@@ -65,7 +65,7 @@ const KYC = (props) => {
   } = loanData;
 
   // 'AMUPH7294R'
-  const verifyAdharApi = verifyAadhar(panDetails.panNumber, loanData);
+  const verifyAdharApi = verifyAadhar(panDetails.panNumber, loanData, panDetails.panName);
   // const verifyAdharApi = checkPanLinkWithAdhaar(panDetails.panNumber);
   const canvasRef = useRef(null);
 
@@ -198,6 +198,18 @@ const KYC = (props) => {
       maxLength: 12,
       keyboardtype: "numeric",
     },
+
+    {
+      id: "adhaarName",
+      label: "Adhaar Name",
+      type: component.textInput,
+      placeHolder: "Enter your Adhaar Name",
+      isRequired: true,
+      data: [],
+      value: "",
+      showRightComp: false,
+
+    },
   ];
 
   const showModal = () => {
@@ -328,13 +340,20 @@ const KYC = (props) => {
 
   const onSubmitAdhaar = () => {
     const AdhaarDetails = watch("adhaarNumber");
-    log("adhaar", AdhaarDetails?.toString()?.length);
-    if (AdhaarDetails?.toString()?.length === 12) {
+    const AdhaarName = watch("adhaarName")
 
-      adhaarEkycMutate?.mutate(AdhaarDetails);
-    } else {
+   
+
+    if (!AdhaarDetails && AdhaarDetails?.toString()?.length !== 12) {
       setError("adhaarNumber", "Please enter valid adhaar number");
+
+    } else if (!AdhaarName) {
+      setError("adhaarName", "Please enter the Name.");
+    } else {
+      adhaarEkycMutate?.mutate({ number: AdhaarDetails, name: AdhaarName });
     }
+
+
   };
   const handleRightIconPress = (index) => {
     if (index === 0) {
@@ -378,7 +397,10 @@ const KYC = (props) => {
           titleStyle={{ fontSize: verticalScale(18) }}
           onPressRight={handleRightIconPress}
           onPressLeft={() => {
-            props?.navigation?.goBack();
+            // props?.navigation?.goBack();
+            props?.navigation?.navigate(screens.PanDetails, {
+              loanData: loanData,
+            });
           }}
         />
         {(uploadAadharToMuleService?.isPending ||
@@ -591,47 +613,44 @@ const KYC = (props) => {
             <View style={{ marginVertical: verticalScale(16) }}>
               {mock_data.map((comp, index) => {
                 return (
-                  (index === 0 ||
-                    (!errors[comp.id] &&
-                      getValues("adhaarNumber")?.length === 12 &&
-                      !isVerified)) && (
-                    <FormControl
-                      compType={comp.type}
-                      control={control}
-                      validations={comp.validations}
-                      name={comp.id}
-                      label={comp.label}
-                      errors={errors[comp.id]}
-                      isRequired={comp.isRequired}
-                      placeholder={comp.placeHolder}
-                      data={comp.data}
-                      key={comp.id}
-                      setValue={setValue}
-                      showRightComp={comp.showRightComp}
-                      type={comp.keyboardtype}
-                      // rightComp={() =>
-                      //   !errors[comp.id] &&
-                      //   getValues("adhaarNumber")?.length === 12 ? (
-                      //     isVerified ? (
-                      //       <Text>Verify</Text>
-                      //     ) : (
-                      //       <Image
-                      //         source={require("../../images/tick.png")}
-                      //         style={styles.tickImage}
-                      //       />
-                      //     )
-                      //   ) : (
-                      //     setIsVerified(true)
-                      //   )
-                      // }
-                      rightCompPress={() => {
-                        setIsVerified(!isVerified);
-                      }}
-                      isMultiline={comp.isMultiline}
-                      maxLength={comp.maxLength}
-                      isDisabled={comp.isDisabled}
-                    />
-                  )
+
+                  <FormControl
+                    compType={comp.type}
+                    control={control}
+                    validations={comp.validations}
+                    name={comp.id}
+                    label={comp.label}
+                    errors={errors[comp.id]}
+                    isRequired={comp.isRequired}
+                    placeholder={comp.placeHolder}
+                    data={comp.data}
+                    key={comp.id}
+                    setValue={setValue}
+                    showRightComp={comp.showRightComp}
+                    type={comp.keyboardtype}
+                    // rightComp={() =>
+                    //   !errors[comp.id] &&
+                    //   getValues("adhaarNumber")?.length === 12 ? (
+                    //     isVerified ? (
+                    //       <Text>Verify</Text>
+                    //     ) : (
+                    //       <Image
+                    //         source={require("../../images/tick.png")}
+                    //         style={styles.tickImage}
+                    //       />
+                    //     )
+                    //   ) : (
+                    //     setIsVerified(true)
+                    //   )
+                    // }
+                    rightCompPress={() => {
+                      setIsVerified(!isVerified);
+                    }}
+                    isMultiline={comp.isMultiline}
+                    maxLength={comp.maxLength}
+                    isDisabled={comp.isDisabled}
+                  />
+
                 );
               })}
             </View>

@@ -1,5 +1,6 @@
 import { smartstore } from "react-native-force";
 import { log } from "../../utils/ConsoleLogUtils";
+import { soupConfig } from "./SoupConstants";
 
 export const checkSoupExists = async (soupName) => {
   return new Promise((resolve, reject) => {
@@ -44,6 +45,56 @@ export const upsertSoupEntries = async (soupName, records) => {
         reject(error);
       }
     );
+  });
+};
+
+export const upsertSoupEntriesWithExternalId = async (soupName, records) => {
+  return new Promise((resolve, reject) => {
+
+    const querySpec = smartstore.buildExactQuerySpec(soupConfig.applicationList.externalId,
+      records[soupConfig.applicationList.externalId]
+    )
+
+    smartstore.querySoup(false, soupName, querySpec, async (cursor) => {
+      if (cursor.currentPageOrderedEntries.length > 0) {
+        // assuming only one record,
+        let existingRecord = cursor.currentPageOrderedEntries[0]
+        for (const key in records) {
+          console.log("key>>>", key)
+          existingRecord[key] = records[key] ? records[key] : null
+        }
+        smartstore.upsertSoupEntriesWithExternalId(
+          false,
+          soupName,
+          [existingRecord],
+          soupConfig.applicationList.externalId,
+          (data) => {
+            resolve(data);
+          },
+          (error) => {
+            log("upsertSoupEntries error>>" + soupName, error);
+            reject(error);
+          }
+        );
+
+      } else {
+        smartstore.upsertSoupEntriesWithExternalId(
+          false,
+          soupName,
+          [records],
+          soupConfig.applicationList.externalId,
+          (data) => {
+            resolve(data);
+          },
+          (error) => {
+            log("upsertSoupEntries error>>" + soupName, error);
+            reject(error);
+          }
+        );
+      }
+
+    })
+
   });
 };
 

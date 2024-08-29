@@ -1,5 +1,5 @@
 import {
-  
+
   useMutation,
   useQueries,
 } from "@tanstack/react-query";
@@ -22,7 +22,8 @@ import { soupConfig } from "./sfDBServices/SoupConstants";
 import { getAllSoupEntries } from "./sfDBServices/salesforceDbUtils";
 
 import { LOAN_DETAILS_KEYS } from "../constants/stringConstants";
-import { compositeRequest, DedupeApi, postObjectData } from "./sfDataServices/netService";
+import { compositeRequest, DedupeApi, getLeadList, postObjectData } from "./sfDataServices/netService";
+import LocalStorage from "./LocalStorage";
 
 export const logoutApi = () => {
   console.log("LOGOUT API");
@@ -63,6 +64,26 @@ export const getHomeScreenDetails = () => {
         try {
           // FETCH THE PINCODE DATA
 
+          const getLeadListData = await getLeadList(LocalStorage?.getUserData()?.Phone)
+          if (getLeadListData && getLeadListData.records?.length > 0) {
+
+            for (let i = 0; i < getLeadListData.records.length; i++) {
+
+              //save the record into the soup
+              let record = getLeadListData.records[i];
+              const data = { loanId: record?.Id, applicationDetails: record }
+            
+              await saveApplicationData(data)
+              
+
+
+            }
+
+
+          } else {
+            resolve([]);
+          }
+
 
 
           const data = await getAllSoupEntries(
@@ -77,6 +98,7 @@ export const getHomeScreenDetails = () => {
             resolve([]);
           }
         } catch (error) {
+          console.log("error>>", error)
           resolve([]);
         }
       });
@@ -1012,10 +1034,24 @@ export const useSubmitApplicationFormData = (pincodeData) => {
 
               // loan create
 
-              const compositeRequestResponse = await compositeRequest(createLoanAndAppplicantCompositeRequest(data, leadcreateResponse?.id))
-              if (compositeRequestResponse){
-                log("compositeRequestResponse>>>", JSON.stringify(compositeRequestResponse))
+              const response = await compositeRequest(createLoanAndAppplicantCompositeRequest(data, leadcreateResponse?.id))
+              if (response) {
+                //log("compositeRequestResponse>>>", JSON.stringify(compositeRequestResponse))
+                const loanId = response?.compositeResponse?.[0]?.body?.id
+                const applicationId = response?.compositeResponse?.[1]?.body?.id
+
+                const defaultData = soupConfig.applicationList.default
+                defaultData.loanId = loanId
+                defaultData.applicationDetails = { ...data, Applicant__c: applicationId, Id: loanId ,
+                  Lead__c: leadcreateResponse?.id
+                }
+
+                console.log("application Data", defaultData)
+
+                await saveApplicationData(defaultData)
+                resolve({ ...defaultData })
               }
+
 
 
             }
@@ -1043,10 +1079,10 @@ export const useSubmitApplicationFormData = (pincodeData) => {
 
 
         //  await saveApplicationData(defaultData);
-        setTimeout(() => {
-          //resolve({ ...defaultData });
-          reject(ErrorConstants.SOMETHING_WENT_WRONG)
-        }, 3000);
+        // setTimeout(() => {
+        //   //resolve({ ...defaultData });
+        //   reject(ErrorConstants.SOMETHING_WENT_WRONG)
+        // }, 3000);
         //
 
 

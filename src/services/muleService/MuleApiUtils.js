@@ -61,7 +61,7 @@ const makeAadharinitiateCall = async (body) => {
   }
 };
 
-export const verifyAadhar = (panNumber, loanData) => {
+export const verifyAadhar = (panNumber, loanData, panName) => {
   const mutate = useMutation({
     mutationFn: (body) => {
       const adhaarToken = body?.intitialResponse?.results?.aadharToken
@@ -89,22 +89,42 @@ export const verifyAadhar = (panNumber, loanData) => {
 
           try {
             checkPanAdhaarLinked(adhaarToken, panNumber, adhaarName)
-              .then(async () => {
+              .then(async (panAadharResponse) => {
                 try {
 
                   console.log('here------------------1', loanData)
                   let loanDetails = { ...loanData };
                   loanDetails.adhaarDetails = adhaarVerifyResponse.data?.results;
-                  console.log('here------------------12')
-                  await saveApplicationData(loanDetails)
-                  resolve(loanDetails)
+
+               
+
+
+                    console.log('here------------------12')
+                    await saveApplicationData(loanDetails)
+                    resolve(loanDetails)
+             
+                 
+                  
                 } catch (error) {
                   log('ERRor, ', error)
                   reject(ErrorConstants.SOMETHING_WENT_WRONG)
                 }
 
               })
-              .catch((error) => reject(ErrorConstants.SOMETHING_WENT_WRONG));
+              .catch(async(error) =>{
+                try {
+                  console.log('name match check------------------12')
+                  const nameMatcshCheck = await nameCheck(panName, adhaarName)
+                  if (nameMatcshCheck) {
+                    await saveApplicationData(loanDetails)
+                    resolve(loanDetails)
+                  }
+
+                } catch (error) {
+                  reject("Pan and Aadhar details are not matched")
+                }
+                
+                reject(ErrorConstants.SOMETHING_WENT_WRONG)});
           } catch (error) {
             reject(ErrorConstants.SOMETHING_WENT_WRONG);
           }
@@ -292,8 +312,8 @@ export const makeAdhaarEKYCCall = () => {
         "consentTime": getConsentTime(),
         "consentText": "Test",
         "caseId": getUniqueId(),
-        "aadharNumber": body?.toString(),
-        "aadharName": "Harikrishna kv"
+        "aadharNumber": body?.number?.toString(),
+        "aadharName": body?.name
       }
       return instance.post('/digital-kyc-v1/api/aadhar-initiate-by-number', requestBody)
       // return new Promise(async (resolve, reject) => {
@@ -353,8 +373,14 @@ export const checkPanLinkWithAdhaar = (pan) => {
             "digital-kyc-v1/api/pan-aadhar-linked",
             bodyRequest
           );
-          console.log({ linkedResponse });
-          resolve(linkedResponse);
+
+          if (linkedResponse?.results?.linked) {
+            console.log({ linkedResponse });
+            resolve(linkedResponse);
+          } else { }
+
+
+
         } catch (error) {
           console.log(error.response);
           reject(ErrorConstants.SOMETHING_WENT_WRONG);
