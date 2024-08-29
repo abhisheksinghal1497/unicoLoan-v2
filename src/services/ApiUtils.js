@@ -22,7 +22,7 @@ import { soupConfig } from "./sfDBServices/SoupConstants";
 import { getAllSoupEntries } from "./sfDBServices/salesforceDbUtils";
 
 import { LOAN_DETAILS_KEYS } from "../constants/stringConstants";
-import { compositeRequest, DedupeApi, getLeadList, postObjectData } from "./sfDataServices/netService";
+import { compositeRequest, DedupeApi, getLeadList, leadConvertApi, postObjectData } from "./sfDataServices/netService";
 import LocalStorage from "./LocalStorage";
 
 export const logoutApi = () => {
@@ -72,9 +72,9 @@ export const getHomeScreenDetails = () => {
               //save the record into the soup
               let record = getLeadListData.records[i];
               const data = { loanId: record?.Id, applicationDetails: record }
-            
+
               await saveApplicationData(data)
-              
+
 
 
             }
@@ -900,6 +900,7 @@ export const getApplicationDetailsForm = () => {
               isRequired: true,
               value: "",
               maxLength: 4,
+              keyboardtype: "numeric",
             },
             //  missing from backend
             {
@@ -922,6 +923,7 @@ export const getApplicationDetailsForm = () => {
               validations: validations.yyMMDate,
               isRequired: true,
               value: "",
+              keyboardtype: "numeric",
             },
             // missing from backend
             {
@@ -933,6 +935,7 @@ export const getApplicationDetailsForm = () => {
               isRequired: true,
               maxLength: 4,
               value: "",
+              keyboardtype: "numeric",
             },
             // missing from backend
 
@@ -980,6 +983,7 @@ export const getApplicationDetailsForm = () => {
               isRequired: true,
               maxLength: 4,
               value: "",
+              keyboardtype: "numeric",
             },
 
             {
@@ -1040,16 +1044,28 @@ export const useSubmitApplicationFormData = (pincodeData) => {
                 const loanId = response?.compositeResponse?.[0]?.body?.id
                 const applicationId = response?.compositeResponse?.[1]?.body?.id
 
-                const defaultData = soupConfig.applicationList.default
-                defaultData.loanId = loanId
-                defaultData.applicationDetails = { ...data, Applicant__c: applicationId, Id: loanId ,
-                  Lead__c: leadcreateResponse?.id
+                if (loanId && applicationId) {
+
+                  // convert lead to loan
+
+                  const leadConvertApiResponse = await leadConvertApi(leadcreateResponse?.id, data?.MobNumber__c);
+                  
+
+                  const defaultData = soupConfig.applicationList.default
+                  defaultData.loanId = loanId
+                  defaultData.applicationDetails = {
+                    ...data, Applicant__c: applicationId, Id: loanId,
+                    Lead__c: leadcreateResponse?.id
+                  }
+
+                  console.log("application Data", defaultData)
+
+                  await saveApplicationData(defaultData)
+
+                  resolve({ ...defaultData })
+                } else {
+                  reject(ErrorConstants.SOMETHING_WENT_WRONG)
                 }
-
-                console.log("application Data", defaultData)
-
-                await saveApplicationData(defaultData)
-                resolve({ ...defaultData })
               }
 
 

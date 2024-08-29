@@ -64,7 +64,7 @@ export const DedupeApi = (LeadId) => {
         resolve(res);
       },
       (error) => {
-        alert("error")
+        
         reject(error);
       },
       "GET"
@@ -72,6 +72,10 @@ export const DedupeApi = (LeadId) => {
   });
 
 };
+
+
+
+
 
 
 export const postObjectData = (objectName, data) => {
@@ -158,4 +162,25 @@ export const getLeadList = (phone) => {
 
     );
   });
+};
+
+export const leadConvertApi = (LeadId, mobile) => {
+
+  return new Promise((resolve, reject) => {
+    net.sendRequest(
+      "/services/apexrest",
+      `/leadConverted?leadId=${LeadId}&mobileNumber=${mobile}`,
+      (res) => {
+        // console.log("Entered");
+        console.log("res", res);
+        resolve(res);
+      },
+      (error) => {
+        
+        reject(error);
+      },
+      "GET"
+    );
+  });
+
 };

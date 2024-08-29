@@ -77,7 +77,7 @@ export const GetPicklistValues = (arr, fieldName, defaultValues) => {
       return {};
     }
     const data = arr?.find((value) => value.name === fieldName)?.picklistValues;
-   
+
 
     return data && data?.length > 0 ? data : defaultValues;
   } catch (error) {
@@ -202,7 +202,7 @@ export const getLoanCreateRequest = (data, leadId) => {
       ReqTenInMonths__c: data?.ReqTenInMonths__c,
       ReqLoanAmt__c: data?.ReqLoanAmt__c,
       PropertyIdentified__c: data?.PropertyIdentified__c ? data.PropertyIdentified__c === "Yes" ?
-        1 : 0 : null,
+        1 : 0 : undefined,
       Lead__c: leadId
     }
 
@@ -214,8 +214,8 @@ export const getLoanCreateRequest = (data, leadId) => {
 export const getApplicantRequest = (data) => {
   try {
     return {
-      FName__c: data?.FName__c,
-      MName__c: data?.MName__c,
+      FName__c: data?.FirstName,
+      MName__c: data?.MiddleName,
       LName__c: data?.LName__c,
       MobNumber__c: data?.MobNumber__c,
       AltMobile__c: data?.AltMobile__c,
@@ -260,7 +260,7 @@ export const getPeriodValues = (str, index) => {
 }
 
 
-export const  isEmptyObject = (obj)=> {
+export const isEmptyObject = (obj) => {
   return Object.keys(obj).length === 0;
 }
 

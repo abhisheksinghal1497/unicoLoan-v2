@@ -55,7 +55,7 @@ export default function ApplicationDetails(props) {
   const [mock_data, setMockData] = useState([]);
   const applicationFormMutate = useSubmitApplicationFormData(pincodeData);
   const resetRoute = useResetRoutes();
- 
+
 
 
 
@@ -219,7 +219,7 @@ export default function ApplicationDetails(props) {
       id !== "If_rented_rent_per_month__c" &&
       id !== "Employment_experience__c" &&
       id !== "Total_Work_Experience__c" &&
-      id !== "totalBusinessExperience"
+      id !== "Total_Business_Experience__c"
     ) {
       return true;
     }
@@ -236,7 +236,7 @@ export default function ApplicationDetails(props) {
       return true;
     } else if (
       id === "Total_Business_Experience__c" &&
-      watch("customerProfile") === "self-employed"
+      watch("Customer_Profile__c") === "Self-Employed"
     ) {
       return true;
     } else {
