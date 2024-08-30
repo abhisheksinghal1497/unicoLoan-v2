@@ -58,6 +58,7 @@ const KYC = (props) => {
   const uploadAadharToMuleService = uploadAadharPhotos();
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
+  
 
   const {
     applicationDetails = {},

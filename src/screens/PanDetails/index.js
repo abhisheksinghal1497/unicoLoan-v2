@@ -29,7 +29,7 @@ import {
   uploadAndVerifyPan,
   nameMatchCheck,
 } from "../../services/muleService/MuleApiUtils";
-import { submitPanApi, useSubmitPanForm } from "../../services/ApiUtils";
+import {  useSubmitPanForm } from "../../services/ApiUtils";
 import { error, log } from "../../utils/ConsoleLogUtils";
 import ImagePicker from "react-native-image-crop-picker";
 import AdhaarSection from "../../components/AdhaarSection";
@@ -48,7 +48,7 @@ const PanDetails = (props) => {
   const [responseData, setResponseData] = useState(null);
   const [panDetails, setPanDetails] = useState(null);
   const panSubmitMutate = useSubmitPanForm(loanData);
-  
+  console.log(">>>>>>>>", loanData)
   const {
     control,
     handleSubmit,

@@ -4,11 +4,13 @@ import { fetch, useNetInfo } from "@react-native-community/netinfo";
 import { errorConsoleLog, log } from "../../utils/ConsoleLogUtils";
 import ErrorConstants from "../../constants/ErrorConstants";
 import {
+  createCompositeRequestForPanAadhar,
   getConsentTime,
   getIpAddress,
   getUniqueId,
 } from "../../utils/functions";
 import { saveApplicationData } from "../sfDataServices/saleforceApiUtils";
+import { compositeRequest } from "../sfDataServices/netService";
 
 export const verifyPanApi = () => {
   const mutate = useMutation({
@@ -89,42 +91,55 @@ export const verifyAadhar = (panNumber, loanData, panName) => {
 
           try {
             checkPanAdhaarLinked(adhaarToken, panNumber, adhaarName)
-              .then(async (panAadharResponse) => {
+              .then(async () => {
                 try {
 
                   console.log('here------------------1', loanData)
                   let loanDetails = { ...loanData };
                   loanDetails.adhaarDetails = adhaarVerifyResponse.data?.results;
 
-               
 
 
-                    console.log('here------------------12')
+
+                  console.log('here------------------12')
+                  const response = await compositeRequest(createCompositeRequestForPanAadhar(loanDetails, request))
+                  if (response) {
                     await saveApplicationData(loanDetails)
-                    resolve(loanDetails)
-             
-                 
-                  
+                    resolve({...loanDetails})
+                  }else{
+                    reject(ErrorConstants.SOMETHING_WENT_WRONG)
+                  }
+
+
+
                 } catch (error) {
                   log('ERRor, ', error)
                   reject(ErrorConstants.SOMETHING_WENT_WRONG)
                 }
 
               })
-              .catch(async(error) =>{
+              .catch(async (error) => {
                 try {
                   console.log('name match check------------------12')
                   const nameMatcshCheck = await nameCheck(panName, adhaarName)
                   if (nameMatcshCheck) {
-                    await saveApplicationData(loanDetails)
-                    resolve(loanDetails)
+                    let loanDetails = {...loanData} ;
+                    loanDetails.adhaarDetails = adhaarVerifyResponse.data?.results;
+                    const response = await compositeRequest(createCompositeRequestForPanAadhar(loanDetails, request))
+                    if (response) {
+                      await saveApplicationData(loanDetails)
+                      resolve({...loanDetails})
+                    }else{
+                      reject(ErrorConstants.SOMETHING_WENT_WRONG)
+                    }
                   }
 
                 } catch (error) {
-                  reject("Pan and Aadhar details are not matched")
+                  reject("Pan and Aadhar details are not matching.")
                 }
-                
-                reject(ErrorConstants.SOMETHING_WENT_WRONG)});
+
+                reject(ErrorConstants.SOMETHING_WENT_WRONG)
+              });
           } catch (error) {
             reject(ErrorConstants.SOMETHING_WENT_WRONG);
           }

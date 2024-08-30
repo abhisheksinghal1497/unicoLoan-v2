@@ -266,5 +266,104 @@ export const isEmptyObject = (obj) => {
 
 // Example usage
 
+export const createCompositeRequestForPanAadhar = (loanData, aadharData) => {
+
+  try {
+    let compositeRequest = [
+      {
+        "method": "POST",
+        "url": `/services/data/${net.getApiVersion()}/sobjects/ApplKyc__c`,
+        "referenceId": "pan",
+        "body": getPanCreateRequest(loanData)
+
+      },
+
+      {
+        "method": "POST",
+        "url": `/services/data/${net.getApiVersion()}/sobjects/ApplKyc__c`,
+        "referenceId": "aadhar",
+        "body": getAadharCreateRequest(loanData, aadharData)
+      },
+
+
+    ]
+
+    return compositeRequest;
+  } catch (error) {
+    log("createCompositeRequestForPanAadhar>>>error", error)
+    return null
+  }
+
+
+}
+
+
+export const getPanCreateRequest = (data) => {
+  //   // RM__c: data?.RM__c,
+  try {
+    return {
+      Applicant__c: data?.Applicant__c,
+      Pan__c: data?.panDetails?.panNumber,
+      NameInPan__c: data?.panDetails.panName,
+      kycDoc__c: "Pan"
+    }
+
+  } catch (error) {
+    return null
+  }
+}
+
+
+export const getAadharCreateRequest = (data, aadharData) => {
+  //   // RM__c: data?.RM__c,
+  try {
+    return {
+      OCRStatus__c:"Success",
+      Applicant__c: data?.Applicant__c,
+      kycDoc__c: "Aadhaar",
+      Aadhar_Reference_Number__c: "",
+      Encrypted_Aadhar_OCR__c: "",
+      Karza_Aadhar_OCR_AccessKey__c: aadharData?.accessKey,
+      Karza_Aadhar_OCR_CaseId__c: aadharData?.caseId,
+      AdharEncrypt__c: aadharData?.encryptedAadhar,
+      NameInAdhr__c: data?.adhaarDetails?.name,
+      DtOfBirth__c: data?.adhaarDetails?.dob,
+      Gender__c: data?.adhaarDetails?.gender,
+      FatherName__c: data?.adhaarDetails?.fatherName,
+      HouseNo__c: data?.adhaarDetails?.address?.splitAddress?.houseNumber,
+      Street__c: data?.adhaarDetails?.address?.splitAddress?.street,
+      Landmark__c: data?.adhaarDetails?.address?.splitAddress?.landmark,
+      District__c: data?.adhaarDetails?.address?.splitAddress?.district,
+      Locality__c: data?.adhaarDetails?.address?.splitAddress?.location,
+      State__c: data?.adhaarDetails?.address?.splitAddress?.state,
+      Country__c: data?.adhaarDetails?.address?.splitAddress?.country,
+      Pincode__c: data?.adhaarDetails?.address?.splitAddress?.pincode,
+      AdhrAdd__c: data?.adhaarDetails?.address?.combinedAddress?.toString()?.length <= 255 ?
+        data?.adhaarDetails?.address?.combinedAddress : undefined // in SF address take max length upto 255
+    }
+
+  } catch (error) {
+    return null
+  }
+}
+
+export const createCurrentAddressIsSameAsPermanentRequest = (data) =>{
+  try {
+    return {
+      Sm_as_Per_Adr__c: 1,
+      AddrTyp__c: "Current Address",
+      HouseNo__c: data?.adhaarDetails?.address?.splitAddress?.houseNumber,
+      Landmark__c: data?.adhaarDetails?.address?.splitAddress?.landmark,
+      District__c: data?.adhaarDetails?.address?.splitAddress?.district,
+      Locality__c: data?.adhaarDetails?.address?.splitAddress?.location,
+      State__c: data?.adhaarDetails?.address?.splitAddress?.state,
+      Country__c: data?.adhaarDetails?.address?.splitAddress?.country,
+      Pincode__c: data?.adhaarDetails?.address?.splitAddress?.pincode,
+      Applicant__c: data?.Applicant__c,
+    }
+  } catch (error) {
+    return null
+  }
+}
 
 

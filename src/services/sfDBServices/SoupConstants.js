@@ -7,9 +7,9 @@ export const soupConfig = {
     name: "Pincode",
     path: "Id",
   },
-  LoanApplicantFields:{
+  LoanApplicantFields: {
     name: "LoanAppl__c",
-    path:"Applicant_Mob_No__c"
+    path: "Applicant_Mob_No__c"
   },
   ApplicantFields: {
     name: "Applicant__c",
@@ -18,9 +18,9 @@ export const soupConfig = {
   applicationList: {
     name: "LoanApplication",
     path: "loanId",
-    externalId:"External_ID",
+    externalId: "External_ID",
     default: {
-      loanId : null,
+      loanId: null,
       pincodeDetails: null, // get from homescreen
       applicationDetails: null, // Form Data
       panDetails: null,
@@ -30,7 +30,10 @@ export const soupConfig = {
       loanDetails: null,
       eligibilityDetails: null,
       sanctionDetails: null,
-      currentAddressDetails: null
+      currentAddressDetails: null,
+      Applicant__c: null,
+      Lead__c: null,
+      Id: null
     }
   },
 };

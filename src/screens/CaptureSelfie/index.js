@@ -19,6 +19,7 @@ const CaptureSelfie = ({ navigation }) => {
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
   const selfieMutate = useSaveSelfie(loanData);
+  console.log(">>>>>",loanData)
   const onCameraPress = ({ front = false }) => {
     ImagePicker.openCamera({
       cropping: true,

@@ -9,7 +9,7 @@ import { log } from "../utils/ConsoleLogUtils";
 import { validations } from "../constants/validations";
 import { component } from "../components/FormComponents/FormControl";
 
-import { createLoanAndAppplicantCompositeRequest, getLeadCreationRequest, GetPicklistValues, getUniqueId, toast } from "../utils/functions";
+import { createCurrentAddressIsSameAsPermanentRequest, createLoanAndAppplicantCompositeRequest, getLeadCreationRequest, GetPicklistValues, getUniqueId, toast } from "../utils/functions";
 import {
   getLeadFields,
   getPincodeData,
@@ -71,7 +71,7 @@ export const getHomeScreenDetails = () => {
 
               //save the record into the soup
               let record = getLeadListData.records[i];
-              const data = { loanId: record?.Id, applicationDetails: record }
+              const data = { loanId: record?.Id, applicationDetails: record, Applicant__c: record?.Applicants__r?.records?.[0].Id }
 
               await saveApplicationData(data)
 
@@ -607,46 +607,9 @@ export const getQueryDetailsById = (id, isSuccess = true) => {
   return query;
 };
 
-export const verifyPanApi = () => {
-  const mutate = useMutation({
-    networkMode: "always",
-    mutationFn: async (data) => {
-      console.log({ data });
-      const { panNumber, success = true } = data;
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (success) {
-            resolve({ valid: true, message: "Pan is valid", panNumber });
-          } else {
-            reject({ message: "Pan is not valid", panNumber });
-          }
-        }, 3000);
-      });
-    },
-  });
 
-  return mutate;
-};
 
-export const submitPanApi = () => {
-  const mutate = useMutation({
-    networkMode: "always",
-    mutationFn: async (data) => {
-      const { panNumber, success = true } = data;
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (success) {
-            resolve({ valid: true, message: "Pan is valid", panNumber });
-          } else {
-            reject({ message: "Pan is not valid", panNumber });
-          }
-        }, 3000);
-      });
-    },
-  });
 
-  return mutate;
-};
 
 export const getApplicationDetailsForm = () => {
   const mutate = useMutation({
@@ -1049,14 +1012,16 @@ export const useSubmitApplicationFormData = (pincodeData) => {
                   // convert lead to loan
 
                   const leadConvertApiResponse = await leadConvertApi(leadcreateResponse?.id, data?.MobNumber__c);
-                  
+
 
                   const defaultData = soupConfig.applicationList.default
                   defaultData.loanId = loanId
                   defaultData.applicationDetails = {
-                    ...data, Applicant__c: applicationId, Id: loanId,
-                    Lead__c: leadcreateResponse?.id
+                    ...data
                   }
+                  defaultData.Applicant__c = applicationId
+                  defaultData.Id = loanId,
+                    defaultData.Lead__c = leadcreateResponse?.id
 
                   console.log("application Data", defaultData)
 
@@ -1531,13 +1496,17 @@ export const useSaveSelfie = (loanData) => {
     networkMode: "always",
     mutationFn: async (selfie) => {
       return new Promise(async (resolve, reject) => {
-        let data = { ...loanData };
-        data.selfieDetails = { ...selfie };
+        let data = {...loanData} ;
+        data.selfieDetails = selfie ;
         log("data>>", data)
 
         try {
           const response = await saveApplicationData(data);
+          if(response){
           resolve(data);
+          }else{
+            reject(ErrorConstants.SOMETHING_WENT_WRONG);
+          }
         } catch (error) {
           reject(ErrorConstants.SOMETHING_WENT_WRONG);
         }
@@ -1558,12 +1527,18 @@ export const useKycDocument = (loanData) => {
           address: loanData?.adhaarDetails?.address?.splitAddress,
           fullAddress: loanData?.adhaarDetails?.address?.combinedAddress,
         };
-        console.log('FULL ADDRESS', data.currentAddressDetails)
-        try {
-          await saveApplicationData(data);
-          resolve(data);
-        } catch (error) {
-          reject(ErrorConstants.SOMETHING_WENT_WRONG);
+
+        const saveCurrentAddress = await postObjectData("ApplAddr__c", createCurrentAddressIsSameAsPermanentRequest(data))
+        if (saveCurrentAddress) {
+          console.log('FULL ADDRESS', data.currentAddressDetails)
+          try {
+            await saveApplicationData(data);
+            resolve(data);
+          } catch (error) {
+            reject(ErrorConstants.SOMETHING_WENT_WRONG);
+          }
+        } else {
+          reject(ErrorConstants.SOMETHING_WENT_WRONG)
         }
       });
     },
