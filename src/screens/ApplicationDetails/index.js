@@ -7,10 +7,7 @@ import {
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import {
-  FormControl,
-
-} from "../../components/FormComponents/FormControl";
+import { FormControl } from "../../components/FormComponents/FormControl";
 import { useTheme } from "react-native-paper";
 import { screens } from "../../constants/screens";
 import Button from "././../../components/Button";
@@ -41,9 +38,6 @@ import Container from "../../components/Container";
 import { EMAIL_CC, Mobile } from "../../constants/stringConstants";
 import LocalStorage from "../../services/LocalStorage";
 
-
-
-
 export default function ApplicationDetails(props) {
   const route = useRoute();
   const { pincode = "", pincodeData = {} } = route.params || {};
@@ -55,9 +49,11 @@ export default function ApplicationDetails(props) {
   const [mock_data, setMockData] = useState([]);
   const applicationFormMutate = useSubmitApplicationFormData(pincodeData);
   const resetRoute = useResetRoutes();
+  const [showHelpModal, setShowHelpModal] = useState(false);
 
-
-
+  const toggleHelpModal = () => {
+    setShowHelpModal(!showHelpModal);
+  };
 
   useEffect(() => {
     getFormData?.mutate({ pincode: pincodeData });
@@ -67,7 +63,7 @@ export default function ApplicationDetails(props) {
     if (index === 0) {
       props.navigation.navigate(screens.FAQ);
     } else if (index === 1) {
-      props.navigation.navigate(screens.HomeScreen);
+      toggleHelpModal()
     }
   };
 
@@ -91,19 +87,16 @@ export default function ApplicationDetails(props) {
   } = useForm({
     mode: "onBlur",
     defaultValues: {
-
       branchName: "",
       Pincode__c: pincode,
       RM__c: "RM",
       LeadSource__c: "Customer Mobile App",
       Bank_Branch_Name: pincodeData?.Bank_Branch__c,
-      Consent_Status__c: "Verified"
+      Consent_Status__c: "Verified",
     },
   });
 
   const { colors } = useTheme();
-
-
 
   useEffect(() => {
     if (data) {
@@ -128,11 +121,9 @@ export default function ApplicationDetails(props) {
 
       if (!isValid) return;
 
-
       const data = new watch();
       applicationFormMutate.mutate(data);
-      log("application Data", data)
-
+      log("application Data", data);
 
       //
     } catch (error) {
@@ -164,7 +155,6 @@ export default function ApplicationDetails(props) {
     }
     const prevValue = { ...watch() };
     prevValue[id] = value;
-
   };
 
   // DATA THAT IS GOING TO BE POPULATED
@@ -173,9 +163,16 @@ export default function ApplicationDetails(props) {
   useEffect(() => {
     const subscription = watch((value, { name, type }) => {
       try {
-        if (name === "No_of_Family_Dependants_Other__c" || name === "No_of_Family_Dependants_Children__c") {
-          const familyDependentOthers = watch("No_of_Family_Dependants_Other__c")
-          const familyDependantChildren = watch("No_of_Family_Dependants_Children__c")
+        if (
+          name === "No_of_Family_Dependants_Other__c" ||
+          name === "No_of_Family_Dependants_Children__c"
+        ) {
+          const familyDependentOthers = watch(
+            "No_of_Family_Dependants_Other__c"
+          );
+          const familyDependantChildren = watch(
+            "No_of_Family_Dependants_Children__c"
+          );
           var totalDependent = 0;
           if (familyDependentOthers) {
             const value = Number(familyDependentOthers);
@@ -183,38 +180,27 @@ export default function ApplicationDetails(props) {
               // Handle the error
               totalDependent = totalDependent + value;
             }
-
           }
 
           if (familyDependantChildren) {
-
             const value = Number(familyDependantChildren);
             if (!isNaN(value)) {
               // Handle the error
               totalDependent = totalDependent + value;
             }
-
           }
 
-
-
-          setValue("Number_of_Family_Dependants__c", totalDependent?.toString());
-
+          setValue(
+            "Number_of_Family_Dependants__c",
+            totalDependent?.toString()
+          );
         }
-
-      } catch (error) {
-
-      }
-
+      } catch (error) {}
     });
     return () => subscription.unsubscribe();
   }, [watch]);
 
   const checkFormCondition = (id) => {
-
-
-
-
     if (
       id !== "If_rented_rent_per_month__c" &&
       id !== "Employment_experience__c" &&
@@ -226,8 +212,11 @@ export default function ApplicationDetails(props) {
 
     const Present_Accomodation__c = watch("Present_Accomodation__c");
 
-    if (id === "If_rented_rent_per_month__c" && Present_Accomodation__c && Present_Accomodation__c?.toString()?.includes("Rented")) {
-
+    if (
+      id === "If_rented_rent_per_month__c" &&
+      Present_Accomodation__c &&
+      Present_Accomodation__c?.toString()?.includes("Rented")
+    ) {
       return true;
     } else if (
       watch("Customer_Profile__c") === "Salaried" &&
@@ -285,6 +274,8 @@ export default function ApplicationDetails(props) {
             onPressLeft={() => {
               props?.navigation?.goBack();
             }}
+            showHelpModal={showHelpModal}
+            toggleHelpModal={toggleHelpModal}
           />
         </View>
         <ScrollView contentContainerStyle={style.scrollviewStyle}>
@@ -328,9 +319,8 @@ export default function ApplicationDetails(props) {
             })}
           </View>
 
-          {mock_data && mock_data?.length > 0 &&
+          {mock_data && mock_data?.length > 0 && (
             <>
-
               <View
                 style={{
                   flexDirection: "row",
@@ -346,8 +336,8 @@ export default function ApplicationDetails(props) {
                     style={{ width: 22, height: 22, resizeMode: "contain" }}
                     source={
                       isChecked
-                        ? require("../../../assets/images/checked.png")
-                        : require("../../../assets/images/box.png")
+                        ? require("../../assets/checked.png")
+                        : require("../../assets/box.png")
                     }
                   />
                 </TouchableOpacity>
@@ -375,7 +365,7 @@ export default function ApplicationDetails(props) {
                 />
               </View>
             </>
-          }
+          )}
           <CustomModal
             modalStyle={style.modalstyle}
             showModal={modalVisible2}
@@ -384,7 +374,7 @@ export default function ApplicationDetails(props) {
           >
             <TouchableOpacity onPress={() => setModalVisible2(false)}>
               <Image
-                source={require("../../../assets/images/crossGray.png")}
+                source={require("../../assets/crossGray.png")}
                 style={{
                   width: 17,
                   height: 17,

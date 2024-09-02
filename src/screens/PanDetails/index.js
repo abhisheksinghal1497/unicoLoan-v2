@@ -79,6 +79,11 @@ const PanDetails = (props) => {
   ];
   const verifyPan = verifyPanApi();
   const uploadPan = uploadAndVerifyPan();
+  const [showHelpModal, setShowHelpModal] = useState(false);
+
+  const toggleHelpModal = () => {
+    setShowHelpModal(!showHelpModal);
+  };
   // const savePan = submitPanApi();
 
   useEffect(() => {
@@ -226,7 +231,7 @@ const PanDetails = (props) => {
     if (index === 0) {
       props.navigation.navigate(screens.FAQ);
     } else if (index === 1) {
-      props.navigation.navigate(screens.HomeScreen);
+      toggleHelpModal();
     }
   };
 
@@ -300,6 +305,8 @@ const PanDetails = (props) => {
           });
 
         }}
+        showHelpModal={showHelpModal}
+        toggleHelpModal={toggleHelpModal}
       />
       <ScrollView
         style={{ marginBottom: 25 }}

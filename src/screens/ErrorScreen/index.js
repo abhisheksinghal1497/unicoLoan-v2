@@ -6,7 +6,7 @@ const ErrorScreen = () => {
     return (
         <View style={styles.container}>
             <Image
-                source={require('../../../assets/images/TechnicalError.png')}
+                source={require('../../assets/TechnicalError.png')}
                 style={styles.image}
                 resizeMode="contain"
             />

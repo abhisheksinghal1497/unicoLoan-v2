@@ -74,8 +74,8 @@ export default DropDown = ({
                 style={{ width: 22, height: 22, resizeMode: "contain" }}
                 source={
                   valueText && valueText === item?.label
-                    ? require("../../../assets/images/checked.png")
-                    : require("../../../assets/images/box.png")
+                    ? require("../../assets/checked.png")
+                    : require("../../assets/box.png")
                 }
               />
               <Text style={[styles.itemText, { marginStart: 16 }]}>{item?.label}</Text>
@@ -180,7 +180,7 @@ export default DropDown = ({
 
             <Text style={styles.modalHeaderTxt}> Select {label}</Text>
             <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.crossButton}>
-              <Image source={require('../../../assets/images/cross.png')} style={{ width: 20, height: 20 }} />
+              <Image source={require('../../assets/cross-copy.png')} style={{ width: 20, height: 20 }} />
             </TouchableOpacity>
           </View>
           <FlatList

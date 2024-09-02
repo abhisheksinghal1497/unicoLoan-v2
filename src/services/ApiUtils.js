@@ -208,37 +208,37 @@ export const getHomeScreenOurServices = () => {
             {
               key: "EMI calculators",
               title: "EMI Calculators",
-              image: require("../../assets/images/Calculators.png"),
+              image: require("../assets/Calculators.png"),
             },
             {
               key: "applyForLoan",
               title: "Apply For Loan",
-              image: require("../../assets/images/applyForLoan.png"),
+              image: require("../assets/applyForLoan.png"),
             },
             {
               key: "statusCheck",
               title: "Status Check",
-              image: require("../../assets/images/StatusCheck.png"),
+              image: require("../assets/StatusCheck.png"),
             },
             {
               key: "RaiseTicket",
               title: "Raise Ticket",
-              image: require("../../assets/images/RaiseTicket.png"),
+              image: require("../assets/RaiseTicket.png"),
             },
             {
               key: "Myticket",
               title: "My ticket",
-              image: require("../../assets/images/MyTickett.png"),
+              image: require("../assets/MyTickett.png"),
             },
             {
               key: "FAQs",
               title: "FAQs",
-              image: require("../../assets/images/FAQ.png"),
+              image: require("../assets/FAQ.png"),
             },
             {
               key: "Services",
               title: "Services",
-              image: require("../../assets/images/FAQ.png"),
+              image: require("../assets/FAQ.png"),
             },
           ];
           resolve(data);
@@ -302,17 +302,17 @@ export const getRaiseTicketsScreenCategory = () => {
             {
               key: "Query",
               title: "Query",
-              image: require("../../assets/images/warning.png"),
+              image: require("../assets/warning.png"),
             },
             {
               key: "Request",
               title: "Request",
-              image: require("../../assets/images/chat.png"),
+              image: require("../assets/chat.png"),
             },
             {
               key: "Complaint",
               title: "Complaint",
-              image: require("../../assets/images/query.png"),
+              image: require("../assets/query.png"),
             },
           ];
           resolve(data);

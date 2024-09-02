@@ -55,6 +55,11 @@ const LoanDetails = (props) => {
       [LOAN_DETAILS_KEYS.currAddr]: loanData?.currentAddressDetails?.fullAddress,
     },
   });
+  const [showHelpModal, setShowHelpModal] = useState(false);
+
+  const toggleHelpModal = () => {
+    setShowHelpModal(!showHelpModal);
+  };
 
 
   useEffect(() => {
@@ -210,6 +215,8 @@ const LoanDetails = (props) => {
         onPressLeft={() => {
           props?.navigation.goBack();
         }}
+        showHelpModal={showHelpModal}
+        toggleHelpModal={toggleHelpModal}
       />
       {formData?.isPending && <ActivityIndicatorComponent />}
       <ScrollView

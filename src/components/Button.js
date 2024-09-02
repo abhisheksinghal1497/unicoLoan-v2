@@ -112,6 +112,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: customTheme.colors.primary,
     borderRadius: 50,
+    
   },
   seconderyButtonContainer: {
     backgroundColor: colors.white,

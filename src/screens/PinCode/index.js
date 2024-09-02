@@ -1,19 +1,29 @@
-import { ScrollView, StatusBar, StyleSheet, Text, View, Image, TouchableOpacity, Alert, Button as B } from 'react-native'
-import React, { useState } from 'react'
-import Header from '../../components/Header';
-import { horizontalScale, verticalScale } from '../../utils/matrcis';
-import { colors } from '../../colors';
-import OTPInputView from '@twotalltotems/react-native-otp-input';
-import Button from '../../components/Button'
-import CustomModal from '../../components/CustomModal';
+import {
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  Alert,
+  Button as B,
+} from "react-native";
+import React, { useState } from "react";
+import Header from "../../components/Header";
+import { horizontalScale, verticalScale } from "../../utils/matrcis";
+import { colors } from "../../colors";
+import OTPInputView from "@twotalltotems/react-native-otp-input";
+import Button from "../../components/Button";
+import CustomModal from "../../components/CustomModal";
 
 const PinCodeVerify = ({ navigation }) => {
-  const [code, setCode] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [code, setCode] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [isChecked, setIsChecked] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
+  const [modalMessage, setModalMessage] = useState("");
 
   const handleCheckBoxClick = () => {
     setIsChecked(!isChecked);
@@ -22,25 +32,25 @@ const PinCodeVerify = ({ navigation }) => {
   const handleCodeChanged = (newCode) => {
     setCode(newCode);
     if (errorMessage && newCode.length === 6) {
-      setErrorMessage('');
+      setErrorMessage("");
     }
-  }
+  };
 
   const handleOnSubmit = () => {
     return new Promise((resolve, reject) => {
       if (!code) {
-        setErrorMessage('Please Enter the Pin');
-        reject('Please Enter the Pin');
+        setErrorMessage("Please Enter the Pin");
+        reject("Please Enter the Pin");
       } else if (code.length !== 6) {
-        setErrorMessage('Please enter all six digits of Pin');
-        reject('Please enter all six digits of Pin');
+        setErrorMessage("Please enter all six digits of Pin");
+        reject("Please enter all six digits of Pin");
       } else if (isChecked) {
-        setErrorMessage('');
-        reject('Please select the Terms & Conditions checkbox');
+        setErrorMessage("");
+        reject("Please select the Terms & Conditions checkbox");
       } else {
-        setErrorMessage('');
-        console.log('Code is', code);
-        resolve('Verified');
+        setErrorMessage("");
+        console.log("Code is", code);
+        resolve("Verified");
       }
     });
   };
@@ -48,7 +58,7 @@ const PinCodeVerify = ({ navigation }) => {
   const closeModal = () => {
     setModalVisible(false);
     setModalVisible2(false);
-  }
+  };
 
   // const handleOnSubmit = () => {
   //   if (!code) {
@@ -63,15 +73,14 @@ const PinCodeVerify = ({ navigation }) => {
   //     Alert.alert('Submitted');
   //   }
   // };
-  
 
   return (
     <View style={styles.container}>
-       {/* <StatusBar
+      {/* <StatusBar
 //         backgroundColor={"#EFEFED"}
 //       /> */}
-        <ScrollView>
-         <CustomModal
+      <ScrollView>
+        <CustomModal
           showModal={modalVisible}
           setShowModal={setModalVisible}
           centeredViewStyle={{ backgroundColor: "rgba(0, 0, 0, 0.1)" }}
@@ -81,7 +90,6 @@ const PinCodeVerify = ({ navigation }) => {
               <Text style={styles.modalHeaderTxt}> {modalMessage}</Text>
               <B title="Okay" onPress={closeModal} />
             </View>
-
           </View>
         </CustomModal>
 
@@ -95,54 +103,82 @@ const PinCodeVerify = ({ navigation }) => {
               <Text style={styles.modalHeaderTxt}> {modalMessage}</Text>
               <B title="Okay" onPress={closeModal} />
             </View>
-
           </View>
         </CustomModal>
         <Header
           onPressLeft={() => navigation.goBack()}
           colour={colors.transparent}
-          left={require('../../../assets/images/Back.png')}
-          leftStyle={{ width: 30, height: 30, }} title="Pin Code"
+          left={require("../../assets/Back.png")}
+          leftStyle={{ width: 30, height: 30 }}
+          title="Pin Code"
         />
-        <View style={{ paddingHorizontal: 16, }}>
-          <Text style={{ color: '#000000', fontSize: 20, fontWeight: '600', lineHeight: 28 }}>Enter Pin</Text>
+        <View style={{ paddingHorizontal: 16 }}>
+          <Text
+            style={{
+              color: "#000000",
+              fontSize: 20,
+              fontWeight: "600",
+              lineHeight: 28,
+            }}
+          >
+            Enter Pin
+          </Text>
           <OTPInputView
-            style={{ width: '100%', height: 80, marginBottom: verticalScale(0), marginTop: verticalScale(10), }}
+            style={{
+              width: "100%",
+              height: 80,
+              marginBottom: verticalScale(0),
+              marginTop: verticalScale(10),
+            }}
             pinCount={6}
             onCodeChanged={(newCode) => handleCodeChanged(newCode)}
             code={code}
-            codeInputFieldStyle={[styles.underlineStyleBase,
-            { borderColor: errorMessage ? 'red' : 'transparent' }
+            codeInputFieldStyle={[
+              styles.underlineStyleBase,
+              { borderColor: errorMessage ? "red" : "transparent" },
             ]}
             onCodeFilled={(code) => {
               console.log(`Code is ${code}, you are good to go!`);
-              setErrorMessage('');
+              setErrorMessage("");
             }}
           />
-          {errorMessage ?
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          {errorMessage ? (
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Image
-                source={require('../../../assets/images/ErrorSign.png')}
-                style={{ width: 12, height: 14, marginRight: horizontalScale(5), marginTop: verticalScale(2) }}
-                resizeMode='contain'
+                source={require("../../assets/ErrorSign.png")}
+                style={{
+                  width: 12,
+                  height: 14,
+                  marginRight: horizontalScale(5),
+                  marginTop: verticalScale(2),
+                }}
+                resizeMode="contain"
               />
-              <Text style={{ color: '#E8292D', fontWeight: '400', fontSize: 14 }}>{errorMessage}</Text>
-            </View> : null}
+              <Text
+                style={{ color: "#E8292D", fontWeight: "400", fontSize: 14 }}
+              >
+                {errorMessage}
+              </Text>
+            </View>
+          ) : null}
 
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <TouchableOpacity
-              onPress={() => handleCheckBoxClick()}
-            >
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <TouchableOpacity onPress={() => handleCheckBoxClick()}>
               <Image
-                style={{ width: 20, height: 20, resizeMode: 'contain' }}
-                source={isChecked ? require('../../../assets/images/unchecked.png') : require('../../../assets/images/check-box.png')}
+                style={{ width: 20, height: 20, resizeMode: "contain" }}
+                source={
+                  isChecked
+                    ? require("../../assets/unchecked.png")
+                    : require("../../assets/check-box.png")
+                }
               />
             </TouchableOpacity>
-            <Text style={{ marginLeft: verticalScale(5) }}>Please agree our Terms & condiiton to proceed</Text>
-
+            <Text style={{ marginLeft: verticalScale(5) }}>
+              Please agree our Terms & condiiton to proceed
+            </Text>
           </View>
         </View>
-        <View style={[styles.buttonview,]}>
+        <View style={[styles.buttonview]}>
           <Button
             onPress={() => {
               handleOnSubmit()
@@ -152,7 +188,7 @@ const PinCodeVerify = ({ navigation }) => {
                 })
                 .catch((error) => {
                   setModalMessage(error);
-                  setModalVisible2(true)
+                  setModalVisible2(true);
                 });
             }}
             type="primary"
@@ -161,10 +197,10 @@ const PinCodeVerify = ({ navigation }) => {
         </View>
       </ScrollView>
     </View>
-  )
-}
+  );
+};
 
-export default PinCodeVerify
+export default PinCodeVerify;
 
 const styles = StyleSheet.create({
   container: {
@@ -175,10 +211,10 @@ const styles = StyleSheet.create({
     height: 45,
     borderWidth: 1,
     borderRadius: 10,
-    color: '#000000',
-    fontWeight: '700',
+    color: "#000000",
+    fontWeight: "700",
     fontSize: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     shadowOffset: { width: 4, height: 6 },
     shadowOpacity: 1,
     shadowRadius: 3.84,
@@ -186,9 +222,9 @@ const styles = StyleSheet.create({
   },
   buttonview: {
     marginHorizontal: horizontalScale(30),
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
     marginTop: verticalScale(450),
-    marginBottom: verticalScale(20)
+    marginBottom: verticalScale(20),
   },
   modalHeader: {
     paddingVertical: 10,
@@ -197,8 +233,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     fontSize: 18,
     color: colors.black,
-    marginLeft: horizontalScale(5)
+    marginLeft: horizontalScale(5),
   },
-})
-
-
+});

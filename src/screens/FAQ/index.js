@@ -42,7 +42,7 @@ const FAQ = (props) => {
       <Header
         title={HeaderTexts.FAQ}
         titleStyle={styles.headerTitle}
-        left={require("../../../assets/images/Back.png")}
+        left={require("../../assets/Back.png")}
         leftImageProps={styles.backImg}
         onPressLeft={() => {
           navigation?.goBack();

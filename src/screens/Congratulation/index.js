@@ -8,7 +8,7 @@ const CongratulationScreen = (props) => {
     return (
         <View style={styles.container}>
             {/* <Image
-                source={require('../../../assets/images/Congratulations.png')}
+                source={require('../../assets/congratulations.png')}
                 style={styles.image}
                 resizeMode="contain"
             /> */}
