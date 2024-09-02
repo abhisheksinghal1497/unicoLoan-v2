@@ -62,7 +62,6 @@ const HomeScreen = ({ navigation }) => {
     if (getLoanCardData.data) {
       setIsLoading(false);
 
-
       setData(getLoanCardData.data);
     }
   }, [getLoanCardData.data]);
@@ -94,8 +93,6 @@ const HomeScreen = ({ navigation }) => {
     }
     fetchData();
   }, []);
-
-
 
   const handleNavigation = (index) => {
     switch (index) {
@@ -142,7 +139,6 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const ResumeLoanJourney = ({ item }) => {
-   
     const progress = useGetProgressPercentage(item);
     const screenName = getCurrentScreenNameForResume(item);
 
@@ -158,7 +154,7 @@ const HomeScreen = ({ navigation }) => {
             backgroundColor: colors.coreBlue,
             borderBottomLeftRadius: 10,
             borderBottomRightRadius: 10,
-            paddingVertical: verticalScale(8)
+            paddingVertical: verticalScale(8),
           }}
         >
           <TouchableOpacity
@@ -178,7 +174,9 @@ const HomeScreen = ({ navigation }) => {
     const CardHeader = () => {
       return (
         <View style={{}}>
-          <Text style={[textStyle(9),{alignSelf:'flex-end'}]}>{brandDetails.name}</Text>
+          <Text style={[textStyle(9), { alignSelf: "flex-end" }]}>
+            {brandDetails.name}
+          </Text>
           <View
             style={{
               flexDirection: "row",
@@ -186,8 +184,9 @@ const HomeScreen = ({ navigation }) => {
               justifyContent: "space-between",
             }}
           >
-            <Text style={textStyle(15)}>{item?.applicationDetails?.Product__c}</Text>
-            
+            <Text style={textStyle(15)}>
+              {item?.applicationDetails?.Product__c}
+            </Text>
           </View>
           <View
             style={{
@@ -206,26 +205,32 @@ const HomeScreen = ({ navigation }) => {
       const ProgressBardSection = () => {
         return (
           <View>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <View>
-              <CircularProgress
-                imageStyle={{ width: 40, height: 40 }}
-                ImageData={require("../../assets/Home2.png")}
-                size={110}
-                strokeWidth={12}
-                progressPercent={progress}
-                bgColor={colors.progressBg}
-                pgColor={colors.coreBlue}
-              />
-            </View>
-            <View style={{ marginLeft: verticalScale(10), alignSelf: 'flex-end' }}>
-              {/* <Text style={[textStyle(13), { marginBottom: verticalScale(5) }]}>Next Payment</Text> */}
-              <Text style={[textStyle(15), { marginBottom: verticalScale(16) }]}>{screenName}</Text>
-              {/* <Text style={textStyle(10, colors.greylight)}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <View>
+                <CircularProgress
+                  imageStyle={{ width: 40, height: 40 }}
+                  ImageData={require("../../assets/Home2.png")}
+                  size={110}
+                  strokeWidth={12}
+                  progressPercent={progress}
+                  bgColor={colors.progressBg}
+                  pgColor={colors.coreBlue}
+                />
+              </View>
+              <View
+                style={{ marginLeft: verticalScale(10), alignSelf: "flex-end" }}
+              >
+                {/* <Text style={[textStyle(13), { marginBottom: verticalScale(5) }]}>Next Payment</Text> */}
+                <Text
+                  style={[textStyle(15), { marginBottom: verticalScale(16) }]}
+                >
+                  {screenName}
+                </Text>
+                {/* <Text style={textStyle(10, colors.greylight)}>
                 29th April 2024
               </Text> */}
+              </View>
             </View>
-          </View>
           </View>
         );
       };
@@ -234,7 +239,9 @@ const HomeScreen = ({ navigation }) => {
         return (
           <View>
             <Text style={textStyle(12.5)}>Loan Amount</Text>
-            <Text style={styles.loanAmountText}>₹ {item?.applicationDetails?.ReqLoanAmt__c}</Text>
+            <Text style={styles.loanAmountText}>
+              ₹ {item?.applicationDetails?.ReqLoanAmt__c}
+            </Text>
             <View style={styles.blueLine} />
             {/* <Text style={textStyle(12.5)}>ROI</Text>
             <Text style={styles.loanAmountText}>9.25%</Text>
@@ -269,45 +276,35 @@ const HomeScreen = ({ navigation }) => {
   const renderItems = ({ item, index }) => {
     return (
       <>
-        {!item?.loanId ?
-
+        {!item?.loanId ? (
           <ApplyNewLoan />
-          :
-          <View style={[styles.card,]}>
-
+        ) : (
+          <View style={[styles.card]}>
             <ResumeLoanJourney item={item} />
           </View>
-        }
+        )}
       </>
     );
   };
 
   const ApplyNewLoan = () => {
     return (
-
-
-      <View style={{
-        width: screenWidth - 40,
-        margin: 10
-      }}>
-
+      <View
+        style={{
+          width: screenWidth - 40,
+          margin: 10,
+        }}
+      >
         <ImageBackground
           resizeMode="stretch"
           style={styles.imgBackground}
           source={require("../../assets/loanapply.png")}
         >
-
           <TouchableOpacity onPress={() => setModalVisible(true)}>
             <Text style={styles.applyforloan}>Apply For Loan</Text>
           </TouchableOpacity>
-
-
         </ImageBackground>
-
-
       </View>
-
-
     );
   };
 
@@ -324,50 +321,56 @@ const HomeScreen = ({ navigation }) => {
         modalVisible={modalVisible}
       />
 
-
-      <ScrollView contentContainerStyle={{ flexGrow: 1, marginBottom: 50 }}>
-        <View style={{ justifyContent: 'space-around', flex: 1 }}>
-
+      <ScrollView
+        keyboardShouldPersistTaps="always"
+        keyboardDismissMode="on-drag"
+        contentContainerStyle={{ flexGrow: 1, marginBottom: 50 }}
+      >
+        <View style={{ justifyContent: "space-around", flex: 1 }}>
           <View style={{ backgroundColor: colors.coreCream, flex: 1 }}>
-            <TouchableOpacity
-              style={styles.profileImageView}
-              onPress={() => navigation.navigate(screens.Profile)}
-            >
-              <View style={{ flexDirection: "row" }}>
-                <Image
-                  source={require("../../assets/profileIcon.png")}
-                  style={styles.profileIcon}
-                />
-                <Text style={styles.profileName}>{LocalStorage?.getUserData()?.FirstName} {LocalStorage?.getUserData()?.LastName}</Text>
-              </View>
+            <View style={styles.profileImageView}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate(screens.Profile)}
+              >
+                <View style={{ flexDirection: "row" }}>
+                  <Image
+                    source={require("../../assets/profileIcon.png")}
+                    style={styles.profileIcon}
+                  />
+                  <Text style={styles.profileName}>
+                    {LocalStorage?.getUserData()?.FirstName}{" "}
+                    {LocalStorage?.getUserData()?.LastName}
+                  </Text>
+                </View>
+              </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => oauth.logout()}>
+              <TouchableOpacity
+              //  onPress={() => oauth.logout()}
+              >
                 <Text>Logout</Text>
               </TouchableOpacity>
-            </TouchableOpacity>
-
+            </View>
           </View>
 
           <View style={{ flex: 1 }}>
             <CardComponent />
           </View>
 
-
           <View style={{ flex: 1 }}>
             <Text style={styles.yourLoan}>Your Loans</Text>
 
-
-
             <View style={styles.secondcards}>
               <FlatList
-
                 ref={flatListRef}
-                data={data?.length > 0 ? [...data, { loanId: null }] : [{ loanId: null }]}
+                data={
+                  data?.length > 0
+                    ? [...data, { loanId: null }]
+                    : [{ loanId: null }]
+                }
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderItems}
                 horizontal
                 showsHorizontalScrollIndicator={false}
-
                 onScroll={handleScroll}
                 scrollEventThrottle={16}
               />
@@ -384,8 +387,6 @@ const HomeScreen = ({ navigation }) => {
                 />
               ))}
             </View>
-
-
           </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.yourLoan}>Our Services</Text>
@@ -409,7 +410,10 @@ const HomeScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  cardBodyHeaderContainer: { paddingHorizontal: horizontalScale(16), paddingVertical: verticalScale(14) },
+  cardBodyHeaderContainer: {
+    paddingHorizontal: horizontalScale(16),
+    paddingVertical: verticalScale(14),
+  },
   blueLine: {
     height: verticalScale(1),
     backgroundColor: colors.coreBlue,
@@ -468,10 +472,9 @@ const styles = StyleSheet.create({
   secondcards: {
     justifyContent: "center",
     alignItems: "center",
-
   },
   applyforloan: {
-    alignSelf: 'center',
+    alignSelf: "center",
     color: colors.white,
     fontWeight: customTheme.fonts.labelLarge.fontWeight,
     letterSpacing: 1.5,
@@ -480,7 +483,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
 
-    marginBottom: verticalScale(20)
+    marginBottom: verticalScale(20),
   },
   profileIcon: {
     width: 40,
@@ -491,10 +494,9 @@ const styles = StyleSheet.create({
   },
   imgBackground: {
     flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
+    justifyContent: "flex-end",
+    alignItems: "center",
     minHeight: 200,
-
   },
 
   profileName: {
@@ -514,7 +516,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     // marginRight: horizontalScale(14),
     width: screenWidth - 40,
-    margin: 10
+    margin: 10,
 
     // marginLeft: verticalScale(-5),
   },

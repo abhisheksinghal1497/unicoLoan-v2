@@ -1,15 +1,17 @@
-import {
-
-  useMutation,
-  useQueries,
-} from "@tanstack/react-query";
-
+import { useMutation, useQueries } from "@tanstack/react-query";
 
 import { log } from "../utils/ConsoleLogUtils";
 import { validations } from "../constants/validations";
 import { component } from "../components/FormComponents/FormControl";
 
-import { createCurrentAddressIsSameAsPermanentRequest, createLoanAndAppplicantCompositeRequest, getLeadCreationRequest, GetPicklistValues, getUniqueId, toast } from "../utils/functions";
+import {
+  createCurrentAddressIsSameAsPermanentRequest,
+  createLoanAndAppplicantCompositeRequest,
+  getLeadCreationRequest,
+  GetPicklistValues,
+  getUniqueId,
+  toast,
+} from "../utils/functions";
 import {
   getLeadFields,
   getPincodeData,
@@ -22,7 +24,13 @@ import { soupConfig } from "./sfDBServices/SoupConstants";
 import { getAllSoupEntries } from "./sfDBServices/salesforceDbUtils";
 
 import { LOAN_DETAILS_KEYS } from "../constants/stringConstants";
-import { compositeRequest, DedupeApi, getLeadList, leadConvertApi, postObjectData } from "./sfDataServices/netService";
+import {
+  compositeRequest,
+  DedupeApi,
+  getLeadList,
+  leadConvertApi,
+  postObjectData,
+} from "./sfDataServices/netService";
 import LocalStorage from "./LocalStorage";
 
 export const logoutApi = () => {
@@ -64,27 +72,24 @@ export const getHomeScreenDetails = () => {
         try {
           // FETCH THE PINCODE DATA
 
-          const getLeadListData = await getLeadList(LocalStorage?.getUserData()?.Phone)
+          const getLeadListData = await getLeadList(
+            LocalStorage?.getUserData()?.Phone
+          );
           if (getLeadListData && getLeadListData.records?.length > 0) {
-
             for (let i = 0; i < getLeadListData.records.length; i++) {
-
               //save the record into the soup
               let record = getLeadListData.records[i];
-              const data = { loanId: record?.Id, applicationDetails: record, Applicant__c: record?.Applicants__r?.records?.[0].Id }
+              const data = {
+                loanId: record?.Id,
+                applicationDetails: record,
+                Applicant__c: record?.Applicants__r?.records?.[0].Id,
+              };
 
-              await saveApplicationData(data)
-
-
-
+              await saveApplicationData(data);
             }
-
-
           } else {
             resolve([]);
           }
-
-
 
           const data = await getAllSoupEntries(
             soupConfig.applicationList.name,
@@ -92,13 +97,12 @@ export const getHomeScreenDetails = () => {
           );
           log("HERE IS DATA----------", { data });
           if (data && data?.length > 0) {
-
             resolve(data);
           } else {
             resolve([]);
           }
         } catch (error) {
-          console.log("error>>", error)
+          console.log("error>>", error);
           resolve([]);
         }
       });
@@ -113,15 +117,12 @@ export const getEligibilityDetails = (loanData) => {
     mutationFn: async (data) => {
       const { applicationDetails, loanDetails } = data || {};
       return new Promise(async (resolve, reject) => {
-
         const data = {
           Product: applicationDetails?.Product__c,
           "Sub Product": loanDetails?.loanPurpose,
           "Request Loan Amount":
-            applicationDetails?.ReqLoanAmt__c?.substring(0, 2) +
-            " lac",
-          "Number of Dependents":
-            11,
+            applicationDetails?.ReqLoanAmt__c?.substring(0, 2) + " lac",
+          "Number of Dependents": 11,
           "Residential Stability": "",
           "Cibil Score": 846,
           "DPD Status": true,
@@ -135,21 +136,20 @@ export const getEligibilityDetails = (loanData) => {
           "Employment Stability": 1,
           Qualification: "BCA",
           Parameter: 1,
-          'Eligible Status': "Eligible"
+          "Eligible Status": "Eligible",
         };
 
         let loanDetail = { ...loanData };
         loanDetail.eligibilityDetails = { ...data };
 
-        console.log("hari>>>>loanDetail", loanDetail)
+        console.log("hari>>>>loanDetail", loanDetail);
         try {
           await saveApplicationData({ ...loanDetail });
           resolve(loanDetail);
         } catch (error) {
-          log("hari>>>>elgible error", error)
+          log("hari>>>>elgible error", error);
           reject(error);
         }
-
       });
     },
   });
@@ -242,7 +242,6 @@ export const getHomeScreenOurServices = () => {
             },
           ];
           resolve(data);
-
         }, 100);
       });
     },
@@ -607,10 +606,6 @@ export const getQueryDetailsById = (id, isSuccess = true) => {
   return query;
 };
 
-
-
-
-
 export const getApplicationDetailsForm = () => {
   const mutate = useMutation({
     networkMode: "always",
@@ -620,8 +615,6 @@ export const getApplicationDetailsForm = () => {
           const fieldArray = await getLeadFields();
 
           const mock_data = [
-
-
             {
               id: "RM__c",
               label: "RM Name",
@@ -974,7 +967,7 @@ export const getApplicationDetailsForm = () => {
           ];
           resolve([...mock_data]);
         } catch (error) {
-          reject(error)
+          reject(error);
         }
       });
     },
@@ -987,77 +980,70 @@ export const useSubmitApplicationFormData = (pincodeData) => {
     networkMode: "always",
     mutationFn: async (data) => {
       return new Promise(async (resolve, reject) => {
-
-
         try {
           // lead create
-          const leadcreateResponse = await postObjectData("Lead", getLeadCreationRequest(data))
+          const leadcreateResponse = await postObjectData(
+            "Lead",
+            getLeadCreationRequest(data)
+          );
           if (leadcreateResponse && leadcreateResponse.id) {
             // make the dedupe call
             const dedupeRes = await DedupeApi(leadcreateResponse?.id);
-            if (dedupeRes && (dedupeRes === "Dedupe failed" || dedupeRes === "EXACT_MATCH")) {
+            if (
+              dedupeRes &&
+              (dedupeRes === "Dedupe failed" || dedupeRes === "EXACT_MATCH")
+            ) {
               reject("Not able to create the loan");
             } else {
-
               // loan create
 
-              const response = await compositeRequest(createLoanAndAppplicantCompositeRequest(data, leadcreateResponse?.id))
+              const response = await compositeRequest(
+                createLoanAndAppplicantCompositeRequest(
+                  data,
+                  leadcreateResponse?.id
+                )
+              );
               if (response) {
                 //log("compositeRequestResponse>>>", JSON.stringify(compositeRequestResponse))
-                const loanId = response?.compositeResponse?.[0]?.body?.id
-                const applicationId = response?.compositeResponse?.[1]?.body?.id
+                const loanId = response?.compositeResponse?.[0]?.body?.id;
+                const applicationId =
+                  response?.compositeResponse?.[1]?.body?.id;
 
                 if (loanId && applicationId) {
-
                   // convert lead to loan
 
-                  const leadConvertApiResponse = await leadConvertApi(leadcreateResponse?.id, data?.MobNumber__c);
+                  const leadConvertApiResponse = await leadConvertApi(
+                    leadcreateResponse?.id,
+                    data?.MobNumber__c
+                  );
 
-
-                  const defaultData = soupConfig.applicationList.default
-                  defaultData.loanId = loanId
+                  const defaultData = soupConfig.applicationList.default;
+                  defaultData.loanId = loanId;
                   defaultData.applicationDetails = {
-                    ...data
-                  }
-                  defaultData.Applicant__c = applicationId
-                  defaultData.Id = loanId,
-                    defaultData.Lead__c = leadcreateResponse?.id
+                    ...data,
+                  };
+                  defaultData.Applicant__c = applicationId;
+                  (defaultData.Id = loanId),
+                    (defaultData.Lead__c = leadcreateResponse?.id);
 
-                  console.log("application Data", defaultData)
+                  console.log("application Data", defaultData);
 
-                  await saveApplicationData(defaultData)
+                  await saveApplicationData(defaultData);
 
-                  resolve({ ...defaultData })
+                  resolve({ ...defaultData });
                 } else {
-                  reject(ErrorConstants.SOMETHING_WENT_WRONG)
+                  reject(ErrorConstants.SOMETHING_WENT_WRONG);
                 }
               }
-
-
-
             }
-
-
-
           }
 
           // loan creation
-
-
         } catch (error) {
           reject(ErrorConstants.SOMETHING_WENT_WRONG);
         }
 
         // make the leadCreation API
-
-
-
-
-
-
-
-
-
 
         //  await saveApplicationData(defaultData);
         // setTimeout(() => {
@@ -1065,10 +1051,6 @@ export const useSubmitApplicationFormData = (pincodeData) => {
         //   reject(ErrorConstants.SOMETHING_WENT_WRONG)
         // }, 3000);
         //
-
-
-
-
 
         // reject(ErrorConstants.SOMETHING_WENT_WRONG)
       });
@@ -1458,7 +1440,7 @@ export const useSubmitServiceForm = () => {
   return mutate;
 };
 
-export const useVerifyOtpService = (onSuccess = (data) => { }) => {
+export const useVerifyOtpService = (onSuccess = (data) => {}) => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (data) => {
@@ -1496,15 +1478,15 @@ export const useSaveSelfie = (loanData) => {
     networkMode: "always",
     mutationFn: async (selfie) => {
       return new Promise(async (resolve, reject) => {
-        let data = {...loanData} ;
-        data.selfieDetails = selfie ;
-        log("data>>", data)
+        let data = { ...loanData };
+        data.selfieDetails = selfie;
+        log("data>>", data);
 
         try {
           const response = await saveApplicationData(data);
-          if(response){
-          resolve(data);
-          }else{
+          if (response) {
+            resolve(data);
+          } else {
             reject(ErrorConstants.SOMETHING_WENT_WRONG);
           }
         } catch (error) {
@@ -1528,9 +1510,12 @@ export const useKycDocument = (loanData) => {
           fullAddress: loanData?.adhaarDetails?.address?.combinedAddress,
         };
 
-        const saveCurrentAddress = await postObjectData("ApplAddr__c", createCurrentAddressIsSameAsPermanentRequest(data))
+        const saveCurrentAddress = await postObjectData(
+          "ApplAddr__c",
+          createCurrentAddressIsSameAsPermanentRequest(data)
+        );
         if (saveCurrentAddress) {
-          console.log('FULL ADDRESS', data.currentAddressDetails)
+          console.log("FULL ADDRESS", data.currentAddressDetails);
           try {
             await saveApplicationData(data);
             resolve(data);
@@ -1538,7 +1523,7 @@ export const useKycDocument = (loanData) => {
             reject(ErrorConstants.SOMETHING_WENT_WRONG);
           }
         } else {
-          reject(ErrorConstants.SOMETHING_WENT_WRONG)
+          reject(ErrorConstants.SOMETHING_WENT_WRONG);
         }
       });
     },
@@ -1547,16 +1532,14 @@ export const useKycDocument = (loanData) => {
   return mutate;
 };
 
-
 export const getAllRawData = () => {
   const mutate = useMutation({
-    networkMode: 'online',
+    networkMode: "online",
     mutationFn: () => {
       let compositeRequest = [];
-
-    }
-  })
-}
+    },
+  });
+};
 
 export const getLoanDetailsForm = () => {
   const mutate = useMutation({
@@ -1589,7 +1572,6 @@ export const getLoanDetailsForm = () => {
               value: "",
             },
 
-
             {
               id: LOAN_DETAILS_KEYS.loanPurpose,
               label: "Loan Purpose",
@@ -1599,12 +1581,9 @@ export const getLoanDetailsForm = () => {
               validations: {
                 ...validations.required,
               },
-              data: [
-
-              ],
+              data: [],
               value: {},
             },
-
 
             {
               id: "MobNumber__c",
@@ -1659,7 +1638,10 @@ export const getLoanDetailsForm = () => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: { ...validations.numberOnly, ...validations.required },
+              validations: {
+                ...validations.numberOnly,
+                ...validations.required,
+              },
             },
             {
               id: LOAN_DETAILS_KEYS.immovableProperty,
@@ -1669,7 +1651,10 @@ export const getLoanDetailsForm = () => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: { ...validations.numberOnly, ...validations.required },
+              validations: {
+                ...validations.numberOnly,
+                ...validations.required,
+              },
             },
             {
               id: LOAN_DETAILS_KEYS.currPF,
@@ -1679,7 +1664,10 @@ export const getLoanDetailsForm = () => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: { ...validations.numberOnly, ...validations.required },
+              validations: {
+                ...validations.numberOnly,
+                ...validations.required,
+              },
             },
             {
               id: LOAN_DETAILS_KEYS.valShareSecr,
@@ -1689,7 +1677,10 @@ export const getLoanDetailsForm = () => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: { ...validations.numberOnly, ...validations.required },
+              validations: {
+                ...validations.numberOnly,
+                ...validations.required,
+              },
             },
             {
               id: LOAN_DETAILS_KEYS.fd,
@@ -1699,7 +1690,10 @@ export const getLoanDetailsForm = () => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: { ...validations.numberOnly, ...validations.required },
+              validations: {
+                ...validations.numberOnly,
+                ...validations.required,
+              },
             },
             {
               id: LOAN_DETAILS_KEYS.invPlantMachVehi,
@@ -1709,7 +1703,10 @@ export const getLoanDetailsForm = () => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: { ...validations.numberOnly, ...validations.required },
+              validations: {
+                ...validations.numberOnly,
+                ...validations.required,
+              },
             },
             {
               id: LOAN_DETAILS_KEYS.ownContri,
@@ -1719,7 +1716,10 @@ export const getLoanDetailsForm = () => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: { ...validations.numberOnly, ...validations.required },
+              validations: {
+                ...validations.numberOnly,
+                ...validations.required,
+              },
             },
             {
               id: LOAN_DETAILS_KEYS.assetVal,
@@ -1729,7 +1729,10 @@ export const getLoanDetailsForm = () => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: { ...validations.numberOnly, ...validations.required },
+              validations: {
+                ...validations.numberOnly,
+                ...validations.required,
+              },
             },
             {
               id: LOAN_DETAILS_KEYS.totalAsset,
@@ -1750,7 +1753,10 @@ export const getLoanDetailsForm = () => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: { ...validations.numberOnly, ...validations.required },
+              validations: {
+                ...validations.numberOnly,
+                ...validations.required,
+              },
             },
             {
               id: LOAN_DETAILS_KEYS.savings,
@@ -1760,7 +1766,10 @@ export const getLoanDetailsForm = () => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: { ...validations.numberOnly, ...validations.required },
+              validations: {
+                ...validations.numberOnly,
+                ...validations.required,
+              },
             },
             {
               id: LOAN_DETAILS_KEYS.dispAsset,
@@ -1770,7 +1779,10 @@ export const getLoanDetailsForm = () => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: { ...validations.numberOnly, ...validations.required },
+              validations: {
+                ...validations.numberOnly,
+                ...validations.required,
+              },
             },
             {
               id: LOAN_DETAILS_KEYS.familyFund,
@@ -1780,7 +1792,10 @@ export const getLoanDetailsForm = () => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: { ...validations.numberOnly, ...validations.required },
+              validations: {
+                ...validations.numberOnly,
+                ...validations.required,
+              },
             },
             {
               id: LOAN_DETAILS_KEYS.srvcFund,
@@ -1790,7 +1805,10 @@ export const getLoanDetailsForm = () => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: { ...validations.numberOnly, ...validations.required },
+              validations: {
+                ...validations.numberOnly,
+                ...validations.required,
+              },
             },
             {
               id: LOAN_DETAILS_KEYS.totalIncome,
@@ -1800,7 +1818,10 @@ export const getLoanDetailsForm = () => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: { ...validations.numberOnly, ...validations.required },
+              validations: {
+                ...validations.numberOnly,
+                ...validations.required,
+              },
             },
             {
               id: LOAN_DETAILS_KEYS.totalObligation,
@@ -1810,7 +1831,10 @@ export const getLoanDetailsForm = () => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: { ...validations.numberOnly, ...validations.required },
+              validations: {
+                ...validations.numberOnly,
+                ...validations.required,
+              },
             },
             {
               id: LOAN_DETAILS_KEYS.resAddr,
@@ -1819,7 +1843,7 @@ export const getLoanDetailsForm = () => {
               placeHolder: "Enter Residential Address",
               value: "",
               isMultiline: true,
-              isDisabled: true
+              isDisabled: true,
             },
             {
               id: LOAN_DETAILS_KEYS.currAddr,
@@ -1828,18 +1852,12 @@ export const getLoanDetailsForm = () => {
               placeHolder: "Enter Current Address",
               value: "",
               isMultiline: true,
-              isDisabled: true
+              isDisabled: true,
             },
-
-
-
-
-
           ];
           resolve([...mock_data]);
         } catch (error) {
-          reject(error)
-
+          reject(error);
         }
       });
     },
@@ -1848,30 +1866,27 @@ export const getLoanDetailsForm = () => {
 };
 
 export const getSanctionPdf = (loanData) => {
-
   const mutate = useMutation({
-    networkMode: 'always',
+    networkMode: "always",
     mutationFn: () => {
       return new Promise(async (resolve, reject) => {
         let data = { ...loanData };
         data.sanctionDetails = {
-          "sanctioned": "true",
+          sanctioned: "true",
         };
 
         try {
-          console.log("data>>>", "success")
+          console.log("data>>>", "success");
           await saveApplicationData(data);
-          resolve({ url: "http://www.clickdimensions.com/links/TestPDFfile.pdf" });
+          resolve({
+            url: "http://www.clickdimensions.com/links/TestPDFfile.pdf",
+          });
         } catch (error) {
           reject(ErrorConstants.SOMETHING_WENT_WRONG);
         }
-      })
-
-    }
-  })
+      });
+    },
+  });
 
   return mutate;
-
-}
-
-
+};
