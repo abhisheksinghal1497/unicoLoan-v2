@@ -75,7 +75,7 @@ const RaiseTicket = ({ navigation }) => {
                                 titleStyle={{ marginRight: horizontalScale(10) }}
                                 onPressLeft={() => navigation.goBack()}
                                 colour={colors.transparent}
-                                left={require('../../../assets/images/Back.png')}
+                                left={require('../../assets/Back.png')}
                                 leftStyle={{ width: 30, height: 30 }} title="Raise Tickets"
                                 onPressRight={(index) => {
                                     if (index === 0) {
@@ -83,7 +83,7 @@ const RaiseTicket = ({ navigation }) => {
                                     } 
                                   }}
                                   rightImages={[
-                                    { source: require('../../../assets/images/ChatsCircle.png'), imageProps: { style: { width: 32, height: 32, } } },
+                                    { source: require('../../assets/ChatsCircle.png'), imageProps: { style: { width: 32, height: 32, } } },
                                   ]}
                                  />
                         </View>
@@ -106,8 +106,8 @@ const RaiseTicket = ({ navigation }) => {
                                                 <Image
                                                     style={styles.radio}
                                                     source={index === selectedIndex
-                                                        ? require('../../../assets/images/filledRadio.png')
-                                                        : require('../../../assets/images/unfilledRadio.png')} />
+                                                        ? require('../../assets/filledRadio.png')
+                                                        : require('../../assets/unfilledRadio.png')} />
                                                 <Text style={styles.item}>{item}</Text>
                                             </TouchableOpacity>
                                         )}

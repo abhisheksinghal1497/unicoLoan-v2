@@ -74,6 +74,11 @@ const KYC = (props) => {
   const [seconds, setSeconds] = useState(0);
   const [adhaarApiType, setAdhaarApiType] = useState(false);
   const adhaarEkycMutate = makeAdhaarEKYCCall();
+  const [showHelpModal, setShowHelpModal] = useState(false);
+
+  const toggleHelpModal = () => {
+    setShowHelpModal(!showHelpModal);
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -360,7 +365,7 @@ const KYC = (props) => {
     if (index === 0) {
       props.navigation.navigate(screens.FAQ);
     } else if (index === 1) {
-      props.navigation.navigate(screens.HomeScreen);
+      toggleHelpModal();
     }
   };
 
@@ -403,6 +408,8 @@ const KYC = (props) => {
               loanData: loanData,
             });
           }}
+          showHelpModal={showHelpModal}
+          toggleHelpModal={toggleHelpModal}
         />
         {(uploadAadharToMuleService?.isPending ||
           verifyAdharApi?.isPending ||

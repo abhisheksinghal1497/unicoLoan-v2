@@ -9,7 +9,7 @@ export default function CameraSection({ onCameraPress,onCameraCross,onCameraRelo
     <View style={cross  ? styles.container : styles.containerSecond}>
        {cross &&(
           <TouchableOpacity onPress={onCameraCross} style={styles.crossButton}>
-          <Image source={require('../../assets/images/cross.png')} style={styles.crossImage} />
+          <Image source={require('../assets/cross-copy.png')} style={styles.crossImage} />
         </TouchableOpacity>
         )}
       
@@ -19,7 +19,7 @@ export default function CameraSection({ onCameraPress,onCameraCross,onCameraRelo
       {reload &&(
         <TouchableOpacity onPress={onCameraReload} style={styles.reloadButton}>
         {/* <AntDesignIcon name="reload1" size={30} color="#2E52A1" /> */}
-        <Image source={require('../../assets/images/retry.png')} style={styles.crossImage} />
+        <Image source={require('../assets/retry.png')} style={styles.crossImage} />
       </TouchableOpacity>
       )}
       

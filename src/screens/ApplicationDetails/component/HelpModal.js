@@ -2,13 +2,17 @@ import CustomModal from "../../../components/CustomModal";
 import { Text } from "react-native-paper";
 import { View } from "react-native";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
-import { verticalScale } from "../../../utils/matrcis";
+import { horizontalScale, verticalScale } from "../../../utils/matrcis";
 import Button from "../../../components/Button";
 import { toast } from "../../../utils/functions";
+import { colors } from "../../../colors";
 
 const HelpModal = ({ showModal, setShowModal, toggleModal, modalStyle }) => {
   const closeModal = () => setShowModal(false);
-  const onPressOk = () => toast('info', 'Info', 'Details')
+  const onPressOk = () => {
+    toggleModal();
+    toast("info", "Info", "Details");
+  };
 
   return (
     <CustomModal
@@ -28,7 +32,9 @@ const HelpModal = ({ showModal, setShowModal, toggleModal, modalStyle }) => {
             paddingBottom: verticalScale(15),
           }}
         >
-          <Text style={{ color: "#44465B", fontSize: verticalScale(20) }}>
+          <Text
+            style={{ color: colors.LIGHT_BLACK, fontSize: verticalScale(18) }}
+          >
             Need some help?
           </Text>
           <EvilIcons
@@ -41,8 +47,8 @@ const HelpModal = ({ showModal, setShowModal, toggleModal, modalStyle }) => {
         <View style={{ alignItems: "center", marginBottom: verticalScale(36) }}>
           <Text
             style={{
-              color: "#44465B",
-              fontSize: verticalScale(20),
+              color: colors.LIGHT_BLACK,
+              fontSize: verticalScale(18),
               marginVertical: verticalScale(10),
             }}
           >
@@ -52,7 +58,7 @@ const HelpModal = ({ showModal, setShowModal, toggleModal, modalStyle }) => {
             style={{
               textAlign: "center",
               color: "#606060",
-              fontSize: verticalScale(15),
+              fontSize: verticalScale(12),
             }}
           >
             Loan assign to nearest branch,{"\n"} The RM will be available to
@@ -60,8 +66,19 @@ const HelpModal = ({ showModal, setShowModal, toggleModal, modalStyle }) => {
           </Text>
         </View>
 
-        <View>
-          <Button label="Ok" type="primary" onPress={onPressOk} />
+        <View style={{ alignItems: "center" }}>
+          <View>
+            <Button
+              buttonContainer={{
+                alignSelf: "flex-start",
+                paddingHorizontal: horizontalScale(80),
+              }}
+              label="OK"
+              type="primary"
+              onPress={onPressOk}
+            />
+          </View>
+
           <Button
             onPress={toggleModal}
             label="Cancel"

@@ -29,6 +29,11 @@ const KYCDocuments = ({ navigation }) => {
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
   const kycDocumentMutate = useKycDocument(loanData);
+  const [showHelpModal, setShowHelpModal] = useState(false);
+
+  const toggleHelpModal = () => {
+    setShowHelpModal(!showHelpModal);
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -68,7 +73,7 @@ const KYCDocuments = ({ navigation }) => {
     if (index === 0) {
       navigation.navigate(screens.FAQ);
     } else if (index === 1) {
-      navigation.navigate(screens.HomeScreen);
+      toggleHelpModal();
     }
   };
   return (
@@ -139,6 +144,8 @@ const KYCDocuments = ({ navigation }) => {
         onPressLeft={() => {
           navigation?.goBack();
         }}
+        showHelpModal={showHelpModal}
+        toggleHelpModal={toggleHelpModal}
       />
       {kycDocumentMutate.isPending && <ActivityIndicatorComponent />}
       <View style={styles.topCon}>

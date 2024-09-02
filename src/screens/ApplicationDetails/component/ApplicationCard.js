@@ -31,7 +31,7 @@ const ApplicationCard = () => {
         <View style={styles.circularProgressBarContainer}>
           <CircularProgress
             imageStyle={{ width: 47, height: 39 }}
-            ImageData={require("../../../../assets/images/Home2.png")}
+            ImageData={require("../../../assets/Home2.png")}
             size={105}
             strokeWidth={12}
             progressPercent={percentage}

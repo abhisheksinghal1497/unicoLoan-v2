@@ -6,7 +6,7 @@ const NoInternet = () => {
     return (
         <View style={styles.container}>
             <Image
-                source={require('../../../assets/images/NoInternet.png')}
+                source={require('../../assets/no_internet.png')}
                 style={styles.image}
                 resizeMode="contain"
             />

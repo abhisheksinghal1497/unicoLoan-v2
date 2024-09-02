@@ -73,7 +73,7 @@ const CardComponent = () => {
   //   return (
   //     <Image
   //         style={{width: 100, height: 100, alignSelf:'center', }}
-  //         source={require('../../../assets/images/22.gif')}
+  //         source={require('../../assets/22.gif')}
   //         resizeMode="contain"
   //       />
   //   );

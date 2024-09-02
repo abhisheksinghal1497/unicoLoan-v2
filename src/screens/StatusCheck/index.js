@@ -28,38 +28,38 @@ const data = [
   {
     id: "1",
     title: "Applicant Details",
-    imagePathActive: require("../../../assets/images/MapPinLineGreen.png"),
-    imagePathUnActive: require("../../../assets/images/MapPinLineGrey.png"),
+    imagePathActive: require("../../assets/MapPinLineGreen.png"),
+    imagePathUnActive: require("../../assets/MapPinLineGrey.png"),
   },
   {
     id: "2",
     title: "PAN and KYC Verified",
-    imagePathActive: require("../../../assets/images/MapPinLineGreen.png"),
-    imagePathUnActive: require("../../../assets/images/MapPinLineGrey.png"),
+    imagePathActive: require("../../assets/MapPinLineGreen.png"),
+    imagePathUnActive: require("../../assets/MapPinLineGrey.png"),
   },
   {
     id: "3",
     title: "Loan Details",
-    imagePathActive: require("../../../assets/images/MapPinLineGreen.png"),
-    imagePathUnActive: require("../../../assets/images/MapPinLineGrey.png"),
+    imagePathActive: require("../../assets/MapPinLineGreen.png"),
+    imagePathUnActive: require("../../assets/MapPinLineGrey.png"),
   },
   {
     id: "4",
     title: "Eligibility",
-    imagePathActive: require("../../../assets/images/MapPinLineGreen.png"),
-    imagePathUnActive: require("../../../assets/images/MapPinLineGrey.png"),
+    imagePathActive: require("../../assets/MapPinLineGreen.png"),
+    imagePathUnActive: require("../../assets/MapPinLineGrey.png"),
   },
   {
     id: "5",
     title: "In-Principle Sanction",
-    imagePathActive: require("../../../assets/images/MapPinLineGreen.png"),
-    imagePathUnActive: require("../../../assets/images/MapPinLineGrey.png"),
+    imagePathActive: require("../../assets/MapPinLineGreen.png"),
+    imagePathUnActive: require("../../assets/MapPinLineGrey.png"),
   },
   {
     id: "6",
     title: "",
-    imagePathUnActive: require("../../../assets/images/loandone.png"),
-    imagePathActive: require("../../../assets/images/loandone.png"),
+    imagePathUnActive: require("../../assets/loandone.png"),
+    imagePathActive: require("../../assets/loandone.png"),
   },
 ];
 
@@ -177,7 +177,7 @@ const RoadMap = ({
           }
           {getCurrentScreen &&
             <Image
-              source={require("../../../assets/images/homekey.png")}
+              source={require("../../assets/homekey.png")}
               style={[styles.key]}
             />
           }
@@ -375,7 +375,7 @@ const RoadMap = ({
           <View>
             <Image
               style={styles.loanimage}
-              source={require("../../../assets/images/statuscheckk.png")}
+              source={require("../../assets/statuscheckk.png")}
             />
           </View>
           <View style={{ marginLeft: horizontalScale(8), flexWrap: "wrap" }}>
@@ -391,7 +391,7 @@ const RoadMap = ({
       <View style={{ marginTop: verticalScale(0) }}>
         {/* <View style={[styles.line, { height: 500 }]}>
           <Image
-            source={require("../../../assets/images/homekey.png")}
+            source={require("../../assets/homekey.png")}
             style={[styles.key, { marginTop: getKeyPosition }]}
           />
           <View style={styles.line2}>
@@ -487,7 +487,7 @@ const StatusCheck = ({ navigation }) => {
           <Header
             onPressLeft={() => navigation.goBack()}
             colour={colors.transparent}
-            left={require("../../../assets/images/Back.png")}
+            left={require("../../assets/Back.png")}
             leftStyle={{
               width: 27,
               height: 27,

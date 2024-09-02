@@ -76,7 +76,7 @@ const Dummy = () => {
     return (
         <><View style={styles.container}>
             <Image
-            source={require('../../../assets/images/unicoLogo.png')}
+            source={require('../../assets/unicoLogo.png')}
             style={{resizeMode:'contain', width: 200, height: 200}}
             
             />

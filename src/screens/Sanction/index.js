@@ -36,6 +36,11 @@ const Sanction = (props) => {
   const pdfUrl = "https://pdfobject.com/pdf/sample.pdf";
 
   const getData = getSanctionPdf(loanData)
+  const [showHelpModal, setShowHelpModal] = useState(false);
+
+  const toggleHelpModal = () => {
+    setShowHelpModal(!showHelpModal);
+  };
 
   useEffect(() => {
     getData?.mutate()
@@ -90,7 +95,7 @@ const Sanction = (props) => {
     if (index === 0) {
       props.navigation.navigate(screens.FAQ);
     } else if (index === 1) {
-      navigation.navigate(screens.HomeScreen);
+      toggleHelpModal();
     }
   };
   return (
@@ -106,6 +111,8 @@ const Sanction = (props) => {
         titleStyle={{ fontSize: verticalScale(18), }}
         onPressRight={handleRightIconPress}
         onPressLeft={() => { props?.navigation.goBack(); }}
+        showHelpModal={showHelpModal}
+        toggleHelpModal={toggleHelpModal}
       />
 
       {getData?.isPending && <ActivityIndicatorComponent />}

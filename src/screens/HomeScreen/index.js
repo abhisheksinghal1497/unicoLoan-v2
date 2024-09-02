@@ -210,7 +210,7 @@ const HomeScreen = ({ navigation }) => {
             <View>
               <CircularProgress
                 imageStyle={{ width: 40, height: 40 }}
-                ImageData={require("../../../assets/images/Home2.png")}
+                ImageData={require("../../assets/Home2.png")}
                 size={110}
                 strokeWidth={12}
                 progressPercent={progress}
@@ -294,7 +294,7 @@ const HomeScreen = ({ navigation }) => {
         <ImageBackground
           resizeMode="stretch"
           style={styles.imgBackground}
-          source={require("../../../assets/images/loanapply.png")}
+          source={require("../../assets/loanapply.png")}
         >
 
           <TouchableOpacity onPress={() => setModalVisible(true)}>
@@ -335,7 +335,7 @@ const HomeScreen = ({ navigation }) => {
             >
               <View style={{ flexDirection: "row" }}>
                 <Image
-                  source={require("../../../assets/images/profileIcon.png")}
+                  source={require("../../assets/profileIcon.png")}
                   style={styles.profileIcon}
                 />
                 <Text style={styles.profileName}>{LocalStorage?.getUserData()?.FirstName} {LocalStorage?.getUserData()?.LastName}</Text>

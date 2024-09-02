@@ -121,11 +121,16 @@ const Eligibility = (props) => {
   const [applicantData, setApplicantData] = useState([]);
   const [cardData, setCardData] = useState();
   const eligibilityDetails = getEligibilityDetails(loanData);
+  const [showHelpModal, setShowHelpModal] = useState(false);
+
+  const toggleHelpModal = () => {
+    setShowHelpModal(!showHelpModal);
+  };
   const handleRightIconPress = (index) => {
     if (index === 0) {
       props.navigation.navigate(screens.FAQ);
     } else if (index === 1) {
-      props.navigation.navigate(screens.HomeScreen);
+      toggleHelpModal();
     }
   };
 
@@ -223,6 +228,8 @@ const Eligibility = (props) => {
         onPressLeft={() => {
           props.navigation.goBack();
         }}
+        showHelpModal={showHelpModal}
+        toggleHelpModal={toggleHelpModal}
       />
       <View style={styles.topCon}>
         {cardData && cardData["Eligible Status"] === "Eligible" && (
