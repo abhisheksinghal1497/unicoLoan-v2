@@ -31,7 +31,6 @@ import ProgressCard from "../../components/ProgressCard";
 
 import { uploadOtpMethod, uploadAdhaarMethod } from "../../services/ApiUtils";
 import {
-  
   makeAdhaarEKYCCall,
   uploadAadharPhotos,
   verifyAadhar,
@@ -58,7 +57,6 @@ const KYC = (props) => {
   const uploadAadharToMuleService = uploadAadharPhotos();
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
-  
 
   const {
     applicationDetails = {},
@@ -66,10 +64,14 @@ const KYC = (props) => {
   } = loanData;
 
   // 'AMUPH7294R'
-  const verifyAdharApi = verifyAadhar(panDetails.panNumber, loanData, panDetails.panName);
+  const verifyAdharApi = verifyAadhar(
+    panDetails.panNumber,
+    loanData,
+    panDetails.panName
+  );
   // const verifyAdharApi = checkPanLinkWithAdhaar(panDetails.panNumber);
   const canvasRef = useRef(null);
-
+  const [aadhaarBase64, setAadhaarbase64] = useState(null)
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
   const [adhaarApiType, setAdhaarApiType] = useState(false);
@@ -214,7 +216,6 @@ const KYC = (props) => {
       data: [],
       value: "",
       showRightComp: false,
-
     },
   ];
 
@@ -273,9 +274,11 @@ const KYC = (props) => {
     try {
       //
       console.log("trigger");
-      let dataURL = await canvasRef.current.toDataURL();
+      const dataURL = await canvasRef.current.toDataURL();
+      console.log('DATA URL---', dataURL)
+      // setAadhaarbase64(dataURL)
       // let newData =  dataURL.replace(/^data:image\/?[A-z]*;base64,/);
-
+      console.log('CHECK 2')
       uploadAadharToMuleService?.mutate(dataURL);
     } catch (error) {
       console.log("some error");
@@ -308,7 +311,7 @@ const KYC = (props) => {
     if (verifyAdharApi?.data) {
       toast("success", "Aadhar verified successfully");
       props.navigation.navigate(screens.CaptureSelfie, {
-        loanData: verifyAadhar.data
+        loanData: verifyAadhar.data,
       });
     }
 
@@ -330,36 +333,28 @@ const KYC = (props) => {
       console.log("SUP----------------", {
         aadharInitiateResponse: JSON.stringify(aadharInitiateResponse),
       });
-      // if (adhaarApiType) {
-      //   props.navigation.navigate(screens.CaptureSelfie, {
-      //     loanData: loanData
-      //   });
-      //   return;
-      // }
 
-      verifyAdharApi?.mutate({
-        otp: otp,
-        intitialResponse: aadharInitiateResponse,
-      });
+      try {
+        verifyAdharApi?.mutate({
+          otp: otp,
+          intitialResponse: aadharInitiateResponse,
+          imageBase64: aadhaarBase64
+        });
+      } catch (error) {}
     }
   };
 
   const onSubmitAdhaar = () => {
     const AdhaarDetails = watch("adhaarNumber");
-    const AdhaarName = watch("adhaarName")
-
-   
+    const AdhaarName = watch("adhaarName");
 
     if (!AdhaarDetails && AdhaarDetails?.toString()?.length !== 12) {
       setError("adhaarNumber", "Please enter valid adhaar number");
-
     } else if (!AdhaarName) {
       setError("adhaarName", "Please enter the Name.");
     } else {
       adhaarEkycMutate?.mutate({ number: AdhaarDetails, name: AdhaarName });
     }
-
-
   };
   const handleRightIconPress = (index) => {
     if (index === 0) {
@@ -545,8 +540,8 @@ const KYC = (props) => {
                       source={
                         selectedImage
                           ? {
-                            uri: `data:${selectedImage.mime};base64,${selectedImage.data}`,
-                          }
+                              uri: `data:${selectedImage.mime};base64,${selectedImage.data}`,
+                            }
                           : require("../../images/aadhar-front.png")
                       }
                       style={[styles.frontImage]}
@@ -568,8 +563,8 @@ const KYC = (props) => {
                       source={
                         selectedImageBack
                           ? {
-                            uri: `data:${selectedImageBack.mime};base64,${selectedImageBack.data}`,
-                          }
+                              uri: `data:${selectedImageBack.mime};base64,${selectedImageBack.data}`,
+                            }
                           : require("../../images/aadhar-back.png")
                       }
                       style={[styles.frontImage]}
@@ -621,7 +616,6 @@ const KYC = (props) => {
             <View style={{ marginVertical: verticalScale(16) }}>
               {mock_data.map((comp, index) => {
                 return (
-
                   <FormControl
                     compType={comp.type}
                     control={control}
@@ -658,7 +652,6 @@ const KYC = (props) => {
                     maxLength={comp.maxLength}
                     isDisabled={comp.isDisabled}
                   />
-
                 );
               })}
             </View>

@@ -345,7 +345,7 @@ const HomeScreen = ({ navigation }) => {
               </TouchableOpacity>
 
               <TouchableOpacity
-              //  onPress={() => oauth.logout()}
+               onPress={() => oauth.logout()}
               >
                 <Text>Logout</Text>
               </TouchableOpacity>
