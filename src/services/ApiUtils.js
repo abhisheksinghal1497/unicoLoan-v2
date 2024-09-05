@@ -5,9 +5,11 @@ import { validations } from "../constants/validations";
 import { component } from "../components/FormComponents/FormControl";
 
 import {
+  createCompositeRequestsForPanUpload,
   createCurrentAddressIsSameAsPermanentRequest,
   createLoanAndAppplicantCompositeRequest,
   getLeadCreationRequest,
+  getPanCreateRequest,
   GetPicklistValues,
   getUniqueId,
   toast,
@@ -30,8 +32,11 @@ import {
   getLeadList,
   leadConvertApi,
   postObjectData,
+  QueryObject,
+  updateObjectData,
 } from "./sfDataServices/netService";
 import LocalStorage from "./LocalStorage";
+import { query } from "../constants/Queries";
 
 export const logoutApi = () => {
   console.log("LOGOUT API");
@@ -1086,7 +1091,33 @@ export const useSubmitPanForm = (loanData) => {
     mutationFn: async (data) => {
       return new Promise(async (resolve, reject) => {
         let loanDetail = { ...loanData };
-        loanDetail.panDetails = data;
+        loanDetail.panDetails = data.panDetails;
+        loanDetail.panDetails.imageBase64 = data?.imageBase64;
+        const imageBase64 = data.imageBase64;
+
+
+        // try {
+        //   // Step 1
+        //   // PAN UPLOAD START
+        //   // const ApplKyc__c = await postObjectData(
+        //   //   "ApplKyc__c",
+        //   //   getPanCreateRequest(loanDetail)
+        //   // );
+        //   // const applicationKycId = ApplKyc__c?.id
+
+        //   // const panUploadRequests = createCompositeRequestsForPanUpload(loanDetail, applicationKycId);
+        //   // const response = await compositeRequest(panUploadRequests);
+        
+        //   // resolve(true);
+        //   // return
+        //    // -------------------------PAN UPLOAD END------------------------------------
+          
+        //   resolve(true)
+        // } catch (error) {
+        //   console.log("FAILED TO UPLOAD PAN", error);
+        //   reject(ErrorConstants.SOMETHING_WENT_WRONG);
+        // }
+
         try {
           await saveApplicationData(loanDetail);
           resolve({ ...loanDetail });

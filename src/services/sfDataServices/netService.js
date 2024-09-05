@@ -10,10 +10,10 @@ const errorCallback = (reject) => () => {
 };
 
 export const QueryObject = (query) => {
-  console.log(query, "response here");
+ 
   return new Promise((resolve, reject) => {
     const successCB = (data) => {
-      console.log('inside success')
+      console.log("inside success");
       if (data) {
         net.query(
           query,
@@ -26,7 +26,6 @@ export const QueryObject = (query) => {
           }
         );
       }
-
     };
     oauth.getAuthCredentials(successCB, () => {
       console.log("INSIDE ERROR CB");
@@ -53,7 +52,6 @@ export const getMetaData = (objectType) => {
 };
 
 export const DedupeApi = (LeadId) => {
-
   return new Promise((resolve, reject) => {
     net.sendRequest(
       "/services/apexrest",
@@ -64,19 +62,12 @@ export const DedupeApi = (LeadId) => {
         resolve(res);
       },
       (error) => {
-        
         reject(error);
       },
       "GET"
     );
   });
-
 };
-
-
-
-
-
 
 export const postObjectData = (objectName, data) => {
   return new Promise((resolve, reject) => {
@@ -95,77 +86,85 @@ export const postObjectData = (objectName, data) => {
   });
 };
 
+export const updateObjectData = (objectName, data, id) => {
+  return new Promise((resolve, reject) => {
+    net.sendRequest(
+      "/services/data/",
+      `${net.getApiVersion()}/sobjects/${objectName}/${id}`,
+      () => {
+        let res = { success: true, id: id };
+        console.log("response Patch============>", res);
+        resolve(res);
+      },
+      (error) => {
+        console.log(error,"updateobject data error")
+        reject(error);
+      },
+      "PATCH",
+      data
+    );
+  });
+};
 
 export const compositeRequest = (requests) => {
   return new Promise((resolve, reject) => {
     // console.log('compositeGraphApi data', graphs);
     let requestData = {
-      "allOrNone": true,
-      "compositeRequest": requests
+      allOrNone: true,
+      compositeRequest: requests,
     };
     net.sendRequest(
-      '/services/data/',
+      "/services/data/",
       `${net.getApiVersion()}/composite`,
       (res) => {
         resolve(res);
       },
       (error) => {
-        console.log('Error', error);
+        console.log("Error", error);
         reject(error);
       },
-      'POST',
+      "POST",
       requestData
     );
   });
 };
 
-
 export const getUserData = (userId) => {
   return new Promise((resolve, reject) => {
     // console.log('compositeGraphApi data', graphs);
-   
-    net.query(
-      query.getUserInfo(userId)
-     ,
-      (res) => {
-        LocalStorage?.setUserdata(res?.records?.[0])
-        resolve(res);
 
+    net.query(
+      query.getUserInfo(userId),
+      (res) => {
+        LocalStorage?.setUserdata(res?.records?.[0]);
+        resolve(res);
       },
       (error) => {
-        console.log('Error', error);
+        console.log("Error", error);
         reject(error);
-      },
-      
+      }
     );
   });
 };
-
-
 
 export const getLeadList = (phone) => {
   return new Promise((resolve, reject) => {
     // console.log('compositeGraphApi data', graphs);
 
     net.query(
-      query.getLeadList('9743063887')
-      ,
+      query.getLeadList("9743063887"),
       (res) => {
-        
         resolve(res);
-
       },
       (error) => {
-        console.log('Error', error);
+        console.log("Error", error);
         reject(error);
-      },
-
+      }
     );
   });
 };
 
 export const leadConvertApi = (LeadId, mobile) => {
-
   return new Promise((resolve, reject) => {
     net.sendRequest(
       "/services/apexrest",
@@ -176,11 +175,9 @@ export const leadConvertApi = (LeadId, mobile) => {
         resolve(res);
       },
       (error) => {
-        
         reject(error);
       },
       "GET"
     );
   });
-
 };

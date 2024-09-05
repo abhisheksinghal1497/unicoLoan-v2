@@ -72,16 +72,13 @@ export const convertFormArrToObj = (data = []) => {
 
 export const GetPicklistValues = (arr, fieldName, defaultValues) => {
   try {
-
     if (!arr || !fieldName) {
       return {};
     }
     const data = arr?.find((value) => value.name === fieldName)?.picklistValues;
 
-
     return data && data?.length > 0 ? data : defaultValues;
   } catch (error) {
-
     return defaultValues;
   }
 };
@@ -121,9 +118,7 @@ export const useResetRoutes = () => {
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
-        routes: [
-          { name: screenName, params },
-        ],
+        routes: [{ name: screenName, params }],
       })
     );
   };
@@ -134,31 +129,29 @@ export const createLoanAndAppplicantCompositeRequest = (data, leadID) => {
   try {
     let compositeRequest = [
       {
-        "method": "POST",
-        "url": `/services/data/${net.getApiVersion()}/sobjects/LoanAppl__c`,
-        "referenceId": "loanCreate",
-        "body": getLoanCreateRequest(data, leadID)
-
+        method: "POST",
+        url: `/services/data/${net.getApiVersion()}/sobjects/LoanAppl__c`,
+        referenceId: "loanCreate",
+        body: getLoanCreateRequest(data, leadID),
       },
 
       {
-        "method": "POST",
-        "url": `/services/data/${net.getApiVersion()}/sobjects/Applicant__c`,
-        "referenceId": "applicantCreate",
-        "body": { ...getApplicantRequest(data), "LoanAppln__c": "@{loanCreate.id}", }
+        method: "POST",
+        url: `/services/data/${net.getApiVersion()}/sobjects/Applicant__c`,
+        referenceId: "applicantCreate",
+        body: {
+          ...getApplicantRequest(data),
+          LoanAppln__c: "@{loanCreate.id}",
+        },
       },
-
-
-    ]
+    ];
 
     return compositeRequest;
   } catch (error) {
-    log("createLeadCompositeRequest>>>error", error)
-    return null
+    log("createLeadCompositeRequest>>>error", error);
+    return null;
   }
-
-
-}
+};
 
 export const getLeadCreationRequest = (data) => {
   try {
@@ -169,12 +162,12 @@ export const getLeadCreationRequest = (data) => {
       MobilePhone: data?.MobNumber__c,
       Email: data?.EmailId__c,
       Bulk_Lead__c: false,
-      Status: 'New Lead',
+      Status: "New Lead",
       Alternative_Mobile_Number__c: data?.AltMobile__c,
       Customer_Profile__c: data?.Customer_Profile__c,
       LeadSource: data?.LeadSource__c,
       Residential_Address__c: data?.Address__c,
-      PostalCode: '',
+      PostalCode: "",
       Pincode__c: data?.Pincode__c,
       Product__c: data?.Product__c,
       ProductLookup__c: "",
@@ -182,13 +175,12 @@ export const getLeadCreationRequest = (data) => {
       Requested_loan_amount__c: data?.ReqLoanAmt__c,
       Requested_tenure_in_Months__c: data?.ReqTenInMonths__c,
       Property_Identified__c: data?.PropertyIdentified__c,
-      Company: data?.LName__c
-    }
-
+      Company: data?.LName__c,
+    };
   } catch (error) {
     return null;
   }
-}
+};
 
 export const getLoanCreateRequest = (data, leadId) => {
   //   // RM__c: data?.RM__c,
@@ -201,15 +193,17 @@ export const getLoanCreateRequest = (data, leadId) => {
       Product__c: data?.Product__c,
       ReqTenInMonths__c: data?.ReqTenInMonths__c,
       ReqLoanAmt__c: data?.ReqLoanAmt__c,
-      PropertyIdentified__c: data?.PropertyIdentified__c ? data.PropertyIdentified__c === "Yes" ?
-        1 : 0 : undefined,
-      Lead__c: leadId
-    }
-
+      PropertyIdentified__c: data?.PropertyIdentified__c
+        ? data.PropertyIdentified__c === "Yes"
+          ? 1
+          : 0
+        : undefined,
+      Lead__c: leadId,
+    };
   } catch (error) {
-    return null
+    return null;
   }
-}
+};
 
 export const getApplicantRequest = (data) => {
   try {
@@ -224,79 +218,264 @@ export const getApplicantRequest = (data) => {
       Period_of_stay_year__c: getPeriodValues(data?.Period_of_stay__c, 0),
       Period_of_stay_month__c: getPeriodValues(data?.Period_of_stay__c, 1),
       If_rented_rent_per_month__c: data?.If_rented_rent_per_month__c,
-      Employment_experience_month__c: getPeriodValues(data?.Employment_experience__c, 1),
-      Employment_experience_year__c: getPeriodValues(data?.Employment_experience__c, 0),
-      Total_Work_Experience_year__c: getPeriodValues(data?.Total_Work_Experience__c, 0),
-      Total_Work_Experience_month__c: getPeriodValues(data?.Total_Work_Experience__c, 1),
+      Employment_experience_month__c: getPeriodValues(
+        data?.Employment_experience__c,
+        1
+      ),
+      Employment_experience_year__c: getPeriodValues(
+        data?.Employment_experience__c,
+        0
+      ),
+      Total_Work_Experience_year__c: getPeriodValues(
+        data?.Total_Work_Experience__c,
+        0
+      ),
+      Total_Work_Experience_month__c: getPeriodValues(
+        data?.Total_Work_Experience__c,
+        1
+      ),
       Number_of_Family_Dependants__c: data?.Number_of_Family_Dependants__c,
-      No_of_Family_Dependants_Children__c: data?.No_of_Family_Dependants_Children__c,
+      No_of_Family_Dependants_Children__c:
+        data?.No_of_Family_Dependants_Children__c,
       No_of_Family_Dependants_Other__c: data?.No_of_Family_Dependants_Other__c,
-      Total_Business_Experience_year__c: getPeriodValues(data?.Total_Business_Experience__c, 0),
-      Total_Business_Experience_month__c: getPeriodValues(data?.Total_Business_Experience__c, 1),
+      Total_Business_Experience_year__c: getPeriodValues(
+        data?.Total_Business_Experience__c,
+        0
+      ),
+      Total_Business_Experience_month__c: getPeriodValues(
+        data?.Total_Business_Experience__c,
+        1
+      ),
       Address__c: data?.Address__c,
-      Pincode__c: data?.Pincode__c
-
-    }
-
+      Pincode__c: data?.Pincode__c,
+    };
   } catch (error) {
-    return null
+    return null;
   }
-}
+};
 
 export const getPeriodValues = (str, index) => {
   try {
     if (str) {
       if (index === 0) {
-        return str.substring(0, 2)
+        return str.substring(0, 2);
       } else {
-        return str.substring(2, 4)
+        return str.substring(2, 4);
       }
     }
-
-  } catch (error) {
-
-  }
-  return null
-}
-
+  } catch (error) {}
+  return null;
+};
 
 export const isEmptyObject = (obj) => {
   return Object.keys(obj).length === 0;
-}
+};
 
 // Example usage
 
 export const createCompositeRequestForPanAadhar = (loanData, aadharData) => {
-
   try {
     let compositeRequest = [
       {
-        "method": "POST",
-        "url": `/services/data/${net.getApiVersion()}/sobjects/ApplKyc__c`,
-        "referenceId": "pan",
-        "body": getPanCreateRequest(loanData)
-
+        method: "POST",
+        url: `/services/data/${net.getApiVersion()}/sobjects/ApplKyc__c`,
+        referenceId: "pan",
+        body: getPanCreateRequest(loanData),
       },
 
       {
-        "method": "POST",
-        "url": `/services/data/${net.getApiVersion()}/sobjects/ApplKyc__c`,
-        "referenceId": "aadhar",
-        "body": getAadharCreateRequest(loanData, aadharData)
+        method: "POST",
+        url: `/services/data/${net.getApiVersion()}/sobjects/ApplKyc__c`,
+        referenceId: "aadhar",
+        body: getAadharCreateRequest(loanData, aadharData),
       },
-
-
-    ]
+    ];
 
     return compositeRequest;
   } catch (error) {
-    log("createCompositeRequestForPanAadhar>>>error", error)
-    return null
+    log("createCompositeRequestForPanAadhar>>>error", error);
+    return null;
+  }
+};
+
+const getDocDetailBody = (data, applicationKycId, type) => {
+
+  if(type === 'PAN'){
+    return {
+      Doc_Sub_Name__c: "Pan",
+      DcmtSubName__c: "Pan",
+      Appl__c: data?.Applicant__c,
+      DocCatgry__c: "PAN Documents",
+      DocSubTyp__c: "PAN",
+      DocTyp__c: "PAN",
+      LAN__c: data?.loanId,
+      Case__c: "",
+      DocStatus__c: "New",
+      FileAvalbl__c: false,
+      Applicant_KYC__c: applicationKycId,
+    }
   }
 
+  if(type === 'Aadhaar'){
+    return {
+      Doc_Sub_Name__c: "Aadhaar",
+      DcmtSubName__c: "Aadhaar",
+      Appl__c: data?.Applicant__c,
+      DocCatgry__c: "KYC Documents",
+      DocSubTyp__c: "Aadhaar",
+      DocTyp__c: "Proof Of Identity",
+      LAN__c: data?.loanId,
+      Case__c: "",
+      DocStatus__c: "New",
+      FileAvalbl__c: false,
+      Applicant_KYC__c: applicationKycId,
+    };
+  }
+  
+  return null;
+};
 
-}
+const getPanUploadBody = (data) => {
+  return {
+    VersionData: data?.panDetails?.imageBase64,
+    Title: "PAN",
+    PathOnClient: "PAN" + ".jpeg",
+  };
+};
 
+const getAdhaarUploadBody = (imageBase64) => {
+  return {
+    VersionData:imageBase64,
+    Title: "Aadhaar",
+    PathOnClient: "Aadhaar" + ".jpeg",
+  };
+};
+
+const getContentDocumentBody = (docId, contentDocumentId) => {
+  return {
+    LinkedEntityId: docId,
+    ContentDocumentId: contentDocumentId,
+    ShareType: "V",
+  };
+};
+
+const panKycUpdateBody = (docId) => {
+  return {
+    Document_Detail__c: docId,
+    OCRStatus__c: "Success",
+  };
+};
+
+export const createCompositeRequestsForPanUpload = (
+  data,
+  applicationKycId
+) => {
+  try {
+    const compositeRequests = [
+      {
+        method: "GET",
+        url: `/services/data/${net.getApiVersion()}/query/?q=SELECT%20id%2C%20Catgry__c%2C%20DocSubTyp__c%2C%20DocTyp__c%20FROM%20DocMstr__c%20WHERE%20DocTyp__c%3D%27PAN%27%20LIMIT%201`,
+        referenceId: "docQuery",
+      },
+      {
+        method: "POST",
+        url: `/services/data/${net.getApiVersion()}/sobjects/DocDtl__c`,
+        referenceId: "docDetailPost",
+        body: {
+          ...getDocDetailBody(data, applicationKycId, 'PAN'),
+          DocMstr__c: "@{docQuery.records[0].Id}",
+        },
+      },
+      {
+        method: "POST",
+        url: `/services/data/${net.getApiVersion()}/sobjects/ContentVersion`,
+        referenceId: "contentVersionPost",
+        body: getPanUploadBody(data),
+      },
+      {
+        method: "GET",
+        url:
+          `/services/data/${net.getApiVersion()}/query/?q=SELECT%20Id%2C%20Title%2C%20ContentDocumentId%20FROM%20ContentVersion%20WHERE%20Id%3D%27@{contentVersionPost.id}%27`,
+        referenceId: "contentDocumentQuery",
+      },
+      {
+        method: "POST",
+        url: `/services/data/${net.getApiVersion()}/sobjects/ContentDocumentLink`,
+        referenceId: "ContentDocumentLink",
+        body: getContentDocumentBody(
+          "@{docDetailPost.id}",
+          "@{contentDocumentQuery.records[0].ContentDocumentId}"
+        ),
+      },
+      {
+        method: "PATCH",
+        url: `/services/data/${net.getApiVersion()}/sobjects/ApplKyc__c/${applicationKycId}`,
+        referenceId: "ApplKycPatch",
+        body: panKycUpdateBody("@{docDetailPost.id}"),
+      },
+    ];
+
+    return compositeRequests;
+  } catch (error) {
+    return null;
+  }
+};
+
+export const createCompositeRequestsForAdhaarUpload = (
+  data,
+  applicationKycId,
+  imageBase64
+) => {
+  try {
+    const compositeRequests = [
+      {
+        method: "GET",
+        url: `/services/data/${net.getApiVersion()}/query/?q=SELECT%20id%2C%20Catgry__c%2C%20DocSubTyp__c%2C%20DocTyp__c%20FROM%20DocMstr__c%20WHERE%20DocTyp__c%20%3D%20%27Proof%20Of%20Identity%27%20AND%20DocSubTyp__c%20%3D%20%27Aadhaar%27`,
+        referenceId: "docQuery",
+      },
+      {
+        method: "POST",
+        url: `/services/data/${net.getApiVersion()}/sobjects/DocDtl__c`,
+        referenceId: "docDetailPost",
+        body: {
+          ...getDocDetailBody(data, applicationKycId, 'Aadhaar'),
+          DocMstr__c: "@{docQuery.records[0].Id}",
+        },
+      },
+      {
+        method: "POST",
+        url: `/services/data/${net.getApiVersion()}/sobjects/ContentVersion`,
+        referenceId: "contentVersionPost",
+        body: getAdhaarUploadBody(imageBase64),
+      },
+      {
+        method: "GET",
+        url:
+          `/services/data/${net.getApiVersion()}/query/?q=SELECT%20Id%2C%20Title%2C%20ContentDocumentId%20FROM%20ContentVersion%20WHERE%20Id%3D%27@{contentVersionPost.id}%27`,
+        referenceId: "contentDocumentQuery",
+      },
+      {
+        method: "POST",
+        url: `/services/data/${net.getApiVersion()}/sobjects/ContentDocumentLink`,
+        referenceId: "ContentDocumentLink",
+        body: getContentDocumentBody(
+          "@{docDetailPost.id}",
+          "@{contentDocumentQuery.records[0].ContentDocumentId}"
+        ),
+      },
+      {
+        method: "PATCH",
+        url: `/services/data/${net.getApiVersion()}/sobjects/ApplKyc__c/${applicationKycId}`,
+        referenceId: "ApplKycPatch",
+        body: panKycUpdateBody("@{docDetailPost.id}"),
+      },
+    ];
+
+    return compositeRequests;
+  } catch (error) {
+    return null;
+  }
+};
 
 export const getPanCreateRequest = (data) => {
   //   // RM__c: data?.RM__c,
@@ -305,26 +484,25 @@ export const getPanCreateRequest = (data) => {
       Applicant__c: data?.Applicant__c,
       Pan__c: data?.panDetails?.panNumber,
       NameInPan__c: data?.panDetails.panName,
-      kycDoc__c: "Pan"
-    }
-
+      kycDoc__c: "Pan",
+      // LoanNo__c: data
+    };
   } catch (error) {
-    return null
+    return null;
   }
-}
-
+};
 
 export const getAadharCreateRequest = (data, aadharData) => {
   //   // RM__c: data?.RM__c,
   try {
     return {
-      OCRStatus__c:"Success",
+      OCRStatus__c: "Success",
       Applicant__c: data?.Applicant__c,
       kycDoc__c: "Aadhaar",
       Aadhar_Reference_Number__c: "",
       Encrypted_Aadhar_OCR__c: "",
       Karza_Aadhar_OCR_AccessKey__c: aadharData?.accessKey,
-      Karza_Aadhar_OCR_CaseId__c: aadharData?.caseId,
+      // Karza_Aadhar_OCR_CaseId__c: aadharData?.caseId,
       AdharEncrypt__c: aadharData?.encryptedAadhar,
       NameInAdhr__c: data?.adhaarDetails?.name,
       DtOfBirth__c: data?.adhaarDetails?.dob,
@@ -338,16 +516,17 @@ export const getAadharCreateRequest = (data, aadharData) => {
       State__c: data?.adhaarDetails?.address?.splitAddress?.state,
       Country__c: data?.adhaarDetails?.address?.splitAddress?.country,
       Pincode__c: data?.adhaarDetails?.address?.splitAddress?.pincode,
-      AdhrAdd__c: data?.adhaarDetails?.address?.combinedAddress?.toString()?.length <= 255 ?
-        data?.adhaarDetails?.address?.combinedAddress : undefined // in SF address take max length upto 255
-    }
-
+      AdhrAdd__c:
+        data?.adhaarDetails?.address?.combinedAddress?.toString()?.length <= 255
+          ? data?.adhaarDetails?.address?.combinedAddress
+          : undefined, // in SF address take max length upto 255
+    };
   } catch (error) {
-    return null
+    return null;
   }
-}
+};
 
-export const createCurrentAddressIsSameAsPermanentRequest = (data) =>{
+export const createCurrentAddressIsSameAsPermanentRequest = (data) => {
   try {
     return {
       Sm_as_Per_Adr__c: 1,
@@ -360,10 +539,8 @@ export const createCurrentAddressIsSameAsPermanentRequest = (data) =>{
       Country__c: data?.adhaarDetails?.address?.splitAddress?.country,
       Pincode__c: data?.adhaarDetails?.address?.splitAddress?.pincode,
       Applicant__c: data?.Applicant__c,
-    }
+    };
   } catch (error) {
-    return null
+    return null;
   }
-}
-
-
+};

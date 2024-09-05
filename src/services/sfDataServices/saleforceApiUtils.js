@@ -2,7 +2,10 @@ import ErrorConstants from "../../constants/ErrorConstants";
 import { query } from "../../constants/Queries";
 import { log } from "../../utils/ConsoleLogUtils";
 import LocalStorage from "../LocalStorage";
-import { saveAllLeadFields, saveApplicationDataSoup } from "../sfDBServices/salesforceDbService";
+import {
+  saveAllLeadFields,
+  saveApplicationDataSoup,
+} from "../sfDBServices/salesforceDbService";
 import { getAllSoupEntries } from "../sfDBServices/salesforceDbUtils";
 import { soupConfig } from "../sfDBServices/SoupConstants";
 import { getMetaData, QueryObject } from "./netService";
@@ -12,11 +15,10 @@ export const getLeadFields = async () => {
     // check weather data is present in local constants
     try {
       if (LocalStorage.getLeadFields()) {
-
         resolve(LocalStorage.getLeadFields());
         return;
       }
-    } catch (error) { }
+    } catch (error) {}
 
     //  check weather data is present in soup (SF Local database) data or not
     try {
@@ -35,48 +37,37 @@ export const getLeadFields = async () => {
     }
 
     // last option make the SF call
-    var loanApplicantFieldData = null
-    var applicantFieldData = null
-    var fieldsData = []
+    var loanApplicantFieldData = null;
+    var applicantFieldData = null;
+    var fieldsData = [];
     try {
-      loanApplicantFieldData = await getMetaData(soupConfig.LoanApplicantFields.name);
-
-    } catch (error) {
-
-    }
+      loanApplicantFieldData = await getMetaData(
+        soupConfig.LoanApplicantFields.name
+      );
+    } catch (error) {}
 
     try {
       applicantFieldData = await getMetaData(soupConfig.ApplicantFields.name);
-
-    } catch (error) {
-
-    }
+    } catch (error) {}
 
     if (loanApplicantFieldData && loanApplicantFieldData?.fields?.length > 0) {
-      fieldsData = [...fieldsData, ...loanApplicantFieldData?.fields]
-
+      fieldsData = [...fieldsData, ...loanApplicantFieldData?.fields];
     }
 
     if (applicantFieldData && applicantFieldData?.fields?.length > 0) {
-      fieldsData = [...fieldsData, ...applicantFieldData?.fields]
-
+      fieldsData = [...fieldsData, ...applicantFieldData?.fields];
     }
 
     fieldsData = fieldsData?.filter(
       (field) => field.createable === true || field.updateable === true
     );
 
-
-
-
     LocalStorage.setLeadFields(fieldsData);
     try {
       await saveAllLeadFields(soupConfig.LoanApplicantFields.name, fieldsData);
-    } catch (error) {
-    }
+    } catch (error) {}
 
-
-    resolve(fieldsData)
+    resolve(fieldsData);
     // getMetaData(soupConfig.LoanApplicantFields.name)
     //   .then(async (data) => {
     //     let metadata = []
@@ -93,8 +84,6 @@ export const getLeadFields = async () => {
     //   (field) => field.createable === true || field.updateable === true
     // );
 
-
-
     //         }
 
     //         LocalStorage.setLeadFields(metadata);
@@ -110,7 +99,6 @@ export const getLeadFields = async () => {
     //       }
     //     }
 
-
     //   })
     //   .catch((error) => {
     //     log("getMetaDataFromSource", error);
@@ -123,12 +111,15 @@ export const getPincodeData = async () => {
   return new Promise(async (resolve, reject) => {
     // check weather data is present in local constants
     try {
-      if (LocalStorage?.getPincodeLists() && LocalStorage?.getPincodeLists()?.length > 0) {
-        log("local", LocalStorage.getPincodeLists())
+      if (
+        LocalStorage?.getPincodeLists() &&
+        LocalStorage?.getPincodeLists()?.length > 0
+      ) {
+        log("local", LocalStorage.getPincodeLists());
         resolve(LocalStorage.getPincodeLists());
         return;
       }
-    } catch (error) { }
+    } catch (error) {}
 
     //  check weather data is present in soup (SF Local database) data or not
     try {
@@ -137,7 +128,6 @@ export const getPincodeData = async () => {
         soupConfig.pincodeList.path
       );
       if (getData && getData?.length > 0) {
-    
         LocalStorage.setPincodeLists(getData);
         resolve(getData);
         return;
@@ -148,20 +138,18 @@ export const getPincodeData = async () => {
 
     // last option make the SF call
 
-    QueryObject(query.getPincodeMasterData,)
+    QueryObject(query.getPincodeMasterData)
       .then(async (data) => {
-        const metadata = data?.records
+        const metadata = data?.records;
         if (metadata && metadata?.length > 0) {
           LocalStorage.setPincodeLists(metadata);
-          log("api", data?.records)
+          log("api", data?.records);
           // save the field into the soups
           try {
             await saveAllLeadFields(soupConfig.pincodeList.name, metadata);
-          } catch (error) {
-          }
+          } catch (error) {}
           resolve(metadata);
-        }
-        else {
+        } else {
           reject(ErrorConstants.SOMETHING_WENT_WRONG);
         }
       })
@@ -175,12 +163,11 @@ export const getPincodeData = async () => {
 export const saveApplicationData = async (data) => {
   return new Promise(async (resolve, reject) => {
     try {
-
       await saveApplicationDataSoup(soupConfig.applicationList.name, data);
-      resolve(data)
+      resolve(data);
     } catch (error) {
-      console.log('saveApplicationData', error)
-      reject(ErrorConstants.SOMETHING_WENT_WRONG)
+      console.log("saveApplicationData", error);
+      reject(ErrorConstants.SOMETHING_WENT_WRONG);
     }
 
     // last option make the SF call

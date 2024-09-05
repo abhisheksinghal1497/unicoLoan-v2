@@ -160,7 +160,7 @@ const HomeScreen = ({ navigation }) => {
           <TouchableOpacity
             style={styles.seeDetailsresumeJourneyButton}
             onPress={() => {
-              navigation?.navigate(screenName, { loanData: item });
+              navigation?.navigate(screens.LoanDetails, { loanData: item });
             }}
           >
             <Text style={styles.seeDetailsresumeJourneyText}>
@@ -345,7 +345,7 @@ const HomeScreen = ({ navigation }) => {
               </TouchableOpacity>
 
               <TouchableOpacity
-              //  onPress={() => oauth.logout()}
+               onPress={() => oauth.logout()}
               >
                 <Text>Logout</Text>
               </TouchableOpacity>

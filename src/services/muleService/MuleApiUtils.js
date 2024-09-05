@@ -5,6 +5,8 @@ import { errorConsoleLog, log } from "../../utils/ConsoleLogUtils";
 import ErrorConstants from "../../constants/ErrorConstants";
 import {
   createCompositeRequestForPanAadhar,
+  createCompositeRequestsForAdhaarUpload,
+  createCompositeRequestsForPanUpload,
   getConsentTime,
   getIpAddress,
   getUniqueId,
@@ -69,6 +71,10 @@ export const verifyAadhar = (panNumber, loanData, panName) => {
       const adhaarToken = body?.intitialResponse?.results?.aadharToken
         ? body?.intitialResponse?.results?.aadharToken
         : "";
+        const aadhaarBase64 = body?.imageBase64;
+        const result = aadhaarBase64 ? aadhaarBase64?.substring(1, aadhaarBase64?.length - 1) : null;
+
+
       const request = {
         aadhaarTokenValue: adhaarToken,
         encryptedAadhar: body?.intitialResponse?.results?.encryptedAadhar,
@@ -104,6 +110,21 @@ export const verifyAadhar = (panNumber, loanData, panName) => {
                   console.log('here------------------12')
                   const response = await compositeRequest(createCompositeRequestForPanAadhar(loanDetails, request))
                   if (response) {
+                     try {
+                      const panApplicationId = response?.compositeResponse?.[0]?.body?.id;
+                      if(panApplicationId && loanData?.panDetails?.imageBase64){
+                        const panUploadRequests = createCompositeRequestsForPanUpload(loanData, panApplicationId);
+                         const response = await compositeRequest(panUploadRequests);
+                      }
+                      const adhaarApplicationId = response?.compositeResponse?.[1]?.body?.id;
+                      if(adhaarApplicationId && result){
+                        const aadhaarUploadRequests = createCompositeRequestsForAdhaarUpload(loanData, panApplicationId, result);
+                         const response = await compositeRequest(aadhaarUploadRequests);
+                      }
+
+                     } catch (error) {
+                      
+                     }
                     await saveApplicationData(loanDetails)
                     resolve({...loanDetails})
                   }else{
@@ -127,6 +148,16 @@ export const verifyAadhar = (panNumber, loanData, panName) => {
                     loanDetails.adhaarDetails = adhaarVerifyResponse.data?.results;
                     const response = await compositeRequest(createCompositeRequestForPanAadhar(loanDetails, request))
                     if (response) {
+                      const panApplicationId = response?.compositeResponse?.[0]?.body?.id;
+                      if(panApplicationId && loanData?.panDetails?.imageBase64){
+                        const panUploadRequests = createCompositeRequestsForPanUpload(loanData, panApplicationId);
+                         const response = await compositeRequest(panUploadRequests);
+                      }
+                      const adhaarApplicationId = response?.compositeResponse?.[1]?.body?.id;
+                      if(adhaarApplicationId && result){
+                        const aadhaarUploadRequests = createCompositeRequestsForAdhaarUpload(loanData, panApplicationId, result);
+                         const response = await compositeRequest(aadhaarUploadRequests);
+                      }
                       await saveApplicationData(loanDetails)
                       resolve({...loanDetails})
                     }else{
