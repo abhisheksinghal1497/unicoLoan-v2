@@ -5,6 +5,7 @@ import { fetch } from "@react-native-community/netinfo";
 import uuid from "react-native-uuid";
 import { CommonActions, useNavigation } from "@react-navigation/native";
 import { net } from "react-native-force";
+import { LOAN_DETAILS_KEYS } from "../constants/stringConstants";
 
 export const alert = (title, subTitle, onPressOK, onPressCancel) => {
   if (onPressCancel) {
@@ -299,8 +300,7 @@ export const createCompositeRequestForPanAadhar = (loanData, aadharData) => {
 };
 
 const getDocDetailBody = (data, applicationKycId, type) => {
-
-  if(type === 'PAN'){
+  if (type === "PAN") {
     return {
       Doc_Sub_Name__c: "Pan",
       DcmtSubName__c: "Pan",
@@ -313,10 +313,10 @@ const getDocDetailBody = (data, applicationKycId, type) => {
       DocStatus__c: "New",
       FileAvalbl__c: false,
       Applicant_KYC__c: applicationKycId,
-    }
+    };
   }
 
-  if(type === 'Aadhaar'){
+  if (type === "Aadhaar") {
     return {
       Doc_Sub_Name__c: "Aadhaar",
       DcmtSubName__c: "Aadhaar",
@@ -331,7 +331,7 @@ const getDocDetailBody = (data, applicationKycId, type) => {
       Applicant_KYC__c: applicationKycId,
     };
   }
-  
+
   return null;
 };
 
@@ -345,7 +345,7 @@ const getPanUploadBody = (data) => {
 
 const getAdhaarUploadBody = (imageBase64) => {
   return {
-    VersionData:imageBase64,
+    VersionData: imageBase64,
     Title: "Aadhaar",
     PathOnClient: "Aadhaar" + ".jpeg",
   };
@@ -366,10 +366,75 @@ const panKycUpdateBody = (docId) => {
   };
 };
 
-export const createCompositeRequestsForPanUpload = (
-  data,
-  applicationKycId
-) => {
+const getCompositeRequest = (query, referenceId) => {
+  return {
+    method: "GET",
+    url: `/services/data/${net.getApiVersion()}/query/?q=${query}`,
+    referenceId,
+  };
+};
+
+const postCompositeRequest = (objectName, body, referenceId) => {
+  return {
+    method: "POST",
+    url: `/services/data/${net.getApiVersion()}/sobjects/${objectName}`,
+    referenceId,
+    body,
+  };
+};
+
+const patchCompositeRequest = (objectName, objectId, body, referenceId) => {
+  return {
+    method: "PATCH",
+    url: `/services/data/${net.getApiVersion()}/sobjects/${objectName}/${objectId}`,
+    referenceId,
+    body,
+  };
+};
+
+const getLoanDetailPatchBody = (loanData) => ({
+  [LOAN_DETAILS_KEYS.reqLoanAmt]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.reqLoanAmt],
+  [LOAN_DETAILS_KEYS.reqTenure]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.reqTenure],
+  // [LOAN_DETAILS_KEYS.loanPurpose]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.loanPurpose],
+});
+
+const getApplicantPatchBody = (loanData) => ({
+  // [LOAN_DETAILS_KEYS.mobile]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.mobile],
+  [LOAN_DETAILS_KEYS.isExistingCustomer]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.isExistingCustomer],
+  [LOAN_DETAILS_KEYS.custId]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.custId],
+});
+
+const getLoanDetailPostBody = (loanData) => ({
+  [LOAN_DETAILS_KEYS.bankBalance]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.bankBalance],
+  [LOAN_DETAILS_KEYS.immovableProperty]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.immovableProperty],
+  [LOAN_DETAILS_KEYS.currPF]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.currPF],
+  // [LOAN_DETAILS_KEYS.valShareSecr]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.valShareSecr],
+  [LOAN_DETAILS_KEYS.fd]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.fd],
+  [LOAN_DETAILS_KEYS.invPlantMachVehi]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.invPlantMachVehi],
+  [LOAN_DETAILS_KEYS.ownContri]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.ownContri],
+  [LOAN_DETAILS_KEYS.assetVal]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.assetVal],
+  [LOAN_DETAILS_KEYS.totalAsset]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.totalAsset],
+  [LOAN_DETAILS_KEYS.amtConstructPurchase]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.amtConstructPurchase],
+  [LOAN_DETAILS_KEYS.savings]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.savings],
+  [LOAN_DETAILS_KEYS.dispAsset]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.dispAsset],
+  [LOAN_DETAILS_KEYS.familyFund]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.familyFund],
+  [LOAN_DETAILS_KEYS.srvcFund]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.srvcFund],
+  // [LOAN_DETAILS_KEYS.totalIncome]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.totalIncome],
+  Appl__c: loanData?.Applicant__c
+});
+
+
+export const createCompositeRequestForLoadDetails = (loanData) => {
+  const compositeRequests = [
+    patchCompositeRequest("LoanAppl__c", loanData?.loanId, getLoanDetailPatchBody(loanData), "patchLoanApplication"),
+    patchCompositeRequest("Applicant__c", loanData?.Applicant__c, getApplicantPatchBody(loanData), "patchApplicant"),
+    postCompositeRequest("ApplAsset__c", getLoanDetailPostBody(loanData), "postLoanDetail"),
+  ];
+
+  return compositeRequests;
+};
+
+export const createCompositeRequestsForPanUpload = (data, applicationKycId) => {
   try {
     const compositeRequests = [
       {
@@ -382,7 +447,7 @@ export const createCompositeRequestsForPanUpload = (
         url: `/services/data/${net.getApiVersion()}/sobjects/DocDtl__c`,
         referenceId: "docDetailPost",
         body: {
-          ...getDocDetailBody(data, applicationKycId, 'PAN'),
+          ...getDocDetailBody(data, applicationKycId, "PAN"),
           DocMstr__c: "@{docQuery.records[0].Id}",
         },
       },
@@ -394,8 +459,7 @@ export const createCompositeRequestsForPanUpload = (
       },
       {
         method: "GET",
-        url:
-          `/services/data/${net.getApiVersion()}/query/?q=SELECT%20Id%2C%20Title%2C%20ContentDocumentId%20FROM%20ContentVersion%20WHERE%20Id%3D%27@{contentVersionPost.id}%27`,
+        url: `/services/data/${net.getApiVersion()}/query/?q=SELECT%20Id%2C%20Title%2C%20ContentDocumentId%20FROM%20ContentVersion%20WHERE%20Id%3D%27@{contentVersionPost.id}%27`,
         referenceId: "contentDocumentQuery",
       },
       {
@@ -438,7 +502,7 @@ export const createCompositeRequestsForAdhaarUpload = (
         url: `/services/data/${net.getApiVersion()}/sobjects/DocDtl__c`,
         referenceId: "docDetailPost",
         body: {
-          ...getDocDetailBody(data, applicationKycId, 'Aadhaar'),
+          ...getDocDetailBody(data, applicationKycId, "Aadhaar"),
           DocMstr__c: "@{docQuery.records[0].Id}",
         },
       },
@@ -450,8 +514,7 @@ export const createCompositeRequestsForAdhaarUpload = (
       },
       {
         method: "GET",
-        url:
-          `/services/data/${net.getApiVersion()}/query/?q=SELECT%20Id%2C%20Title%2C%20ContentDocumentId%20FROM%20ContentVersion%20WHERE%20Id%3D%27@{contentVersionPost.id}%27`,
+        url: `/services/data/${net.getApiVersion()}/query/?q=SELECT%20Id%2C%20Title%2C%20ContentDocumentId%20FROM%20ContentVersion%20WHERE%20Id%3D%27@{contentVersionPost.id}%27`,
         referenceId: "contentDocumentQuery",
       },
       {
@@ -499,11 +562,11 @@ export const getAadharCreateRequest = (data, aadharData) => {
       OCRStatus__c: "Success",
       Applicant__c: data?.Applicant__c,
       kycDoc__c: "Aadhaar",
-      Aadhar_Reference_Number__c: "",
-      Encrypted_Aadhar_OCR__c: "",
-      Karza_Aadhar_OCR_AccessKey__c: aadharData?.accessKey,
+      // Aadhar_Reference_Number__c: "",
+      // Encrypted_Aadhar_OCR__c: "",
+      // Karza_Aadhar_OCR_AccessKey__c: aadharData?.accessKey,
       // Karza_Aadhar_OCR_CaseId__c: aadharData?.caseId,
-      AdharEncrypt__c: aadharData?.encryptedAadhar,
+      // AdharEncrypt__c: aadharData?.encryptedAadhar,
       NameInAdhr__c: data?.adhaarDetails?.name,
       DtOfBirth__c: data?.adhaarDetails?.dob,
       Gender__c: data?.adhaarDetails?.gender,

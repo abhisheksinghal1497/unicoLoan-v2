@@ -35,7 +35,7 @@ const LoanDetails = (props) => {
 
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
-  console.log("hari>>>loanData", loanData)
+  console.log("hari>>>loanData", {...loanData, panDetails: ''})
   const submitLoanMutate = useSubmitLoanFormData(loanData);
   const {
     control,
@@ -82,14 +82,16 @@ const LoanDetails = (props) => {
 
 
   const onSubmit = async () => {
-    const isValid = await trigger();
-    if (!isValid) {
-      // toast("error", "Value is invalid");
+    const data = watch();
+    console.log('DATA here-------------', data)
+    // const isValid = await trigger();
+    // if (!isValid) {
+    //   // toast("error", "Value is invalid");
 
-      return;
-    }
-    const data = watch()
-    await AsyncStorage.setItem("LoanDetails", JSON.stringify(data));
+    //   return;
+    // }
+    // const data = watch()
+    // await AsyncStorage.setItem("LoanDetails", JSON.stringify(data));
     submitLoanMutate.mutate(data);
   };
 
@@ -103,8 +105,8 @@ const LoanDetails = (props) => {
 
   useEffect(() => {
     if (submitLoanMutate.error) {
-      log("submitLoanMutate error", submitLoanMutate.error);
-      alert(ErrorConstants.SOMETHING_WENT_WRONG);
+      // log("submitLoanMutate error", submitLoanMutate.error);
+      // alert(ErrorConstants.SOMETHING_WENT_WRONG);
     }
   }, [submitLoanMutate.error]);
 

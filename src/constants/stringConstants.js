@@ -13,28 +13,28 @@ export const AadharBasicDetails = {
 export const LOAN_DETAILS_KEYS = {
   reqLoanAmt: "ReqLoanAmt__c",
   reqTenure: "ReqTenInMonths__c",
-  loanPurpose: "loanPurpose",
-  mobile: "MobNumber__c",
-  isExistingCustomer: "isExistingCustomer",
-  custId: "custId",
-  bankBalance: "bankBalance",
-  immovableProperty: 'immovableProperty',
-  currPF: "currPF",
-  valShareSecr: "valShareSecr",
-  fd: "fd",
-  invPlantMachVehi: "invPlantMachVehi",
-  ownContri: "ownContri",
-  assetVal: "assetVal",
-  totalAsset: "totalAsset",
-  amtConstructPurchase: "amtConstructPurchase",
-  savings: "savings",
-  dispAsset: "dispAsset",
-  familyFund: "familyFund",
-  srvcFund: "srvcFund",
-  totalIncome: "totalIncome",
-  totalObligation: "totalObligation",
-  resAddr: "resAddr",
-  currAddr: "currAddr",
+  loanPurpose: "loanPurpose",  // not done
+  mobile: "MobNumber__c", // not done
+  isExistingCustomer: "ExistingCustomer__c",
+  custId: "Customer__c",
+  bankBalance: "Bankbalance__c",
+  immovableProperty: 'ImmovablePropertyValue__c',
+  currPF: "CurrentPfBalance__c",
+  valShareSecr: "valShareSecr", // not done
+  fd: "FixedDeposits__c",
+  invPlantMachVehi: "InvestmentInPlants_Machinery_Vehicles__c",
+  ownContri: "OwnContributions__c",
+  assetVal: "OthersAssetsValue__c", 
+  totalAsset: "TotalAssets__c", 
+  amtConstructPurchase: "AmountSpentForConstruction_Purchase__c",
+  savings: "Savings__c",
+  dispAsset: "DisposalOfAsset__c",
+  familyFund: "FundFromFamily__c",
+  srvcFund: "FundFromOtherServices__c",
+  totalIncome: "totalIncome", // not done
+  totalObligation: "totalObligation", // not done
+  resAddr: "resAddr", // not done
+  currAddr: "currAddr", // not done
 };
 
 export const KycScreen = {

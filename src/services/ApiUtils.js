@@ -5,6 +5,7 @@ import { validations } from "../constants/validations";
 import { component } from "../components/FormComponents/FormControl";
 
 import {
+  createCompositeRequestForLoadDetails,
   createCompositeRequestsForPanUpload,
   createCurrentAddressIsSameAsPermanentRequest,
   createLoanAndAppplicantCompositeRequest,
@@ -1072,12 +1073,15 @@ export const useSubmitLoanFormData = (loanData) => {
       return new Promise(async (resolve, reject) => {
         let loanDetail = { ...loanData };
         loanDetail.loanDetails = { ...data };
-        try {
-          await saveApplicationData(loanDetail);
-          resolve({ ...loanDetail });
-        } catch (error) {
-          reject(ErrorConstants.SOMETHING_WENT_WRONG);
-        }
+
+        const response = await compositeRequest(createCompositeRequestForLoadDetails(loanDetail));
+        reject(true)
+        // try {
+        //   await saveApplicationData(loanDetail);
+        //   resolve({ ...loanDetail });
+        // } catch (error) {
+        //   reject(ErrorConstants.SOMETHING_WENT_WRONG);
+        // }
       });
     },
   });
