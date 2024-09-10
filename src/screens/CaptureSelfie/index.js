@@ -12,19 +12,24 @@ import CustomButton from "../../components/Button";
 import { useRoute } from "@react-navigation/native";
 import { useSaveSelfie } from "../../services/ApiUtils";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
+import Toast from "react-native-toast-message";
 
 const CaptureSelfie = ({ navigation }) => {
   const { fonts } = useTheme();
   const [selectedImage, setSelectedImage] = useState(null);
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
+  console.log('loanData', loanData?.adhaarDetails)
   const selfieMutate = useSaveSelfie(loanData);
-  console.log(">>>>>",loanData)
+
   const onCameraPress = ({ front = false }) => {
     ImagePicker.openCamera({
       cropping: true,
       compressImageQuality: 0.6,
       useFrontCamera: front,
+      includeBase64:true,
+      multiple:false,
+      mediaType:'photo'
     })
       .then((image) => {
         setSelectedImage(image);
@@ -44,6 +49,10 @@ const CaptureSelfie = ({ navigation }) => {
   };
 
   const onSubmit = () => {
+    if(!selectedImage){
+      Toast.show({type:'error', text1:'Please upload image'})
+      return
+    }
     selfieMutate.mutate(selectedImage);
   };
 

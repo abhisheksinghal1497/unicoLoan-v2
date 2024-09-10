@@ -7,11 +7,13 @@ import { component } from "../components/FormComponents/FormControl";
 import {
   createCompositeRequestForLoadDetails,
   createCompositeRequestsForPanUpload,
+  createCompositeRequestsForSelfieUpload,
   createCurrentAddressIsSameAsPermanentRequest,
   createLoanAndAppplicantCompositeRequest,
   getLeadCreationRequest,
   getPanCreateRequest,
   GetPicklistValues,
+  getSelfieCreateRequest,
   getUniqueId,
   toast,
 } from "../utils/functions";
@@ -1074,14 +1076,15 @@ export const useSubmitLoanFormData = (loanData) => {
         let loanDetail = { ...loanData };
         loanDetail.loanDetails = { ...data };
 
-        const response = await compositeRequest(createCompositeRequestForLoadDetails(loanDetail));
-        reject(true)
-        // try {
-        //   await saveApplicationData(loanDetail);
-        //   resolve({ ...loanDetail });
-        // } catch (error) {
-        //   reject(ErrorConstants.SOMETHING_WENT_WRONG);
-        // }
+        const response = await compositeRequest(
+          createCompositeRequestForLoadDetails(loanDetail)
+        );
+         try {
+           await saveApplicationData(loanDetail);
+           resolve({ ...loanDetail });
+         } catch (error) {
+           reject(ErrorConstants.SOMETHING_WENT_WRONG);
+         }
       });
     },
   });
@@ -1099,7 +1102,6 @@ export const useSubmitPanForm = (loanData) => {
         loanDetail.panDetails.imageBase64 = data?.imageBase64;
         const imageBase64 = data.imageBase64;
 
-
         // try {
         //   // Step 1
         //   // PAN UPLOAD START
@@ -1111,11 +1113,11 @@ export const useSubmitPanForm = (loanData) => {
 
         //   // const panUploadRequests = createCompositeRequestsForPanUpload(loanDetail, applicationKycId);
         //   // const response = await compositeRequest(panUploadRequests);
-        
+
         //   // resolve(true);
         //   // return
         //    // -------------------------PAN UPLOAD END------------------------------------
-          
+
         //   resolve(true)
         // } catch (error) {
         //   console.log("FAILED TO UPLOAD PAN", error);
@@ -1515,9 +1517,16 @@ export const useSaveSelfie = (loanData) => {
       return new Promise(async (resolve, reject) => {
         let data = { ...loanData };
         data.selfieDetails = selfie;
-        log("data>>", data);
 
         try {
+          const ApplKyc__c = await postObjectData(
+            "ApplKyc__c",
+            getSelfieCreateRequest(data)
+          );
+          const applicationKycId = ApplKyc__c?.id;
+          const responseComposite = await compositeRequest(
+            createCompositeRequestsForSelfieUpload(data, applicationKycId)
+          );
           const response = await saveApplicationData(data);
           if (response) {
             resolve(data);
@@ -1544,11 +1553,14 @@ export const useKycDocument = (loanData) => {
           address: loanData?.adhaarDetails?.address?.splitAddress,
           fullAddress: loanData?.adhaarDetails?.address?.combinedAddress,
         };
-
+        
+        const body = createCurrentAddressIsSameAsPermanentRequest(data, 'Current Address')
+     
         const saveCurrentAddress = await postObjectData(
           "ApplAddr__c",
-          createCurrentAddressIsSameAsPermanentRequest(data)
+          body
         );
+
         if (saveCurrentAddress) {
           console.log("FULL ADDRESS", data.currentAddressDetails);
           try {
