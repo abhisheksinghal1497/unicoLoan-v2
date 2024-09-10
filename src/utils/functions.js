@@ -274,7 +274,39 @@ export const isEmptyObject = (obj) => {
 
 // Example usage
 
+function parseFullName(fullName) {
+  // Split the full name by spaces
+  const nameParts = fullName?.trim()?.split(' ');
+  
+  // Initialize the result object
+  let result = {
+    FName__c: '',
+    MName__c: '',
+    LName__c: ''
+  };
+
+  // Assign names based on the number of parts
+  if (nameParts?.length === 1) {
+    result.FName__c = nameParts[0];
+  } else if (nameParts?.length === 2) {
+    result.FName__c = nameParts[0];
+    result.LName__c = nameParts[1];
+  } else if (nameParts?.length >= 3) {
+    result.FName__c = nameParts[0];
+    result.MName__c = nameParts.slice(1, -1).join(' '); // Join all middle names
+    result.LName__c = nameParts[nameParts.length - 1];
+  }
+
+  return result;
+}
+
+const updateNameInLoanBody = (aadharData) => ({
+  Father_Name__c: aadharData?.fatherName,
+  ...parseFullName(aadharData?.name)
+})
+
 export const createCompositeRequestForPanAadhar = (loanData, aadharData) => {
+  console.log('aadharData',aadharData)
   try {
     let compositeRequest = [
       {
@@ -289,6 +321,10 @@ export const createCompositeRequestForPanAadhar = (loanData, aadharData) => {
         url: `/services/data/${net.getApiVersion()}/sobjects/ApplKyc__c`,
         referenceId: "aadhar",
         body: getAadharCreateRequest(loanData, aadharData),
+      },
+      // Update Loan application First name, middlename , last name and Father name - LoanAppl__c and Applicant__c
+      {
+        ...patchCompositeRequest('Applicant__c', loanData?.Applicant__c, updateNameInLoanBody(loanDetails?.adhaarDetails) ,'Applicant__cPatch')
       },
     ];
 
@@ -332,7 +368,31 @@ const getDocDetailBody = (data, applicationKycId, type) => {
     };
   }
 
+  if (type === "Selfie") {
+    return {
+      Doc_Sub_Name__c: "Selfie",
+      DcmtSubName__c: "Selfie",
+      Appl__c: data?.Applicant__c,
+      DocCatgry__c: "KYC Documents",
+      DocSubTyp__c: "Applicant Photo",
+      DocTyp__c: "Photograph",
+      LAN__c: data?.loanId,
+      Case__c: "",
+      DocStatus__c: "New",
+      FileAvalbl__c: false,
+      Applicant_KYC__c: applicationKycId,
+    };
+  }
+
   return null;
+};
+
+const getSelfieUploadBody = (data) => {
+  return {
+    VersionData: data?.selfieDetails?.data,
+    Title: "Selfie",
+    PathOnClient: "Selfie" + ".jpeg",
+  };
 };
 
 const getPanUploadBody = (data) => {
@@ -432,6 +492,57 @@ export const createCompositeRequestForLoadDetails = (loanData) => {
   ];
 
   return compositeRequests;
+};
+
+export const createCompositeRequestsForSelfieUpload = (data, applicationKycId) => {
+  try {
+    const compositeRequests = [
+      {
+        method: "GET",
+        url: `/services/data/${net.getApiVersion()}/query/?q=SELECT%20id%2C%20Catgry__c%2C%20DocSubTyp__c%2C%20DocTyp__c%20FROM%20DocMstr__c%20WHERE%20DocTyp__c%3D%27Photograph%27%20LIMIT%201`,
+        referenceId: "docQuery",
+      },
+      {
+        method: "POST",
+        url: `/services/data/${net.getApiVersion()}/sobjects/DocDtl__c`,
+        referenceId: "docDetailPost",
+        body: {
+          ...getDocDetailBody(data, applicationKycId, "Selfie"),
+          DocMstr__c: "@{docQuery.records[0].Id}",
+        },
+      },
+      {
+        method: "POST",
+        url: `/services/data/${net.getApiVersion()}/sobjects/ContentVersion`,
+        referenceId: "contentVersionPost",
+        body: getSelfieUploadBody(data),
+      },
+      {
+        method: "GET",
+        url: `/services/data/${net.getApiVersion()}/query/?q=SELECT%20Id%2C%20Title%2C%20ContentDocumentId%20FROM%20ContentVersion%20WHERE%20Id%3D%27@{contentVersionPost.id}%27`,
+        referenceId: "contentDocumentQuery",
+      },
+      {
+        method: "POST",
+        url: `/services/data/${net.getApiVersion()}/sobjects/ContentDocumentLink`,
+        referenceId: "ContentDocumentLink",
+        body: getContentDocumentBody(
+          "@{docDetailPost.id}",
+          "@{contentDocumentQuery.records[0].ContentDocumentId}"
+        ),
+      },
+      {
+        method: "PATCH",
+        url: `/services/data/${net.getApiVersion()}/sobjects/ApplKyc__c/${applicationKycId}`,
+        referenceId: "ApplKycPatch",
+        body: panKycUpdateBody("@{docDetailPost.id}"),
+      },
+    ];
+
+    return compositeRequests;
+  } catch (error) {
+    return null;
+  }
 };
 
 export const createCompositeRequestsForPanUpload = (data, applicationKycId) => {
@@ -555,6 +666,19 @@ export const getPanCreateRequest = (data) => {
   }
 };
 
+export const getSelfieCreateRequest = (data) => {
+  //   // RM__c: data?.RM__c,
+  try {
+    return {
+      Applicant__c: data?.Applicant__c,
+      kycDoc__c: "Applicant Photo",
+    };
+  } catch (error) {
+    return null;
+  }
+};
+
+
 export const getAadharCreateRequest = (data, aadharData) => {
   //   // RM__c: data?.RM__c,
   try {
@@ -589,19 +713,25 @@ export const getAadharCreateRequest = (data, aadharData) => {
   }
 };
 
-export const createCurrentAddressIsSameAsPermanentRequest = (data) => {
+export const createCurrentAddressIsSameAsPermanentRequest = (data, AddrTyp__c) => {
   try {
+    const street = data?.adhaarDetails?.address?.splitAddress?.street;
+    const location = data?.adhaarDetails?.address?.splitAddress?.location
     return {
-      Sm_as_Per_Adr__c: 1,
-      AddrTyp__c: "Current Address",
-      HouseNo__c: data?.adhaarDetails?.address?.splitAddress?.houseNumber,
+      Applicant__c: data?.Applicant__c,
+      LoanAppl__c: data?.loanId,
       Landmark__c: data?.adhaarDetails?.address?.splitAddress?.landmark,
-      District__c: data?.adhaarDetails?.address?.splitAddress?.district,
-      Locality__c: data?.adhaarDetails?.address?.splitAddress?.location,
+      AddrLine1__c: street ? street : location ? location : null,
+      AddrLine2__c: location ? location : street ? street : null,
+      AddrTyp__c,
       State__c: data?.adhaarDetails?.address?.splitAddress?.state,
       Country__c: data?.adhaarDetails?.address?.splitAddress?.country,
       Pincode__c: data?.adhaarDetails?.address?.splitAddress?.pincode,
-      Applicant__c: data?.Applicant__c,
+      District__c: data?.adhaarDetails?.address?.splitAddress?.district,
+      city__c: data?.adhaarDetails?.address?.splitAddress?.district,
+      HouseNo__c: data?.adhaarDetails?.address?.splitAddress?.houseNumber,
+      // Sm_as_Per_Adr__c: 1,
+      Locality__c: data?.adhaarDetails?.address?.splitAddress?.location, 
     };
   } catch (error) {
     return null;
