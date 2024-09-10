@@ -48,7 +48,7 @@ const PanDetails = (props) => {
   const [responseData, setResponseData] = useState(null);
   const [panDetails, setPanDetails] = useState(null);
   const panSubmitMutate = useSubmitPanForm(loanData);
-  console.log(">>>>>>>>", loanData)
+
   const {
     control,
     handleSubmit,

@@ -10,7 +10,7 @@ const errorCallback = (reject) => () => {
 };
 
 export const QueryObject = (query) => {
- 
+
   return new Promise((resolve, reject) => {
     const successCB = (data) => {
       console.log("inside success");
@@ -97,7 +97,7 @@ export const updateObjectData = (objectName, data, id) => {
         resolve(res);
       },
       (error) => {
-        console.log(error,"updateobject data error")
+        console.log(error, "updateobject data error")
         reject(error);
       },
       "PATCH",
@@ -106,18 +106,26 @@ export const updateObjectData = (objectName, data, id) => {
   });
 };
 
-export const compositeRequest = (requests) => {
+export const compositeRequest = (requests, allOrNone = true) => {
   return new Promise((resolve, reject) => {
     // console.log('compositeGraphApi data', graphs);
     let requestData = {
-      allOrNone: true,
+      allOrNone: allOrNone,
       compositeRequest: requests,
     };
     net.sendRequest(
       "/services/data/",
       `${net.getApiVersion()}/composite`,
       (res) => {
-        resolve(res);
+        if (res?.compositeResponse?.length > 0) {
+          if (res?.compositeResponse?.[0]?.body?.success) {
+            resolve(res);
+          } else {
+            reject("Request Failed");
+          }
+        } else {
+          reject("Request Failed");
+        }
       },
       (error) => {
         console.log("Error", error);

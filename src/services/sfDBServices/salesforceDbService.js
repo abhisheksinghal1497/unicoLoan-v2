@@ -36,14 +36,14 @@ export const getAllSavedRecords = async (soupName, path) => {
 
 
 export const saveApplicationDataSoup = async (soupName, data) => {
-    data[soupConfig.applicationList.externalId] = data?.loanId ? data?.loanId : data?.Id
+    data = { ...data, External_ID: data?.loanId ? data?.loanId : data?.Id }
     return new Promise(async (resolve, reject) => {
         try {
             const checkSoupExistsOrNot = await checkSoupExists(soupName)
             if (!checkSoupExistsOrNot) {
                 // register for the soup
-                await registerSoup(soupName, [{ path: soupConfig.applicationList.path, type: 'string', unique: true },
-                { path: soupConfig.applicationList.externalId, type: 'string', unique: true }
+                await registerSoup(soupName, [{ path: soupConfig.applicationList.externalId, type: 'string', unique: true },
+                
                 ])
             }
 

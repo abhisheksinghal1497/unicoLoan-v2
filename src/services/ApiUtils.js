@@ -91,6 +91,7 @@ export const getHomeScreenDetails = () => {
                 loanId: record?.Id,
                 applicationDetails: record,
                 Applicant__c: record?.Applicants__r?.records?.[0].Id,
+                External_ID: record?.Id
               };
 
               await saveApplicationData(data);
@@ -1027,6 +1028,7 @@ export const useSubmitApplicationFormData = (pincodeData) => {
 
                   const defaultData = soupConfig.applicationList.default;
                   defaultData.loanId = loanId;
+                  defaultData.applicationId = applicationId;
                   defaultData.applicationDetails = {
                     ...data,
                   };

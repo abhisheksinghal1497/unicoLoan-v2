@@ -29,7 +29,10 @@ package com.unico_loan.react;
 import com.salesforce.androidsdk.reactnative.app.SalesforceReactSDKManager;
 import com.salesforce.androidsdk.reactnative.ui.SalesforceReactActivity;
 
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+
 import androidx.fragment.app.FragmentManager;
 
 public class MainActivity extends SalesforceReactActivity {
@@ -43,7 +46,17 @@ public class MainActivity extends SalesforceReactActivity {
 		super.onCreate(savedInstanceState);
 
 		// Initialize fragmentManager
+
+		boolean isDevEnabled = isDevelopmentSettingsMode();
+		if(isDevEnabled){
+
+		}
 		
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
 	}
 
 	// /**
@@ -74,5 +87,17 @@ public class MainActivity extends SalesforceReactActivity {
 	protected String getMainComponentName() {
 		return "unicoLoan";
 	}
+
+	private boolean isDevelopmentSettingsMode(){
+		boolean isDevelopmentSettingsMode;
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
+			isDevelopmentSettingsMode = Settings.System.getInt(this.getContentResolver(), Settings.Secure.DEVELOPMENT_SETTINGS_ENABLED, 0) != 1;
+		} else {
+			isDevelopmentSettingsMode = Settings.Global.getInt(this.getContentResolver(), Settings.Global.DEVELOPMENT_SETTINGS_ENABLED, 0) == 1;
+		}
+	return  isDevelopmentSettingsMode;
+	}
+
+
 }
 

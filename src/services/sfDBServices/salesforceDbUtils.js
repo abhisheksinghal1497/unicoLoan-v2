@@ -60,7 +60,7 @@ export const upsertSoupEntriesWithExternalId = async (soupName, records) => {
         // assuming only one record,
         let existingRecord = cursor.currentPageOrderedEntries[0]
         for (const key in records) {
-          console.log("key>>>", key)
+         
           existingRecord[key] = records[key] ? records[key] : null
         }
         smartstore.upsertSoupEntriesWithExternalId(
@@ -78,6 +78,7 @@ export const upsertSoupEntriesWithExternalId = async (soupName, records) => {
         );
 
       } else {
+        console.log("ajhXJAHxsbva")
         smartstore.upsertSoupEntriesWithExternalId(
           false,
           soupName,

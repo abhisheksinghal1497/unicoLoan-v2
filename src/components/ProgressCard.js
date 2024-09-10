@@ -35,7 +35,7 @@ const ProgressCard = ({ screenName }) => {
               styles.textStyle,
             ]}
           >
-            LAN:-  {loanId}
+            LAN:-  {applicationDetails?.Name}
           </Text>
           <Text style={[fonts.labelSmall, { color: "rgba(46, 82, 161, 1)" }, styles.textStyle, {
             fontSize: 12
