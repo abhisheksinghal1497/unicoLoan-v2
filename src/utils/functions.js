@@ -276,13 +276,13 @@ export const isEmptyObject = (obj) => {
 
 function parseFullName(fullName) {
   // Split the full name by spaces
-  const nameParts = fullName?.trim()?.split(' ');
-  
+  const nameParts = fullName?.trim()?.split(" ");
+
   // Initialize the result object
   let result = {
-    FName__c: '',
-    MName__c: '',
-    LName__c: ''
+    FName__c: "",
+    MName__c: "",
+    LName__c: "",
   };
 
   // Assign names based on the number of parts
@@ -293,7 +293,7 @@ function parseFullName(fullName) {
     result.LName__c = nameParts[1];
   } else if (nameParts?.length >= 3) {
     result.FName__c = nameParts[0];
-    result.MName__c = nameParts.slice(1, -1).join(' '); // Join all middle names
+    result.MName__c = nameParts.slice(1, -1).join(" "); // Join all middle names
     result.LName__c = nameParts[nameParts.length - 1];
   }
 
@@ -302,11 +302,11 @@ function parseFullName(fullName) {
 
 const updateNameInLoanBody = (aadharData) => ({
   Father_Name__c: aadharData?.fatherName,
-  ...parseFullName(aadharData?.name)
-})
+  ...parseFullName(aadharData?.name),
+});
 
 export const createCompositeRequestForPanAadhar = (loanData, aadharData) => {
-  console.log('aadharData',aadharData)
+  console.log("aadharData", aadharData);
   try {
     let compositeRequest = [
       {
@@ -324,7 +324,12 @@ export const createCompositeRequestForPanAadhar = (loanData, aadharData) => {
       },
       // Update Loan application First name, middlename , last name and Father name - LoanAppl__c and Applicant__c
       {
-        ...patchCompositeRequest('Applicant__c', loanData?.Applicant__c, updateNameInLoanBody(loanDetails?.adhaarDetails) ,'Applicant__cPatch')
+        ...patchCompositeRequest(
+          "Applicant__c",
+          loanData?.Applicant__c,
+          updateNameInLoanBody(loanDetails?.adhaarDetails),
+          "Applicant__cPatch"
+        ),
       },
     ];
 
@@ -453,48 +458,78 @@ const patchCompositeRequest = (objectName, objectId, body, referenceId) => {
 };
 
 const getLoanDetailPatchBody = (loanData) => ({
-  [LOAN_DETAILS_KEYS.reqLoanAmt]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.reqLoanAmt],
-  [LOAN_DETAILS_KEYS.reqTenure]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.reqTenure],
+  [LOAN_DETAILS_KEYS.reqLoanAmt]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.reqLoanAmt],
+  [LOAN_DETAILS_KEYS.reqTenure]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.reqTenure],
   // [LOAN_DETAILS_KEYS.loanPurpose]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.loanPurpose],
 });
 
 const getApplicantPatchBody = (loanData) => ({
   // [LOAN_DETAILS_KEYS.mobile]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.mobile],
-  [LOAN_DETAILS_KEYS.isExistingCustomer]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.isExistingCustomer],
+  [LOAN_DETAILS_KEYS.isExistingCustomer]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.isExistingCustomer],
   [LOAN_DETAILS_KEYS.custId]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.custId],
 });
 
 const getLoanDetailPostBody = (loanData) => ({
-  [LOAN_DETAILS_KEYS.bankBalance]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.bankBalance],
-  [LOAN_DETAILS_KEYS.immovableProperty]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.immovableProperty],
+  [LOAN_DETAILS_KEYS.bankBalance]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.bankBalance],
+  [LOAN_DETAILS_KEYS.immovableProperty]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.immovableProperty],
   [LOAN_DETAILS_KEYS.currPF]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.currPF],
   // [LOAN_DETAILS_KEYS.valShareSecr]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.valShareSecr],
   [LOAN_DETAILS_KEYS.fd]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.fd],
-  [LOAN_DETAILS_KEYS.invPlantMachVehi]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.invPlantMachVehi],
-  [LOAN_DETAILS_KEYS.ownContri]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.ownContri],
-  [LOAN_DETAILS_KEYS.assetVal]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.assetVal],
-  [LOAN_DETAILS_KEYS.totalAsset]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.totalAsset],
-  [LOAN_DETAILS_KEYS.amtConstructPurchase]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.amtConstructPurchase],
-  [LOAN_DETAILS_KEYS.savings]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.savings],
-  [LOAN_DETAILS_KEYS.dispAsset]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.dispAsset],
-  [LOAN_DETAILS_KEYS.familyFund]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.familyFund],
-  [LOAN_DETAILS_KEYS.srvcFund]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.srvcFund],
+  [LOAN_DETAILS_KEYS.invPlantMachVehi]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.invPlantMachVehi],
+  [LOAN_DETAILS_KEYS.ownContri]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.ownContri],
+  [LOAN_DETAILS_KEYS.assetVal]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.assetVal],
+  [LOAN_DETAILS_KEYS.totalAsset]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.totalAsset],
+  [LOAN_DETAILS_KEYS.amtConstructPurchase]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.amtConstructPurchase],
+  [LOAN_DETAILS_KEYS.savings]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.savings],
+  [LOAN_DETAILS_KEYS.dispAsset]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.dispAsset],
+  [LOAN_DETAILS_KEYS.familyFund]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.familyFund],
+  [LOAN_DETAILS_KEYS.srvcFund]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.srvcFund],
   // [LOAN_DETAILS_KEYS.totalIncome]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.totalIncome],
-  Appl__c: loanData?.Applicant__c
+  Appl__c: loanData?.Applicant__c,
 });
-
 
 export const createCompositeRequestForLoadDetails = (loanData) => {
   const compositeRequests = [
-    patchCompositeRequest("LoanAppl__c", loanData?.loanId, getLoanDetailPatchBody(loanData), "patchLoanApplication"),
-    patchCompositeRequest("Applicant__c", loanData?.Applicant__c, getApplicantPatchBody(loanData), "patchApplicant"),
-    postCompositeRequest("ApplAsset__c", getLoanDetailPostBody(loanData), "postLoanDetail"),
+    patchCompositeRequest(
+      "LoanAppl__c",
+      loanData?.loanId,
+      getLoanDetailPatchBody(loanData),
+      "patchLoanApplication"
+    ),
+    patchCompositeRequest(
+      "Applicant__c",
+      loanData?.Applicant__c,
+      getApplicantPatchBody(loanData),
+      "patchApplicant"
+    ),
+    postCompositeRequest(
+      "ApplAsset__c",
+      getLoanDetailPostBody(loanData),
+      "postLoanDetail"
+    ),
   ];
 
   return compositeRequests;
 };
 
-export const createCompositeRequestsForSelfieUpload = (data, applicationKycId) => {
+export const createCompositeRequestsForSelfieUpload = (
+  data,
+  applicationKycId
+) => {
   try {
     const compositeRequests = [
       {
@@ -546,6 +581,7 @@ export const createCompositeRequestsForSelfieUpload = (data, applicationKycId) =
 };
 
 export const createCompositeRequestsForPanUpload = (data, applicationKycId) => {
+  console.log("createCompositeRequestsForPanUpload");
   try {
     const compositeRequests = [
       {
@@ -678,7 +714,6 @@ export const getSelfieCreateRequest = (data) => {
   }
 };
 
-
 export const getAadharCreateRequest = (data, aadharData) => {
   //   // RM__c: data?.RM__c,
   try {
@@ -713,10 +748,13 @@ export const getAadharCreateRequest = (data, aadharData) => {
   }
 };
 
-export const createCurrentAddressIsSameAsPermanentRequest = (data, AddrTyp__c) => {
+export const createCurrentAddressIsSameAsPermanentRequest = (
+  data,
+  AddrTyp__c
+) => {
   try {
     const street = data?.adhaarDetails?.address?.splitAddress?.street;
-    const location = data?.adhaarDetails?.address?.splitAddress?.location
+    const location = data?.adhaarDetails?.address?.splitAddress?.location;
     return {
       Applicant__c: data?.Applicant__c,
       LoanAppl__c: data?.loanId,
@@ -731,7 +769,7 @@ export const createCurrentAddressIsSameAsPermanentRequest = (data, AddrTyp__c) =
       city__c: data?.adhaarDetails?.address?.splitAddress?.district,
       HouseNo__c: data?.adhaarDetails?.address?.splitAddress?.houseNumber,
       // Sm_as_Per_Adr__c: 1,
-      Locality__c: data?.adhaarDetails?.address?.splitAddress?.location, 
+      Locality__c: data?.adhaarDetails?.address?.splitAddress?.location,
     };
   } catch (error) {
     return null;
