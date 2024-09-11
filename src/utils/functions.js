@@ -145,6 +145,17 @@ export const createLoanAndAppplicantCompositeRequest = (data, leadID) => {
           LoanAppln__c: "@{loanCreate.id}",
         },
       },
+
+      // {
+      //   "method": "POST",
+      //   "url": `/services/data/${net.getApiVersion()}/sobjects/ApplConsent__c`,
+      //   "referenceId": "consent",
+      //   "body": {
+      //     ...createApplicationConsentRequest(), "LoanAppln__c": "@{loanCreate.id}",
+      //     "Applicant__c": "@{applicantCreate.id}"
+      //   }
+
+      // }
     ];
 
     return compositeRequest;
@@ -163,7 +174,7 @@ export const getLeadCreationRequest = (data) => {
       MobilePhone: data?.MobNumber__c,
       Email: data?.EmailId__c,
       Bulk_Lead__c: false,
-      Status: "New Lead",
+      Status: "Closed Lead",
       Alternative_Mobile_Number__c: data?.AltMobile__c,
       Customer_Profile__c: data?.Customer_Profile__c,
       LeadSource: data?.LeadSource__c,
@@ -200,6 +211,8 @@ export const getLoanCreateRequest = (data, leadId) => {
           : 0
         : undefined,
       Lead__c: leadId,
+      SubStage__c: "RM Data Entry",
+      Stage__c: "QDE",
     };
   } catch (error) {
     return null;
@@ -695,13 +708,11 @@ export const getPanCreateRequest = (data) => {
       Pan__c: data?.panDetails?.panNumber,
       NameInPan__c: data?.panDetails.panName,
       kycDoc__c: "Pan",
-      // LoanNo__c: data
     };
   } catch (error) {
     return null;
   }
 };
-
 export const getSelfieCreateRequest = (data) => {
   //   // RM__c: data?.RM__c,
   try {
@@ -723,8 +734,8 @@ export const getAadharCreateRequest = (data, aadharData) => {
       kycDoc__c: "Aadhaar",
       // Aadhar_Reference_Number__c: "",
       // Encrypted_Aadhar_OCR__c: "",
-      // Karza_Aadhar_OCR_AccessKey__c: aadharData?.accessKey,
-      // Karza_Aadhar_OCR_CaseId__c: aadharData?.caseId,
+      //  Karza_Aadhar_OCR_AccessKey__c: aadharData?.accessKey,
+      //Karza_Aadhar_OCR_CaseId__c: aadharData?.caseId, // Karza_Aadhar_OCR_CaseId__c
       // AdharEncrypt__c: aadharData?.encryptedAadhar,
       NameInAdhr__c: data?.adhaarDetails?.name,
       DtOfBirth__c: data?.adhaarDetails?.dob,
@@ -744,33 +755,267 @@ export const getAadharCreateRequest = (data, aadharData) => {
           : undefined, // in SF address take max length upto 255
     };
   } catch (error) {
+    console.log("getAadhaerCreateRequest>>>>error", error);
+
     return null;
   }
 };
 
 export const createCurrentAddressIsSameAsPermanentRequest = (
   data,
-  AddrTyp__c
+  type = "Current Address"
 ) => {
+  try {
+    if (type === "Permanent Address") {
+      console.log("permanent address>>>", type);
+      console.log("Applicant__c address>>>", type);
+      return {
+        LoanAppl__c: data?.loanId,
+        Applicant__c: data?.Applicant__c,
+        Landmark__c: data?.adhaarDetails?.address?.splitAddress?.landmark,
+        AddrLine1__c: street ? street : location ? location : null,
+        AddrLine2__c: location ? location : street ? street : null,
+        AddrTyp__c: "Permanent Address",
+        State__c: data?.adhaarDetails?.address?.splitAddress?.state,
+        Country__c: data?.adhaarDetails?.address?.splitAddress?.country,
+        Pincode__c: data?.adhaarDetails?.address?.splitAddress?.pincode,
+        HouseNo__c: data?.adhaarDetails?.address?.splitAddress?.houseNumber,
+        District__c: data?.adhaarDetails?.address?.splitAddress?.district,
+        city__c: data?.adhaarDetails?.address?.splitAddress?.district,
+        Locality__c: data?.adhaarDetails?.address?.splitAddress?.location,
+      };
+    } else {
+      return {
+        Applicant__c: data?.Applicant__c,
+        LoanAppl__c: data?.loanId,
+        Sm_as_Per_Adr__c: 1,
+        Landmark__c: data?.adhaarDetails?.address?.splitAddress?.landmark,
+        AddrLine1__c: street ? street : location ? location : null,
+        AddrLine2__c: location ? location : street ? street : null,
+        AddrTyp__c: "Current Address",
+        State__c: data?.adhaarDetails?.address?.splitAddress?.state,
+        Country__c: data?.adhaarDetails?.address?.splitAddress?.country,
+        Pincode__c: data?.adhaarDetails?.address?.splitAddress?.pincode,
+        HouseNo__c: data?.adhaarDetails?.address?.splitAddress?.houseNumber,
+        city__c: data?.adhaarDetails?.address?.splitAddress?.district,
+        District__c: data?.adhaarDetails?.address?.splitAddress?.district,
+        Locality__c: data?.adhaarDetails?.address?.splitAddress?.location,
+      };
+    }
+  } catch (error) {
+    return null;
+  }
+};
+
+export const createFinalLoanAndAssetsCompositeRequest = (leadData, request) => {
+  try {
+    let compositeRequest = [
+      {
+        method: "PATCH",
+        url: `/services/data/${net.getApiVersion()}/sobjects/LoanAppl__c/${
+          leadData?.loanId
+        }`,
+        referenceId: "loanUpdate",
+        body: getLoanUpdateRequest(request),
+      },
+
+      {
+        method: "PATCH",
+        url: `/services/data/${net.getApiVersion()}/sobjects/Applicant__c/${
+          leadData?.Applicant__c
+        }`,
+        referenceId: "applicantUpdate",
+        body: getapplicantUpdateRequest(data),
+      },
+
+      {
+        method: "POST",
+        url: `/services/data/${net.getApiVersion()}/sobjects/ApplAsset__c`,
+        referenceId: "applicantAssestsCreateOrUpdate",
+        body: getapplicantUpdateRequest(data),
+      },
+    ];
+
+    return compositeRequest;
+  } catch (error) {
+    log("createLeadCompositeRequest>>>error", error);
+    return null;
+  }
+};
+
+export const getLoanUpdateRequest = (data) => {
+  //   // RM__c: data?.RM__c,
+  try {
+    return {
+      ReqTenInMonths__c: data?.ReqTenInMonths__c,
+      ReqLoanAmt__c: data?.ReqLoanAmt__c,
+      LoanPurpose__c: data?.LoanPurpose__c,
+    };
+  } catch (error) {
+    return null;
+  }
+};
+
+export const getapplicantUpdateRequest = (data) => {
+  //   // RM__c: data?.RM__c,
+  try {
+    return {
+      ExistingCustomer__c: data?.ExistingCustomer__c,
+      Customer__c: data?.Customer__c,
+    };
+  } catch (error) {
+    return null;
+  }
+};
+
+export const getapplicantAssetsRequest = (data, id) => {
+  //   // RM__c: data?.RM__c,
+  try {
+    return {
+      Applicant__c: id,
+      Bankbalance__c: data?.Bankbalance__c,
+      ImmovablePropertyValue__c: data?.ImmovablePropertyValue__c,
+      CurrentPfBalance__c: data?.CurrentPfBalance__c,
+      SharesAndSecurityBalance__c: data?.SharesAndSecurityBalance__c,
+      FixedDeposits__c: data?.FixedDeposits__c,
+      InvestmentInPlants_Machinery_Vehicles__c:
+        data?.InvestmentInPlants_Machinery_Vehicles__c,
+      OwnContributions__c: data?.OwnContributions__c,
+      OthersAssetsValue__c: data?.OthersAssetsValue__c,
+      TotalAssets__c: data?.TotalAssets__c,
+      AmountSpentForConstruction_Purchase__c:
+        data?.AmountSpentForConstruction_Purchase__c,
+      Savings__c: data?.Savings__c,
+      DisposalOfAsset__c: data?.DisposalOfAsset__c,
+      FundFromFamily__c: data?.FundFromFamily__c,
+      FundFromOtherServices__c: data?.FundFromOtherServices__c,
+    };
+  } catch (error) {
+    return null;
+  }
+};
+
+export const createApplicationConsentRequest = () => {
+  try {
+    return {
+      Aadhar_Consent__c: 1,
+      C_KYC__c: 1,
+
+      Declaration__c: 1,
+      Driving_License__c: 1,
+      Email_Id__c: 1,
+      General_Consent__c: 1,
+      LPG_ID__c: 1,
+      Mobile_No__c: 1,
+      PAN_No__c: 1,
+      Passport__c: 1,
+      Voter_ID__c: 1,
+    };
+  } catch (error) {
+    return null;
+  }
+};
+
+export const getAadharAddressRequest = (data) => {
+  //   // RM__c: data?.RM__c,
   try {
     const street = data?.adhaarDetails?.address?.splitAddress?.street;
     const location = data?.adhaarDetails?.address?.splitAddress?.location;
     return {
       Applicant__c: data?.Applicant__c,
-      LoanAppl__c: data?.loanId,
+      LoanAppl__c: data?.data?.loanId,
+      HouseNo__c: data?.adhaarDetails?.address?.splitAddress?.houseNumber,
       Landmark__c: data?.adhaarDetails?.address?.splitAddress?.landmark,
       AddrLine1__c: street ? street : location ? location : null,
       AddrLine2__c: location ? location : street ? street : null,
-      AddrTyp__c,
+      AddrTyp__c: "Permanent Address",
       State__c: data?.adhaarDetails?.address?.splitAddress?.state,
       Country__c: data?.adhaarDetails?.address?.splitAddress?.country,
       Pincode__c: data?.adhaarDetails?.address?.splitAddress?.pincode,
       District__c: data?.adhaarDetails?.address?.splitAddress?.district,
       city__c: data?.adhaarDetails?.address?.splitAddress?.district,
-      HouseNo__c: data?.adhaarDetails?.address?.splitAddress?.houseNumber,
-      // Sm_as_Per_Adr__c: 1,
-      Locality__c: data?.adhaarDetails?.address?.splitAddress?.location,
     };
+  } catch (error) {
+    console.log("getPanCreateRequest>>>>error", error);
+
+    return null;
+  }
+};
+
+export const updateAadharDataToApplicant = (data) => {
+  //   // RM__c: data?.RM__c,
+  try {
+    let request = {
+      Father_Name__c: data?.adhaarDetails?.fatherName,
+      AdhrLst4Dgts__c: extractLastFourDigitsOfString(
+        data?.adhaarDetails?.maskedAadhaarNumber
+      ),
+      DOB__c: data?.adhaarDetails?.dob,
+      Gender__c: data?.adhaarDetails?.gender,
+    };
+    const name = data?.adhaarDetails?.name;
+    let firstName = null;
+    let lastName = null;
+    let middlename = null;
+    try {
+      if (name && name?.length > 0) {
+        const nameList = name?.toString()?.split(" ");
+        firstName = nameList
+          ? nameList.length > 0
+            ? nameList[0]
+            : name
+          : null;
+
+        if (nameList != null && nameList.size() == 3) {
+          middlename = nameList[1] ? nameList[1] : null;
+
+          lastName = nameList[2] ? nameList[2] : null;
+
+          console.log("middlename1", middlename);
+          console.log("lastName1", lastName);
+        } else if (nameList != null && nameList.size() == 2) {
+          //appl.MName__c = string.isNotBlank(nameList[1]) ? nameList[1] : null;
+
+          lastName = nameList[1] ? nameList[1] : null;
+
+          console.log("middlename2", middlename);
+          console.log("lastName2", lastName);
+        } else if (nameList != null && nameList.size() > 3) {
+          middlename = nameList[1] ? nameList[1] : null;
+          for (let i = 2; i <= nameList.size(); i++) {
+            lastName = lastName + " " + nameList(i);
+          }
+
+          console.log("middlename3", middlename);
+          console.log("lastName3", lastName);
+        } else {
+          lastName = firstName;
+        }
+      }
+    } catch (error) {}
+
+    if (firstName) {
+      request = { ...request, FName__c: firstName };
+    }
+
+    if (middlename) {
+      request = { ...request, MName__c: middlename };
+    }
+
+    if (lastName) {
+      request = { ...request, LName__c: lastName };
+    }
+    return request;
+  } catch (error) {
+    console.log("getPanCreateRequest>>>>error", error);
+
+    return null;
+  }
+};
+
+const extractLastFourDigitsOfString = (data) => {
+  try {
+    return data.slice(-4);
   } catch (error) {
     return null;
   }

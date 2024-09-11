@@ -195,7 +195,7 @@ const HomeScreen = ({ navigation }) => {
               justifyContent: "space-between",
             }}
           >
-            <Text style={textStyle(14)}>LAN: {item?.loanId}</Text>
+            <Text style={textStyle(14)}>LAN: {item?.applicationDetails?.Name}</Text>
           </View>
         </View>
       );
@@ -345,7 +345,7 @@ const HomeScreen = ({ navigation }) => {
               </TouchableOpacity>
 
               <TouchableOpacity
-               onPress={() => oauth.logout()}
+                onPress={() => oauth.logout()}
               >
                 <Text>Logout</Text>
               </TouchableOpacity>
