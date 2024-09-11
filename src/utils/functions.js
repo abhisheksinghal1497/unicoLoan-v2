@@ -145,17 +145,6 @@ export const createLoanAndAppplicantCompositeRequest = (data, leadID) => {
           LoanAppln__c: "@{loanCreate.id}",
         },
       },
-
-      // {
-      //   "method": "POST",
-      //   "url": `/services/data/${net.getApiVersion()}/sobjects/ApplConsent__c`,
-      //   "referenceId": "consent",
-      //   "body": {
-      //     ...createApplicationConsentRequest(), "LoanAppln__c": "@{loanCreate.id}",
-      //     "Applicant__c": "@{applicantCreate.id}"
-      //   }
-
-      // }
     ];
 
     return compositeRequest;
@@ -174,7 +163,7 @@ export const getLeadCreationRequest = (data) => {
       MobilePhone: data?.MobNumber__c,
       Email: data?.EmailId__c,
       Bulk_Lead__c: false,
-      Status: "Closed Lead",
+      Status: "New Lead",
       Alternative_Mobile_Number__c: data?.AltMobile__c,
       Customer_Profile__c: data?.Customer_Profile__c,
       LeadSource: data?.LeadSource__c,
@@ -211,8 +200,6 @@ export const getLoanCreateRequest = (data, leadId) => {
           : 0
         : undefined,
       Lead__c: leadId,
-      SubStage__c: "RM Data Entry",
-      Stage__c: "QDE",
     };
   } catch (error) {
     return null;
@@ -277,7 +264,7 @@ export const getPeriodValues = (str, index) => {
         return str.substring(2, 4);
       }
     }
-  } catch (error) {}
+  } catch (error) { }
   return null;
 };
 
@@ -289,13 +276,13 @@ export const isEmptyObject = (obj) => {
 
 function parseFullName(fullName) {
   // Split the full name by spaces
-  const nameParts = fullName?.trim()?.split(" ");
+  const nameParts = fullName?.trim()?.split(' ');
 
   // Initialize the result object
   let result = {
-    FName__c: "",
-    MName__c: "",
-    LName__c: "",
+    FName__c: '',
+    MName__c: '',
+    LName__c: ''
   };
 
   // Assign names based on the number of parts
@@ -306,7 +293,7 @@ function parseFullName(fullName) {
     result.LName__c = nameParts[1];
   } else if (nameParts?.length >= 3) {
     result.FName__c = nameParts[0];
-    result.MName__c = nameParts.slice(1, -1).join(" "); // Join all middle names
+    result.MName__c = nameParts.slice(1, -1).join(' '); // Join all middle names
     result.LName__c = nameParts[nameParts.length - 1];
   }
 
@@ -315,11 +302,11 @@ function parseFullName(fullName) {
 
 const updateNameInLoanBody = (aadharData) => ({
   Father_Name__c: aadharData?.fatherName,
-  ...parseFullName(aadharData?.name),
-});
+  ...parseFullName(aadharData?.name)
+})
 
 export const createCompositeRequestForPanAadhar = (loanData, aadharData) => {
-  console.log("aadharData", aadharData);
+  console.log('aadharData', aadharData)
   try {
     let compositeRequest = [
       {
@@ -343,6 +330,13 @@ export const createCompositeRequestForPanAadhar = (loanData, aadharData) => {
           updateNameInLoanBody(loanDetails?.adhaarDetails),
           "Applicant__cPatch"
         ),
+      },
+
+      {
+        "method": "PATCH",
+        "url": `/services/data/${net.getApiVersion()}/sobjects/Applicant__c/${loanData.Applicant__c}`,
+        "referenceId": "applicantUpdateId",
+        "body": updateAadharDataToApplicant(loanData)
       },
     ];
 
@@ -471,17 +465,14 @@ const patchCompositeRequest = (objectName, objectId, body, referenceId) => {
 };
 
 const getLoanDetailPatchBody = (loanData) => ({
-  [LOAN_DETAILS_KEYS.reqLoanAmt]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.reqLoanAmt],
-  [LOAN_DETAILS_KEYS.reqTenure]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.reqTenure],
+  [LOAN_DETAILS_KEYS.reqLoanAmt]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.reqLoanAmt],
+  [LOAN_DETAILS_KEYS.reqTenure]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.reqTenure],
   // [LOAN_DETAILS_KEYS.loanPurpose]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.loanPurpose],
 });
 
 const getApplicantPatchBody = (loanData) => ({
   // [LOAN_DETAILS_KEYS.mobile]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.mobile],
-  [LOAN_DETAILS_KEYS.isExistingCustomer]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.isExistingCustomer],
+  [LOAN_DETAILS_KEYS.isExistingCustomer]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.isExistingCustomer],
   [LOAN_DETAILS_KEYS.custId]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.custId],
 });
 
@@ -490,59 +481,30 @@ const getLoanDetailPostBody = (loanData) => ({
     loanData?.loanDetails?.[LOAN_DETAILS_KEYS.bankBalance],
   [LOAN_DETAILS_KEYS.immovableProperty]:
     loanData?.loanDetails?.[LOAN_DETAILS_KEYS.immovableProperty],
-  [LOAN_DETAILS_KEYS.currPF]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.currPF],
-  // [LOAN_DETAILS_KEYS.valShareSecr]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.valShareSecr],
-  [LOAN_DETAILS_KEYS.fd]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.fd],
-  [LOAN_DETAILS_KEYS.invPlantMachVehi]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.invPlantMachVehi],
-  [LOAN_DETAILS_KEYS.ownContri]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.ownContri],
-  [LOAN_DETAILS_KEYS.assetVal]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.assetVal],
-  [LOAN_DETAILS_KEYS.totalAsset]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.totalAsset],
-  [LOAN_DETAILS_KEYS.amtConstructPurchase]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.amtConstructPurchase],
-  [LOAN_DETAILS_KEYS.savings]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.savings],
-  [LOAN_DETAILS_KEYS.dispAsset]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.dispAsset],
-  [LOAN_DETAILS_KEYS.familyFund]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.familyFund],
-  [LOAN_DETAILS_KEYS.srvcFund]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.srvcFund],
+  [LOAN_DETAILS_KEYS.invPlantMachVehi]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.invPlantMachVehi],
+  [LOAN_DETAILS_KEYS.ownContri]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.ownContri],
+  [LOAN_DETAILS_KEYS.assetVal]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.assetVal],
+  [LOAN_DETAILS_KEYS.totalAsset]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.totalAsset],
+  [LOAN_DETAILS_KEYS.amtConstructPurchase]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.amtConstructPurchase],
+  [LOAN_DETAILS_KEYS.savings]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.savings],
+  [LOAN_DETAILS_KEYS.dispAsset]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.dispAsset],
+  [LOAN_DETAILS_KEYS.familyFund]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.familyFund],
+  [LOAN_DETAILS_KEYS.srvcFund]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.srvcFund],
   // [LOAN_DETAILS_KEYS.totalIncome]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.totalIncome],
-  Appl__c: loanData?.Applicant__c,
+  Appl__c: loanData?.Applicant__c
 });
+
 
 export const createCompositeRequestForLoadDetails = (loanData) => {
   const compositeRequests = [
-    patchCompositeRequest(
-      "LoanAppl__c",
-      loanData?.loanId,
-      getLoanDetailPatchBody(loanData),
-      "patchLoanApplication"
-    ),
-    patchCompositeRequest(
-      "Applicant__c",
-      loanData?.Applicant__c,
-      getApplicantPatchBody(loanData),
-      "patchApplicant"
-    ),
-    postCompositeRequest(
-      "ApplAsset__c",
-      getLoanDetailPostBody(loanData),
-      "postLoanDetail"
-    ),
+    patchCompositeRequest("LoanAppl__c", loanData?.loanId, getLoanDetailPatchBody(loanData), "patchLoanApplication"),
+    patchCompositeRequest("Applicant__c", loanData?.Applicant__c, getApplicantPatchBody(loanData), "patchApplicant"),
+    postCompositeRequest("ApplAsset__c", getLoanDetailPostBody(loanData), "postLoanDetail"),
   ];
 
   return compositeRequests;
 };
-
-export const createCompositeRequestsForSelfieUpload = (
-  data,
-  applicationKycId
-) => {
+export const createCompositeRequestsForSelfieUpload = (data, applicationKycId) => {
   try {
     const compositeRequests = [
       {
@@ -594,7 +556,6 @@ export const createCompositeRequestsForSelfieUpload = (
 };
 
 export const createCompositeRequestsForPanUpload = (data, applicationKycId) => {
-  console.log("createCompositeRequestsForPanUpload");
   try {
     const compositeRequests = [
       {
@@ -708,6 +669,7 @@ export const getPanCreateRequest = (data) => {
       Pan__c: data?.panDetails?.panNumber,
       NameInPan__c: data?.panDetails.panName,
       kycDoc__c: "Pan",
+      // LoanNo__c: data
     };
   } catch (error) {
     return null;
@@ -734,8 +696,8 @@ export const getAadharCreateRequest = (data, aadharData) => {
       kycDoc__c: "Aadhaar",
       // Aadhar_Reference_Number__c: "",
       // Encrypted_Aadhar_OCR__c: "",
-      //  Karza_Aadhar_OCR_AccessKey__c: aadharData?.accessKey,
-      //Karza_Aadhar_OCR_CaseId__c: aadharData?.caseId, // Karza_Aadhar_OCR_CaseId__c
+      // Karza_Aadhar_OCR_AccessKey__c: aadharData?.accessKey,
+      // Karza_Aadhar_OCR_CaseId__c: aadharData?.caseId,
       // AdharEncrypt__c: aadharData?.encryptedAadhar,
       NameInAdhr__c: data?.adhaarDetails?.name,
       DtOfBirth__c: data?.adhaarDetails?.dob,
@@ -755,161 +717,29 @@ export const getAadharCreateRequest = (data, aadharData) => {
           : undefined, // in SF address take max length upto 255
     };
   } catch (error) {
-    console.log("getAadhaerCreateRequest>>>>error", error);
-
     return null;
   }
 };
 
-export const createCurrentAddressIsSameAsPermanentRequest = (
-  data,
-  type = "Current Address"
-) => {
+export const createCurrentAddressIsSameAsPermanentRequest = (data, AddrTyp__c) => {
   try {
-    if (type === "Permanent Address") {
-      console.log("permanent address>>>", type);
-      console.log("Applicant__c address>>>", type);
-      return {
-        LoanAppl__c: data?.loanId,
-        Applicant__c: data?.Applicant__c,
-        Landmark__c: data?.adhaarDetails?.address?.splitAddress?.landmark,
-        AddrLine1__c: street ? street : location ? location : null,
-        AddrLine2__c: location ? location : street ? street : null,
-        AddrTyp__c: "Permanent Address",
-        State__c: data?.adhaarDetails?.address?.splitAddress?.state,
-        Country__c: data?.adhaarDetails?.address?.splitAddress?.country,
-        Pincode__c: data?.adhaarDetails?.address?.splitAddress?.pincode,
-        HouseNo__c: data?.adhaarDetails?.address?.splitAddress?.houseNumber,
-        District__c: data?.adhaarDetails?.address?.splitAddress?.district,
-        city__c: data?.adhaarDetails?.address?.splitAddress?.district,
-        Locality__c: data?.adhaarDetails?.address?.splitAddress?.location,
-      };
-    } else {
-      return {
-        Applicant__c: data?.Applicant__c,
-        LoanAppl__c: data?.loanId,
-        Sm_as_Per_Adr__c: 1,
-        Landmark__c: data?.adhaarDetails?.address?.splitAddress?.landmark,
-        AddrLine1__c: street ? street : location ? location : null,
-        AddrLine2__c: location ? location : street ? street : null,
-        AddrTyp__c: "Current Address",
-        State__c: data?.adhaarDetails?.address?.splitAddress?.state,
-        Country__c: data?.adhaarDetails?.address?.splitAddress?.country,
-        Pincode__c: data?.adhaarDetails?.address?.splitAddress?.pincode,
-        HouseNo__c: data?.adhaarDetails?.address?.splitAddress?.houseNumber,
-        city__c: data?.adhaarDetails?.address?.splitAddress?.district,
-        District__c: data?.adhaarDetails?.address?.splitAddress?.district,
-        Locality__c: data?.adhaarDetails?.address?.splitAddress?.location,
-      };
-    }
-  } catch (error) {
-    return null;
-  }
-};
-
-export const createFinalLoanAndAssetsCompositeRequest = (leadData, request) => {
-  try {
-    let compositeRequest = [
-      {
-        method: "PATCH",
-        url: `/services/data/${net.getApiVersion()}/sobjects/LoanAppl__c/${
-          leadData?.loanId
-        }`,
-        referenceId: "loanUpdate",
-        body: getLoanUpdateRequest(request),
-      },
-
-      {
-        method: "PATCH",
-        url: `/services/data/${net.getApiVersion()}/sobjects/Applicant__c/${
-          leadData?.Applicant__c
-        }`,
-        referenceId: "applicantUpdate",
-        body: getapplicantUpdateRequest(data),
-      },
-
-      {
-        method: "POST",
-        url: `/services/data/${net.getApiVersion()}/sobjects/ApplAsset__c`,
-        referenceId: "applicantAssestsCreateOrUpdate",
-        body: getapplicantUpdateRequest(data),
-      },
-    ];
-
-    return compositeRequest;
-  } catch (error) {
-    log("createLeadCompositeRequest>>>error", error);
-    return null;
-  }
-};
-
-export const getLoanUpdateRequest = (data) => {
-  //   // RM__c: data?.RM__c,
-  try {
+    const street = data?.adhaarDetails?.address?.splitAddress?.street;
+    const location = data?.adhaarDetails?.address?.splitAddress?.location
     return {
-      ReqTenInMonths__c: data?.ReqTenInMonths__c,
-      ReqLoanAmt__c: data?.ReqLoanAmt__c,
-      LoanPurpose__c: data?.LoanPurpose__c,
-    };
-  } catch (error) {
-    return null;
-  }
-};
-
-export const getapplicantUpdateRequest = (data) => {
-  //   // RM__c: data?.RM__c,
-  try {
-    return {
-      ExistingCustomer__c: data?.ExistingCustomer__c,
-      Customer__c: data?.Customer__c,
-    };
-  } catch (error) {
-    return null;
-  }
-};
-
-export const getapplicantAssetsRequest = (data, id) => {
-  //   // RM__c: data?.RM__c,
-  try {
-    return {
-      Applicant__c: id,
-      Bankbalance__c: data?.Bankbalance__c,
-      ImmovablePropertyValue__c: data?.ImmovablePropertyValue__c,
-      CurrentPfBalance__c: data?.CurrentPfBalance__c,
-      SharesAndSecurityBalance__c: data?.SharesAndSecurityBalance__c,
-      FixedDeposits__c: data?.FixedDeposits__c,
-      InvestmentInPlants_Machinery_Vehicles__c:
-        data?.InvestmentInPlants_Machinery_Vehicles__c,
-      OwnContributions__c: data?.OwnContributions__c,
-      OthersAssetsValue__c: data?.OthersAssetsValue__c,
-      TotalAssets__c: data?.TotalAssets__c,
-      AmountSpentForConstruction_Purchase__c:
-        data?.AmountSpentForConstruction_Purchase__c,
-      Savings__c: data?.Savings__c,
-      DisposalOfAsset__c: data?.DisposalOfAsset__c,
-      FundFromFamily__c: data?.FundFromFamily__c,
-      FundFromOtherServices__c: data?.FundFromOtherServices__c,
-    };
-  } catch (error) {
-    return null;
-  }
-};
-
-export const createApplicationConsentRequest = () => {
-  try {
-    return {
-      Aadhar_Consent__c: 1,
-      C_KYC__c: 1,
-
-      Declaration__c: 1,
-      Driving_License__c: 1,
-      Email_Id__c: 1,
-      General_Consent__c: 1,
-      LPG_ID__c: 1,
-      Mobile_No__c: 1,
-      PAN_No__c: 1,
-      Passport__c: 1,
-      Voter_ID__c: 1,
+      Applicant__c: data?.Applicant__c,
+      LoanAppl__c: data?.loanId,
+      Landmark__c: data?.adhaarDetails?.address?.splitAddress?.landmark,
+      AddrLine1__c: street ? street : location ? location : null,
+      AddrLine2__c: location ? location : street ? street : null,
+      AddrTyp__c,
+      State__c: data?.adhaarDetails?.address?.splitAddress?.state,
+      Country__c: data?.adhaarDetails?.address?.splitAddress?.country,
+      Pincode__c: data?.adhaarDetails?.address?.splitAddress?.pincode,
+      District__c: data?.adhaarDetails?.address?.splitAddress?.district,
+      city__c: data?.adhaarDetails?.address?.splitAddress?.district,
+      HouseNo__c: data?.adhaarDetails?.address?.splitAddress?.houseNumber,
+      // Sm_as_Per_Adr__c: 1,
+      Locality__c: data?.adhaarDetails?.address?.splitAddress?.location,
     };
   } catch (error) {
     return null;
@@ -941,6 +771,7 @@ export const getAadharAddressRequest = (data) => {
     return null;
   }
 };
+
 
 export const updateAadharDataToApplicant = (data) => {
   //   // RM__c: data?.RM__c,
@@ -1019,4 +850,4 @@ const extractLastFourDigitsOfString = (data) => {
   } catch (error) {
     return null;
   }
-};
+}
