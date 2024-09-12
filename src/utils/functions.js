@@ -200,6 +200,8 @@ export const getLoanCreateRequest = (data, leadId) => {
           : 0
         : undefined,
       Lead__c: leadId,
+      SubStage__c: "RM Data Entry",
+      Stage__c: "QDE",
     };
   } catch (error) {
     return null;
@@ -305,7 +307,7 @@ const updateNameInLoanBody = (aadharData) => ({
   ...parseFullName(aadharData?.name)
 })
 
-export const createCompositeRequestForPanAadhar = (loanData, aadharData) => {
+export const createCompositeRequestForPanAadhar = (loanData, aadharData, isPanAadharLinked, score) => {
   console.log('aadharData', aadharData)
   try {
     let compositeRequest = [
@@ -320,7 +322,13 @@ export const createCompositeRequestForPanAadhar = (loanData, aadharData) => {
         method: "POST",
         url: `/services/data/${net.getApiVersion()}/sobjects/ApplKyc__c`,
         referenceId: "aadhar",
-        body: getAadharCreateRequest(loanData, aadharData),
+        body: isPanAadharLinked ? {
+          ...getAadharCreateRequest(loanData, aadharData),
+          IsPanAdrLnk__c: "true", ValidationStatus__c: "Success"
+        } : {
+          ...getAadharCreateRequest(loanData, aadharData), IsPanAdrLnk__c: "false", ValidationStatus__c: "Success",
+          KARZA_Name_Match_Score__c: score, Name_Match_Status__c: "Name Match successful!!"
+        },
       },
       // Update Loan application First name, middlename , last name and Father name - LoanAppl__c and Applicant__c
       {
@@ -370,6 +378,22 @@ const getDocDetailBody = (data, applicationKycId, type) => {
       DocCatgry__c: "KYC Documents",
       DocSubTyp__c: "Aadhaar",
       DocTyp__c: "Proof Of Identity",
+      LAN__c: data?.loanId,
+      Case__c: "",
+      DocStatus__c: "New",
+      FileAvalbl__c: false,
+      Applicant_KYC__c: applicationKycId,
+    };
+  }
+
+  if (type === "AadhaarPOA") {
+    return {
+      Doc_Sub_Name__c: "Aadhaar",
+      DcmtSubName__c: "Aadhaar",
+      Appl__c: data?.Applicant__c,
+      DocCatgry__c: "KYC Documents",
+      DocSubTyp__c: "Aadhaar",
+      DocTyp__c: "Proof Of Address",
       LAN__c: data?.loanId,
       Case__c: "",
       DocStatus__c: "New",
@@ -433,6 +457,7 @@ const panKycUpdateBody = (docId) => {
   return {
     Document_Detail__c: docId,
     OCRStatus__c: "Success",
+    validated__c: 1,
   };
 };
 
@@ -653,10 +678,56 @@ export const createCompositeRequestsForAdhaarUpload = (
         referenceId: "ApplKycPatch",
         body: panKycUpdateBody("@{docDetailPost.id}"),
       },
+
+      //// for POA file upload
+
+
+
+      {
+        method: "GET",
+        url: `/services/data/${net.getApiVersion()}/query/?q=SELECT%20id%2C%20Catgry__c%2C%20DocSubTyp__c%2C%20DocTyp__c%20FROM%20DocMstr__c%20WHERE%20DocTyp__c%20%3D%20%27Proof%20Of%20Address%27%20AND%20DocSubTyp__c%20%3D%20%27Aadhaar%27`,
+        referenceId: "poadocQuery",
+      },
+      {
+        method: "POST",
+        url: `/services/data/${net.getApiVersion()}/sobjects/DocDtl__c`,
+        referenceId: "poadocDetailPost",
+        body: {
+          ...getDocDetailBody(data, applicationKycId, "AadhaarPOA"),
+          DocMstr__c: "@{poadocQuery.records[0].Id}",
+        },
+      },
+      {
+        method: "POST",
+        url: `/services/data/${net.getApiVersion()}/sobjects/ContentVersion`,
+        referenceId: "poacontentVersionPost",
+        body: getAdhaarUploadBody(imageBase64),
+      },
+      {
+        method: "GET",
+        url: `/services/data/${net.getApiVersion()}/query/?q=SELECT%20Id%2C%20Title%2C%20ContentDocumentId%20FROM%20ContentVersion%20WHERE%20Id%3D%27@{poacontentVersionPost.id}%27`,
+        referenceId: "poacontentDocumentQuery",
+      },
+      {
+        method: "POST",
+        url: `/services/data/${net.getApiVersion()}/sobjects/ContentDocumentLink`,
+        referenceId: "poaContentDocumentLink",
+        body: getContentDocumentBody(
+          "@{poadocDetailPost.id}",
+          "@{poacontentDocumentQuery.records[0].ContentDocumentId}"
+        ),
+      },
+      {
+        method: "PATCH",
+        url: `/services/data/${net.getApiVersion()}/sobjects/ApplKyc__c/${applicationKycId}`,
+        referenceId: "poaApplKycPatch",
+        body: panKycUpdateBody("@{poadocDetailPost.id}"),
+      },
     ];
 
     return compositeRequests;
   } catch (error) {
+    console.log("hari>>>>>>error", error)
     return null;
   }
 };
@@ -691,17 +762,19 @@ export const getSelfieCreateRequest = (data) => {
 
 export const getAadharCreateRequest = (data, aadharData) => {
   //   // RM__c: data?.RM__c,
+
   try {
     return {
       OCRStatus__c: "Success",
       Applicant__c: data?.Applicant__c,
       kycDoc__c: "Aadhaar",
-      // Aadhar_Reference_Number__c: "",
+      //Aadhar_Reference_Number__c: aadharData?.accessKey,
       // Encrypted_Aadhar_OCR__c: "",
       // Karza_Aadhar_OCR_AccessKey__c: aadharData?.accessKey,
       // Karza_Aadhar_OCR_CaseId__c: aadharData?.caseId,
-      // AdharEncrypt__c: aadharData?.encryptedAadhar,
+
       NameInAdhr__c: data?.adhaarDetails?.name,
+      AdharEncrypt__c: data?.adhaarDetails?.maskedAadhaarNumber,
       DtOfBirth__c: data?.adhaarDetails?.dob,
       Gender__c: data?.adhaarDetails?.gender,
       FatherName__c: data?.adhaarDetails?.fatherName,
@@ -787,6 +860,9 @@ export const updateAadharDataToApplicant = (data) => {
       AdhrLst4Dgts__c: extractLastFourDigitsOfString(data?.adhaarDetails?.maskedAadhaarNumber),
       DOB__c: data?.adhaarDetails?.dob,
       Gender__c: data?.adhaarDetails?.gender,
+      IsPOICmptd__c: 1,
+      POI_KYCTyp__c: "Aadhaar eKYC",
+      PoiDocused__c: "Aadhaar"
 
 
     }
@@ -797,40 +873,35 @@ export const updateAadharDataToApplicant = (data) => {
     try {
       if (name && name?.length > 0) {
         const nameList = name?.toString()?.split(" ")
+
         firstName = nameList ? nameList.length > 0 ? nameList[0] : name : null
 
 
 
-        if (nameList != null && nameList.size() == 3) {
+        if (nameList != null && nameList.length == 3) {
 
           middlename = nameList[1] ? nameList[1] : null;
 
           lastName = nameList[2] ? nameList[2] : null;
 
-          console.log("middlename1", middlename)
-          console.log("lastName1", lastName)
 
         }
 
-        else if (nameList != null && nameList.size() == 2) {
+        else if (nameList != null && nameList.length == 2) {
 
           //appl.MName__c = string.isNotBlank(nameList[1]) ? nameList[1] : null;
 
           lastName = nameList[1] ? nameList[1] : null;
 
-          console.log("middlename2", middlename)
-          console.log("lastName2", lastName)
 
-        } else if (nameList != null && nameList.size() > 3) {
+        } else if (nameList != null && nameList.length > 3) {
 
           middlename = nameList[1] ? nameList[1] : null;
-          for (let i = 2; i <= nameList.size(); i++) {
+          for (let i = 2; i <= nameList.length; i++) {
             lastName = lastName + " " + nameList(i)
 
           }
 
-          console.log("middlename3", middlename)
-          console.log("lastName3", lastName)
 
         } else {
           lastName = firstName;

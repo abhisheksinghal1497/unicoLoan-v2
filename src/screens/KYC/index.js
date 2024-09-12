@@ -109,10 +109,47 @@ const KYC = (props) => {
     }
   }, [canvasRef.current, selectedImage, selectedImageBack]);
 
+  // const mergeBase64Images = (canvasRef, base64Image1, base64Image2) => {
+  //   const canvas = canvasRef.current;
+
+  //   const context = canvas.getContext("2d");
+  //   //context.rotate(45 * Math.PI / 180)
+
+  //   const image1 = new CanvasImage(canvas);
+  //   const image2 = new CanvasImage(canvas);
+
+  //   image1.src = `data:image/jpeg;base64,${base64Image1}`;
+  //   image2.src = `data:image/jpeg;base64,${base64Image2}`;
+
+  //   image1.addEventListener("load", () => {
+  //     // Draw the first image
+  //     context.save();
+
+  //     //  context.drawImage(image1, 0, 0, canvas.width / 2, canvas.height);
+
+  //     image2.addEventListener("load", () => {
+  //       canvas.width = Math.max(image1.width, image2.width);
+  //       canvas.height = image1.height + image2.height;
+  //       // Draw the second image next to the first image
+  //       context.drawImage(image1, 0, 0, image1.width, image1.height);
+  //       context.drawImage(
+  //         image2,
+  //         0,
+  //         image1.height + 50,
+  //         image2.width,
+  //         image2.height
+  //       );
+
+  //       // Optionally, convert the canvas content to base64
+  //     });
+  //   });
+  // };
+
+
   const mergeBase64Images = (canvasRef, base64Image1, base64Image2) => {
     const canvas = canvasRef.current;
-    canvas.width = 600;
-    canvas.height = 500;
+    canvas.width = 1000;
+    canvas.height = 800;
 
     const context = canvas.getContext("2d");
     //context.rotate(45 * Math.PI / 180)
@@ -275,8 +312,19 @@ const KYC = (props) => {
       //
       console.log("trigger");
       const dataURL = await canvasRef.current.toDataURL();
-      console.log('DATA URL---', dataURL)
-      // setAadhaarbase64(dataURL)
+
+      try {
+
+        var data = dataURL.slice(1, -1) // remove the firstlast letter
+        data = data?.split(",")[1]
+        //console.log(">>>>", data)
+        //  console.log("")
+        setAadhaarbase64(data)
+       
+      } catch (error) {
+          console.log("error>>>", error)
+      }
+
       // let newData =  dataURL.replace(/^data:image\/?[A-z]*;base64,/);
       console.log('CHECK 2')
       uploadAadharToMuleService?.mutate(dataURL);
@@ -311,7 +359,7 @@ const KYC = (props) => {
     if (verifyAdharApi?.data) {
       toast("success", "Aadhar verified successfully");
       props.navigation.navigate(screens.CaptureSelfie, {
-        loanData: verifyAadhar.data,
+        loanData: verifyAdharApi.data,
       });
     }
 
@@ -340,7 +388,7 @@ const KYC = (props) => {
           intitialResponse: aadharInitiateResponse,
           imageBase64: aadhaarBase64
         });
-      } catch (error) {}
+      } catch (error) { }
     }
   };
 
@@ -540,8 +588,8 @@ const KYC = (props) => {
                       source={
                         selectedImage
                           ? {
-                              uri: `data:${selectedImage.mime};base64,${selectedImage.data}`,
-                            }
+                            uri: `data:${selectedImage.mime};base64,${selectedImage.data}`,
+                          }
                           : require("../../images/aadhar-front.png")
                       }
                       style={[styles.frontImage]}
@@ -563,8 +611,8 @@ const KYC = (props) => {
                       source={
                         selectedImageBack
                           ? {
-                              uri: `data:${selectedImageBack.mime};base64,${selectedImageBack.data}`,
-                            }
+                            uri: `data:${selectedImageBack.mime};base64,${selectedImageBack.data}`,
+                          }
                           : require("../../images/aadhar-back.png")
                       }
                       style={[styles.frontImage]}

@@ -3,7 +3,7 @@ import React from "react";
 import { screens } from "../constants/screens";
 
 export const getCurrentScreenNameForResume = (item) => {
-  if (!item?.panDetails ) {
+  if (!item?.panDetails) {
     return screens.PanDetails;
   }
   else if (!item?.adhaarDetails) {

@@ -104,7 +104,7 @@ export const getHomeScreenDetails = () => {
             soupConfig.applicationList.name,
             soupConfig.applicationList.path
           );
-          log("HERE IS DATA----------", { data });
+          log("HERE IS DATA----------", JSON.stringify({ ...data }));
           if (data && data?.length > 0) {
             resolve(data);
           } else {
@@ -1026,21 +1026,35 @@ export const useSubmitApplicationFormData = (pincodeData) => {
                     data?.MobNumber__c
                   );
 
-                  const defaultData = soupConfig.applicationList.default;
-                  defaultData.loanId = loanId;
-                  defaultData.applicationId = applicationId;
-                  defaultData.applicationDetails = {
-                    ...data,
+                  const dbdata = {
+                    loanId: loanId,
+                    applicationDetails: {
+                      ...data,
+                    },
+                    Applicant__c: applicationId,
+                    External_ID: loanId,
+                    Lead__c: leadcreateResponse?.id
+
                   };
-                  defaultData.Applicant__c = applicationId;
-                  (defaultData.Id = loanId),
-                    (defaultData.Lead__c = leadcreateResponse?.id);
 
-                  console.log("application Data", defaultData);
+                  await saveApplicationData(dbdata);
 
-                  await saveApplicationData(defaultData);
+                  // const defaultData = soupConfig.applicationList.default;
+                  // defaultData.loanId = loanId;
+                  // defaultData.External_ID = loanId;
+                  // defaultData.applicationId = applicationId;
+                  // defaultData.applicationDetails = {
+                  //   ...data,
+                  // };
+                  // defaultData.Applicant__c = applicationId;
+                  // (defaultData.Id = loanId),
+                  //   (defaultData.Lead__c = leadcreateResponse?.id);
 
-                  resolve({ ...defaultData });
+                  // console.log("application Data", defaultData);
+
+                  // await saveApplicationData(defaultData);
+
+                  resolve({ ...dbdata });
                 } else {
                   reject(ErrorConstants.SOMETHING_WENT_WRONG);
                 }
@@ -1081,12 +1095,12 @@ export const useSubmitLoanFormData = (loanData) => {
         const response = await compositeRequest(
           createCompositeRequestForLoadDetails(loanDetail)
         );
-         try {
-           await saveApplicationData(loanDetail);
-           resolve({ ...loanDetail });
-         } catch (error) {
-           reject(ErrorConstants.SOMETHING_WENT_WRONG);
-         }
+        try {
+          await saveApplicationData(loanDetail);
+          resolve({ ...loanDetail });
+        } catch (error) {
+          reject(ErrorConstants.SOMETHING_WENT_WRONG);
+        }
       });
     },
   });
@@ -1479,7 +1493,7 @@ export const useSubmitServiceForm = () => {
   return mutate;
 };
 
-export const useVerifyOtpService = (onSuccess = (data) => {}) => {
+export const useVerifyOtpService = (onSuccess = (data) => { }) => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (data) => {
@@ -1526,16 +1540,24 @@ export const useSaveSelfie = (loanData) => {
             getSelfieCreateRequest(data)
           );
           const applicationKycId = ApplKyc__c?.id;
-          const responseComposite = await compositeRequest(
-            createCompositeRequestsForSelfieUpload(data, applicationKycId)
-          );
+          try {
+            const responseComposite = await compositeRequest(
+              createCompositeRequestsForSelfieUpload(data, applicationKycId), false
+            );
+          } catch (error) {
+
+          }
+
+
           const response = await saveApplicationData(data);
           if (response) {
             resolve(data);
           } else {
+            console.log("error1>>>>", error)
             reject(ErrorConstants.SOMETHING_WENT_WRONG);
           }
         } catch (error) {
+          console.log("error>>>>", error)
           reject(ErrorConstants.SOMETHING_WENT_WRONG);
         }
       });
@@ -1555,9 +1577,9 @@ export const useKycDocument = (loanData) => {
           address: loanData?.adhaarDetails?.address?.splitAddress,
           fullAddress: loanData?.adhaarDetails?.address?.combinedAddress,
         };
-        
+
         const body = createCurrentAddressIsSameAsPermanentRequest(data, 'Current Address')
-     
+
         const saveCurrentAddress = await postObjectData(
           "ApplAddr__c",
           body

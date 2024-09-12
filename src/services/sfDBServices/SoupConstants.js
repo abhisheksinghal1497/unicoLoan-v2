@@ -20,6 +20,7 @@ export const soupConfig = {
     path: "loanId",
     externalId: "External_ID",
     default: {
+      External_ID: null,
       loanId: null,
       pincodeDetails: null, // get from homescreen
       applicationDetails: null, // Form Data

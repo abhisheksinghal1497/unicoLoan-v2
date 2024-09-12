@@ -3,7 +3,7 @@ import { MULE_API_DEV_END_POINT, MULE_API_CLIENT_ID, MULE_API_CLIENT_SECRET, MUL
 import { getUniqueId } from '../../utils/functions';
 const instance = axios.create({
     baseURL: MULE_API_DEV_END_POINT, // mulesoftApi 
-    timeout: 25000, // 25 seconds
+    timeout: 45000, // 45 seconds
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
