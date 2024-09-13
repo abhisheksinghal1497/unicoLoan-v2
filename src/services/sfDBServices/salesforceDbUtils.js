@@ -78,7 +78,7 @@ export const upsertSoupEntriesWithExternalId = async (soupName, records) => {
         );
 
       } else {
-        console.log("ajhXJAHxsbva")
+       
         smartstore.upsertSoupEntriesWithExternalId(
           false,
           soupName,

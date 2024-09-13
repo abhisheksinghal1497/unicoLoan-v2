@@ -13,6 +13,7 @@ import { useRoute } from "@react-navigation/native";
 import { useSaveSelfie } from "../../services/ApiUtils";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 import Toast from "react-native-toast-message";
+import { updateAadharDataToApplicant } from "../../utils/functions";
 
 const CaptureSelfie = ({ navigation }) => {
   const { fonts } = useTheme();
@@ -22,14 +23,15 @@ const CaptureSelfie = ({ navigation }) => {
   console.log('loanData', loanData?.adhaarDetails)
   const selfieMutate = useSaveSelfie(loanData);
 
+
   const onCameraPress = ({ front = false }) => {
     ImagePicker.openCamera({
       cropping: true,
       compressImageQuality: 0.6,
       useFrontCamera: front,
-      includeBase64:true,
-      multiple:false,
-      mediaType:'photo'
+      includeBase64: true,
+      multiple: false,
+      mediaType: 'photo'
     })
       .then((image) => {
         setSelectedImage(image);
@@ -49,8 +51,8 @@ const CaptureSelfie = ({ navigation }) => {
   };
 
   const onSubmit = () => {
-    if(!selectedImage){
-      Toast.show({type:'error', text1:'Please upload image'})
+    if (!selectedImage) {
+      Toast.show({ type: 'error', text1: 'Please upload image' })
       return
     }
     selfieMutate.mutate(selectedImage);
@@ -58,11 +60,22 @@ const CaptureSelfie = ({ navigation }) => {
 
   useEffect(() => {
     if (selfieMutate?.data) {
+      alert("skjdbszjk")
       navigation?.navigate(screens.KYCDocuments, {
         loanData: selfieMutate.data,
       });
     }
   }, [selfieMutate?.data]);
+
+  useEffect(() => {
+    if (selfieMutate?.error) {
+      console.log(selfieMutate?.error)
+      alert("error")
+      // navigation?.navigate(screens.KYCDocuments, {
+      //   loanData: selfieMutate.data,
+      // });
+    }
+  }, [selfieMutate?.error]);
 
   return (
     <>
@@ -73,7 +86,7 @@ const CaptureSelfie = ({ navigation }) => {
           onPressLeft={() => {
             navigation.goBack();
           }}
-          onPressRight={() => {}}
+          onPressRight={() => { }}
           colour="white"
         />
         {selfieMutate?.isPending && <ActivityIndicatorComponent />}
