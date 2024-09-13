@@ -254,6 +254,7 @@ export const getApplicantRequest = (data) => {
       ),
       Address__c: data?.Address__c,
       Pincode__c: data?.Pincode__c,
+      Consent_Status__c:"Verified"
     };
   } catch (error) {
     return null;
@@ -1181,6 +1182,16 @@ export const CurrentAddressDocumentCompositeRequests = (
           "ApplKycPatch"
         ),
       },
+      {
+        ...patchCompositeRequest(
+          "Applicant__c",
+          data?.Applicant__c,
+          {
+            isPerSameAsResi_ADD__c:0
+          },
+          "UpdateApicant"
+        ),
+      },
     ];
 
     if(isAddressRequired){
@@ -1191,6 +1202,7 @@ export const CurrentAddressDocumentCompositeRequests = (
 
     return compositeRequests;
   } catch (error) {
+    console.log('ERROR IN FINAL', error)
     return null;
   }
 };

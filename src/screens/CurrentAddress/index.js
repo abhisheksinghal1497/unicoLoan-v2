@@ -18,9 +18,7 @@ import { colors } from "../../colors";
 import customTheme from "../../colors/theme";
 import CustomShadow from "../../components/FormComponents/CustomShadow";
 import Button from "../../components/Button";
-import {
-  submitDrivingLicenseMutation,
-} from "../../services/ApiUtils";
+import { submitDrivingLicenseMutation } from "../../services/ApiUtils";
 import Accordion from "react-native-collapsible/Accordion";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import ErrorConstant from "../../constants/ErrorConstants";
@@ -173,6 +171,87 @@ const CurrentAddress = ({ navigation }) => {
     },
   ];
 
+  const addressForm = [
+    {
+      id: "HouseNo__c",
+      label: "House No",
+      type: component.textInput,
+      placeHolder: "Enter house number",
+      isRequired: false,
+      value: "",
+    },
+    {
+      id: "AddrLine1__c",
+      label: "Address Line 1",
+      type: component.textInput,
+      placeHolder: "Enter address line 1",
+      isRequired: false,
+      value: "",
+    },
+    {
+      id: "AddrLine2__c",
+      label: "Address Line 2",
+      type: component.textInput,
+      placeHolder: "Enter address line 2",
+      isRequired: false,
+      value: "",
+    },
+    {
+      id: "Landmark__c",
+      label: "Landmark",
+      type: component.textInput,
+      placeHolder: "Enter landmark",
+      isRequired: false,
+      value: "",
+    },
+    {
+      id: "Locality__c",
+      label: "Area of Locality",
+      type: component.textInput,
+      placeHolder: "Enter area of locality",
+      isRequired: false,
+      value: "",
+    },
+    {
+      id: "Pincode__c",
+      label: "Pincode",
+      type: component.textInput,
+      placeHolder: "Enter pincode",
+      validations: {
+        required: true,
+        pattern: /^[1-9]\d{5}$/,
+      },
+      isRequired: true,
+      value: "",
+      maxLength: 6,
+      keyboardType: "numeric",
+    },
+    {
+      id: "city__c",
+      label: "City",
+      type: component.textInput,
+      placeHolder: "Enter city",
+      isRequired: true,
+      value: "",
+    },
+    {
+      id: "State__c",
+      label: "State",
+      type: component.textInput,
+      placeHolder: "Enter state",
+      isRequired: true,
+      value: "",
+    },
+    {
+      id: "District__c",
+      label: "District",
+      type: component.textInput,
+      placeHolder: "Enter district",
+      isRequired: false,
+      value: "",
+    },
+  ];
+
   const neregaFields = [
     //NREGA ID
     {
@@ -183,6 +262,7 @@ const CurrentAddress = ({ navigation }) => {
       isRequired: true,
       value: "",
     },
+    ...addressForm,
   ];
 
   const electicityFields = [
@@ -204,6 +284,7 @@ const CurrentAddress = ({ navigation }) => {
       isRequired: true,
       value: "",
     },
+    ...addressForm,
   ];
 
   const gasFields = [
@@ -225,6 +306,7 @@ const CurrentAddress = ({ navigation }) => {
       isRequired: true,
       value: "",
     },
+    ...addressForm,
   ];
 
   const mobileFields = [
@@ -246,6 +328,7 @@ const CurrentAddress = ({ navigation }) => {
       isRequired: true,
       value: "",
     },
+    ...addressForm,
   ];
 
   const {
@@ -304,52 +387,109 @@ const CurrentAddress = ({ navigation }) => {
     // wait for 2 seconds
   }, [canvasRef.current, firstImageSelected, secondImageSelected]);
 
-  const uploadMultipleFiles = async () => {
-    try {
-      let dataURL = await canvasRef.current.toDataURL();
-      log("uploadMultipleFiles>>>>>", dataURL);
-      if (dataURL) {
-        if (selectedItem === CaptureAddressConstants.PASSPORT) {
-          passportCheck?.mutate(dataURL);
-        }
-      }
-    } catch (error) {}
-  };
-
   const mergeBase64Images = (canvasRef, base64Image1, base64Image2) => {
     const canvas = canvasRef.current;
+    if (!canvas) return;
 
     const context = canvas.getContext("2d");
-    //context.rotate(45 * Math.PI / 180)
+    canvas.width = 1000;
+    canvas.height = 800;
 
     const image1 = new CanvasImage(canvas);
     const image2 = new CanvasImage(canvas);
 
-    image1.src = `data:image/jpeg;base64,${base64Image1}`;
-    image2.src = `data:image/jpeg;base64,${base64Image2}`;
+    image1.src = `data:image/png;base64,${base64Image1}`;
+    image2.src = `data:image/png;base64,${base64Image2}`;
+
+    // Ensure both images are loaded before drawing
+    const drawImages = () => {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+
+      const imageHeight = canvas.height / 2;
+
+      // Draw the first image (top half of the canvas)
+      context.drawImage(image1, 0, 0, canvas.width, imageHeight);
+
+      // Draw the second image (bottom half of the canvas)
+      context.drawImage(image2, 0, imageHeight, canvas.width, imageHeight);
+
+      // Optionally, convert the canvas content to a data URL
+      canvas.toDataURL(firstImageSelected?.mime).then((dataUrl) => {
+        // Handle the data URL as needed
+        console.log("Data URL:", dataUrl);
+        uploadMultipleFiles(dataUrl);
+      });
+    };
 
     image1.addEventListener("load", () => {
-      // Draw the first image
-      context.save();
-
-      //  context.drawImage(image1, 0, 0, canvas.width / 2, canvas.height);
-
-      image2.addEventListener("load", () => {
-        canvas.width = Math.max(image1.width, image2.width);
-        canvas.height = image1.height + image2.height;
-        // Draw the second image next to the first image
-        context.drawImage(image1, 0, 0, image1.width, image1.height);
-        context.drawImage(
-          image2,
-          0,
-          image1.height + 50,
-          image2.width,
-          image2.height
-        );
-
-        // Optionally, convert the canvas content to base64
-      });
+      image2.addEventListener("load", drawImages);
     });
+  };
+
+  // const mergeBase64Images = async (canvasRef, base64Image1, base64Image2) => {
+  //   const canvas = canvasRef.current;
+
+  //   const context = canvas.getContext("2d");
+  //   //context.rotate(45 * Math.PI / 180)
+
+  //   const image1 = new CanvasImage(canvas);
+  //   const image2 = new CanvasImage(canvas);
+
+  //   image1.src = `data:image/jpeg;base64,${base64Image1}`;
+  //   image2.src = `data:image/jpeg;base64,${base64Image2}`;
+
+  //   image1.addEventListener("load", () => {
+  //     // Draw the first image
+  //     context.save();
+
+  //     //  context.drawImage(image1, 0, 0, canvas.width / 2, canvas.height);
+
+  //     image2.addEventListener("load", async () => {
+  //       canvas.width = Math.max(image1.width, image2.width);
+  //       canvas.height = image1.height + image2.height;
+  //       // Draw the second image next to the first image
+  //       context.drawImage(image1, 0, 0, image1.width, image1.height);
+  //       context.drawImage(
+  //         image2,
+  //         0,
+  //         image1.height + 50,
+  //         image2.width,
+  //         image2.height
+  //       );
+
+  //       const dataUrl = await canvas.toDataURL(firstImageSelected.mime);
+  //       uploadMultipleFiles(removeAfterLastBackslash(dataUrl))
+
+  //       // Optionally, convert the canvas content to base64
+  //     });
+  //   });
+  // };
+
+  const uploadMultipleFiles = async (dataURL) => {
+    try {
+      // let dataURL = await canvasRef.current.toDataURL();
+      if (dataURL) {
+        var result = dataURL?.substring(1, dataURL.length - 1);
+        console.log(
+          result.substring(0, 5),
+          "-------------------dataURL-------------------",
+          result.substring(dataURL.length - 6, dataURL.length)
+        );
+        const request = {
+          fileData: {
+            content: `${result}`,
+            title: selectedItem,
+          },
+          consent: "Y",
+          caseId: "eeea90ab-f4e0-4d9e-9efa-c03fffbd22c6",
+        };
+        if (selectedItem === CaptureAddressConstants.PASSPORT) {
+          passportCheck?.mutate(dataURL);
+        } else if (selectedItem === CaptureAddressConstants.VOTERID) {
+          voterIdCheck?.mutate(request);
+        }
+      }
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -391,7 +531,7 @@ const CurrentAddress = ({ navigation }) => {
 
   const handleGalleryUpload = (type) => {
     ImagePicker.openPicker({
-      compressImageQuality: 0.6,
+      compressImageQuality: 0.4,
       includeBase64: true,
       cropping: true,
     })
@@ -430,7 +570,7 @@ const CurrentAddress = ({ navigation }) => {
       if (selectedItem === CaptureAddressConstants.DL) {
         handleDlApiCall(request);
       } else if (selectedItem === CaptureAddressConstants.VOTERID) {
-        voterIdCheck?.mutate(request);
+        // voterIdCheck?.mutate(request);
       } else if (selectedItem === CaptureAddressConstants.PASSPORT) {
         // alert(request)
         //  passportCheck?.mutate(request)
@@ -671,6 +811,7 @@ const CurrentAddress = ({ navigation }) => {
         name: data?.results?.name,
         isAddressRequired: true,
         kycType: selectedItem,
+        nameCheck:true
       };
       return body;
     } catch (error) {
@@ -678,7 +819,27 @@ const CurrentAddress = ({ navigation }) => {
     }
   };
 
-  const getRequestForOthers = (data) => {
+  const getRequestForOthers = (formData) => {
+    let data = {};
+    let addressBody = {
+      Applicant__c: loanData?.Applicant__c,
+      LoanAppl__c: loanData?.loanId,
+      AddrTyp__c: "Current Address",
+    };
+
+    // isPerSameAsResi_ADD__c: 0 in Applicant Object update
+
+    let addressFields = addressForm.reduce((prev, el) => ({...prev, [el.id]: el.id}), {})
+
+    Object.keys(formData).forEach(el => {
+      if(addressFields[el]){
+        addressBody[el] = formData[el];
+      }else {
+        data[el] = formData[el];
+      }
+    })
+
+
     let dateKey = null;
     let dateValue = null;
 
@@ -712,16 +873,21 @@ const CurrentAddress = ({ navigation }) => {
     const body = {
       kycBody,
       image: imageSelected?.data,
-      isAddressRequired: false,
+      isAddressRequired: true,
       kycType: selectedItem,
+      addressBody,
+      nameCheck:false
     };
     return body;
   };
 
   const submitDoc = async () => {
     const isValid = await trigger();
+    if (!isValid) {
+      toast("error", "Please fill all the required fields");
+      return;
+    }
     const formData = watch();
-    console.log(typeof formData?.ElctBillDt__c);
 
     try {
       let body = {};
@@ -730,10 +896,11 @@ const CurrentAddress = ({ navigation }) => {
       } else {
         body = getRequestForOthers(formData);
       }
-      const response = await submitMutation?.mutateAsync(body);
+      await submitMutation?.mutateAsync(body);
       navigation?.navigate(screens.LoanDetails);
       // console.log("FINAL RESPONSE HERE");
     } catch (error) {
+      toast("error", ErrorConstant.SOMETHING_WENT_WRONG);
       console.log("submitDoc failed here", error);
     }
   };
@@ -801,28 +968,11 @@ const CurrentAddress = ({ navigation }) => {
             onChange={(sections) => setActiveSections(sections)}
           />
 
-          {/* Text Inputs */}
-          {/* {selectedItem && (
-            <>
-              <TextInput
-                style={styles.input}
-
-                value={inputValue1}
-                onChangeText={(text) => setInputValue1(text)}
-              />
-              <TextInput
-                style={styles.input}
-
-                value={inputValue2}
-                onChangeText={(text) => setInputValue2(text)}
-              />
-            </>
-          )} */}
-
           <View style={{ marginVertical: 16 }}>
             {selectedItem && (
               <>
-                {selectedItem !== CaptureAddressConstants.PASSPORT ? (
+                {selectedItem !== CaptureAddressConstants.PASSPORT &&
+                selectedItem !== CaptureAddressConstants.VOTERID ? (
                   <TouchableOpacity
                     disabled={imageSelected ? true : false}
                     onPress={() => handleGalleryUpload(0)}
@@ -1051,6 +1201,7 @@ const CurrentAddress = ({ navigation }) => {
                 isDisabled={comp.isDisabled}
                 // isUpperCaseRequired={true}
                 isEditable={comp.isEditable}
+                type={comp.keyboardType}
               />
             );
           })}

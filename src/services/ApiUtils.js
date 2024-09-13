@@ -1973,7 +1973,7 @@ export const submitDrivingLicenseMutation = (loanData) => {
 
         try {
           // if this value is true so we are doing kyc for DL, Voter id and Passport
-          if(body?.isAddressRequired){
+          if(body?.nameCheck){
               // await nameCheck(loanData?.panDetails?.panName, body?.name);
           }
 
@@ -1991,7 +1991,7 @@ export const submitDrivingLicenseMutation = (loanData) => {
           );
           resolve(response)
         } catch (error) {
-          console.log("ERROR IN UPLOAD");
+          console.log("ERROR IN UPLOAD", error);
           reject(ErrorConstants.SOMETHING_WENT_WRONG);
         }
 

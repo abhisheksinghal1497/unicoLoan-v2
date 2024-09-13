@@ -4,7 +4,7 @@ export const query = {
     `SELECT FIELDS(ALL) FROM User WHERE Id  = '${userId}'`,
   getLeadList: (MobilePhone) =>
     `SELECT FIELDS(ALL), (SELECT FIELDS(ALL) FROM Applicants__r LIMIT 200),  Lead__r.FirstName, Lead__r.Requested_loan_amount__c, 
-  Lead__r.Requested_tenure_in_Months__c, Lead__r.OwnerId  FROM LoanAppl__c WHERE Lead__r.MobilePhone = '9743063887' LIMIT 200`,
+  Lead__r.Requested_tenure_in_Months__c, Lead__r.OwnerId  FROM LoanAppl__c WHERE Lead__r.MobilePhone = '${MobilePhone}' LIMIT 200`,
   getDocMasterId: (DocTyp__c) => `SELECT id,Catgry__c,DocSubTyp__c,DocTyp__c FROM DocMstr__c WHERE DocTyp__c='${DocTyp__c}' LIMIT 1`,
   getContentDocument: (contentVersionId) => `SELECT Id, Title, ContentDocumentId FROM ContentVersion WHERE Id = '${contentVersionId?.trim()}'`
 };

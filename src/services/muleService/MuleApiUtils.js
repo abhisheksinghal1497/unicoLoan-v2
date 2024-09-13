@@ -361,7 +361,6 @@ export const doOCRForVoterID = () => {
       //return instance.post('/digital-utility-v1/api/name-match', body)
       return new Promise(async (resolve, reject) => {
         try {
-          log("request body", body);
           const response = await instance.post(
             "/digital-kyc-v1/api/voterid",
             body

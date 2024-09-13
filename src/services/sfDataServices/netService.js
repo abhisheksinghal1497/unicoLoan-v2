@@ -157,11 +157,12 @@ export const getUserData = (userId) => {
 
 export const getLeadList = (phone) => {
   return new Promise((resolve, reject) => {
-    // console.log('compositeGraphApi data', graphs);
-
+    // console.log('compositeGraphApi data', graphs)
     net.query(
-      query.getLeadList("9743063887"),
+      query.getLeadList(phone),
       (res) => {
+
+        console.log('HERE IS THE DATA-------------------', res)
         resolve(res);
       },
       (error) => {
