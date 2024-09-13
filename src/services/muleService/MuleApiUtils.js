@@ -201,7 +201,7 @@ export const nameCheck = async (panName, name) => {
         verifyNamematchRequest
       );
       if (namCheckResponse?.data?.results?.score < 0.5) {
-        reject("Pan and adhaar names are different please check.");
+        reject("Name not match with pan.");
       } else {
         resolve(namCheckResponse);
       }
@@ -268,22 +268,23 @@ export const nameMatchCheck = () => {
   return mutate;
 };
 
-export const doOCRForDL = () => {
+export const doOCRForDL = (panName) => {
   const mutate = useMutation({
     mutationFn: (body) => {
       //return instance.post('/digital-utility-v1/api/name-match', body)
       return new Promise(async (resolve, reject) => {
         try {
-          log("request body", body);
+          console.log('I AM TRIGGER---------------------')
           const response = await instance.post(
             "/digital-kyc-v1/api/drivers-license",
             body
           );
+          console.log('DL RESPONSE ------------' , JSON.stringify(response.data)  )
           resolve(response?.data);
-          // resolve("saxasx")
+        
         } catch (error) {
           errorConsoleLog("verifyDrivingLicence>>", error);
-          reject(ErrorConstants.SOMETHING_WENT_WRONG);
+          reject(typeof error === 'string' ? error : ErrorConstants.SOMETHING_WENT_WRONG);
         }
       });
     },

@@ -10,6 +10,7 @@ import {
   createCompositeRequestsForSelfieUpload,
   createCurrentAddressIsSameAsPermanentRequest,
   createLoanAndAppplicantCompositeRequest,
+  CurrentAddressDocumentCompositeRequests,
   getLeadCreationRequest,
   getPanCreateRequest,
   GetPicklistValues,
@@ -40,6 +41,7 @@ import {
 } from "./sfDataServices/netService";
 import LocalStorage from "./LocalStorage";
 import { query } from "../constants/Queries";
+import { nameCheck } from "./muleService/MuleApiUtils";
 
 export const logoutApi = () => {
   console.log("LOGOUT API");
@@ -91,7 +93,7 @@ export const getHomeScreenDetails = () => {
                 loanId: record?.Id,
                 applicationDetails: record,
                 Applicant__c: record?.Applicants__r?.records?.[0].Id,
-                External_ID: record?.Id
+                External_ID: record?.Id,
               };
 
               await saveApplicationData(data);
@@ -1081,12 +1083,12 @@ export const useSubmitLoanFormData = (loanData) => {
         const response = await compositeRequest(
           createCompositeRequestForLoadDetails(loanDetail)
         );
-         try {
-           await saveApplicationData(loanDetail);
-           resolve({ ...loanDetail });
-         } catch (error) {
-           reject(ErrorConstants.SOMETHING_WENT_WRONG);
-         }
+        try {
+          await saveApplicationData(loanDetail);
+          resolve({ ...loanDetail });
+        } catch (error) {
+          reject(ErrorConstants.SOMETHING_WENT_WRONG);
+        }
       });
     },
   });
@@ -1555,13 +1557,13 @@ export const useKycDocument = (loanData) => {
           address: loanData?.adhaarDetails?.address?.splitAddress,
           fullAddress: loanData?.adhaarDetails?.address?.combinedAddress,
         };
-        
-        const body = createCurrentAddressIsSameAsPermanentRequest(data, 'Current Address')
-     
-        const saveCurrentAddress = await postObjectData(
-          "ApplAddr__c",
-          body
+
+        const body = createCurrentAddressIsSameAsPermanentRequest(
+          data,
+          "Current Address"
         );
+
+        const saveCurrentAddress = await postObjectData("ApplAddr__c", body);
 
         if (saveCurrentAddress) {
           console.log("FULL ADDRESS", data.currentAddressDetails);
@@ -1933,6 +1935,52 @@ export const getSanctionPdf = (loanData) => {
         } catch (error) {
           reject(ErrorConstants.SOMETHING_WENT_WRONG);
         }
+      });
+    },
+  });
+
+  return mutate;
+};
+
+export const submitDrivingLicenseMutation = (loanData) => {
+  const mutate = useMutation({
+    networkMode: "always",
+    mutationFn: (body) => {
+      return new Promise(async (resolve, reject) => {
+        let data = { ...loanData };
+
+        try {
+          // if this value is true so we are doing kyc for DL, Voter id and Passport
+          if(body?.isAddressRequired){
+              // await nameCheck(loanData?.panDetails?.panName, body?.name);
+          }
+
+          const ApplKyc__c = await postObjectData("ApplKyc__c", body?.kycBody);
+          const applicationKycId = ApplKyc__c?.id;
+          const response = await compositeRequest(
+            CurrentAddressDocumentCompositeRequests(
+              loanData,
+              applicationKycId,
+              body?.image,
+              body?.addressBody,
+              body?.kycType,
+              body?.isAddressRequired
+            )
+          );
+          resolve(response)
+        } catch (error) {
+          console.log("ERROR IN UPLOAD");
+          reject(ErrorConstants.SOMETHING_WENT_WRONG);
+        }
+
+        // try {
+        //   await saveApplicationData(data);
+        //   resolve({
+        //     url: "http://www.clickdimensions.com/links/TestPDFfile.pdf",
+        //   });
+        // } catch (error) {
+        //   reject(ErrorConstants.SOMETHING_WENT_WRONG);
+        // }
       });
     },
   });

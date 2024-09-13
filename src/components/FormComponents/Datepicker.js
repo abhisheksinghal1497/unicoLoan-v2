@@ -48,16 +48,24 @@ export default function CustomDatepicker({
     }
 
   };
+
   const formatDate = (date) => {
     try {
       if (!date) return "";
-      const data = moment(date).format("DD-MM-YYYY");
-      if (data?.isValid()) { return data } else { return date }
+      
+      // Create a moment object with the input date
+      const momentDate = moment(date, "DD-MM-YYYY", true);
+      if (momentDate.isValid()) {
+        return momentDate.format("DD-MM-YYYY");
+      } else {
+        return date;
+      }
     } catch (error) {
-      return date
+      return date;
     }
-
   };
+
+  
   return (
     <View>
       <Controller
@@ -111,6 +119,7 @@ export default function CustomDatepicker({
                   setOpen(false);
                 }}
                 onConfirm={(value) => {
+                  console.log('onConfirm', {name, value})
                   // let formattedDate = format(value, 'dd/MM/yyyy');
                   onChange(value);
                   setOpen(false);

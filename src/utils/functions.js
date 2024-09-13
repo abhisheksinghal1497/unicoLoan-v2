@@ -5,7 +5,10 @@ import { fetch } from "@react-native-community/netinfo";
 import uuid from "react-native-uuid";
 import { CommonActions, useNavigation } from "@react-navigation/native";
 import { net } from "react-native-force";
-import { LOAN_DETAILS_KEYS } from "../constants/stringConstants";
+import {
+  CaptureAddressConstants,
+  LOAN_DETAILS_KEYS,
+} from "../constants/stringConstants";
 
 export const alert = (title, subTitle, onPressOK, onPressCancel) => {
   if (onPressCancel) {
@@ -264,7 +267,7 @@ export const getPeriodValues = (str, index) => {
         return str.substring(2, 4);
       }
     }
-  } catch (error) { }
+  } catch (error) {}
   return null;
 };
 
@@ -276,13 +279,13 @@ export const isEmptyObject = (obj) => {
 
 function parseFullName(fullName) {
   // Split the full name by spaces
-  const nameParts = fullName?.trim()?.split(' ');
+  const nameParts = fullName?.trim()?.split(" ");
 
   // Initialize the result object
   let result = {
-    FName__c: '',
-    MName__c: '',
-    LName__c: ''
+    FName__c: "",
+    MName__c: "",
+    LName__c: "",
   };
 
   // Assign names based on the number of parts
@@ -293,7 +296,7 @@ function parseFullName(fullName) {
     result.LName__c = nameParts[1];
   } else if (nameParts?.length >= 3) {
     result.FName__c = nameParts[0];
-    result.MName__c = nameParts.slice(1, -1).join(' '); // Join all middle names
+    result.MName__c = nameParts.slice(1, -1).join(" "); // Join all middle names
     result.LName__c = nameParts[nameParts.length - 1];
   }
 
@@ -302,11 +305,11 @@ function parseFullName(fullName) {
 
 const updateNameInLoanBody = (aadharData) => ({
   Father_Name__c: aadharData?.fatherName,
-  ...parseFullName(aadharData?.name)
-})
+  ...parseFullName(aadharData?.name),
+});
 
 export const createCompositeRequestForPanAadhar = (loanData, aadharData) => {
-  console.log('aadharData', aadharData)
+  console.log("aadharData", aadharData);
   try {
     let compositeRequest = [
       {
@@ -333,10 +336,12 @@ export const createCompositeRequestForPanAadhar = (loanData, aadharData) => {
       },
 
       {
-        "method": "PATCH",
-        "url": `/services/data/${net.getApiVersion()}/sobjects/Applicant__c/${loanData.Applicant__c}`,
-        "referenceId": "applicantUpdateId",
-        "body": updateAadharDataToApplicant(loanData)
+        method: "PATCH",
+        url: `/services/data/${net.getApiVersion()}/sobjects/Applicant__c/${
+          loanData.Applicant__c
+        }`,
+        referenceId: "applicantUpdateId",
+        body: updateAadharDataToApplicant(loanData),
       },
     ];
 
@@ -396,6 +401,86 @@ const getDocDetailBody = (data, applicationKycId, type) => {
     };
   }
 
+  if (type === CaptureAddressConstants.DL) {
+    return {
+      Doc_Sub_Name__c: "DL",
+      DcmtSubName__c: "DL",
+      Appl__c: data?.Applicant__c,
+      DocCatgry__c: "KYC Documents",
+      DocSubTyp__c: "Driving License",
+      DocTyp__c: "Proof Of Address (Other Kyc)",
+      LAN__c: data?.loanId,
+      Case__c: "",
+      DocStatus__c: "New",
+      FileAvalbl__c: false,
+      Applicant_KYC__c: applicationKycId,
+    };
+  }
+
+  if (type === CaptureAddressConstants.NREGACard) {
+    return {
+      Doc_Sub_Name__c: "nrega",
+      DcmtSubName__c: "nrega",
+      Appl__c: data?.Applicant__c,
+      DocCatgry__c: "KYC Documents",
+      DocSubTyp__c: "Nrega Card",
+      DocTyp__c: "Proof Of Address",
+      LAN__c: data?.loanId,
+      Case__c: "",
+      DocStatus__c: "New",
+      FileAvalbl__c: false,
+      Applicant_KYC__c: applicationKycId,
+    };
+  }
+
+  if (type === CaptureAddressConstants.EBILL) {
+    return {
+      Doc_Sub_Name__c: "Electricity",
+      DcmtSubName__c: "Electricity",
+      Appl__c: data?.Applicant__c,
+      DocCatgry__c: "KYC Documents",
+      DocSubTyp__c: "Electricity Bill",
+      DocTyp__c:  "Proof Of Address (Temporary)",
+      LAN__c: data?.loanId,
+      Case__c: "",
+      DocStatus__c: "New",
+      FileAvalbl__c: false,
+      Applicant_KYC__c: applicationKycId,
+    };
+  }
+
+  if (type === CaptureAddressConstants.GBILL) {
+    return {
+      Doc_Sub_Name__c: "Gas",
+      DcmtSubName__c: "Gas",
+      Appl__c: data?.Applicant__c,
+      DocCatgry__c: "KYC Documents",
+      DocSubTyp__c: "Gas Bill",
+      DocTyp__c:  "Proof Of Address (Temporary)",
+      LAN__c: data?.loanId,
+      Case__c: "",
+      DocStatus__c: "New",
+      FileAvalbl__c: false,
+      Applicant_KYC__c: applicationKycId,
+    };
+  }
+
+  if (type === CaptureAddressConstants.MBILL) {
+    return {
+      Doc_Sub_Name__c: "Mobile",
+      DcmtSubName__c: "Mobile",
+      Appl__c: data?.Applicant__c,
+      DocCatgry__c: "KYC Documents",
+      DocSubTyp__c: "Mobile Bill",
+      DocTyp__c:  "Proof Of Address (Temporary)",
+      LAN__c: data?.loanId,
+      Case__c: "",
+      DocStatus__c: "New",
+      FileAvalbl__c: false,
+      Applicant_KYC__c: applicationKycId,
+    };
+  }
+
   return null;
 };
 
@@ -415,11 +500,11 @@ const getPanUploadBody = (data) => {
   };
 };
 
-const getAdhaarUploadBody = (imageBase64) => {
+const getAdhaarUploadBody = (imageBase64, title = "Aadhaar") => {
   return {
     VersionData: imageBase64,
-    Title: "Aadhaar",
-    PathOnClient: "Aadhaar" + ".jpeg",
+    Title: title,
+    PathOnClient: title + ".jpeg",
   };
 };
 
@@ -447,6 +532,7 @@ const getCompositeRequest = (query, referenceId) => {
 };
 
 const postCompositeRequest = (objectName, body, referenceId) => {
+  console.log("ADRESS BODY", body);
   return {
     method: "POST",
     url: `/services/data/${net.getApiVersion()}/sobjects/${objectName}`,
@@ -465,14 +551,17 @@ const patchCompositeRequest = (objectName, objectId, body, referenceId) => {
 };
 
 const getLoanDetailPatchBody = (loanData) => ({
-  [LOAN_DETAILS_KEYS.reqLoanAmt]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.reqLoanAmt],
-  [LOAN_DETAILS_KEYS.reqTenure]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.reqTenure],
+  [LOAN_DETAILS_KEYS.reqLoanAmt]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.reqLoanAmt],
+  [LOAN_DETAILS_KEYS.reqTenure]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.reqTenure],
   // [LOAN_DETAILS_KEYS.loanPurpose]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.loanPurpose],
 });
 
 const getApplicantPatchBody = (loanData) => ({
   // [LOAN_DETAILS_KEYS.mobile]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.mobile],
-  [LOAN_DETAILS_KEYS.isExistingCustomer]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.isExistingCustomer],
+  [LOAN_DETAILS_KEYS.isExistingCustomer]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.isExistingCustomer],
   [LOAN_DETAILS_KEYS.custId]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.custId],
 });
 
@@ -481,30 +570,56 @@ const getLoanDetailPostBody = (loanData) => ({
     loanData?.loanDetails?.[LOAN_DETAILS_KEYS.bankBalance],
   [LOAN_DETAILS_KEYS.immovableProperty]:
     loanData?.loanDetails?.[LOAN_DETAILS_KEYS.immovableProperty],
-  [LOAN_DETAILS_KEYS.invPlantMachVehi]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.invPlantMachVehi],
-  [LOAN_DETAILS_KEYS.ownContri]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.ownContri],
-  [LOAN_DETAILS_KEYS.assetVal]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.assetVal],
-  [LOAN_DETAILS_KEYS.totalAsset]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.totalAsset],
-  [LOAN_DETAILS_KEYS.amtConstructPurchase]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.amtConstructPurchase],
-  [LOAN_DETAILS_KEYS.savings]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.savings],
-  [LOAN_DETAILS_KEYS.dispAsset]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.dispAsset],
-  [LOAN_DETAILS_KEYS.familyFund]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.familyFund],
-  [LOAN_DETAILS_KEYS.srvcFund]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.srvcFund],
+  [LOAN_DETAILS_KEYS.invPlantMachVehi]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.invPlantMachVehi],
+  [LOAN_DETAILS_KEYS.ownContri]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.ownContri],
+  [LOAN_DETAILS_KEYS.assetVal]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.assetVal],
+  [LOAN_DETAILS_KEYS.totalAsset]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.totalAsset],
+  [LOAN_DETAILS_KEYS.amtConstructPurchase]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.amtConstructPurchase],
+  [LOAN_DETAILS_KEYS.savings]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.savings],
+  [LOAN_DETAILS_KEYS.dispAsset]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.dispAsset],
+  [LOAN_DETAILS_KEYS.familyFund]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.familyFund],
+  [LOAN_DETAILS_KEYS.srvcFund]:
+    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.srvcFund],
   // [LOAN_DETAILS_KEYS.totalIncome]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.totalIncome],
-  Appl__c: loanData?.Applicant__c
+  Appl__c: loanData?.Applicant__c,
 });
-
 
 export const createCompositeRequestForLoadDetails = (loanData) => {
   const compositeRequests = [
-    patchCompositeRequest("LoanAppl__c", loanData?.loanId, getLoanDetailPatchBody(loanData), "patchLoanApplication"),
-    patchCompositeRequest("Applicant__c", loanData?.Applicant__c, getApplicantPatchBody(loanData), "patchApplicant"),
-    postCompositeRequest("ApplAsset__c", getLoanDetailPostBody(loanData), "postLoanDetail"),
+    patchCompositeRequest(
+      "LoanAppl__c",
+      loanData?.loanId,
+      getLoanDetailPatchBody(loanData),
+      "patchLoanApplication"
+    ),
+    patchCompositeRequest(
+      "Applicant__c",
+      loanData?.Applicant__c,
+      getApplicantPatchBody(loanData),
+      "patchApplicant"
+    ),
+    postCompositeRequest(
+      "ApplAsset__c",
+      getLoanDetailPostBody(loanData),
+      "postLoanDetail"
+    ),
   ];
 
   return compositeRequests;
 };
-export const createCompositeRequestsForSelfieUpload = (data, applicationKycId) => {
+
+export const createCompositeRequestsForSelfieUpload = (
+  data,
+  applicationKycId
+) => {
   try {
     const compositeRequests = [
       {
@@ -721,10 +836,13 @@ export const getAadharCreateRequest = (data, aadharData) => {
   }
 };
 
-export const createCurrentAddressIsSameAsPermanentRequest = (data, AddrTyp__c) => {
+export const createCurrentAddressIsSameAsPermanentRequest = (
+  data,
+  AddrTyp__c
+) => {
   try {
     const street = data?.adhaarDetails?.address?.splitAddress?.street;
-    const location = data?.adhaarDetails?.address?.splitAddress?.location
+    const location = data?.adhaarDetails?.address?.splitAddress?.location;
     return {
       Applicant__c: data?.Applicant__c,
       LoanAppl__c: data?.loanId,
@@ -771,7 +889,6 @@ export const getAadharAddressRequest = (data) => {
     return null;
   }
 };
-
 
 export const updateAadharDataToApplicant = (data) => {
   //   // RM__c: data?.RM__c,
@@ -850,4 +967,150 @@ const extractLastFourDigitsOfString = (data) => {
   } catch (error) {
     return null;
   }
+};
+
+function createEncodedQuery(docType, docSubType) {
+  // Construct the query string with placeholders
+  const query = `SELECT id, Catgry__c, DocSubTyp__c, DocTyp__c FROM DocMstr__c WHERE DocTyp__c = '${docType}' AND DocSubTyp__c = '${docSubType}'`;
+
+  // URL-encode the entire query string
+  let encodedQuery = encodeURIComponent(query);
+
+  // Replace encoded single quotes (%27) with actual single quotes (')
+  encodedQuery = encodedQuery.replace(/%27/g, "'");
+
+  // Ensure encoded single quotes are in the output as %27
+  encodedQuery = encodedQuery.replace(/'/g, "%27");
+
+  return encodedQuery;
 }
+
+export const getDocType = (type) => {
+  if (type === CaptureAddressConstants.DL) {
+    return {
+      docType: "Proof Of Address (Other Kyc)",
+      docSubType: "Driving License"
+    };
+  } else if (type === CaptureAddressConstants.NREGACard) {
+    return {
+      docType: "Proof Of Address",
+      docSubType: "Nrega Card"
+    };
+  } else if (type === CaptureAddressConstants.EBILL) {
+    return {
+      docType: "Proof Of Address (Temporary)",
+      docSubType: "Electricity Bill"
+    };
+  } else if (type === CaptureAddressConstants.GBILL) {
+    return {
+      docType: "Proof Of Address (Temporary)",
+      docSubType: "Gas Bill"
+    };
+  } else if (type === CaptureAddressConstants.MBILL) {
+    return {
+      docType: "Proof Of Address (Temporary)",
+      docSubType: "Mobile Bill"
+    };
+  }
+};
+
+const getDocMasterEncodedQuery = (type) => {
+  const docType = getDocType(type);
+  if (type === CaptureAddressConstants.DL) {
+    return createEncodedQuery(
+      docType.docType,
+      docType.docSubType
+    );
+  }else if(type === CaptureAddressConstants.NREGACard){
+    return createEncodedQuery(
+      docType.docType,
+      docType.docSubType
+    );
+  }else if(type === CaptureAddressConstants.EBILL){
+    return createEncodedQuery(
+      docType.docType,
+      docType.docSubType
+    );
+  }else if(type === CaptureAddressConstants.GBILL){
+    return createEncodedQuery(
+      docType.docType,
+      docType.docSubType
+    );
+  }else if(type === CaptureAddressConstants.MBILL){
+    return createEncodedQuery(
+      docType.docType,
+      docType.docSubType
+    );
+  }
+};
+
+export const CurrentAddressDocumentCompositeRequests = (
+  data,
+  applicationKycId,
+  imageBase64,
+  addressBody,
+  kycType,
+  isAddressRequired
+) => {
+  try {
+    const compositeRequests = [
+      {
+        ...getCompositeRequest(
+          getDocMasterEncodedQuery(kycType),
+          "docQuery"
+        ),
+      },
+      {
+        ...postCompositeRequest(
+          "DocDtl__c",
+          {
+            ...getDocDetailBody(data, applicationKycId, kycType),
+            DocMstr__c: "@{docQuery.records[0].Id}",
+          },
+          "docDetailPost"
+        ),
+      },
+      {
+        ...postCompositeRequest(
+          "ContentVersion",
+          getAdhaarUploadBody(imageBase64, kycType),
+          "contentVersionPost"
+        ),
+      },
+      {
+        ...getCompositeRequest(
+          `SELECT%20Id%2C%20Title%2C%20ContentDocumentId%20FROM%20ContentVersion%20WHERE%20Id%3D%27@{contentVersionPost.id}%27`,
+          "contentDocumentQuery"
+        ),
+      },
+      {
+        ...postCompositeRequest(
+          "ContentDocumentLink",
+          getContentDocumentBody(
+            "@{docDetailPost.id}",
+            "@{contentDocumentQuery.records[0].ContentDocumentId}"
+          ),
+          "ContentDocumentLink"
+        ),
+      },
+      {
+        ...patchCompositeRequest(
+          "ApplKyc__c",
+          applicationKycId,
+          panKycUpdateBody("@{docDetailPost.id}"),
+          "ApplKycPatch"
+        ),
+      },
+    ];
+
+    if(isAddressRequired){
+      compositeRequests.push({
+        ...postCompositeRequest("ApplAddr__c", addressBody, "Add_Address"),
+      })
+    }
+
+    return compositeRequests;
+  } catch (error) {
+    return null;
+  }
+};

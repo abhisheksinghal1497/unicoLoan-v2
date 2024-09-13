@@ -19,8 +19,7 @@ import customTheme from "../../colors/theme";
 import CustomShadow from "../../components/FormComponents/CustomShadow";
 import Button from "../../components/Button";
 import {
-  getOtherKycList,
-  getTempAddressKycList,
+  submitDrivingLicenseMutation,
 } from "../../services/ApiUtils";
 import Accordion from "react-native-collapsible/Accordion";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -36,10 +35,12 @@ import {
   doOCRForPassport,
   doOCRForVoterID,
 } from "../../services/muleService/MuleApiUtils";
-import { toast } from "../../utils/functions";
+import { getDocType, toast } from "../../utils/functions";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 import { log } from "../../utils/ConsoleLogUtils";
 import Canvas, { Image as CanvasImage } from "react-native-canvas";
+import { useRoute } from "@react-navigation/native";
+import moment from "moment";
 
 const CurrentAddress = ({ navigation }) => {
   const [imageSelected, setImageSelected] = useState("");
@@ -50,6 +51,14 @@ const CurrentAddress = ({ navigation }) => {
 
   const [selectedFields, setSelectedFields] = useState([]);
   const [showHelpModal, setShowHelpModal] = useState(false);
+  const route = useRoute();
+  const { loanData = {} } = route?.params || {};
+  const {
+    applicationDetails = {},
+    panDetails = { panNumber: "", panName: "" },
+  } = loanData;
+
+  const panName = panDetails?.panName;
 
   const toggleHelpModal = () => {
     setShowHelpModal(!showHelpModal);
@@ -58,14 +67,15 @@ const CurrentAddress = ({ navigation }) => {
   // const otherkyc = getOtherKycList();
   // const TempKyc = getTempAddressKycList();
 
-  const dlCheck = doOCRForDL();
+  const dlCheck = doOCRForDL(panName);
   const passportCheck = doOCRForPassport();
   const voterIdCheck = doOCRForVoterID();
+  const submitMutation = submitDrivingLicenseMutation(loanData);
   const canvasRef = useRef(null);
 
   const dlFields = [
     {
-      id: "dl",
+      id: "DLNo__c",
       label: "DL No",
       type: component.textInput,
       placeHolder: "Enter DL Number",
@@ -73,13 +83,46 @@ const CurrentAddress = ({ navigation }) => {
       value: "",
     },
     {
-      id: "dlExpiry",
+      id: "DLname",
+      label: "Name",
+      type: component.textInput,
+      placeHolder: "Enter Name",
+      isRequired: true,
+      value: "",
+    },
+    {
+      id: "DLExpDt__c",
       label: "Expiry Date",
       type: component.datetime,
       placeHolder: "Enter Expiry Date",
       isRequired: true,
       value: "",
     },
+    // {
+    //   id: "DLIssueDt__c ",
+    //   label: "Issue date",
+    //   type: component.datetime,
+    //   placeHolder: "Enter issue date",
+    //   isRequired: true,
+    //   value: "",
+    // },
+    // {
+    //   id: "BloodGroup__c ",
+    //   label: "Blood group",
+    //   type: component.textInput,
+    //   placeHolder: "Enter blood group",
+    //   isRequired: true,
+    //   value: "",
+    //   isMultiline: true,
+    // },
+    // {
+    //   id: "DLStatus__c ",
+    //   label: "DL Status",
+    //   type: component.textInput,
+    //   placeHolder: "Enter DL status",
+    //   isRequired: true,
+    //   value: "",
+    // },
     {
       id: "address",
       label: "Address",
@@ -133,7 +176,7 @@ const CurrentAddress = ({ navigation }) => {
   const neregaFields = [
     //NREGA ID
     {
-      id: "neragaID",
+      id: "NREGA_Id__c",
       label: "NREGA ID",
       type: component.textInput,
       placeHolder: "Enter NREGA ID",
@@ -145,7 +188,7 @@ const CurrentAddress = ({ navigation }) => {
   const electicityFields = [
     // Bill No, Bill Date
     {
-      id: "electricBillNumber",
+      id: "ElectBillNo__c",
       label: "Bill No",
       type: component.textInput,
       placeHolder: "Enter Bill No",
@@ -154,9 +197,9 @@ const CurrentAddress = ({ navigation }) => {
     },
 
     {
-      id: "electricBillDate",
+      id: "ElctBillDt__c",
       label: "Bill Date",
-      type: component.textInput,
+      type: component.datetime,
       placeHolder: "Enter Bill Date",
       isRequired: true,
       value: "",
@@ -166,7 +209,7 @@ const CurrentAddress = ({ navigation }) => {
   const gasFields = [
     // Bill No, Bill Date
     {
-      id: "gasBillNumber",
+      id: "Gas_Bill_No__c",
       label: "Bill No",
       type: component.textInput,
       placeHolder: "Enter Bill No",
@@ -175,9 +218,9 @@ const CurrentAddress = ({ navigation }) => {
     },
 
     {
-      id: "gasBillDate",
+      id: "GasBillDt__c",
       label: "Bill Date",
-      type: component.textInput,
+      type: component.datetime,
       placeHolder: "Enter Bill Date",
       isRequired: true,
       value: "",
@@ -187,7 +230,7 @@ const CurrentAddress = ({ navigation }) => {
   const mobileFields = [
     // Bill No, Bill Date
     {
-      id: "mobileBillNumber",
+      id: "PhnBillNo__c",
       label: "Bill No",
       type: component.textInput,
       placeHolder: "Enter Bill No",
@@ -196,9 +239,9 @@ const CurrentAddress = ({ navigation }) => {
     },
 
     {
-      id: "mobileBillDate",
+      id: "PhnBillDt__c",
       label: "Bill Date",
-      type: component.textInput,
+      type: component.datetime,
       placeHolder: "Enter Bill Date",
       isRequired: true,
       value: "",
@@ -213,6 +256,7 @@ const CurrentAddress = ({ navigation }) => {
     setError,
     watch,
     setValue,
+    reset,
     trigger,
   } = useForm({
     mode: "onBlur",
@@ -226,7 +270,7 @@ const CurrentAddress = ({ navigation }) => {
       items: [
         {
           title: CaptureAddressConstants.DL,
-          fields: [],
+          fields: [...dlFields],
         },
         {
           title: CaptureAddressConstants.PASSPORT,
@@ -243,57 +287,6 @@ const CurrentAddress = ({ navigation }) => {
       ],
     },
   ];
-
-  useEffect(() => {
-    try {
-      if (dlCheck.data) {
-        setValue(
-          "address",
-          dlCheck.data?.results?.address?.[0].completeAddress
-        );
-        setValue("dl", dlCheck.data?.results?.dlNumber);
-        try {
-          // need to get DL expiry
-          // will get the response like this "nonTransport": "13-02-2019 to 12-02-2039",
-          let expiryResponse = dlCheck.data?.results?.validity;
-          if (expiryResponse && expiryResponse.nonTransport) {
-            if (
-              expiryResponse.nonTransport
-                ?.toString()
-                ?.toLowerCase()
-                ?.includes("to")
-            ) {
-              const expiry = expiryResponse.nonTransport
-                ?.toString()
-                ?.toLowerCase()
-                ?.split("to")
-                ?.pop();
-
-              setValue("dlExpiry", expiry?.trim());
-            }
-          } else if (expiryResponse && expiryResponse.transport) {
-            if (
-              expiryResponse.transport
-                ?.toString()
-                ?.toLowerCase()
-                ?.includes("to")
-            ) {
-              const expiry = expiryResponse.transport
-                ?.toString()
-                ?.toLowerCase()
-                ?.split("to")
-                ?.pop();
-              setValue("dlExpiry", expiry?.trim());
-            }
-          }
-        } catch (error) {}
-      }
-      if (dlCheck.error) {
-      }
-    } catch (error) {
-      toast("error", ErrorConstant.SOMETHING_WENT_WRONG);
-    }
-  }, [dlCheck.data, dlCheck.error]);
 
   useEffect(() => {
     // alert(canvasRef.current && firstImageSelected?.data && secondImageSelected?.data)
@@ -435,7 +428,7 @@ const CurrentAddress = ({ navigation }) => {
       };
 
       if (selectedItem === CaptureAddressConstants.DL) {
-        dlCheck?.mutate(request);
+        handleDlApiCall(request);
       } else if (selectedItem === CaptureAddressConstants.VOTERID) {
         voterIdCheck?.mutate(request);
       } else if (selectedItem === CaptureAddressConstants.PASSPORT) {
@@ -443,6 +436,80 @@ const CurrentAddress = ({ navigation }) => {
         //  passportCheck?.mutate(request)
       }
     } catch (error) {}
+  };
+
+  const handleDlApiCall = async (request) => {
+    try {
+      const response = await dlCheck?.mutateAsync(request);
+
+      const data = response;
+      const address = response?.results?.address[0] || {};
+      const drivingLicenseDetails = {
+        name: data?.results?.name,
+        issueDate: data?.results?.issueDate,
+        status: data?.results?.status,
+        bloodGroup: data?.results?.bloodGroup,
+        dlNumber: data?.results?.dlNumber,
+        Landmark__c: address?.completeAddress,
+        AddrLine1__c: address?.completeAddress,
+        AddrLine2__c: address?.completeAddress,
+        State__c: address?.state,
+        Pincode__c: address?.pin,
+        city__c: address?.district,
+        fatherName: data?.results["father/husband"],
+        dob: data?.results?.dob,
+      };
+      console.log(
+        "DETAILS HERE----------------------->",
+        drivingLicenseDetails
+      );
+      setValue("address", drivingLicenseDetails.AddrLine1__c);
+      setValue("DLNo__c", drivingLicenseDetails.dlNumber);
+      setValue("DLStatus__c", drivingLicenseDetails.status);
+      setValue("DLname", drivingLicenseDetails.name);
+      setValue("DLIssueDt__c", drivingLicenseDetails.issueDate);
+
+      // need to get DL expiry
+      // will get the response like this "nonTransport": "13-02-2019 to 12-02-2039",
+      let expiryResponse = response?.results?.validity;
+      if (expiryResponse && expiryResponse.nonTransport) {
+        if (
+          expiryResponse.nonTransport?.toString()?.toLowerCase()?.includes("to")
+        ) {
+          const dateArr = expiryResponse.nonTransport
+            ?.toString()
+            ?.toLowerCase()
+            ?.split("to");
+
+          const expiry = dateArr[1];
+          setValue("DLExpDt__c", expiry?.trim());
+        }
+      } else if (expiryResponse && expiryResponse.transport) {
+        if (
+          expiryResponse.transport?.toString()?.toLowerCase()?.includes("to")
+        ) {
+          const dateArr = expiryResponse.transport
+            ?.toString()
+            ?.toLowerCase()
+            ?.split("to");
+
+          const expiry = dateArr[1];
+          setValue("DLExpDt__c", expiry?.trim());
+        }
+      }
+    } catch (error) {
+      console.log("HERE ERROR----------->", error);
+      toast("error", ErrorConstant.SOMETHING_WENT_WRONG);
+
+      setSelectedItem(null);
+      // Set dummy values for inputs based on selected item
+      setImageSelected("");
+      setFirstImageSelected(null);
+      setSecondImageSelected(null);
+      setActiveSections([]);
+      setSelectedFields([]);
+      reset();
+    }
   };
 
   const handleRightIconPress = (index) => {
@@ -515,31 +582,159 @@ const CurrentAddress = ({ navigation }) => {
     setSecondImageSelected(null);
     setActiveSections([]);
     setSelectedFields(item.fields);
+    reset();
     // setInputValue1(`Sample ${item.fields[0]}`);
     // setInputValue2(`Sample ${item.fields[1]}`);
     //setSelectedFields(item.fields)
   };
 
-  const handleCameraUpload = () => {
-    ImagePicker.openCamera({
-      width: 300,
-      height: 400,
-      cropping: true,
-    })
-      .then((image) => {
-        console.log(image.path);
-        setImageSelected(image.path);
-      })
-      .catch((error) => {
-        console.log("Error:", error);
-      });
+  const parsedDate = (date) => {
+    try {
+      const parsedDate = moment(date, "DD-MM-YYYY");
+      const formattedDate = parsedDate.format("YYYY-MM-DD");
+      return formattedDate;
+    } catch (error) {
+      return date;
+    }
+  };
+
+  const getDLrequest = () => {
+    try {
+      const data = dlCheck?.data;
+      const address = dlCheck?.data?.results?.address[0] || {};
+      let expiry = "";
+      let expiryResponse = data?.results?.validity;
+      if (expiryResponse && expiryResponse.nonTransport) {
+        if (
+          expiryResponse.nonTransport?.toString()?.toLowerCase()?.includes("to")
+        ) {
+          const dateArr = expiryResponse.nonTransport
+            ?.toString()
+            ?.toLowerCase()
+            ?.split("to");
+
+          expiry = dateArr[1]?.trim();
+        }
+      } else if (expiryResponse && expiryResponse.transport) {
+        if (
+          expiryResponse.transport?.toString()?.toLowerCase()?.includes("to")
+        ) {
+          const dateArr = expiryResponse.transport
+            ?.toString()
+            ?.toLowerCase()
+            ?.split("to");
+
+          expiry = dateArr[1]?.trim();
+        }
+      }
+
+      if (expiry) {
+        expiry = parsedDate(expiry);
+      }
+
+      const kycBody = {
+        // DLNonTransportFrom__c: data?.results?.validity?.nonTransport,
+        // DLNonTransportTo__c: data?.results?.validity?.nonTransport,
+        DLStatus__c: data?.results?.status,
+        // DLTransportFrom__c: data?.validity?.transport,
+        // DLTransportTo__c: data?.validity?.transport,
+        DLExpDt__c: expiry,
+        DLIssueDt__c: parsedDate(data?.results?.issueDate),
+        DLIssueDt_del__c: parsedDate(data?.results?.issueDate),
+        DLNo__c: data?.results?.dlNumber,
+        FatherName__c: data?.results["father/husband"],
+        Applicant__c: loanData?.Applicant__c,
+        kycDoc__c: "Driving License",
+        DtOfBirth__c: parsedDate(data?.results?.dob),
+      };
+
+      const addressBody = {
+        Applicant__c: loanData?.Applicant__c,
+        LoanAppl__c: loanData?.loanId,
+        Landmark__c: address?.completeAddress,
+        AddrLine1__c: address?.completeAddress,
+        AddrLine2__c: address?.completeAddress,
+        AddrTyp__c: "Current Address",
+        State__c: address?.state,
+        Country__c: data?.adhaarDetails?.address?.splitAddress?.country,
+        Pincode__c: address?.pin,
+        District__c: address?.district,
+        city__c: address?.district,
+        HouseNo__c: address?.completeAddress,
+        Locality__c: address?.completeAddress,
+      };
+
+      const body = {
+        kycBody,
+        addressBody,
+        image: imageSelected?.data,
+        name: data?.results?.name,
+        isAddressRequired: true,
+        kycType: selectedItem,
+      };
+      return body;
+    } catch (error) {
+      throw new Error("Failed to get DL request body");
+    }
+  };
+
+  const getRequestForOthers = (data) => {
+    let dateKey = null;
+    let dateValue = null;
+
+    // Identify the key with a Date value
+    for (const key in data) {
+      if (data.hasOwnProperty(key)) {
+        const value = data[key];
+        if (typeof value === "object") {
+          dateKey = key;
+          break;
+        }
+      }
+    }
+
+    if (dateKey) {
+      // Parse the date and format it
+      dateValue = moment(data[dateKey]).format("DD-MM-YYYY");
+      dateValue = parsedDate(dateValue);
+    }
+
+    let kycBody = {
+      Applicant__c: loanData?.Applicant__c,
+      ...data,
+      kycDoc__c: getDocType(selectedItem).docSubType,
+    };
+
+    if (dateValue) {
+      kycBody[dateKey] = dateValue;
+    }
+
+    const body = {
+      kycBody,
+      image: imageSelected?.data,
+      isAddressRequired: false,
+      kycType: selectedItem,
+    };
+    return body;
   };
 
   const submitDoc = async () => {
     const isValid = await trigger();
-    if (isValid) {
-      //  dlCheck.mutate(watch())
+    const formData = watch();
+    console.log(typeof formData?.ElctBillDt__c);
+
+    try {
+      let body = {};
+      if (CaptureAddressConstants.DL === selectedItem) {
+        body = getDLrequest();
+      } else {
+        body = getRequestForOthers(formData);
+      }
+      const response = await submitMutation?.mutateAsync(body);
       navigation?.navigate(screens.LoanDetails);
+      // console.log("FINAL RESPONSE HERE");
+    } catch (error) {
+      console.log("submitDoc failed here", error);
     }
   };
 
@@ -833,7 +1028,6 @@ const CurrentAddress = ({ navigation }) => {
             </>
           )}
         </View>
-        {console.log(selectedFields)}
 
         {(imageSelected || (firstImageSelected && secondImageSelected)) &&
           selectedFields &&
@@ -855,7 +1049,7 @@ const CurrentAddress = ({ navigation }) => {
                 isMultiline={comp.isMultiline}
                 maxLength={comp.maxLength}
                 isDisabled={comp.isDisabled}
-                isUpperCaseRequired={true}
+                // isUpperCaseRequired={true}
                 isEditable={comp.isEditable}
               />
             );
