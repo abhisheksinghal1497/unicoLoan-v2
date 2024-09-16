@@ -9,6 +9,7 @@ import {
   createCompositeRequestsForPanUpload,
   createCompositeRequestsForSelfieUpload,
   createCurrentAddressIsSameAsPermanentRequest,
+  createGraphRequestForLeadList,
   createLoanAndAppplicantCompositeRequest,
   CurrentAddressDocumentCompositeRequests,
   getLeadCreationRequest,
@@ -31,6 +32,7 @@ import { getAllSoupEntries } from "./sfDBServices/salesforceDbUtils";
 
 import { LOAN_DETAILS_KEYS } from "../constants/stringConstants";
 import {
+  compositeGraphRequest,
   compositeRequest,
   DedupeApi,
   getLeadList,
@@ -88,12 +90,18 @@ export const getHomeScreenDetails = () => {
           if (getLeadListData && getLeadListData.records?.length > 0) {
             for (let i = 0; i < getLeadListData.records.length; i++) {
               //save the record into the soup
+              // const compositGraphRequest = await compositeGraphRequest(createGraphRequestForLeadList(getLeadListData))
+              // console.log("compositGraphRequest", JSON.stringify(compositGraphRequest))
               let record = getLeadListData.records[i];
+              const applicantRecord = record?.Applicants__r?.records?.[0]
+            
               const data = {
                 loanId: record?.Id,
                 applicationDetails: record,
-                Applicant__c: record?.Applicants__r?.records?.[0].Id,
+                Applicant__c: applicantRecord?.Id,
                 External_ID: record?.Id,
+                panDetails: applicantRecord?.PAN__c ? { panNumber: applicantRecord?.PAN__c} : null,
+                adhaarDetails: applicantRecord?.AdhrLst4Dgts__c ? { AdhrLst4Dgts__c: applicantRecord?.AdhrLst4Dgts__c }:null
               };
 
               await saveApplicationData(data);
@@ -106,7 +114,7 @@ export const getHomeScreenDetails = () => {
             soupConfig.applicationList.name,
             soupConfig.applicationList.path
           );
-          log("HERE IS DATA----------", JSON.stringify({ ...data }));
+
           if (data && data?.length > 0) {
             resolve(data);
           } else {
@@ -1973,8 +1981,8 @@ export const submitDrivingLicenseMutation = (loanData) => {
 
         try {
           // if this value is true so we are doing kyc for DL, Voter id and Passport
-          if(body?.nameCheck){
-              // await nameCheck(loanData?.panDetails?.panName, body?.name);
+          if (body?.nameCheck) {
+            // await nameCheck(loanData?.panDetails?.panName, body?.name);
           }
 
           const ApplKyc__c = await postObjectData("ApplKyc__c", body?.kycBody);

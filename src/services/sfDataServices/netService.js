@@ -190,3 +190,27 @@ export const leadConvertApi = (LeadId, mobile) => {
     );
   });
 };
+
+
+export const compositeGraphRequest = (requests, ) => {
+  return new Promise((resolve, reject) => {
+    // console.log('compositeGraphApi data', graphs);
+    let requestData = {
+      graphs: requests,
+    };
+    net.sendRequest(
+      "/services/data/",
+      `${net.getApiVersion()}/composite/graph`,
+      (res) => {
+        
+        resolve(res)
+      },
+      (error) => {
+        console.log("Error", error);
+        reject(error);
+      },
+      "POST",
+      requestData
+    );
+  });
+};

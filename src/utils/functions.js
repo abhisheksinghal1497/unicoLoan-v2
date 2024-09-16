@@ -254,7 +254,7 @@ export const getApplicantRequest = (data) => {
       ),
       Address__c: data?.Address__c,
       Pincode__c: data?.Pincode__c,
-      Consent_Status__c:"Verified"
+      Consent_Status__c: "Verified"
     };
   } catch (error) {
     return null;
@@ -270,7 +270,7 @@ export const getPeriodValues = (str, index) => {
         return str.substring(2, 4);
       }
     }
-  } catch (error) {}
+  } catch (error) { }
   return null;
 };
 
@@ -335,22 +335,21 @@ export const createCompositeRequestForPanAadhar = (loanData, aadharData, isPanAa
         },
       },
       // Update Loan application First name, middlename , last name and Father name - LoanAppl__c and Applicant__c
-      {
-        ...patchCompositeRequest(
-          "Applicant__c",
-          loanData?.Applicant__c,
-          updateNameInLoanBody(loanDetails?.adhaarDetails),
-          "Applicant__cPatch"
-        ),
-      },
+      // {
+      //   ...patchCompositeRequest(
+      //     "Applicant__c",
+      //     loanData?.Applicant__c,
+      //     updateNameInLoanBody(loanDetails?.adhaarDetails),
+      //     "Applicant__cPatch"
+      //   ),
+      // },
 
       {
         method: "PATCH",
-        url: `/services/data/${net.getApiVersion()}/sobjects/Applicant__c/${
-          loanData.Applicant__c
-        }`,
+        url: `/services/data/${net.getApiVersion()}/sobjects/Applicant__c/${loanData.Applicant__c
+          }`,
         referenceId: "applicantUpdateId",
-        body: updateAadharDataToApplicant(loanData),
+        body: { ...updateAadharDataToApplicant(loanData), ...updateNameInLoanBody(loanData?.adhaarDetails), Pan__c: loanData?.panDetails?.panNumber, },
       },
     ];
 
@@ -465,7 +464,7 @@ const getDocDetailBody = (data, applicationKycId, type) => {
       Appl__c: data?.Applicant__c,
       DocCatgry__c: "KYC Documents",
       DocSubTyp__c: "Electricity Bill",
-      DocTyp__c:  "Proof Of Address (Temporary)",
+      DocTyp__c: "Proof Of Address (Temporary)",
       LAN__c: data?.loanId,
       Case__c: "",
       DocStatus__c: "New",
@@ -481,7 +480,7 @@ const getDocDetailBody = (data, applicationKycId, type) => {
       Appl__c: data?.Applicant__c,
       DocCatgry__c: "KYC Documents",
       DocSubTyp__c: "Gas Bill",
-      DocTyp__c:  "Proof Of Address (Temporary)",
+      DocTyp__c: "Proof Of Address (Temporary)",
       LAN__c: data?.loanId,
       Case__c: "",
       DocStatus__c: "New",
@@ -497,7 +496,7 @@ const getDocDetailBody = (data, applicationKycId, type) => {
       Appl__c: data?.Applicant__c,
       DocCatgry__c: "KYC Documents",
       DocSubTyp__c: "Mobile Bill",
-      DocTyp__c:  "Proof Of Address (Temporary)",
+      DocTyp__c: "Proof Of Address (Temporary)",
       LAN__c: data?.loanId,
       Case__c: "",
       DocStatus__c: "New",
@@ -1021,7 +1020,7 @@ export const updateAadharDataToApplicant = (data) => {
           lastName = firstName;
         }
       }
-    } catch (error) {}
+    } catch (error) { }
 
     if (firstName) {
       request = { ...request, FName__c: firstName };
@@ -1102,22 +1101,22 @@ const getDocMasterEncodedQuery = (type) => {
       docType.docType,
       docType.docSubType
     );
-  }else if(type === CaptureAddressConstants.NREGACard){
+  } else if (type === CaptureAddressConstants.NREGACard) {
     return createEncodedQuery(
       docType.docType,
       docType.docSubType
     );
-  }else if(type === CaptureAddressConstants.EBILL){
+  } else if (type === CaptureAddressConstants.EBILL) {
     return createEncodedQuery(
       docType.docType,
       docType.docSubType
     );
-  }else if(type === CaptureAddressConstants.GBILL){
+  } else if (type === CaptureAddressConstants.GBILL) {
     return createEncodedQuery(
       docType.docType,
       docType.docSubType
     );
-  }else if(type === CaptureAddressConstants.MBILL){
+  } else if (type === CaptureAddressConstants.MBILL) {
     return createEncodedQuery(
       docType.docType,
       docType.docSubType
@@ -1187,14 +1186,14 @@ export const CurrentAddressDocumentCompositeRequests = (
           "Applicant__c",
           data?.Applicant__c,
           {
-            isPerSameAsResi_ADD__c:0
+            isPerSameAsResi_ADD__c: 0
           },
           "UpdateApicant"
         ),
       },
     ];
 
-    if(isAddressRequired){
+    if (isAddressRequired) {
       compositeRequests.push({
         ...postCompositeRequest("ApplAddr__c", addressBody, "Add_Address"),
       })
@@ -1206,3 +1205,50 @@ export const CurrentAddressDocumentCompositeRequests = (
     return null;
   }
 };
+
+
+export const createGraphRequestForLeadList = (loanData) => {
+  try {
+    var loanLength = loanData.records.length;
+    var graphsRequest = []
+    for (let i = 0; i < loanLength; i++) {
+      const record = loanData.records[i];
+      const applicantId = record?.Applicants__r?.records?.[0].Id;
+      if (applicantId) {
+        graphsRequest?.push(
+          {
+            graphId: i.toString(),
+            compositeRequest: [
+
+              {
+                "method": "GET",
+                "url": "/services/data/v55.0/sobjects/ApplKyc__c/Applicant__c/a10Bi000003iCFIIA2",
+                "referenceId": "ApplKycData"
+              }
+
+              // {
+              //   method: "GET",
+              //   url: `/services/data/${net.getApiVersion()}/query/?q=SELECT%20FIELDS%28ALL%29%20FROM%20ApplAsset__c%20WHERE%20Appl__c%20%3D%20%27${applicantId}%27%20LIMIT%20200`,
+              //   referenceId: "ApplicantAssets",
+              // }
+
+            ]
+          }
+        )
+
+      }
+
+    }
+    if (graphsRequest.length > 0) {
+      return graphsRequest
+    } else {
+      return null
+    }
+
+
+
+  } catch (error) {
+    return null
+  }
+
+}
