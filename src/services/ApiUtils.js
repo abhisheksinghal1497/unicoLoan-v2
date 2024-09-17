@@ -9,7 +9,7 @@ import {
   createCompositeRequestsForPanUpload,
   createCompositeRequestsForSelfieUpload,
   createCurrentAddressIsSameAsPermanentRequest,
-  createGraphRequestForLeadList,
+  createCompositeRequestForLeadList,
   createLoanAndAppplicantCompositeRequest,
   CurrentAddressDocumentCompositeRequests,
   getLeadCreationRequest,
@@ -88,6 +88,16 @@ export const getHomeScreenDetails = () => {
             LocalStorage?.getUserData()?.Phone
           );
           if (getLeadListData && getLeadListData.records?.length > 0) {
+
+            try {
+              const compositGraphRequest = await compositeRequest(createCompositeRequestForLeadList(getLeadListData))
+
+              console.log("compositGraphRequest", JSON.stringify(compositGraphRequest))
+              
+            } catch (error) {
+              
+            }
+           
             for (let i = 0; i < getLeadListData.records.length; i++) {
               //save the record into the soup
               // const compositGraphRequest = await compositeGraphRequest(createGraphRequestForLeadList(getLeadListData))
@@ -100,8 +110,8 @@ export const getHomeScreenDetails = () => {
                 applicationDetails: record,
                 Applicant__c: applicantRecord?.Id,
                 External_ID: record?.Id,
-                panDetails: applicantRecord?.PAN__c ? { panNumber: applicantRecord?.PAN__c} : null,
-                adhaarDetails: applicantRecord?.AdhrLst4Dgts__c ? { AdhrLst4Dgts__c: applicantRecord?.AdhrLst4Dgts__c }:null
+                panDetails: applicantRecord?.PAN__c ? { panNumber: applicantRecord?.PAN__c} : undefined,
+                adhaarDetails: applicantRecord?.AdhrLst4Dgts__c ? { AdhrLst4Dgts__c: applicantRecord?.AdhrLst4Dgts__c } : undefined
               };
 
               await saveApplicationData(data);

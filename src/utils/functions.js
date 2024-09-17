@@ -1207,47 +1207,96 @@ export const CurrentAddressDocumentCompositeRequests = (
 };
 
 
-export const createGraphRequestForLeadList = (loanData) => {
+export const createCompositeRequestForLeadList = (loanData) => {
   try {
     var loanLength = loanData.records.length;
-    var graphsRequest = []
+    var compositeRequest = []
+    var applicationIds = []
     for (let i = 0; i < loanLength; i++) {
       const record = loanData.records[i];
       const applicantId = record?.Applicants__r?.records?.[0].Id;
-      if (applicantId) {
-        graphsRequest?.push(
-          {
-            graphId: i.toString(),
-            compositeRequest: [
+      console.log("applicantId ", applicantId)
+      applicationIds.push(applicantId)
 
-              {
-                "method": "GET",
-                "url": "/services/data/v55.0/sobjects/ApplKyc__c/Applicant__c/a10Bi000003iCFIIA2",
-                "referenceId": "ApplKycData"
-              }
 
-              // {
-              //   method: "GET",
-              //   url: `/services/data/${net.getApiVersion()}/query/?q=SELECT%20FIELDS%28ALL%29%20FROM%20ApplAsset__c%20WHERE%20Appl__c%20%3D%20%27${applicantId}%27%20LIMIT%20200`,
-              //   referenceId: "ApplicantAssets",
-              // }
 
-            ]
-          }
-        )
+      // graphsRequest?.push(
+      //   {
+      //     graphId: i.toString(),
+      //     compositeRequest: [
 
-      }
+      //       {
+      //         "method": "GET",
+      //         "url": "/services/data/v55.0/sobjects/ApplKyc__c/Applicant__c/a10Bi000003iCFIIA2",
+      //         "referenceId": "ApplKycData"
+      //       }
+
+      // {
+      //   method: "GET",
+      //   url: `/services/data/${net.getApiVersion()}/query/?q=SELECT%20FIELDS%28ALL%29%20FROM%20ApplAsset__c%20WHERE%20Appl__c%20%3D%20%27${applicantId}%27%20LIMIT%20200`,
+      //   referenceId: "ApplicantAssets",
+      // }
+
+      //     ]
+      //   }
+      // )
 
     }
-    if (graphsRequest.length > 0) {
-      return graphsRequest
+
+
+
+    if (applicationIds.length > 0) {
+      const query = `SELECT FIELDS(ALL) FROM ApplKyc__c WHERE Applicant__c IN (${applicationIds.map(id => `'${id}'`).join(', ')}) LIMIT 200`;
+      const encodedQuery = encodeURIComponent(query);
+
+      const query1 = `SELECT FIELDS(ALL) FROM ApplAddr__c WHERE Applicant__c IN (${applicationIds.map(id => `'${id}'`).join(', ')}) LIMIT 200`;
+      const encodedQuery1 = encodeURIComponent(query1);
+
+
+      const query2 = `SELECT FIELDS(ALL) FROM ApplAsset__c WHERE Appl__c IN (${applicationIds.map(id => `'${id}'`).join(', ')}) LIMIT 200`;
+      const encodedQuery2 = encodeURIComponent(query2);
+
+
+      compositeRequest.push({
+        method: "GET",
+        url: `/services/data/${net.getApiVersion()}/query/?q=${encodedQuery}`,
+        referenceId: "ApplicantKyc"
+      },
+
+
+
+      )
+
+      compositeRequest.push({
+        method: "GET",
+        url: `/services/data/${net.getApiVersion()}/query/?q=${encodedQuery1}`,
+        referenceId: "ApplicantAddress"
+      })
+
+
+      compositeRequest.push({
+        method: "GET",
+        url: `/services/data/${net.getApiVersion()}/query/?q=${encodedQuery2}`,
+        referenceId: "applicantAssets"
+      })
+
+
+
+
+    }
+
+
+    if (compositeRequest.length > 0) {
+      return compositeRequest
     } else {
+      console.log("error >>>", "length is 0")
       return null
     }
 
 
 
   } catch (error) {
+    console.log("error >>>", error)
     return null
   }
 
