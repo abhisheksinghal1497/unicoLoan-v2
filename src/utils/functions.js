@@ -254,7 +254,7 @@ export const getApplicantRequest = (data) => {
       ),
       Address__c: data?.Address__c,
       Pincode__c: data?.Pincode__c,
-      Consent_Status__c: "Verified"
+      // Consent_Status__c: "Verified"
     };
   } catch (error) {
     return null;
@@ -1214,36 +1214,13 @@ export const createCompositeRequestForLeadList = (loanData) => {
     var applicationIds = []
     for (let i = 0; i < loanLength; i++) {
       const record = loanData.records[i];
-      const applicantId = record?.Applicants__r?.records?.[0].Id;
+      const applicantId = record?.Applicants__r?.records?.[0].Id; // need to check after coapplicant
       console.log("applicantId ", applicantId)
       applicationIds.push(applicantId)
 
-
-
-      // graphsRequest?.push(
-      //   {
-      //     graphId: i.toString(),
-      //     compositeRequest: [
-
-      //       {
-      //         "method": "GET",
-      //         "url": "/services/data/v55.0/sobjects/ApplKyc__c/Applicant__c/a10Bi000003iCFIIA2",
-      //         "referenceId": "ApplKycData"
-      //       }
-
-      // {
-      //   method: "GET",
-      //   url: `/services/data/${net.getApiVersion()}/query/?q=SELECT%20FIELDS%28ALL%29%20FROM%20ApplAsset__c%20WHERE%20Appl__c%20%3D%20%27${applicantId}%27%20LIMIT%20200`,
-      //   referenceId: "ApplicantAssets",
-      // }
-
-      //     ]
-      //   }
-      // )
-
     }
 
-
+   //['1234','123566']
 
     if (applicationIds.length > 0) {
       const query = `SELECT FIELDS(ALL) FROM ApplKyc__c WHERE Applicant__c IN (${applicationIds.map(id => `'${id}'`).join(', ')}) LIMIT 200`;

@@ -214,3 +214,22 @@ export const compositeGraphRequest = (requests, ) => {
     );
   });
 };
+
+
+export const getConsentLink = (applicationId) => {
+  return new Promise((resolve, reject) => {
+    net.sendRequest(
+      "/services/apexrest",
+      `/getConsentLink?recordId=${applicationId}`,
+      (res) => {
+        // console.log("Entered");
+        console.log("res", res);
+        resolve(res);
+      },
+      (error) => {
+        reject(error);
+      },
+      "GET"
+    );
+  });
+};
