@@ -133,7 +133,7 @@ export default function ApplicationDetails(props) {
 
   useEffect(() => {
     if (applicationFormMutate.data) {
-      resetRoute(screens.PanDetails, {
+      resetRoute(screens.ConsentScreen, {
         loanData: applicationFormMutate.data,
       });
     }

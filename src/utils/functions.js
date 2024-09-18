@@ -9,6 +9,7 @@ import {
   CaptureAddressConstants,
   LOAN_DETAILS_KEYS,
 } from "../constants/stringConstants";
+import { query } from "../constants/Queries";
 
 export const alert = (title, subTitle, onPressOK, onPressCancel) => {
   if (onPressCancel) {
@@ -148,6 +149,9 @@ export const createLoanAndAppplicantCompositeRequest = (data, leadID) => {
           LoanAppln__c: "@{loanCreate.id}",
         },
       },
+      {
+        ...getCompositeRequest(query.getLoanDetailById("@{loanCreate.id}"), 'getLoanAppl__c')
+      }
     ];
 
     return compositeRequest;
@@ -557,7 +561,6 @@ const getCompositeRequest = (query, referenceId) => {
 };
 
 const postCompositeRequest = (objectName, body, referenceId) => {
-  console.log("ADRESS BODY", body);
   return {
     method: "POST",
     url: `/services/data/${net.getApiVersion()}/sobjects/${objectName}`,
@@ -1071,6 +1074,11 @@ export const getDocType = (type) => {
       docType: "Proof Of Address (Other Kyc)",
       docSubType: "Driving License"
     };
+  }else if(type === CaptureAddressConstants.PASSPORT){
+    return {
+      docType: "Proof Of Address (Other Kyc)",
+      docSubType: "Passport"
+    };
   } else if (type === CaptureAddressConstants.NREGACard) {
     return {
       docType: "Proof Of Address",
@@ -1198,7 +1206,7 @@ export const CurrentAddressDocumentCompositeRequests = (
         ...postCompositeRequest("ApplAddr__c", addressBody, "Add_Address"),
       })
     }
-
+    console.log('BEFORE RETURNING COMPOSITE')
     return compositeRequests;
   } catch (error) {
     console.log('ERROR IN FINAL', error)

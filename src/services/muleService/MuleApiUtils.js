@@ -72,9 +72,9 @@ export const verifyAadhar = (panNumber, loanData, panName) => {
         ? body?.intitialResponse?.results?.aadharToken
         : "";
       const aadhaarBase64 = body?.imageBase64;
-      var result = aadhaarBase64 ? aadhaarBase64 : null
+      var result = aadhaarBase64 ? aadhaarBase64 : null;
       if (result) {
-        console.log("RESULT IS NOT NULL")
+        console.log("RESULT IS NOT NULL");
       }
       //  alert(result)
       // var result = aadhaarBase64 ? aadhaarBase64?.substring(1, aadhaarBase64?.length - 1) : null;
@@ -86,7 +86,6 @@ export const verifyAadhar = (panNumber, loanData, panName) => {
       // } catch (error) {
 
       // }
-
 
       const request = {
         aadhaarTokenValue: adhaarToken,
@@ -105,106 +104,137 @@ export const verifyAadhar = (panNumber, loanData, panName) => {
             "digital-kyc-v1/api/aadhar-verify",
             request
           );
-          console.log(adhaarVerifyResponse, 'HERE-------------2')
+          console.log(adhaarVerifyResponse, "HERE-------------2");
           const adhaarName = adhaarVerifyResponse?.data?.results?.name;
 
           try {
             checkPanAdhaarLinked(adhaarToken, panNumber, adhaarName)
               .then(async () => {
                 try {
-
-
                   let loanDetails = { ...loanData };
-                  loanDetails.adhaarDetails = adhaarVerifyResponse.data?.results;
+                  loanDetails.adhaarDetails =
+                    adhaarVerifyResponse.data?.results;
 
-
-
-
-                  const response = await compositeRequest(createCompositeRequestForPanAadhar(loanDetails, request, true, 100))
+                  const response = await compositeRequest(
+                    createCompositeRequestForPanAadhar(
+                      loanDetails,
+                      request,
+                      true,
+                      100
+                    )
+                  );
 
                   if (response) {
                     try {
-                      const panApplicationId = response?.compositeResponse?.[0]?.body?.id;
-                      const adhaarApplicationId = response?.compositeResponse?.[1]?.body?.id;
-                      
+                      const panApplicationId =
+                        response?.compositeResponse?.[0]?.body?.id;
+                      const adhaarApplicationId =
+                        response?.compositeResponse?.[1]?.body?.id;
+
                       if (adhaarApplicationId && result) {
-                        console.log("aadhar upload")
+                        console.log("aadhar upload");
                         try {
-                          const aadhaarUploadRequests = createCompositeRequestsForAdhaarUpload(loanData, adhaarApplicationId, result);
+                          const aadhaarUploadRequests =
+                            createCompositeRequestsForAdhaarUpload(
+                              loanData,
+                              adhaarApplicationId,
+                              result
+                            );
                           await compositeRequest(aadhaarUploadRequests);
-                        } catch (error) {
-                          
-                        }
-                       
+                        } catch (error) {}
                       }
-                      if (panApplicationId && loanData?.panDetails?.imageBase64) {
-                        console.log("pan upload")
+                      if (
+                        panApplicationId &&
+                        loanData?.panDetails?.imageBase64
+                      ) {
+                        console.log("pan upload");
                         try {
-                          const panUploadRequests = createCompositeRequestsForPanUpload(loanData, panApplicationId);
-                          await compositeRequest(panUploadRequests); 
-                        } catch (error) {
-                          
-                        }
-                        
+                          const panUploadRequests =
+                            createCompositeRequestsForPanUpload(
+                              loanData,
+                              panApplicationId
+                            );
+                          await compositeRequest(panUploadRequests);
+                        } catch (error) {}
                       }
-
-
-
-
                     } catch (error) {
-                      console.log("error", error)
+                      console.log("error", error);
                     }
-                    await saveApplicationData(loanDetails)
-                    resolve(loanDetails)
+                    await saveApplicationData(loanDetails);
+                    resolve(loanDetails);
                   } else {
-                    reject(ErrorConstants.SOMETHING_WENT_WRONG)
+                    reject(ErrorConstants.SOMETHING_WENT_WRONG);
                   }
-
-
-
                 } catch (error) {
-                  log('ERRor, ', error)
-                  reject(ErrorConstants.SOMETHING_WENT_WRONG)
+                  log("ERRor, ", error);
+                  reject(ErrorConstants.SOMETHING_WENT_WRONG);
                 }
-
               })
               .catch(async (error) => {
                 try {
-                  console.log('name match check------------------12')
-                  const nameMatchCheck = await nameCheck(panName, adhaarName)
+                  console.log("name match check------------------12");
+                  const nameMatchCheck = await nameCheck(panName, adhaarName);
                   if (nameMatchCheck) {
-                    let loanDetails = { ...loanData, adhaarDetails: adhaarVerifyResponse.data?.result };
+                    let loanDetails = {
+                      ...loanData,
+                      adhaarDetails: adhaarVerifyResponse.data?.result,
+                    };
                     //  loanDetails.adhaarDetails = adhaarVerifyResponse.data?.results;
-                    const response = await compositeRequest(createCompositeRequestForPanAadhar(loanDetails, request, false, nameMatchCheck?.score), false)
+                    const response = await compositeRequest(
+                      createCompositeRequestForPanAadhar(
+                        loanDetails,
+                        request,
+                        false,
+                        nameMatchCheck?.score
+                      ),
+                      false
+                    );
                     if (response) {
-                      const panApplicationId = response?.compositeResponse?.[0]?.body?.id;
-                      if (panApplicationId && loanData?.panDetails?.imageBase64) {
-                        const panUploadRequests = createCompositeRequestsForPanUpload(loanData, panApplicationId);
-                        const response = await compositeRequest(panUploadRequests);
+                      const panApplicationId =
+                        response?.compositeResponse?.[0]?.body?.id;
+                      if (
+                        panApplicationId &&
+                        loanData?.panDetails?.imageBase64
+                      ) {
+                        const panUploadRequests =
+                          createCompositeRequestsForPanUpload(
+                            loanData,
+                            panApplicationId
+                          );
+                        const response = await compositeRequest(
+                          panUploadRequests
+                        );
                       }
-                      const adhaarApplicationId = response?.compositeResponse?.[1]?.body?.id;
+                      const adhaarApplicationId =
+                        response?.compositeResponse?.[1]?.body?.id;
                       if (adhaarApplicationId && result) {
-                        const aadhaarUploadRequests = createCompositeRequestsForAdhaarUpload(loanData, adhaarApplicationId, result);
-                        const response = await compositeRequest(aadhaarUploadRequests);
+                        const aadhaarUploadRequests =
+                          createCompositeRequestsForAdhaarUpload(
+                            loanData,
+                            adhaarApplicationId,
+                            result
+                          );
+                        const response = await compositeRequest(
+                          aadhaarUploadRequests
+                        );
                       }
-                      await saveApplicationData(loanDetails)
-                      resolve({ ...loanDetails })
+                      await saveApplicationData(loanDetails);
+                      resolve({ ...loanDetails });
                     } else {
-                      reject(ErrorConstants.SOMETHING_WENT_WRONG)
+                      reject(ErrorConstants.SOMETHING_WENT_WRONG);
                     }
                   }
-
                 } catch (error) {
-                  reject("Pan and Aadhar details are not matching.")
+                  reject("Pan and Aadhar details are not matching.");
                 }
 
-                reject(ErrorConstants.SOMETHING_WENT_WRONG)
+                reject(ErrorConstants.SOMETHING_WENT_WRONG);
               });
           } catch (error) {
             reject(ErrorConstants.SOMETHING_WENT_WRONG);
           }
         } catch (error) {
-          console.log('VERIFY ORP ERROR', error)
+          console.log("VERIFY ORP ERROR", error);
           reject("Aadhar verification failed");
         }
       });
@@ -233,7 +263,7 @@ export const nameCheck = async (panName, name) => {
         reject("Name not match with pan.");
       } else {
         resolve({
-          score: namCheckResponse?.data?.results?.score
+          score: namCheckResponse?.data?.results?.score,
         });
       }
     } catch (error) {
@@ -305,17 +335,23 @@ export const doOCRForDL = (panName) => {
       //return instance.post('/digital-utility-v1/api/name-match', body)
       return new Promise(async (resolve, reject) => {
         try {
-          console.log('I AM TRIGGER---------------------')
+          console.log("I AM TRIGGER---------------------");
           const response = await instance.post(
             "/digital-kyc-v1/api/drivers-license",
             body
           );
-          console.log('DL RESPONSE ------------' , JSON.stringify(response.data)  )
+          console.log(
+            "DL RESPONSE ------------",
+            JSON.stringify(response.data)
+          );
           resolve(response?.data);
-        
         } catch (error) {
           errorConsoleLog("verifyDrivingLicence>>", error);
-          reject(typeof error === 'string' ? error : ErrorConstants.SOMETHING_WENT_WRONG);
+          reject(
+            typeof error === "string"
+              ? error
+              : ErrorConstants.SOMETHING_WENT_WRONG
+          );
         }
       });
     },
@@ -382,17 +418,19 @@ export const makeAdhaarEKYCCall = () => {
     mutationFn: async (body) => {
       const ipaddress = await getIpAddress();
 
-
       const requestBody = {
-        "consent": "Y",
-        "ipAddress": ipaddress,
-        "consentTime": getConsentTime(),
-        "consentText": "Test",
-        "caseId": getUniqueId(),
-        "aadharNumber": body?.number?.toString(),
-        "aadharName": body?.name
-      }
-      return instance.post('/digital-kyc-v1/api/aadhar-initiate-by-number', requestBody)
+        consent: "Y",
+        ipAddress: ipaddress,
+        consentTime: getConsentTime(),
+        consentText: "Test",
+        caseId: getUniqueId(),
+        aadharNumber: body?.number?.toString(),
+        aadharName: body?.name,
+      };
+      return instance.post(
+        "/digital-kyc-v1/api/aadhar-initiate-by-number",
+        requestBody
+      );
       // return new Promise(async (resolve, reject) => {
       //   setTimeout(() => {
       //     resolve(body);
@@ -454,10 +492,8 @@ export const checkPanLinkWithAdhaar = (pan) => {
           if (linkedResponse?.results?.linked) {
             console.log({ linkedResponse });
             resolve(linkedResponse);
-          } else { }
-
-
-
+          } else {
+          }
         } catch (error) {
           console.log(error.response);
           reject(ErrorConstants.SOMETHING_WENT_WRONG);

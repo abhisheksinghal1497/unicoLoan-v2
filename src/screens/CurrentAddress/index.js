@@ -39,6 +39,7 @@ import { log } from "../../utils/ConsoleLogUtils";
 import Canvas, { Image as CanvasImage } from "react-native-canvas";
 import { useRoute } from "@react-navigation/native";
 import moment from "moment";
+import Toast from "react-native-toast-message";
 
 const CurrentAddress = ({ navigation }) => {
   const [imageSelected, setImageSelected] = useState("");
@@ -71,115 +72,15 @@ const CurrentAddress = ({ navigation }) => {
   const submitMutation = submitDrivingLicenseMutation(loanData);
   const canvasRef = useRef(null);
 
-  const dlFields = [
-    {
-      id: "DLNo__c",
-      label: "DL No",
-      type: component.textInput,
-      placeHolder: "Enter DL Number",
-      isRequired: true,
-      value: "",
-    },
-    {
-      id: "DLname",
-      label: "Name",
-      type: component.textInput,
-      placeHolder: "Enter Name",
-      isRequired: true,
-      value: "",
-    },
-    {
-      id: "DLExpDt__c",
-      label: "Expiry Date",
-      type: component.datetime,
-      placeHolder: "Enter Expiry Date",
-      isRequired: true,
-      value: "",
-    },
-    // {
-    //   id: "DLIssueDt__c ",
-    //   label: "Issue date",
-    //   type: component.datetime,
-    //   placeHolder: "Enter issue date",
-    //   isRequired: true,
-    //   value: "",
-    // },
-    // {
-    //   id: "BloodGroup__c ",
-    //   label: "Blood group",
-    //   type: component.textInput,
-    //   placeHolder: "Enter blood group",
-    //   isRequired: true,
-    //   value: "",
-    //   isMultiline: true,
-    // },
-    // {
-    //   id: "DLStatus__c ",
-    //   label: "DL Status",
-    //   type: component.textInput,
-    //   placeHolder: "Enter DL status",
-    //   isRequired: true,
-    //   value: "",
-    // },
-    {
-      id: "address",
-      label: "Address",
-      type: component.textInput,
-      placeHolder: "Enter address",
-      isRequired: true,
-      value: "",
-      isMultiline: true,
-    },
-  ];
-  //Passport No, Expiry Date
-  const passPortFields = [
-    {
-      id: "passportNo",
-      label: "Passport No",
-      type: component.textInput,
-      placeHolder: "Enter Passport No",
-      isRequired: true,
-      value: "",
-    },
-    {
-      id: "passportExpiry",
-      label: "Expiry Date",
-      type: component.datetime,
-      placeHolder: "Enter Expiry Date",
-      isRequired: true,
-      value: "",
-    },
-    {
-      id: "address",
-      label: "Address",
-      type: component.textInput,
-      placeHolder: "Enter address",
-      isRequired: true,
-      value: "",
-      isMultiline: true,
-    },
-  ];
-
-  const voterIdFields = [
-    {
-      id: "voterID",
-      label: "Voter Id No",
-      type: component.textInput,
-      placeHolder: "Enter Voter Id No",
-      isRequired: true,
-      value: "",
-    },
-  ];
-
   const addressForm = [
-    {
-      id: "HouseNo__c",
-      label: "House No",
-      type: component.textInput,
-      placeHolder: "Enter house number",
-      isRequired: false,
-      value: "",
-    },
+    // {
+    //   id: "HouseNo__c",
+    //   label: "House No",
+    //   type: component.textInput,
+    //   placeHolder: "Enter house number",
+    //   isRequired: false,
+    //   value: "",
+    // },
     {
       id: "AddrLine1__c",
       label: "Address Line 1",
@@ -248,6 +149,90 @@ const CurrentAddress = ({ navigation }) => {
       type: component.textInput,
       placeHolder: "Enter district",
       isRequired: false,
+      value: "",
+    },
+  ];
+
+  const dlFields = [
+    {
+      id: "DLNo__c",
+      label: "DL No",
+      type: component.textInput,
+      placeHolder: "Enter DL Number",
+      isRequired: true,
+      value: "",
+    },
+    {
+      id: "DLname",
+      label: "Name",
+      type: component.textInput,
+      placeHolder: "Enter Name",
+      isRequired: true,
+      value: "",
+    },
+    {
+      id: "DLExpDt__c",
+      label: "Expiry Date",
+      type: component.datetime,
+      placeHolder: "Enter Expiry Date",
+      isRequired: true,
+      value: "",
+    },
+    {
+      id: "DLIssueDt__c",
+      label: "Issue date",
+      type: component.datetime,
+      placeHolder: "Enter issue date",
+      isRequired: true,
+      value: "",
+    },
+    {
+      id: "BloodGroup__c",
+      label: "Blood group",
+      type: component.textInput,
+      placeHolder: "Enter blood group",
+      isRequired: false,
+      value: "",
+    },
+    {
+      id: "DLStatus__c",
+      label: "DL Status",
+      type: component.textInput,
+      placeHolder: "Enter DL status",
+      isRequired: true,
+      value: "",
+    },
+    ...addressForm,
+  ];
+
+  //Passport No, Expiry Date
+  const passPortFields = [
+    {
+      id: "PassNo__c",
+      label: "Passport No",
+      type: component.textInput,
+      placeHolder: "Enter Passport No",
+      isRequired: true,
+      value: "",
+    },
+    {
+      id: "PassExpDt__c",
+      label: "Expiry Date",
+      type: component.datetime,
+      placeHolder: "Enter Expiry Date",
+      isRequired: true,
+      value: "",
+    },
+    ...addressForm,
+  ];
+
+  const voterIdFields = [
+    {
+      id: "voterID",
+      label: "Voter Id No",
+      type: component.textInput,
+      placeHolder: "Enter Voter Id No",
+      isRequired: true,
       value: "",
     },
   ];
@@ -346,6 +331,35 @@ const CurrentAddress = ({ navigation }) => {
     defaultValues: {},
   });
 
+  const handlePassportRequest = async (dataURL) => {
+    try {
+      const response = await passportCheck?.mutateAsync(dataURL);
+      const address = response?.results?.ocrDetails?.[1]?.details?.addressSplit;
+
+      setValue(
+        "PassNo__c",
+        response?.results?.passportNumber?.passportNumberFromSource
+      );
+      setValue(
+        "PassExpDt__c",
+        response?.results?.ocrDetails?.[0]?.details?.doe?.value
+      );
+      setValue("AddrLine1__c", address?.line1);
+      setValue("AddrLine2__c", address?.line2);
+      setValue("Landmark__c", address?.landmark);
+      setValue("Locality__c", address?.locality);
+      setValue("Pincode__c", address?.pin);
+      setValue("city__c", address?.city);
+      setValue("State__c", address?.state);
+      setValue("District__c", address?.city);
+
+
+    } catch (error) {
+      console.log("RESPONSE ERROR ", error);
+      Toast.show({ type: "error", text1: ErrorConstant.SOMETHING_WENT_WRONG });
+    }
+  };
+
   const options = [
     {
       id: 1,
@@ -374,15 +388,13 @@ const CurrentAddress = ({ navigation }) => {
   useEffect(() => {
     // alert(canvasRef.current && firstImageSelected?.data && secondImageSelected?.data)
     if (canvasRef.current && firstImageSelected && secondImageSelected) {
-      //alert('dsj')
-      mergeBase64Images(
-        canvasRef,
-        firstImageSelected?.data,
-        secondImageSelected?.data
-      );
-      setTimeout(() => {
-        uploadMultipleFiles();
-      }, 500);
+      // mergeBase64Images(
+      //   canvasRef,
+      //   firstImageSelected?.data,
+      //   secondImageSelected?.data
+      // );
+
+      uploadMultipleFiles("ajdcghsgsddsghghds");
     }
     // wait for 2 seconds
   }, [canvasRef.current, firstImageSelected, secondImageSelected]);
@@ -416,7 +428,6 @@ const CurrentAddress = ({ navigation }) => {
       // Optionally, convert the canvas content to a data URL
       canvas.toDataURL(firstImageSelected?.mime).then((dataUrl) => {
         // Handle the data URL as needed
-        console.log("Data URL:", dataUrl);
         uploadMultipleFiles(dataUrl);
       });
     };
@@ -426,55 +437,11 @@ const CurrentAddress = ({ navigation }) => {
     });
   };
 
-  // const mergeBase64Images = async (canvasRef, base64Image1, base64Image2) => {
-  //   const canvas = canvasRef.current;
-
-  //   const context = canvas.getContext("2d");
-  //   //context.rotate(45 * Math.PI / 180)
-
-  //   const image1 = new CanvasImage(canvas);
-  //   const image2 = new CanvasImage(canvas);
-
-  //   image1.src = `data:image/jpeg;base64,${base64Image1}`;
-  //   image2.src = `data:image/jpeg;base64,${base64Image2}`;
-
-  //   image1.addEventListener("load", () => {
-  //     // Draw the first image
-  //     context.save();
-
-  //     //  context.drawImage(image1, 0, 0, canvas.width / 2, canvas.height);
-
-  //     image2.addEventListener("load", async () => {
-  //       canvas.width = Math.max(image1.width, image2.width);
-  //       canvas.height = image1.height + image2.height;
-  //       // Draw the second image next to the first image
-  //       context.drawImage(image1, 0, 0, image1.width, image1.height);
-  //       context.drawImage(
-  //         image2,
-  //         0,
-  //         image1.height + 50,
-  //         image2.width,
-  //         image2.height
-  //       );
-
-  //       const dataUrl = await canvas.toDataURL(firstImageSelected.mime);
-  //       uploadMultipleFiles(removeAfterLastBackslash(dataUrl))
-
-  //       // Optionally, convert the canvas content to base64
-  //     });
-  //   });
-  // };
-
   const uploadMultipleFiles = async (dataURL) => {
     try {
       // let dataURL = await canvasRef.current.toDataURL();
       if (dataURL) {
         var result = dataURL?.substring(1, dataURL.length - 1);
-        console.log(
-          result.substring(0, 5),
-          "-------------------dataURL-------------------",
-          result.substring(dataURL.length - 6, dataURL.length)
-        );
         const request = {
           fileData: {
             content: `${result}`,
@@ -484,7 +451,7 @@ const CurrentAddress = ({ navigation }) => {
           caseId: "eeea90ab-f4e0-4d9e-9efa-c03fffbd22c6",
         };
         if (selectedItem === CaptureAddressConstants.PASSPORT) {
-          passportCheck?.mutate(dataURL);
+          handlePassportRequest(dataURL);
         } else if (selectedItem === CaptureAddressConstants.VOTERID) {
           voterIdCheck?.mutate(request);
         }
@@ -494,32 +461,8 @@ const CurrentAddress = ({ navigation }) => {
 
   useEffect(() => {
     try {
-      if (passportCheck.data) {
-        setValue(
-          "passportNo",
-          passportCheck.data?.results?.passportNumber?.passportNumberFromSource
-        );
-        setValue(
-          "passportExpiry",
-          passportCheck.data?.results?.ocrDetails?.[0]?.details?.doe?.value
-        );
-        setValue(
-          "address",
-          passportCheck.data?.results?.ocrDetails?.[1]?.details?.address?.value
-        );
-        //passportExpiry, address
-      }
-      if (passportCheck.error) {
-      }
-    } catch (error) {
-      toast("error", ErrorConstant.SOMETHING_WENT_WRONG);
-    }
-  }, [passportCheck.data, passportCheck.error]);
-
-  useEffect(() => {
-    try {
       if (voterIdCheck.data) {
-        log("voter id >>>>", JSON.stringify(voterIdCheck.data));
+        // log("voter id >>>>", JSON.stringify(voterIdCheck.data));
         // setValue('address', passportCheck.data?.results?.address?.[0].completeAddress)
       }
       if (voterIdCheck.error) {
@@ -591,23 +534,24 @@ const CurrentAddress = ({ navigation }) => {
         bloodGroup: data?.results?.bloodGroup,
         dlNumber: data?.results?.dlNumber,
         Landmark__c: address?.completeAddress,
-        AddrLine1__c: address?.completeAddress,
-        AddrLine2__c: address?.completeAddress,
+        AddrLine1__c: address?.completeAddress
+          ? address?.completeAddress
+          : address?.addressLine1,
+        AddrLine2__c: address?.addressLine1
+          ? address?.addressLine1
+          : address?.completeAddress,
         State__c: address?.state,
         Pincode__c: address?.pin,
         city__c: address?.district,
         fatherName: data?.results["father/husband"],
         dob: data?.results?.dob,
       };
-      console.log(
-        "DETAILS HERE----------------------->",
-        drivingLicenseDetails
-      );
-      setValue("address", drivingLicenseDetails.AddrLine1__c);
+
       setValue("DLNo__c", drivingLicenseDetails.dlNumber);
       setValue("DLStatus__c", drivingLicenseDetails.status);
       setValue("DLname", drivingLicenseDetails.name);
       setValue("DLIssueDt__c", drivingLicenseDetails.issueDate);
+      setValue("BloodGroup__c", drivingLicenseDetails.bloodGroup);
 
       // need to get DL expiry
       // will get the response like this "nonTransport": "13-02-2019 to 12-02-2039",
@@ -637,6 +581,15 @@ const CurrentAddress = ({ navigation }) => {
           setValue("DLExpDt__c", expiry?.trim());
         }
       }
+
+      setValue("AddrLine1__c", drivingLicenseDetails?.AddrLine1__c);
+      setValue("AddrLine2__c", drivingLicenseDetails?.AddrLine2__c);
+      setValue("Landmark__c", drivingLicenseDetails?.AddrLine2__c);
+      setValue("Locality__c", drivingLicenseDetails?.AddrLine2__c);
+      setValue("Pincode__c", drivingLicenseDetails?.Pincode__c);
+      setValue("city__c", drivingLicenseDetails?.city__c);
+      setValue("State__c", drivingLicenseDetails?.State__c);
+      setValue("District__c", drivingLicenseDetails?.city__c);
     } catch (error) {
       console.log("HERE ERROR----------->", error);
       toast("error", ErrorConstant.SOMETHING_WENT_WRONG);
@@ -714,7 +667,6 @@ const CurrentAddress = ({ navigation }) => {
   };
 
   const handleItemPress = (optionId, item) => {
-    console.log(`Selected item ${item.title} from option ${optionId}`);
     setSelectedItem(item.title);
     // Set dummy values for inputs based on selected item
     setImageSelected("");
@@ -791,17 +743,21 @@ const CurrentAddress = ({ navigation }) => {
       const addressBody = {
         Applicant__c: loanData?.Applicant__c,
         LoanAppl__c: loanData?.loanId,
-        Landmark__c: address?.completeAddress,
-        AddrLine1__c: address?.completeAddress,
-        AddrLine2__c: address?.completeAddress,
+        // Landmark__c: address?.completeAddress,
+        AddrLine1__c: address?.completeAddress
+          ? address?.completeAddress
+          : address?.addressLine1,
+        AddrLine2__c: address?.addressLine1
+          ? address?.addressLine1
+          : address?.completeAddress,
         AddrTyp__c: "Current Address",
         State__c: address?.state,
-        Country__c: data?.adhaarDetails?.address?.splitAddress?.country,
+        // Country__c: data?.adhaarDetails?.address?.splitAddress?.country,
         Pincode__c: address?.pin,
         District__c: address?.district,
         city__c: address?.district,
-        HouseNo__c: address?.completeAddress,
-        Locality__c: address?.completeAddress,
+        // HouseNo__c: address?.completeAddress,
+        // Locality__c: address?.completeAddress,
       };
 
       const body = {
@@ -811,7 +767,7 @@ const CurrentAddress = ({ navigation }) => {
         name: data?.results?.name,
         isAddressRequired: true,
         kycType: selectedItem,
-        nameCheck:true
+        nameCheck: true,
       };
       return body;
     } catch (error) {
@@ -829,16 +785,18 @@ const CurrentAddress = ({ navigation }) => {
 
     // isPerSameAsResi_ADD__c: 0 in Applicant Object update
 
-    let addressFields = addressForm.reduce((prev, el) => ({...prev, [el.id]: el.id}), {})
+    let addressFields = addressForm.reduce(
+      (prev, el) => ({ ...prev, [el.id]: el.id }),
+      {}
+    );
 
-    Object.keys(formData).forEach(el => {
-      if(addressFields[el]){
+    Object.keys(formData).forEach((el) => {
+      if (addressFields[el]) {
         addressBody[el] = formData[el];
-      }else {
+      } else {
         data[el] = formData[el];
       }
-    })
-
+    });
 
     let dateKey = null;
     let dateValue = null;
@@ -860,6 +818,16 @@ const CurrentAddress = ({ navigation }) => {
       dateValue = parsedDate(dateValue);
     }
 
+    if (
+      selectedItem === CaptureAddressConstants.PASSPORT &&
+      data["PassExpDt__c"]
+    ) {
+      const updatedDate = moment(data["PassExpDt__c"], "DD/MM/YYYY").format(
+        "DD-MM-YYYY"
+      );
+      data["PassExpDt__c"] = parsedDate(updatedDate);
+    }
+
     let kycBody = {
       Applicant__c: loanData?.Applicant__c,
       ...data,
@@ -876,7 +844,7 @@ const CurrentAddress = ({ navigation }) => {
       isAddressRequired: true,
       kycType: selectedItem,
       addressBody,
-      nameCheck:false
+      nameCheck: false,
     };
     return body;
   };
@@ -898,7 +866,6 @@ const CurrentAddress = ({ navigation }) => {
       }
       await submitMutation?.mutateAsync(body);
       navigation?.navigate(screens.LoanDetails);
-      // console.log("FINAL RESPONSE HERE");
     } catch (error) {
       toast("error", ErrorConstant.SOMETHING_WENT_WRONG);
       console.log("submitDoc failed here", error);
@@ -936,7 +903,7 @@ const CurrentAddress = ({ navigation }) => {
         {<Canvas ref={canvasRef} style={{ width: 1, height: 1 }} />}
         {(dlCheck.isPending ||
           voterIdCheck.isPending ||
-          passportCheck.isPending) && <ActivityIndicatorComponent />}
+          passportCheck.isPending || submitMutation?.isPending) && <ActivityIndicatorComponent />}
 
         <View
           style={[styles.container, { marginHorizontal: horizontalScale(11) }]}
@@ -1198,7 +1165,12 @@ const CurrentAddress = ({ navigation }) => {
                 showRightComp={comp.showRightComp || false}
                 isMultiline={comp.isMultiline}
                 maxLength={comp.maxLength}
-                isDisabled={comp.isDisabled}
+                isDisabled={
+                  comp.isDisabled ||
+                  selectedItem === CaptureAddressConstants.PASSPORT ||
+                  selectedItem === CaptureAddressConstants.VOTERID ||
+                  selectedItem === CaptureAddressConstants.DL
+                }
                 // isUpperCaseRequired={true}
                 isEditable={comp.isEditable}
                 type={comp.keyboardType}

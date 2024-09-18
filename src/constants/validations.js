@@ -1,3 +1,10 @@
+
+const validateLength = (value, minLength, maxLength) => {
+  const isNumeric = /^[0-9]+$/.test(value);
+  return isNumeric && value >= minLength && value <= maxLength;
+};
+
+
 export const validations = {
   required: {
     required: true,
@@ -10,8 +17,6 @@ export const validations = {
     required: true,
     minLength: 6,
     pattern: /\d*/,
-
-
   },
   phone: {
     required: true,
@@ -23,14 +28,23 @@ export const validations = {
   numberOnly: {
     pattern: /\d*/,
   },
+  tenureRegex: {
+    validate: (value) => validateLength(value, 36, 360) || 'Tenure should be in between 36 to 360',
+  },
+  loanAmountRegex: {
+    // pattern: /^[0-9]+$/, 
+    // minLength: 100000, 
+    // maxLength: 20000000, 
+    validate: (value) => validateLength(value, 100000, 20000000) || 'Amount should be in between 1 Lakh to 2 Crores',
+  },
   numberOnlyRequired: {
     required: true,
-    pattern: /\d*/,
+    pattern:  /^(0|[1-9]\d*)$/, // Matches non-negative integers (0 or positive)
   },
   name: {
     required: true,
     minLength: 2,
-    pattern: /[a-zA-Z]+/,
+    pattern: /^[a-zA-Z]+$/
   },
   nameWithoutRequired: {
     minLength: 2,
