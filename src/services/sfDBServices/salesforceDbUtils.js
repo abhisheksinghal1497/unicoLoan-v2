@@ -51,6 +51,7 @@ export const upsertSoupEntries = async (soupName, records) => {
 export const upsertSoupEntriesWithExternalId = async (soupName, records) => {
   return new Promise((resolve, reject) => {
 
+   
     const querySpec = smartstore.buildExactQuerySpec(soupConfig.applicationList.externalId,
       records[soupConfig.applicationList.externalId]
     )
@@ -72,7 +73,7 @@ export const upsertSoupEntriesWithExternalId = async (soupName, records) => {
             resolve(data);
           },
           (error) => {
-            log("upsertSoupEntries error>>" + soupName, error);
+            log("upsertSoupEntries error1>>" + soupName, error);
             reject(error);
           }
         );
@@ -88,7 +89,7 @@ export const upsertSoupEntriesWithExternalId = async (soupName, records) => {
             resolve(data);
           },
           (error) => {
-            log("upsertSoupEntries error>>" + soupName, error);
+            log("upsertSoupEntries error2>>" + soupName, error);
             reject(error);
           }
         );
@@ -105,7 +106,7 @@ export const getAllSoupEntries = async (soupName, path) => {
       const checkSoupExistsOrNot = await checkSoupExists(soupName)
       if (!checkSoupExistsOrNot) {
         // register for the soup
-        await registerSoup(soupName, [{ path: soupName, type: 'string' }])
+        await registerSoup(soupName, [{ path: soupConfig.applicationList.externalId, type: 'string' }])
         reject("Not found")
       }
 

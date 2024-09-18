@@ -60,7 +60,6 @@ const CaptureSelfie = ({ navigation }) => {
 
   useEffect(() => {
     if (selfieMutate?.data) {
-      alert("skjdbszjk")
       navigation?.navigate(screens.KYCDocuments, {
         loanData: selfieMutate.data,
       });
@@ -70,7 +69,6 @@ const CaptureSelfie = ({ navigation }) => {
   useEffect(() => {
     if (selfieMutate?.error) {
       console.log(selfieMutate?.error)
-      alert("error")
       // navigation?.navigate(screens.KYCDocuments, {
       //   loanData: selfieMutate.data,
       // });
