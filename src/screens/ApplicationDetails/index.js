@@ -63,7 +63,7 @@ export default function ApplicationDetails(props) {
     if (index === 0) {
       props.navigation.navigate(screens.FAQ);
     } else if (index === 1) {
-      toggleHelpModal()
+      toggleHelpModal();
     }
   };
 
@@ -83,6 +83,7 @@ export default function ApplicationDetails(props) {
     formState: { errors, isValid },
     watch,
     setValue,
+    setError,
     trigger,
   } = useForm({
     mode: "onBlur",
@@ -122,6 +123,23 @@ export default function ApplicationDetails(props) {
       if (!isValid) return;
 
       const data = new watch();
+
+      if (
+        data?.MobNumber__c &&
+        data?.AltMobile__c &&
+        data?.MobNumber__c === data?.AltMobile__c
+      ) {
+        setError(
+          "MobNumber__c",
+          "Permanent and Alternate number can't be same"
+        );
+        setError(
+          "AltMobile__c",
+          "Permanent and Alternate number can't be same"
+        );
+        return;
+      }
+
       applicationFormMutate.mutate(data);
       log("application Data", data);
 
