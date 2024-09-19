@@ -330,9 +330,9 @@ export default function ApplicationDetails(props) {
           <View
             style={{ marginHorizontal: DimensionUtils.pixelSizeHorizontal(15) }}
           >
-            {(applicationFormMutate?.isPending || getFormData?.isPending) && (
-              <ActivityIndicatorComponent />
-            )}
+      
+              <ActivityIndicatorComponent visible={applicationFormMutate?.isPending || getFormData?.isPending} />
+        
             {mock_data.map((comp, index) => {
               if (!checkFormCondition(comp.id)) {
                 return <></>;

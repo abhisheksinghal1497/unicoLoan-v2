@@ -352,8 +352,6 @@ const CurrentAddress = ({ navigation }) => {
       setValue("city__c", address?.city);
       setValue("State__c", address?.state);
       setValue("District__c", address?.city);
-
-
     } catch (error) {
       console.log("RESPONSE ERROR ", error);
       Toast.show({ type: "error", text1: ErrorConstant.SOMETHING_WENT_WRONG });
@@ -388,13 +386,13 @@ const CurrentAddress = ({ navigation }) => {
   useEffect(() => {
     // alert(canvasRef.current && firstImageSelected?.data && secondImageSelected?.data)
     if (canvasRef.current && firstImageSelected && secondImageSelected) {
-      // mergeBase64Images(
-      //   canvasRef,
-      //   firstImageSelected?.data,
-      //   secondImageSelected?.data
-      // );
+      mergeBase64Images(
+        canvasRef,
+        firstImageSelected?.data,
+        secondImageSelected?.data
+      );
 
-      uploadMultipleFiles("ajdcghsgsddsghghds");
+      // uploadMultipleFiles("ajdcghsgsddsghghds");
     }
     // wait for 2 seconds
   }, [canvasRef.current, firstImageSelected, secondImageSelected]);
@@ -865,12 +863,16 @@ const CurrentAddress = ({ navigation }) => {
         body = getRequestForOthers(formData);
       }
       await submitMutation?.mutateAsync(body);
-      navigation?.navigate(screens.LoanDetails);
+      navigation?.navigate(screens.LoanDetails, {
+        loanData: { ...loanData, currentAddress: body },
+      });
     } catch (error) {
       toast("error", ErrorConstant.SOMETHING_WENT_WRONG);
       console.log("submitDoc failed here", error);
     }
   };
+
+  console.log("IS DL PENDING --------------", dlCheck.isPending);
 
   return (
     <ScrollView style={{ backgroundColor: "#ffff" }}>
@@ -901,9 +903,15 @@ const CurrentAddress = ({ navigation }) => {
           />
         </View>
         {<Canvas ref={canvasRef} style={{ width: 1, height: 1 }} />}
-        {(dlCheck.isPending ||
-          voterIdCheck.isPending ||
-          passportCheck.isPending || submitMutation?.isPending) && <ActivityIndicatorComponent />}
+
+        <ActivityIndicatorComponent
+          visible={
+            dlCheck.isPending ||
+            voterIdCheck.isPending ||
+            passportCheck.isPending ||
+            submitMutation?.isPending
+          }
+        />
 
         <View
           style={[styles.container, { marginHorizontal: horizontalScale(11) }]}

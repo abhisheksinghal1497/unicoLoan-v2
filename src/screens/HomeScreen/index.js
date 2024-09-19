@@ -160,7 +160,7 @@ const HomeScreen = ({ navigation }) => {
           <TouchableOpacity
             style={styles.seeDetailsresumeJourneyButton}
             onPress={() => {
-              navigation?.navigate(screenName, { loanData: item });
+              navigation?.navigate(screens.CurrentAddress, { loanData: item });
             }}
           >
             <Text style={styles.seeDetailsresumeJourneyText}>
@@ -317,7 +317,7 @@ const HomeScreen = ({ navigation }) => {
         hidden={false}
         backgroundColor={colors.coreCream}
       />
-      {isLoading && <ActivityIndicatorComponent />}
+      <ActivityIndicatorComponent visible={isLoading} />
       <PincodeModal
         setModalVisible={setModalVisible}
         modalVisible={modalVisible}

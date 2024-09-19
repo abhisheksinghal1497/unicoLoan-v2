@@ -186,7 +186,6 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
     setShowBottomModal(true);
   };
 
-
   const createApplicant = async (formData) => {
     if (coApplicantsArr.length === 2) {
       Toast.show({ type: "error", text1: "Only 2 co applicants are allowed" });
@@ -197,7 +196,7 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
       ...formData,
       MName__c: formData?.MName__c ?? "",
       ApplType__c: "C",
-      LoanAppln__c: loanId
+      LoanAppln__c: loanId,
     };
 
     try {
@@ -280,9 +279,7 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
   const CoApplicantCard = ({ data, index }) => {
     return (
       <Card cardStyle={styles.coapplicantCard}>
-        <TouchableOpacity
-        onPress={() => selectUpdateForm(index)}
-        >
+        <TouchableOpacity onPress={() => selectUpdateForm(index)}>
           <View>
             <View
               style={{
@@ -344,24 +341,34 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
         <Button
           type="secondery"
           label="Add Co-Applicant"
-           onPress={createNewApplicant}
+          onPress={createNewApplicant}
           buttonContainer={{
             alignSelf: "flex-start",
             paddingHorizontal: horizontalScale(10),
             borderRadius: 8,
             paddingVertical: 3,
-            borderColor:  coApplicantsArr?.length === 2 ? '#888888' : customTheme.colors.primary,
+            borderColor:
+              coApplicantsArr?.length === 2
+                ? "#888888"
+                : customTheme.colors.primary,
           }}
           labelStyle={{
             fontSize: verticalScale(10),
-            color: coApplicantsArr?.length === 2 ? '#888888' : customTheme.colors.primary,
+            color:
+              coApplicantsArr?.length === 2
+                ? "#888888"
+                : customTheme.colors.primary,
           }}
         />
       </View>
       <View style={styles.container}>
-        {(createDataMutate.isPending ||
-          deleteDataMutate.isPending ||
-          updateDataMutate.isPending) && <ActivityIndicatorComponent />}
+        <ActivityIndicatorComponent
+          visible={
+            createDataMutate.isPending ||
+            deleteDataMutate.isPending ||
+            updateDataMutate.isPending
+          }
+        />
 
         {coApplicantsArr.map((el, index) => {
           if (!el?.id) {
@@ -386,14 +393,14 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
         showModal={showBottomModal}
         setShowModal={setShowBottomModal}
         modalStyle={{
-          borderRadius:0,
+          borderRadius: 0,
           borderTopLeftRadius: 10,
-          borderTopRightRadius: 10
+          borderTopRightRadius: 10,
         }}
         withFeedback={true}
       >
         <ScrollView showsVerticalScrollIndicator={false}>
-          <Text style={{ fontWeight: "bold", fontSize: 18,  }}>
+          <Text style={{ fontWeight: "bold", fontSize: 18 }}>
             {isCreateForm ? "Create Applicant" : "Update applicant"}
           </Text>
           {CoApplicantForm.map((comp, i) => (
@@ -427,7 +434,7 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
                 : handleSubmit(updateApplicant)
             }
             label={isCreateForm ? "Create Applicant" : "Update applicant"}
-            buttonContainer={{ marginTop: 20, marginBottom:20 }}
+            buttonContainer={{ marginTop: 20, marginBottom: 20 }}
           />
         </ScrollView>
       </CustomModal>
@@ -442,7 +449,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 5,
     paddingHorizontal: 10,
-    paddingVertical:10,
+    paddingVertical: 10,
     backgroundColor: "#F2F2F2",
     borderWidth: 0.5,
     borderColor: "#C8C8C8",

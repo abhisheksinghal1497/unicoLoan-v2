@@ -87,7 +87,7 @@ const CaptureSelfie = ({ navigation }) => {
           onPressRight={() => { }}
           colour="white"
         />
-        {selfieMutate?.isPending && <ActivityIndicatorComponent />}
+        <ActivityIndicatorComponent visible={selfieMutate?.isPending} />
         <SelfieSection uri={selectedImage?.path} />
         <CameraSection
           onCameraPress={onCameraPress}

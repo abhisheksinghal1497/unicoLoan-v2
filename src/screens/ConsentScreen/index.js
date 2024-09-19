@@ -48,7 +48,10 @@ const ConsentScreen = (props) => {
           loanData: loanData,
         });
       } else {
-        Toast.show({ type: "error", text1: 'Please give consent before proceeding.' });
+        Toast.show({
+          type: "error",
+          text1: "Please give consent before proceeding.",
+        });
       }
     } catch (error) {
       Toast.show({ type: "error", text1: ErrorConstants.SOMETHING_WENT_WRONG });
@@ -56,9 +59,6 @@ const ConsentScreen = (props) => {
     }
   };
 
-  if (isLoading || postConsentMutate?.isPending) {
-    return <ActivityIndicatorComponent />;
-  }
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <Header
@@ -91,6 +91,10 @@ const ConsentScreen = (props) => {
         showHelpModal={showHelpModal}
         toggleHelpModal={toggleHelpModal}
       />
+      <ActivityIndicatorComponent
+        visible={isLoading || postConsentMutate?.isPending}
+      />
+
       {isError || data?.error ? (
         <Text>Something went wrong</Text>
       ) : (

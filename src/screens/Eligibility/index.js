@@ -77,8 +77,6 @@ const Eligibility = (props) => {
     }
   }, [eligibilityDetails.error]);
 
-  if (eligibilityDetails?.isPending) return <ActivityIndicatorComponent />;
-
   const onPressContinue = () => {
     if (!eligibilityDetails?.isPending) {
       props.navigation.navigate(screens.Sanction, {
@@ -91,6 +89,7 @@ const Eligibility = (props) => {
 
   return (
     <ScrollView style={{ backgroundColor: "#ffff" }}>
+      <ActivityIndicatorComponent visible={eligibilityDetails?.isPending} />;
       <Header
         title="Eligibility"
         left={assets.back}

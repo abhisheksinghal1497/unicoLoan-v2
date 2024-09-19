@@ -483,7 +483,7 @@ const StatusCheck = ({ navigation }) => {
             flex: 1,
           }}
         >
-          {isPending && <ActivityIndicatorComponent />}
+          <ActivityIndicatorComponent visible={isPending} />
           <Header
             onPressLeft={() => navigation.goBack()}
             colour={colors.transparent}

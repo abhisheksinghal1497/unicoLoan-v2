@@ -147,7 +147,7 @@ const KYCDocuments = ({ navigation }) => {
         showHelpModal={showHelpModal}
         toggleHelpModal={toggleHelpModal}
       />
-      {kycDocumentMutate.isPending && <ActivityIndicatorComponent />}
+      <ActivityIndicatorComponent visible={kycDocumentMutate.isPending} />
       <View style={styles.topCon}>
         <Image source={assets.protection} />
         <Text>

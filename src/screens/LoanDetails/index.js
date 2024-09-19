@@ -27,15 +27,12 @@ import { getLoanDetailsForm } from "../../services/ApiUtils";
 
 const LoanDetails = (props) => {
   const [showModal, setShowModal] = useState(false);
-  const [mock_loan_details_data, setMockDetails] = useState([])
+  const [mock_loan_details_data, setMockDetails] = useState([]);
   const formData = getLoanDetailsForm();
-
-
-
 
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
-  console.log("hari>>>loanData", {...loanData, panDetails: ''})
+  console.log("hari>>>loanData", { ...loanData, panDetails: "" });
   const submitLoanMutate = useSubmitLoanFormData(loanData);
   const {
     control,
@@ -43,16 +40,20 @@ const LoanDetails = (props) => {
     formState: { errors, isValid },
     setValue,
     watch,
-    trigger
+    trigger,
   } = useForm({
     mode: "onChange",
     defaultValues: {
-      [LOAN_DETAILS_KEYS.reqLoanAmt]: loanData?.applicationDetails?.ReqLoanAmt__c,
-      [LOAN_DETAILS_KEYS.reqTenure]: loanData?.applicationDetails?.ReqTenInMonths__c,
-      [LOAN_DETAILS_KEYS.loanPurpose]: '',
+      [LOAN_DETAILS_KEYS.reqLoanAmt]:
+        loanData?.applicationDetails?.ReqLoanAmt__c,
+      [LOAN_DETAILS_KEYS.reqTenure]:
+        loanData?.applicationDetails?.ReqTenInMonths__c,
+      [LOAN_DETAILS_KEYS.loanPurpose]: "",
       [LOAN_DETAILS_KEYS.mobile]: loanData?.applicationDetails?.MobNumber__c,
-      [LOAN_DETAILS_KEYS.resAddr]: loanData?.adhaarDetails?.address?.combinedAddress,
-      [LOAN_DETAILS_KEYS.currAddr]: loanData?.currentAddressDetails?.fullAddress,
+      [LOAN_DETAILS_KEYS.resAddr]:
+        loanData?.adhaarDetails?.address?.combinedAddress,
+      [LOAN_DETAILS_KEYS.currAddr]:
+        loanData?.currentAddressDetails?.fullAddress,
     },
   });
   const [showHelpModal, setShowHelpModal] = useState(false);
@@ -61,29 +62,25 @@ const LoanDetails = (props) => {
     setShowHelpModal(!showHelpModal);
   };
 
-
   useEffect(() => {
-    formData?.mutate()
-  }, [])
+    formData?.mutate();
+  }, []);
 
   useEffect(() => {
     if (formData.data) {
-      setMockDetails(formData.data)
+      setMockDetails(formData.data);
     }
-  }, [formData.data])
+  }, [formData.data]);
 
   useEffect(() => {
     if (formData.error) {
-      alert(formData.error)
+      alert(formData.error);
     }
-  }, [formData.error])
-
-
-
+  }, [formData.error]);
 
   const onSubmit = async () => {
     const data = watch();
-    console.log('DATA here-------------', data)
+    console.log("DATA here-------------", data);
     // const isValid = await trigger();
     // if (!isValid) {
     //   // toast("error", "Value is invalid");
@@ -183,8 +180,6 @@ const LoanDetails = (props) => {
     })();
   }, []);
 
-
-
   const toggleModal = () => {
     setShowModal(!showModal);
   };
@@ -220,7 +215,9 @@ const LoanDetails = (props) => {
         showHelpModal={showHelpModal}
         toggleHelpModal={toggleHelpModal}
       />
-      {formData?.isPending && <ActivityIndicatorComponent />}
+      <ActivityIndicatorComponent
+        visible={formData?.isPending || submitLoanMutate?.isPending}
+      />
       <ScrollView
         contentContainerStyle={{
           paddingBottom: 120,
@@ -230,9 +227,9 @@ const LoanDetails = (props) => {
         <View style={styles.applCard}>
           <ProgressCard screenName={screens.LoanDetails} />
         </View>
-        {submitLoanMutate?.isPending && <ActivityIndicatorComponent />}
+
         {mock_loan_details_data.map((comp) => {
-          console.log(comp.id, comp.type)
+          console.log(comp.id, comp.type);
           return (
             <FormControl
               compType={comp.type}
@@ -261,10 +258,8 @@ const LoanDetails = (props) => {
           buttonContainer={styles.buttonContainer}
           // buttonContainer={{}}
           onPress={onSubmit}
-
         />
       </ScrollView>
-
       <HelpModal
         toggleModal={toggleModal}
         showModal={showModal}
