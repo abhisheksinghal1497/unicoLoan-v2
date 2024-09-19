@@ -173,6 +173,21 @@ export const getLeadList = (phone) => {
   });
 };
 
+export const getConsentDetailByApplicantId = (applicantId) => {
+  return new Promise((resolve, reject) => {
+    net.query(
+      query.getUserConsentId(applicantId),
+      (res) => {
+        resolve(res);
+      },
+      (error) => {
+        console.log("Error", error);
+        reject(error);
+      }
+    );
+  });
+}
+
 export const leadConvertApi = (LeadId, mobile) => {
   return new Promise((resolve, reject) => {
     net.sendRequest(

@@ -3,17 +3,17 @@ import React from "react";
 import { screens } from "../constants/screens";
 
 export const getCurrentScreenNameForResume = (item) => {
-  if (!item?.panDetails) {
+  if (item?.applicationDetails?.Consent_Status__c !== "Verified") {
+    return screens.ConsentScreen;
+  } else if (!item?.panDetails) {
     return screens.PanDetails;
-  }
-  else if (!item?.adhaarDetails) {
+  } else if (!item?.adhaarDetails) {
     return screens.KYC;
   } else if (!item?.selfieDetails) {
     return screens.CaptureSelfie;
   } else if (!item?.currentAddressDetails) {
     return screens.KYCDocuments;
-  }
-  else if (!item?.loanDetails) {
+  } else if (!item?.loanDetails) {
     return screens.LoanDetails;
   } else if (!item?.eligibilityDetails) {
     return screens.Eligibility;
@@ -46,12 +46,9 @@ const useGetProgressPercentage = (item) => {
     percentage = 80;
   } else if (routeName === screens.Eligibility) {
     percentage = 100;
-  }
-  else if (routeName === screens.Sanction) {
+  } else if (routeName === screens.Sanction) {
     percentage = 100;
-  }
-
-  else if (routeName === "COMPLETED") {
+  } else if (routeName === "COMPLETED") {
     percentage = 100;
   }
   return percentage;

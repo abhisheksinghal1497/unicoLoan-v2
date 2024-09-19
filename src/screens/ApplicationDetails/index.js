@@ -118,6 +118,8 @@ export default function ApplicationDetails(props) {
 
   const onSubmit = async () => {
     try {
+      setError("MobNumber__c", "");
+      setError("AltMobile__c", "");
       const isValid = await trigger();
 
       if (!isValid) return;
@@ -213,6 +215,30 @@ export default function ApplicationDetails(props) {
             totalDependent?.toString()
           );
         }
+        // else if (name === "MobNumber__c" || name === "AltMobile__c") {
+        //   const MobNumber__c = watch("MobNumber__c");
+        //   const AltMobile__c = watch("AltMobile__c");
+
+        //   if (MobNumber__c && AltMobile__c) {
+        //     if (MobNumber__c === AltMobile__c) {
+        //       setError(
+        //         "MobNumber__c",
+        //         "Permanent and Alternate number can't be same"
+        //       );
+        //       setError(
+        //         "AltMobile__c",
+        //         "Permanent and Alternate number can't be same"
+        //       );
+        //     }else {
+        //       setError(
+        //         "MobNumber__c",
+        //         ""
+        //       );
+        //     }
+
+        //     return;
+        //   }
+        // }
       } catch (error) {}
     });
     return () => subscription.unsubscribe();

@@ -8,4 +8,5 @@ export const query = {
   getDocMasterId: (DocTyp__c) => `SELECT id,Catgry__c,DocSubTyp__c,DocTyp__c FROM DocMstr__c WHERE DocTyp__c='${DocTyp__c}' LIMIT 1`,
   getContentDocument: (contentVersionId) => `SELECT Id, Title, ContentDocumentId FROM ContentVersion WHERE Id = '${contentVersionId?.trim()}'`,
   getLoanDetailById: (loanId) => `SELECT FIELDS(ALL) FROM LoanAppl__c WHERE Id  = '${loanId}'`,
+  getUserConsentId: (applicantId) => `SELECT Consent_Status__c FROM Applicant__c WHERE Id  = '${applicantId}'`,
 };

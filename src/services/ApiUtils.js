@@ -35,6 +35,7 @@ import {
   compositeGraphRequest,
   compositeRequest,
   DedupeApi,
+  getConsentDetailByApplicantId,
   getConsentLink,
   getLeadList,
   leadConvertApi,
@@ -2115,14 +2116,14 @@ export const getConsentUrl = (applicationId) => {
   return query;
 }
 
-export const giveConsentMutation = (applicationId) => {
+export const checkIfUserHasGivenConsent = (applicationId) => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: (body) => {
       return new Promise(async (resolve, reject) => {
        try {
-
-        resolve(true)
+        const response = await getConsentDetailByApplicantId(applicationId);
+        resolve(response)
        } catch (error) {
         console.log('POST OBJECT ERROR,---',error);
         reject(ErrorConstants.SOMETHING_WENT_WRONG);

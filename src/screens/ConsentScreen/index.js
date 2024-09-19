@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { WebView } from "react-native-webview";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
-import { getConsentUrl, giveConsentMutation } from "../../services/ApiUtils";
+import {
+  getConsentUrl,
+  checkIfUserHasGivenConsent,
+} from "../../services/ApiUtils";
 import { horizontalScale, verticalScale } from "../../utils/matrcis";
 import { assets } from "../../assets/assets";
 import Header from "../../components/Header";
@@ -18,7 +21,7 @@ const ConsentScreen = (props) => {
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
   const applicationId = loanData?.Applicant__c;
-  const postConsentMutate = giveConsentMutation(applicationId);
+  const postConsentMutate = checkIfUserHasGivenConsent(applicationId);
   const [{ data, isError, isLoading }] = getConsentUrl(applicationId);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const resetRoute = useResetRoutes();
@@ -37,10 +40,16 @@ const ConsentScreen = (props) => {
 
   const onPressContinue = async () => {
     try {
-      await postConsentMutate.mutateAsync();
-      resetRoute(screens.PanDetails, {
-        loanData: loanData
-      });
+      const response = await postConsentMutate.mutateAsync();
+      const isConsentGiven =
+        response?.records[0]?.Consent_Status__c === "Verified";
+      if (isConsentGiven) {
+        resetRoute(screens.PanDetails, {
+          loanData: loanData,
+        });
+      } else {
+        Toast.show({ type: "error", text1: 'Please give consent before proceeding.' });
+      }
     } catch (error) {
       Toast.show({ type: "error", text1: ErrorConstants.SOMETHING_WENT_WRONG });
       console.log(error);
