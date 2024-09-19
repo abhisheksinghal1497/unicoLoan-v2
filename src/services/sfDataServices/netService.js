@@ -30,7 +30,7 @@ export const QueryObject = (query) => {
     oauth.getAuthCredentials(successCB, () => {
       console.log("INSIDE ERROR CB");
       reject(ErrorConstants.SOMETHING_WENT_WRONG);
-    });
+    })
   });
 };
 
@@ -118,12 +118,14 @@ export const compositeRequest = (requests, allOrNone = true) => {
       `${net.getApiVersion()}/composite`,
       (res) => {
         if (res?.compositeResponse?.length > 0) {
-          if (res?.compositeResponse?.[0]?.body?.success) {
+          if (res?.compositeResponse?.[0]?.body?.success || res?.compositeResponse?.[0]?.body?.done) {
             resolve(res);
           } else {
+            console.log('CHECK 1 ')
             reject("Request Failed");
           }
         } else {
+          console.log('CHECK 2 ')
           reject("Request Failed");
         }
       },
@@ -173,6 +175,21 @@ export const getLeadList = (phone) => {
   });
 };
 
+export const getConsentDetailByApplicantId = (applicantId) => {
+  return new Promise((resolve, reject) => {
+    net.query(
+      query.getUserConsentId(applicantId),
+      (res) => {
+        resolve(res);
+      },
+      (error) => {
+        console.log("Error", error);
+        reject(error);
+      }
+    );
+  });
+}
+
 export const leadConvertApi = (LeadId, mobile) => {
   return new Promise((resolve, reject) => {
     net.sendRequest(
@@ -214,7 +231,6 @@ export const compositeGraphRequest = (requests, ) => {
     );
   });
 };
-
 
 export const getConsentLink = (applicationId) => {
   return new Promise((resolve, reject) => {

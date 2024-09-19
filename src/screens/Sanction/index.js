@@ -35,7 +35,7 @@ const Sanction = (props) => {
   const [progress, setProgress] = useState(0);
   const pdfUrl = "https://pdfobject.com/pdf/sample.pdf";
 
-  const getData = getSanctionPdf(loanData)
+  const getData = getSanctionPdf(loanData);
   const [showHelpModal, setShowHelpModal] = useState(false);
 
   const toggleHelpModal = () => {
@@ -43,8 +43,8 @@ const Sanction = (props) => {
   };
 
   useEffect(() => {
-    getData?.mutate()
-  }, [])
+    getData?.mutate();
+  }, []);
 
   const downloadPDF = async () => {
     let dirs = RNFetchBlob.fs.dirs;
@@ -102,20 +102,29 @@ const Sanction = (props) => {
     <View style={styles.container}>
       <Header
         title="IN-Principle Sanction"
-        left={require('../../images/back.png')}
-        rightImages={[{ source: assets.chat, }, { source: assets.questionRound, },]}
-        leftStyle={{ height: verticalScale(15), width: verticalScale(15), }}
-        leftImageProps={{ resizeMode: "contain", }}
-        rightStyle={{ height: verticalScale(23), width: verticalScale(23), marginHorizontal: 10 }}
+        left={require("../../images/back.png")}
+        rightImages={[
+          { source: assets.chat },
+          { source: assets.questionRound },
+        ]}
+        leftStyle={{ height: verticalScale(15), width: verticalScale(15) }}
+        leftImageProps={{ resizeMode: "contain" }}
+        rightStyle={{
+          height: verticalScale(23),
+          width: verticalScale(23),
+          marginHorizontal: 10,
+        }}
         rightImageProps={{ resizeMode: "contain" }}
-        titleStyle={{ fontSize: verticalScale(18), }}
+        titleStyle={{ fontSize: verticalScale(18) }}
         onPressRight={handleRightIconPress}
-        onPressLeft={() => { props?.navigation.goBack(); }}
+        onPressLeft={() => {
+          props?.navigation.goBack();
+        }}
         showHelpModal={showHelpModal}
         toggleHelpModal={toggleHelpModal}
       />
 
-      {getData?.isPending && <ActivityIndicatorComponent />}
+      <ActivityIndicatorComponent visible={getData?.isPending} />
 
       <Card cardStyle={styles.cardContainer}>
         <ImageBackground
@@ -200,9 +209,9 @@ const Sanction = (props) => {
         buttonContainer={styles.buttonContainer}
         // buttonContainer={{}}
         onPress={() => {
-          props?.navigation?.navigate?.(screens.CongratulationScreen)
-
-        }} />
+          props?.navigation?.navigate?.(screens.CongratulationScreen);
+        }}
+      />
     </View>
   );
 };

@@ -35,6 +35,8 @@ import {
   compositeGraphRequest,
   compositeRequest,
   DedupeApi,
+  getConsentDetailByApplicantId,
+  getConsentLink,
   getLeadList,
   leadConvertApi,
   postObjectData,
@@ -146,37 +148,37 @@ export const getEligibilityDetails = (loanData) => {
     mutationFn: async (data) => {
       const { applicationDetails, loanDetails } = data || {};
       return new Promise(async (resolve, reject) => {
-        const data = {
-          Product: applicationDetails?.Product__c,
-          "Sub Product": loanDetails?.loanPurpose,
-          "Request Loan Amount":
-            applicationDetails?.ReqLoanAmt__c?.substring(0, 2) + " lac",
-          "Number of Dependents": 11,
-          "Residential Stability": "",
-          "Cibil Score": 846,
-          "DPD Status": true,
-          "Business Vintage": 2,
-          "Net Asset": loanDetails?.totalAsset,
-          "Total Score": 90,
-          "Number of Enquiries in the last 6 months": 2,
-          "Eligible Status": "Not Eligible", //Not Eligible
-          "Eligible Loan Amount": "45 lac",
-          "Customer Segment": applicationDetails?.Customer_Profile__c,
-          "Employment Stability": 1,
-          Qualification: "BCA",
-          Parameter: 1,
-          "Eligible Status": "Eligible",
-        };
-
-        let loanDetail = { ...loanData };
-        loanDetail.eligibilityDetails = { ...data };
-
-        console.log("hari>>>>loanDetail", loanDetail);
+        console.log({applicationDetails, loanDetails})
         try {
+          const data = {
+            Product: applicationDetails?.Product__c,
+            "Sub Product": loanDetails?.loanPurpose,
+            "Request Loan Amount": '2 Lac',
+              // applicationDetails?.ReqLoanAmt__c?.substring(0, 2) + " lac",
+            "Number of Dependents": 11,
+            "Residential Stability": "",
+            "Cibil Score": 846,
+            "DPD Status": true,
+            "Business Vintage": 2,
+            "Net Asset": loanDetails?.totalAsset,
+            "Total Score": 90,
+            "Number of Enquiries in the last 6 months": 2,
+            "Eligible Status": "Not Eligible", //Not Eligible
+            "Eligible Loan Amount": "45 lac",
+            "Customer Segment": applicationDetails?.Customer_Profile__c,
+            "Employment Stability": 1,
+            Qualification: "BCA",
+            Parameter: 1,
+            "Eligible Status": "Not Eligible",
+          };
+  
+          let loanDetail = { ...loanData };
+          loanDetail.eligibilityDetails = { ...data };
+
           await saveApplicationData({ ...loanDetail });
           resolve(loanDetail);
         } catch (error) {
-          log("hari>>>>elgible error", error);
+          console.log('SOME ERROR OCCURED---', error)
           reject(error);
         }
       });
@@ -797,7 +799,7 @@ export const getApplicationDetailsForm = () => {
               label: "Requested tenure in Months",
               type: component.textInput,
               placeHolder: "Enter requested tenure in months",
-              validations: validations.numberOnly,
+              validations: validations.tenureRegex,
               isRequired: false,
               keyboardtype: "numeric",
               value: "",
@@ -808,7 +810,7 @@ export const getApplicationDetailsForm = () => {
               label: "Requested loan amount",
               type: component.textInput,
               placeHolder: "Enter required loan amount",
-              validations: validations.currency,
+              validations: validations.loanAmountRegex,
               keyboardtype: "numeric",
               isRequired: true,
               value: "",
@@ -1037,6 +1039,9 @@ export const useSubmitApplicationFormData = (pincodeData) => {
                 const loanId = response?.compositeResponse?.[0]?.body?.id;
                 const applicationId =
                   response?.compositeResponse?.[1]?.body?.id;
+                  console.log('CHECK 2')
+                const loanDetails = response?.compositeResponse?.[2]?.body?.records[0];
+                console.log('--------------------------LOAN DETAILS HERE---------------------------',{loanDetails})
 
                 if (loanId && applicationId) {
                   // convert lead to loan
@@ -1084,6 +1089,7 @@ export const useSubmitApplicationFormData = (pincodeData) => {
 
           // loan creation
         } catch (error) {
+          console.log('SOme error in api', error)
           reject(ErrorConstants.SOMETHING_WENT_WRONG);
         }
 
@@ -1987,16 +1993,15 @@ export const submitDrivingLicenseMutation = (loanData) => {
     networkMode: "always",
     mutationFn: (body) => {
       return new Promise(async (resolve, reject) => {
+        console.log('--------- HERE I AM -----------')
         let data = { ...loanData };
 
         try {
           // if this value is true so we are doing kyc for DL, Voter id and Passport
-          if (body?.nameCheck) {
-            // await nameCheck(loanData?.panDetails?.panName, body?.name);
-          }
 
           const ApplKyc__c = await postObjectData("ApplKyc__c", body?.kycBody);
           const applicationKycId = ApplKyc__c?.id;
+          console.log('COMPOSIT API HIT')
           const response = await compositeRequest(
             CurrentAddressDocumentCompositeRequests(
               loanData,
@@ -2007,9 +2012,10 @@ export const submitDrivingLicenseMutation = (loanData) => {
               body?.isAddressRequired
             )
           );
+          console.log('RESPONSE HERE----------', response)
           resolve(response)
         } catch (error) {
-          console.log("ERROR IN UPLOAD", error);
+          console.log("ERROR IN UPLOAD", error, error?.message);
           reject(ErrorConstants.SOMETHING_WENT_WRONG);
         }
 
@@ -2027,3 +2033,104 @@ export const submitDrivingLicenseMutation = (loanData) => {
 
   return mutate;
 };
+
+export const postObjectMutation = () => {
+  const mutate = useMutation({
+    networkMode: "always",
+    mutationFn: (body) => {
+      return new Promise(async (resolve, reject) => {
+       try {
+        // const response = await postObjectData(body?.objectName, body?.body);
+        // console.log('POST RESPONSE ------------', response)
+        // response(response)
+        resolve(true)
+       } catch (error) {
+        console.log('POST OBJECT ERROR,---',error);
+        reject(ErrorConstants.SOMETHING_WENT_WRONG);
+       }
+      });
+    },
+  });
+
+  return mutate;
+}
+
+export const updateObjectMutation = () => {
+  const mutate = useMutation({
+    networkMode: "always",
+    mutationFn: (body) => {
+      return new Promise(async (resolve, reject) => {
+       try {
+        // const response = await updateObjectData(body?.objectName, body?.body, body?.id);
+        // resolve(response)
+        resolve(true)
+       } catch (error) {
+        console.log('POST OBJECT ERROR,---',error);
+        reject(ErrorConstants.SOMETHING_WENT_WRONG);
+       }
+      });
+    },
+  });
+
+  return mutate;
+}
+
+export const deleteObjectMutation = () => {
+  const mutate = useMutation({
+    networkMode: "always",
+    mutationFn: (body) => {
+      return new Promise(async (resolve, reject) => {
+       try {
+        // const response = await updateObjectData(body?.objectName, body?.id);
+        resolve(true)
+       } catch (error) {
+        console.log('POST OBJECT ERROR,---',error);
+        reject(ErrorConstants.SOMETHING_WENT_WRONG);
+       }
+      });
+    },
+  });
+
+  return mutate;
+}
+
+export const getConsentUrl = (applicationId) => {
+  const query = useQueries({
+    queries: [
+      {
+        queryKey: ["getConsentUrl" + applicationId],
+        queryFn: () =>
+          new Promise(async(resolve, reject) => {
+              try {
+                const response = await getConsentLink(applicationId);
+                resolve(response)
+              } catch (error) {
+                console.log('RESPONSE--', error)
+                reject(ErrorConstants.SOMETHING_WENT_WRONG)
+              }
+          }),
+      },
+    ],
+  });
+
+  return query;
+}
+
+export const checkIfUserHasGivenConsent = (applicationId) => {
+  const mutate = useMutation({
+    networkMode: "always",
+    mutationFn: (body) => {
+      return new Promise(async (resolve, reject) => {
+       try {
+        const response = await getConsentDetailByApplicantId(applicationId);
+        resolve(response)
+       } catch (error) {
+        console.log('POST OBJECT ERROR,---',error);
+        reject(ErrorConstants.SOMETHING_WENT_WRONG);
+       }
+      });
+    },
+  });
+
+  return mutate;
+}

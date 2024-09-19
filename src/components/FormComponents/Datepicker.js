@@ -26,7 +26,7 @@ export default function CustomDatepicker({
   isDisabled = false,
   isRequired = false,
   isVisible = true,
-  trigger = () => { },
+  trigger = () => {},
   ...rest
 }) {
   const { colors: themeColor } = useTheme();
@@ -44,15 +44,14 @@ export default function CustomDatepicker({
         return new Date(dateString);
       }
     } catch (error) {
-      return new Date()
+      return new Date();
     }
-
   };
 
   const formatDate = (date) => {
     try {
       if (!date) return "";
-      
+
       // Create a moment object with the input date
       const momentDate = moment(date, "DD-MM-YYYY", true);
       if (momentDate.isValid()) {
@@ -65,7 +64,6 @@ export default function CustomDatepicker({
     }
   };
 
-  
   return (
     <View>
       <Controller
@@ -119,7 +117,6 @@ export default function CustomDatepicker({
                   setOpen(false);
                 }}
                 onConfirm={(value) => {
-                  console.log('onConfirm', {name, value})
                   // let formattedDate = format(value, 'dd/MM/yyyy');
                   onChange(value);
                   setOpen(false);

@@ -20,108 +20,22 @@ import { validations } from "../../constants/validations";
 import { getEligibilityDetails } from "../../services/ApiUtils";
 import { useRoute } from "@react-navigation/native";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
-
-const formData = [
-  {
-    id: "name",
-    label: "Co-Applicant Name",
-    type: component.textInput,
-    placeHolder: "Enter Co-Applicant Name",
-    value: "",
-    validations: {
-      required: true,
-      minLength: 2,
-    },
-  },
-  {
-    id: "dob",
-    label: "Co-Applicant DOB",
-    type: component.datetime,
-    placeHolder: "Enter Co-Applicant DOB",
-    value: "",
-    validations: validations.required,
-  },
-  {
-    id: "number",
-    label: "Co-Applicant Mobile Number",
-    type: component.number,
-    placeHolder: "Enter Co-Applicant Mobile Number",
-    value: "",
-    validations: validations.phone,
-  },
-  {
-    id: "relationship",
-    label: "Relationship with Applicant",
-    type: component.dropdown,
-    placeHolder: "Select Relationship",
-    data: [
-      {
-        id: "relationship-1",
-        label: "Mother",
-        value: "mother",
-      },
-      {
-        id: "relationship-2",
-        label: "Father",
-        value: "father",
-      },
-      {
-        id: "relationship-3",
-        label: "Brother",
-        value: "brother",
-      },
-      {
-        id: "relationship-4",
-        label: "Sister",
-        value: "sister",
-      },
-      {
-        id: "relationship-5",
-        label: "Son",
-        value: "son",
-      },
-      {
-        id: "relationship-6",
-        label: "Daughter",
-        value: "daughter",
-      },
-      {
-        id: "relationship-7",
-        label: "Husband",
-        value: "husband",
-      },
-      {
-        id: "relationship-8",
-        label: "Wife",
-        value: "wife",
-      },
-    ],
-    value: {},
-    validations: validations.required,
-  },
-  {
-    id: "income",
-    label: "Co-Applicant Income",
-    type: component.textInput,
-    placeHolder: "Enter Co-Applicant Income",
-    value: "",
-    validations: {
-      required: true,
-      minLength: 2,
-    },
-  },
-];
+import CoApplicant from "../CoApplicant";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import { colors } from "../../colors";
 
 const Eligibility = (props) => {
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
   const { applicationDetails = {}, loanDetails = {} } = loanData;
-
-  const [showBottomModal, setShowBottomModal] = useState(false);
-  const [applicantData, setApplicantData] = useState([]);
+  const loanId = applicationDetails?.LeadId__c;
+  console.log({ loanId });
   const [cardData, setCardData] = useState();
   const eligibilityDetails = getEligibilityDetails(loanData);
+  const [coApplicantsArr, setCoApplicantsArr] = useState([]);
   const [showHelpModal, setShowHelpModal] = useState(false);
+
+  console.log("-------> RESPONSE HERE---- >", applicationDetails, loanDetails);
 
   const toggleHelpModal = () => {
     setShowHelpModal(!showHelpModal);
@@ -163,41 +77,6 @@ const Eligibility = (props) => {
     }
   }, [eligibilityDetails.error]);
 
-  const onSubmit = (data) => {
-    if (applicantData?.length) {
-      setApplicantData([...applicantData, { ...data }]);
-    } else {
-      setApplicantData([{ ...data }]);
-    }
-    setShowBottomModal(false);
-  };
-
-  if (eligibilityDetails?.isPending) return <ActivityIndicatorComponent />;
-
-  // if (cardData && cardData["Eligible Status"] === "Not Eligible") {
-  //   return (
-  //     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-  //       <View>
-  //         <Text
-  //           style={{
-  //             marginBottom: verticalScale(5),
-  //             fontSize: verticalScale(16),
-  //           }}
-  //         >
-  //           You are not eligible for the loan
-  //         </Text>
-  //         <CustomButton
-  //           type="primary"
-  //           label="Continue"
-  //           onPress={() => {
-  //             props.navigation.navigate(screens.HomeScreen);
-  //           }}
-  //         />
-  //       </View>
-  //     </View>
-  //   );
-  // }
-
   const onPressContinue = () => {
     if (!eligibilityDetails?.isPending) {
       props.navigation.navigate(screens.Sanction, {
@@ -206,8 +85,11 @@ const Eligibility = (props) => {
     }
   };
 
+  const isEligible = cardData && cardData["Eligible Status"] === "Eligible";
+
   return (
     <ScrollView style={{ backgroundColor: "#ffff" }}>
+      <ActivityIndicatorComponent visible={eligibilityDetails?.isPending} />;
       <Header
         title="Eligibility"
         left={assets.back}
@@ -231,8 +113,9 @@ const Eligibility = (props) => {
         showHelpModal={showHelpModal}
         toggleHelpModal={toggleHelpModal}
       />
+
       <View style={styles.topCon}>
-        {cardData && cardData["Eligible Status"] === "Eligible" && (
+        {cardData && (
           <Card cardStyle={styles.cardCon}>
             <ImageBackground
               source={assets.Frame2}
@@ -240,13 +123,21 @@ const Eligibility = (props) => {
               style={{ height: 168 }}
             >
               <View style={styles.cardInnView}>
-                <Text style={styles.cardText1}>You are eligible for upto</Text>
-                <Text style={styles.cardText2}>
-                  ₹ {cardData ? cardData["Eligible Loan Amount"] : 0}
+                <Text style={styles.cardText1}>
+                  {isEligible
+                    ? "You are eligible for upto"
+                    : "You are not eligible for loan"}
                 </Text>
-                <Text style={styles.cardText3}>
-                  @6.75% - 7.25% interest p.a
-                </Text>
+                {isEligible && (
+                  <>
+                    <Text style={styles.cardText2}>
+                      ₹ {cardData ? cardData["Eligible Loan Amount"] : 0}
+                    </Text>
+                    <Text style={styles.cardText3}>
+                      @6.75% - 7.25% interest p.a
+                    </Text>
+                  </>
+                )}
               </View>
             </ImageBackground>
           </Card>
@@ -258,38 +149,35 @@ const Eligibility = (props) => {
             marginBottom: 20,
           }}
         >
-          {/* <TouchableOpacity
-            style={[
-              styles.btnStyle,
-              {
-                borderColor: applicantData?.length >= 2 ? "#888888" : "#2E52A1",
-              },
-            ]}
-            disabled={applicantData?.length >= 2 ? true : false}
-            onPress={() => setShowBottomModal(!showBottomModal)}
-          >
-            <Text
-              style={[
-                styles.textStyle,
-                { color: applicantData?.length >= 2 ? "#888888" : "#2E52A1" },
-              ]}
-            >
-              Add Co-Aplicant
-            </Text>
-          </TouchableOpacity> */}
-
-          {applicantData?.length
-            ? applicantData.map((el, i) => (
-                <CoApplicantCard data={el} key={i} />
-              ))
-            : null}
+          <CoApplicant
+            coApplicantsArr={coApplicantsArr}
+            setCoApplicantsArr={setCoApplicantsArr}
+            loanId={loanId}
+          />
+          {/* <View style={{marginVertical: verticalScale(5), flexDirection:'row', justifyContent:'flex-end', marginBottom: verticalScale(10)}}>
+            <CustomButton
+              type="secondery"
+              label="Add Co-Applicant"
+              onPress={onPressContinue}
+              buttonContainer={{
+                alignSelf: "flex-start",
+                paddingHorizontal: horizontalScale(10),
+                borderRadius: 8,
+                paddingVertical:3
+              }}
+              labelStyle={{
+                fontSize: verticalScale(10)
+              }}
+            />
+          </View>
+          <CoApplicantCard index={1} /> */}
           {cardData &&
             Object.keys(cardData).length > 0 &&
             Object.keys(cardData).map((el, i) => (
               <CustomComponent title={el} key={i} value={cardData[el]} />
             ))}
         </Card>
-        {cardData && cardData["Eligible Status"] === "Eligible" && (
+        {cardData && (
           <CustomButton
             type="primary"
             label="Continue"
@@ -297,35 +185,6 @@ const Eligibility = (props) => {
           />
         )}
       </View>
-
-      <CustomModal
-        type="bottom"
-        showModal={showBottomModal}
-        setShowModal={setShowBottomModal}
-      >
-        <ScrollView showsVerticalScrollIndicator={false}>
-          {formData.map((el, i) => (
-            <FormControl
-              key={i}
-              control={control}
-              compType={el.type}
-              validations={el.validations}
-              name={el.id}
-              setValue={setValue}
-              label={el.label}
-              placeHolder={el.placeHolder}
-              data={el?.data}
-            />
-          ))}
-
-          <CustomButton
-            type="primary"
-            label="Save"
-            onPress={handleSubmit(onSubmit)}
-            buttonContainer={{ marginTop: 20 }}
-          />
-        </ScrollView>
-      </CustomModal>
     </ScrollView>
   );
 };
@@ -343,24 +202,54 @@ const CustomComponent = ({ title, value }) => {
   );
 };
 
-const CoApplicantCard = ({ data }) => {
+const CoApplicantCard = ({ data, index }) => {
   return (
     <Card cardStyle={styles.coapplicantCard}>
-      <Text style={styles.applicantText1}>Co-Applicant</Text>
-      <View style={styles.con2}>
-        <Text style={styles.applicantText2}>Name : {data?.name}</Text>
-        <Text style={styles.applicantText2}>
-          DOB :{" "}
-          {new Date(data?.dob).getDate() +
-            "/" +
-            new Date(data?.dob).getMonth() +
-            "/" +
-            new Date(data?.dob).getFullYear()}
+      <TouchableOpacity
+      // onPress={() => selectUpdateForm(index)}
+      >
+        <View>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+              marginBottom: verticalScale(5),
+              // paddingHorizontal: horizontalScale(15),
+              // margin: verticalScale(5)
+            }}
+          >
+            <Text style={styles.applicantText1}>Co-Applicant {index + 1}</Text>
+            <MaterialIcons
+              name={"delete"}
+              size={16}
+              color={colors.asteriskRequired}
+              // onPress={() => deleteApplicant(data?.id)}
+            />
+          </View>
+
+          <View style={styles.con2}>
+            <Text style={styles.applicantText2}>Name : {data?.FName__c}</Text>
+            <Text style={styles.applicantText2}>
+              DOB :{" "}
+              {typeof data?.DOB__c === "object"
+                ? moment(data?.DOB__c).format("DD-MM-YYYY")
+                : data?.DOB__c
+                ? data?.DOB__c
+                : "-"}
+            </Text>
+          </View>
+          {/* <Text style={styles.applicantText2}>
+          Mobile Number : {data?.MobNumber__c}
         </Text>
-      </View>
-      <Text style={styles.applicantText2}>Mobile Number : {data?.number}</Text>
-      <Text style={styles.applicantText2}>Relation : {data?.relationship}</Text>
-      <Text style={styles.applicantText2}>Income : {data?.income}</Text>
+        <Text style={styles.applicantText2}>
+          Relation : {data?.Relationship__c}
+        </Text> */}
+          <Text style={styles.applicantText2}>
+            Income : {data?.TotalIncome__c}
+          </Text>
+        </View>
+      </TouchableOpacity>
     </Card>
   );
 };
@@ -434,9 +323,10 @@ const styles = StyleSheet.create({
   },
 
   coapplicantCard: {
-    paddingTop: 15,
+    paddingTop: 10,
+    paddingBottom: 5,
     paddingHorizontal: 10,
-    paddingVertical: 15,
+    paddingVertical: 10,
     backgroundColor: "#F2F2F2",
     borderWidth: 0.5,
     borderColor: "#C8C8C8",

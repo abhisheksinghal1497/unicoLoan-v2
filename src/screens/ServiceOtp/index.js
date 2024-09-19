@@ -43,8 +43,11 @@ const ServiceOtp = (props) => {
   };
   const { isPending: isVerifyOtpLoading, mutate: verifyOtpMutate } =
     useVerifyOtpService(onOtpVerify);
-  const { isPending: isResendOtpLoading, mutate: resendOtpMutate, data: resendOtpData } =
-    useResendOtpService();
+  const {
+    isPending: isResendOtpLoading,
+    mutate: resendOtpMutate,
+    data: resendOtpData,
+  } = useResendOtpService();
 
   const RenderOtpComponent = () => {
     return (
@@ -99,10 +102,10 @@ const ServiceOtp = (props) => {
     }, [timer]);
 
     useEffect(() => {
-      if(resendOtpData){
-        setTimer(30)
+      if (resendOtpData) {
+        setTimer(30);
       }
-    },[isResendOtpLoading, resendOtpData]);
+    }, [isResendOtpLoading, resendOtpData]);
 
     return (
       <View style={{ marginBottom: verticalScale(15) }}>
@@ -111,7 +114,11 @@ const ServiceOtp = (props) => {
             <Text style={style.resendOtpText}>Resend otp in {timer}</Text>
           </View>
         ) : (
-          <TouchableOpacity onPress={() => resendOtpMutate({requestedService, requestedServiceSubCategory})}>
+          <TouchableOpacity
+            onPress={() =>
+              resendOtpMutate({ requestedService, requestedServiceSubCategory })
+            }
+          >
             <Text
               style={[
                 style.resendOtpText,
@@ -153,9 +160,11 @@ const ServiceOtp = (props) => {
             props?.navigation?.goBack();
           }}
         />
-        {(isVerifyOtpLoading || isResendOtpLoading) && (
-          <ActivityIndicatorComponent />
-        )}
+
+        <ActivityIndicatorComponent
+          visible={isVerifyOtpLoading || isResendOtpLoading}
+        />
+
         <RenderOtpComponent />
         <RenderResendOtp />
         <RenderButton />

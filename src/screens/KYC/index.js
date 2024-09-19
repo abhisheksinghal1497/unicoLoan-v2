@@ -71,7 +71,7 @@ const KYC = (props) => {
   );
   // const verifyAdharApi = checkPanLinkWithAdhaar(panDetails.panNumber);
   const canvasRef = useRef(null);
-  const [aadhaarBase64, setAadhaarbase64] = useState(null)
+  const [aadhaarBase64, setAadhaarbase64] = useState(null);
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
   const [adhaarApiType, setAdhaarApiType] = useState(false);
@@ -144,7 +144,6 @@ const KYC = (props) => {
   //     });
   //   });
   // };
-
 
   const mergeBase64Images = (canvasRef, base64Image1, base64Image2) => {
     const canvas = canvasRef.current;
@@ -314,19 +313,17 @@ const KYC = (props) => {
       const dataURL = await canvasRef.current.toDataURL();
 
       try {
-
-        var data = dataURL.slice(1, -1) // remove the firstlast letter
-        data = data?.split(",")[1]
+        var data = dataURL.slice(1, -1); // remove the firstlast letter
+        data = data?.split(",")[1];
         //console.log(">>>>", data)
         //  console.log("")
-        setAadhaarbase64(data)
-       
+        setAadhaarbase64(data);
       } catch (error) {
-          console.log("error>>>", error)
+        console.log("error>>>", error);
       }
 
       // let newData =  dataURL.replace(/^data:image\/?[A-z]*;base64,/);
-      console.log('CHECK 2')
+      console.log("CHECK 2");
       uploadAadharToMuleService?.mutate(dataURL);
     } catch (error) {
       console.log("some error");
@@ -386,9 +383,9 @@ const KYC = (props) => {
         verifyAdharApi?.mutate({
           otp: otp,
           intitialResponse: aadharInitiateResponse,
-          imageBase64: aadhaarBase64
+          imageBase64: aadhaarBase64,
         });
-      } catch (error) { }
+      } catch (error) {}
     }
   };
 
@@ -454,9 +451,13 @@ const KYC = (props) => {
           showHelpModal={showHelpModal}
           toggleHelpModal={toggleHelpModal}
         />
-        {(uploadAadharToMuleService?.isPending ||
-          verifyAdharApi?.isPending ||
-          adhaarEkycMutate?.isPending) && <ActivityIndicatorComponent />}
+        <ActivityIndicatorComponent
+          visible={
+            uploadAadharToMuleService?.isPending ||
+            verifyAdharApi?.isPending ||
+            adhaarEkycMutate?.isPending
+          }
+        />
         {<Canvas ref={canvasRef} style={{ width: 0, height: 0 }} />}
         {false ? (
           <View style={styles.ActivityStyle}>
@@ -588,8 +589,8 @@ const KYC = (props) => {
                       source={
                         selectedImage
                           ? {
-                            uri: `data:${selectedImage.mime};base64,${selectedImage.data}`,
-                          }
+                              uri: `data:${selectedImage.mime};base64,${selectedImage.data}`,
+                            }
                           : require("../../images/aadhar-front.png")
                       }
                       style={[styles.frontImage]}
@@ -611,8 +612,8 @@ const KYC = (props) => {
                       source={
                         selectedImageBack
                           ? {
-                            uri: `data:${selectedImageBack.mime};base64,${selectedImageBack.data}`,
-                          }
+                              uri: `data:${selectedImageBack.mime};base64,${selectedImageBack.data}`,
+                            }
                           : require("../../images/aadhar-back.png")
                       }
                       style={[styles.frontImage]}

@@ -33,6 +33,8 @@ import Services from "../screens/Services";
 import { makeMetadataApiCall } from "../services/sfDataServices/salesforceApiService";
 import ServiceOtp from "../screens/ServiceOtp";
 import LoginComponent from "../screens/login/LoginComponent";
+import CoApplicant from "../screens/CoApplicant";
+import ConsentScreen from "../screens/ConsentScreen";
 
 const Stack = createStackNavigator();
 
@@ -80,6 +82,7 @@ const Dashboard = () => {
         <Stack.Screen name={screens.RaiseTicket} component={RaiseTicket} />
         <Stack.Screen name={screens.TrackTicket} component={TrackTicket} />
         <Stack.Screen name={screens.EmiCalculator} component={EmiCalculator} />
+        <Stack.Screen name={screens.ConsentScreen} component={ConsentScreen} />
         <Stack.Screen
           name={screens.CurrentAddress}
           component={CurrentAddress}
@@ -106,7 +109,7 @@ const Dashboard = () => {
 
         <Stack.Screen name={screens.ServiceOtp} component={ServiceOtp} />
         <Stack.Screen name={screens.LoginComponent} component={LoginComponent} />
-
+        <Stack.Screen name={screens.CoApplicant} component={CoApplicant} />
       </Stack.Navigator>
     </NavigationContainer>
   );

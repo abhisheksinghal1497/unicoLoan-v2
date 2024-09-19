@@ -145,9 +145,9 @@ const Services = (props) => {
         }}
       >
 
-        {(isLoading || submitFormData.isPending) && (
-          <ActivityIndicatorComponent />
-        )}
+
+          <ActivityIndicatorComponent visible={isLoading || submitFormData.isPending} />
+
         <RenderForm />
         <RenderButton />
       </View>

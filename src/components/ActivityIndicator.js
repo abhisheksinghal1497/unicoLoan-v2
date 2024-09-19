@@ -12,7 +12,7 @@ const ActivityIndicatorComponent = props => {
         <Modal
             animationType="none"
             transparent={true}
-            visible={props.visible}
+            visible={props?.visible}
             onRequestClose={() => {
                 props?.closed?.()
             }}>

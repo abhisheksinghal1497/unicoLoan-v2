@@ -160,7 +160,7 @@ const HomeScreen = ({ navigation }) => {
           <TouchableOpacity
             style={styles.seeDetailsresumeJourneyButton}
             onPress={() => {
-              navigation?.navigate(screenName, { loanData: item });
+              navigation?.navigate(screens.CurrentAddress, { loanData: item });
             }}
           >
             <Text style={styles.seeDetailsresumeJourneyText}>
@@ -195,7 +195,9 @@ const HomeScreen = ({ navigation }) => {
               justifyContent: "space-between",
             }}
           >
-            <Text style={textStyle(14)}>LAN: {item?.applicationDetails?.Name}</Text>
+            <Text style={textStyle(14)}>
+              LAN: {item?.applicationDetails?.Name}
+            </Text>
           </View>
         </View>
       );
@@ -315,7 +317,7 @@ const HomeScreen = ({ navigation }) => {
         hidden={false}
         backgroundColor={colors.coreCream}
       />
-      {isLoading && <ActivityIndicatorComponent />}
+      <ActivityIndicatorComponent visible={isLoading} />
       <PincodeModal
         setModalVisible={setModalVisible}
         modalVisible={modalVisible}
@@ -344,9 +346,7 @@ const HomeScreen = ({ navigation }) => {
                 </View>
               </TouchableOpacity>
 
-              <TouchableOpacity
-                onPress={() => oauth.logout()}
-              >
+              <TouchableOpacity onPress={() => oauth.logout()}>
                 <Text>Logout</Text>
               </TouchableOpacity>
             </View>

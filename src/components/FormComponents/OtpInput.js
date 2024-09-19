@@ -97,7 +97,7 @@ export default function OtpInput({
             {error && (
               <Text style={styles.error}>
                 {" "}
-                &#9432; {getErrMsg(error, label)}
+                &#9432; {getErrMsg(error, label, name)}
               </Text>
             )}
           </View>

@@ -63,7 +63,7 @@ export default function ApplicationDetails(props) {
     if (index === 0) {
       props.navigation.navigate(screens.FAQ);
     } else if (index === 1) {
-      toggleHelpModal()
+      toggleHelpModal();
     }
   };
 
@@ -83,6 +83,7 @@ export default function ApplicationDetails(props) {
     formState: { errors, isValid },
     watch,
     setValue,
+    setError,
     trigger,
   } = useForm({
     mode: "onBlur",
@@ -117,11 +118,30 @@ export default function ApplicationDetails(props) {
 
   const onSubmit = async () => {
     try {
+      setError("MobNumber__c", "");
+      setError("AltMobile__c", "");
       const isValid = await trigger();
 
       if (!isValid) return;
 
       const data = new watch();
+
+      if (
+        data?.MobNumber__c &&
+        data?.AltMobile__c &&
+        data?.MobNumber__c === data?.AltMobile__c
+      ) {
+        setError(
+          "MobNumber__c",
+          "Permanent and Alternate number can't be same"
+        );
+        setError(
+          "AltMobile__c",
+          "Permanent and Alternate number can't be same"
+        );
+        return;
+      }
+
       applicationFormMutate.mutate(data);
       log("application Data", data);
 
@@ -133,7 +153,7 @@ export default function ApplicationDetails(props) {
 
   useEffect(() => {
     if (applicationFormMutate.data) {
-      resetRoute(screens.PanDetails, {
+      resetRoute(screens.ConsentScreen, {
         loanData: applicationFormMutate.data,
       });
     }
@@ -195,6 +215,30 @@ export default function ApplicationDetails(props) {
             totalDependent?.toString()
           );
         }
+        // else if (name === "MobNumber__c" || name === "AltMobile__c") {
+        //   const MobNumber__c = watch("MobNumber__c");
+        //   const AltMobile__c = watch("AltMobile__c");
+
+        //   if (MobNumber__c && AltMobile__c) {
+        //     if (MobNumber__c === AltMobile__c) {
+        //       setError(
+        //         "MobNumber__c",
+        //         "Permanent and Alternate number can't be same"
+        //       );
+        //       setError(
+        //         "AltMobile__c",
+        //         "Permanent and Alternate number can't be same"
+        //       );
+        //     }else {
+        //       setError(
+        //         "MobNumber__c",
+        //         ""
+        //       );
+        //     }
+
+        //     return;
+        //   }
+        // }
       } catch (error) {}
     });
     return () => subscription.unsubscribe();
@@ -286,9 +330,9 @@ export default function ApplicationDetails(props) {
           <View
             style={{ marginHorizontal: DimensionUtils.pixelSizeHorizontal(15) }}
           >
-            {(applicationFormMutate?.isPending || getFormData?.isPending) && (
-              <ActivityIndicatorComponent />
-            )}
+      
+              <ActivityIndicatorComponent visible={applicationFormMutate?.isPending || getFormData?.isPending} />
+        
             {mock_data.map((comp, index) => {
               if (!checkFormCondition(comp.id)) {
                 return <></>;
