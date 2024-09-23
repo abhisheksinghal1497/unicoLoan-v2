@@ -26,7 +26,6 @@ import {
   getPinCodes,
   getHomeScreenDetails,
   getHomeScreenOurServices,
-  logoutApi,
 } from "../../services/ApiUtils";
 import CustomModal from "../../components/CustomModal";
 import Button from "../../components/Button";
@@ -160,7 +159,7 @@ const HomeScreen = ({ navigation }) => {
           <TouchableOpacity
             style={styles.seeDetailsresumeJourneyButton}
             onPress={() => {
-              navigation?.navigate(screens.CurrentAddress, { loanData: item });
+              navigation?.navigate(screenName, { loanData: item });
             }}
           >
             <Text style={styles.seeDetailsresumeJourneyText}>
@@ -346,7 +345,10 @@ const HomeScreen = ({ navigation }) => {
                 </View>
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => oauth.logout()}>
+              <TouchableOpacity onPress={() =>{
+                 LocalStorage.clearAllData();
+                 oauth.logout()
+                 }}>
                 <Text>Logout</Text>
               </TouchableOpacity>
             </View>

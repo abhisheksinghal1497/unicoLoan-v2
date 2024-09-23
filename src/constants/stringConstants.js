@@ -13,7 +13,7 @@ export const AadharBasicDetails = {
 export const LOAN_DETAILS_KEYS = {
   reqLoanAmt: "ReqLoanAmt__c",
   reqTenure: "ReqTenInMonths__c",
-  loanPurpose: "loanPurpose",  // not done
+  loanPurpose: "LoanPurpose__c",  // not done
   mobile: "MobNumber__c", // not done
   isExistingCustomer: "ExistingCustomer__c",
   custId: "Customer__c",

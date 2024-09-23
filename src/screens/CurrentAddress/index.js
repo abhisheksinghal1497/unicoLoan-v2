@@ -41,9 +41,22 @@ import { useRoute } from "@react-navigation/native";
 import moment from "moment";
 import Toast from "react-native-toast-message";
 
+
+export const parsedDate = (date) => {
+  try {
+    const parsedDate = moment(date, "DD-MM-YYYY");
+    const formattedDate = parsedDate.format("YYYY-MM-DD");
+    return formattedDate;
+  } catch (error) {
+    return date;
+  }
+};
+
+
 const CurrentAddress = ({ navigation }) => {
   const [imageSelected, setImageSelected] = useState("");
   const [firstImageSelected, setFirstImageSelected] = useState(null);
+  const [mergeDataUrl, setMergeDataUrl] = useState('')
   const [secondImageSelected, setSecondImageSelected] = useState(null);
   const [activeSections, setActiveSections] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -331,9 +344,9 @@ const CurrentAddress = ({ navigation }) => {
     defaultValues: {},
   });
 
-  const handlePassportRequest = async (dataURL) => {
+  const handlePassportRequest = async (request,dataURL) => {
     try {
-      const response = await passportCheck?.mutateAsync(dataURL);
+      const response = await passportCheck?.mutateAsync(request);
       const address = response?.results?.ocrDetails?.[1]?.details?.addressSplit;
 
       setValue(
@@ -440,6 +453,7 @@ const CurrentAddress = ({ navigation }) => {
       // let dataURL = await canvasRef.current.toDataURL();
       if (dataURL) {
         var result = dataURL?.substring(1, dataURL.length - 1);
+        setMergeDataUrl(result)
         const request = {
           fileData: {
             content: `${result}`,
@@ -449,7 +463,7 @@ const CurrentAddress = ({ navigation }) => {
           caseId: "eeea90ab-f4e0-4d9e-9efa-c03fffbd22c6",
         };
         if (selectedItem === CaptureAddressConstants.PASSPORT) {
-          handlePassportRequest(dataURL);
+          handlePassportRequest(request,dataURL);
         } else if (selectedItem === CaptureAddressConstants.VOTERID) {
           voterIdCheck?.mutate(request);
         }
@@ -678,16 +692,6 @@ const CurrentAddress = ({ navigation }) => {
     //setSelectedFields(item.fields)
   };
 
-  const parsedDate = (date) => {
-    try {
-      const parsedDate = moment(date, "DD-MM-YYYY");
-      const formattedDate = parsedDate.format("YYYY-MM-DD");
-      return formattedDate;
-    } catch (error) {
-      return date;
-    }
-  };
-
   const getDLrequest = () => {
     try {
       const data = dlCheck?.data;
@@ -838,7 +842,7 @@ const CurrentAddress = ({ navigation }) => {
 
     const body = {
       kycBody,
-      image: imageSelected?.data,
+      image: mergeDataUrl ? mergeDataUrl : imageSelected?.data,
       isAddressRequired: true,
       kycType: selectedItem,
       addressBody,

@@ -29,7 +29,7 @@ import {
   uploadAndVerifyPan,
   nameMatchCheck,
 } from "../../services/muleService/MuleApiUtils";
-import {  useSubmitPanForm } from "../../services/ApiUtils";
+import { useSubmitPanForm } from "../../services/ApiUtils";
 import { error, log } from "../../utils/ConsoleLogUtils";
 import ImagePicker from "react-native-image-crop-picker";
 import AdhaarSection from "../../components/AdhaarSection";
@@ -39,7 +39,7 @@ import { useRoute } from "@react-navigation/native";
 
 const PanDetails = (props) => {
   const route = useRoute();
-  const { loanData={}} = route?.params || {};
+  const { loanData = {} } = route?.params || {};
   const [isVerified, setIsVerified] = useState(false);
   const [isUploadVerified, setUploadIsVerified] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -206,7 +206,7 @@ const PanDetails = (props) => {
 
   const submitPan = async () => {
     try {
-      panSubmitMutate?.mutate({panDetails, imageBase64: selectedImage?.data });
+      panSubmitMutate?.mutate({ panDetails, imageBase64: selectedImage?.data });
     } catch (error) {
       toast("error", "Some error occurred");
     }
@@ -215,7 +215,7 @@ const PanDetails = (props) => {
   useEffect(() => {
     if (panSubmitMutate?.data) {
       props?.navigation?.navigate(screens.KYC, {
-        loanData: panSubmitMutate?.data
+        loanData: panSubmitMutate?.data,
       });
     }
   }, [panSubmitMutate?.data]);
@@ -296,14 +296,14 @@ const PanDetails = (props) => {
         titleStyle={{ fontSize: verticalScale(18) }}
         onPressRight={handleRightIconPress}
         onPressLeft={() => {
-
           props?.navigation?.reset({
             index: 0,
-            routes: [{
-              name: screens.HomeScreen
-            }],
+            routes: [
+              {
+                name: screens.HomeScreen,
+              },
+            ],
           });
-
         }}
         showHelpModal={showHelpModal}
         toggleHelpModal={toggleHelpModal}
@@ -315,13 +315,15 @@ const PanDetails = (props) => {
         contentContainerStyle={{ flexGrow: 1 }}
       >
         <View style={{ flex: 1, paddingHorizontal: 16 }}>
-         
-
           <ProgressCard screenName={"PAN Details"} />
 
-          {(verifyPan?.isPending ||
-            uploadPan?.isPending ||
-            panSubmitMutate?.isPending) && <ActivityIndicatorComponent />}
+          <ActivityIndicatorComponent
+            visible={
+              verifyPan?.isPending ||
+              uploadPan?.isPending ||
+              panSubmitMutate?.isPending
+            }
+          />
 
           {mock_data.map((comp, index) => {
             return (
