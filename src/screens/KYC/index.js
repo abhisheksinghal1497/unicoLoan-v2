@@ -37,7 +37,7 @@ import {
 } from "../../services/muleService/MuleApiUtils";
 import { log } from "../../utils/ConsoleLogUtils";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
-import { toast } from "../../utils/functions";
+import { toast, useResetRoutes } from "../../utils/functions";
 
 import Canvas, { Image as CanvasImage } from "react-native-canvas";
 import { KycScreen } from "../../constants/stringConstants";
@@ -57,6 +57,7 @@ const KYC = (props) => {
   const uploadAadharToMuleService = uploadAadharPhotos();
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
+  const resetRoute = useResetRoutes();
 
   const {
     applicationDetails = {},
@@ -443,8 +444,7 @@ const KYC = (props) => {
           titleStyle={{ fontSize: verticalScale(18) }}
           onPressRight={handleRightIconPress}
           onPressLeft={() => {
-            // props?.navigation?.goBack();
-            props?.navigation?.navigate(screens.PanDetails, {
+            resetRoute(screens.PanDetails, {
               loanData: loanData,
             });
           }}

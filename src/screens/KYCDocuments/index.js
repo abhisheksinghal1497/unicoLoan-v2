@@ -20,6 +20,7 @@ import { horizontalScale, verticalScale } from "../../utils/matrcis";
 import { colors } from "../../colors";
 import { useKycDocument } from "../../services/ApiUtils";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
+import { useResetRoutes } from "../../utils/functions";
 
 const KYCDocuments = ({ navigation }) => {
   const [selectedImage, setSelectedImage] = useState("");
@@ -30,6 +31,7 @@ const KYCDocuments = ({ navigation }) => {
   const { loanData = {} } = route?.params || {};
   const kycDocumentMutate = useKycDocument(loanData);
   const [showHelpModal, setShowHelpModal] = useState(false);
+  const resetRoute = useResetRoutes();
 
   const toggleHelpModal = () => {
     setShowHelpModal(!showHelpModal);
@@ -142,7 +144,7 @@ const KYCDocuments = ({ navigation }) => {
         titleStyle={{ fontSize: verticalScale(18) }}
         onPressRight={handleRightIconPress}
         onPressLeft={() => {
-          navigation?.goBack();
+          resetRoute(screens.HomeScreen)
         }}
         showHelpModal={showHelpModal}
         toggleHelpModal={toggleHelpModal}

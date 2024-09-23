@@ -33,14 +33,13 @@ import {
   doOCRForPassport,
   doOCRForVoterID,
 } from "../../services/muleService/MuleApiUtils";
-import { getDocType, toast } from "../../utils/functions";
+import { getDocType, toast, useResetRoutes } from "../../utils/functions";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 import { log } from "../../utils/ConsoleLogUtils";
 import Canvas, { Image as CanvasImage } from "react-native-canvas";
 import { useRoute } from "@react-navigation/native";
 import moment from "moment";
 import Toast from "react-native-toast-message";
-
 
 export const parsedDate = (date) => {
   try {
@@ -52,15 +51,14 @@ export const parsedDate = (date) => {
   }
 };
 
-
 const CurrentAddress = ({ navigation }) => {
   const [imageSelected, setImageSelected] = useState("");
   const [firstImageSelected, setFirstImageSelected] = useState(null);
-  const [mergeDataUrl, setMergeDataUrl] = useState('')
+  const [mergeDataUrl, setMergeDataUrl] = useState("");
   const [secondImageSelected, setSecondImageSelected] = useState(null);
   const [activeSections, setActiveSections] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
-
+  const resetRoute = useResetRoutes();
   const [selectedFields, setSelectedFields] = useState([]);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const route = useRoute();
@@ -344,7 +342,7 @@ const CurrentAddress = ({ navigation }) => {
     defaultValues: {},
   });
 
-  const handlePassportRequest = async (request,dataURL) => {
+  const handlePassportRequest = async (request, dataURL) => {
     try {
       const response = await passportCheck?.mutateAsync(request);
       const address = response?.results?.ocrDetails?.[1]?.details?.addressSplit;
@@ -453,7 +451,7 @@ const CurrentAddress = ({ navigation }) => {
       // let dataURL = await canvasRef.current.toDataURL();
       if (dataURL) {
         var result = dataURL?.substring(1, dataURL.length - 1);
-        setMergeDataUrl(result)
+        setMergeDataUrl(result);
         const request = {
           fileData: {
             content: `${result}`,
@@ -463,7 +461,7 @@ const CurrentAddress = ({ navigation }) => {
           caseId: "eeea90ab-f4e0-4d9e-9efa-c03fffbd22c6",
         };
         if (selectedItem === CaptureAddressConstants.PASSPORT) {
-          handlePassportRequest(request,dataURL);
+          handlePassportRequest(request, dataURL);
         } else if (selectedItem === CaptureAddressConstants.VOTERID) {
           voterIdCheck?.mutate(request);
         }
@@ -900,7 +898,7 @@ const CurrentAddress = ({ navigation }) => {
             titleStyle={{ fontSize: verticalScale(18) }}
             onPressRight={(index) => handleRightIconPress(index)}
             onPressLeft={() => {
-              navigation.navigate(screens.KYCDocuments);
+              resetRoute(screens.KYCDocuments, { loanData });
             }}
             showHelpModal={showHelpModal}
             toggleHelpModal={toggleHelpModal}
