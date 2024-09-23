@@ -10,6 +10,7 @@ import {
   LOAN_DETAILS_KEYS,
 } from "../constants/stringConstants";
 import { query } from "../constants/Queries";
+import { soupConfig } from "../services/sfDBServices/SoupConstants";
 
 export const alert = (title, subTitle, onPressOK, onPressCancel) => {
   if (onPressCancel) {
@@ -77,11 +78,13 @@ export const convertFormArrToObj = (data = []) => {
 
 export const GetPicklistValues = (arr, fieldName, defaultValues) => {
   try {
+    console.log('CHECK ! HERE', {fieldName})
     if (!arr || !fieldName) {
       return {};
     }
+    console.log('CHECK 2 HERE',  arr?.find((value) => value.name === fieldName))
     const data = arr?.find((value) => value.name === fieldName)?.picklistValues;
-
+    console.log('DATA here', data)
     return data && data?.length > 0 ? data : defaultValues;
   } catch (error) {
     return defaultValues;
@@ -150,8 +153,11 @@ export const createLoanAndAppplicantCompositeRequest = (data, leadID) => {
         },
       },
       {
-        ...getCompositeRequest(query.getLoanDetailById("@{loanCreate.id}"), 'getLoanAppl__c')
-      }
+        ...getCompositeRequest(
+          query.getLoanDetailById("@{loanCreate.id}"),
+          "getLoanAppl__c"
+        ),
+      },
     ];
 
     return compositeRequest;
@@ -274,7 +280,7 @@ export const getPeriodValues = (str, index) => {
         return str.substring(2, 4);
       }
     }
-  } catch (error) { }
+  } catch (error) {}
   return null;
 };
 
@@ -315,8 +321,13 @@ const updateNameInLoanBody = (aadharData) => ({
   ...parseFullName(aadharData?.name),
 });
 
-export const createCompositeRequestForPanAadhar = (loanData, aadharData, isPanAadharLinked, score) => {
-  console.log('aadharData', aadharData)
+export const createCompositeRequestForPanAadhar = (
+  loanData,
+  aadharData,
+  isPanAadharLinked,
+  score
+) => {
+  console.log("aadharData", aadharData);
   try {
     let compositeRequest = [
       {
@@ -330,13 +341,19 @@ export const createCompositeRequestForPanAadhar = (loanData, aadharData, isPanAa
         method: "POST",
         url: `/services/data/${net.getApiVersion()}/sobjects/ApplKyc__c`,
         referenceId: "aadhar",
-        body: isPanAadharLinked ? {
-          ...getAadharCreateRequest(loanData, aadharData),
-          IsPanAdrLnk__c: "true", ValidationStatus__c: "Success"
-        } : {
-          ...getAadharCreateRequest(loanData, aadharData), IsPanAdrLnk__c: "false", ValidationStatus__c: "Success",
-          KARZA_Name_Match_Score__c: score, Name_Match_Status__c: "Name Match successful!!"
-        },
+        body: isPanAadharLinked
+          ? {
+              ...getAadharCreateRequest(loanData, aadharData),
+              IsPanAdrLnk__c: "true",
+              ValidationStatus__c: "Success",
+            }
+          : {
+              ...getAadharCreateRequest(loanData, aadharData),
+              IsPanAdrLnk__c: "false",
+              ValidationStatus__c: "Success",
+              KARZA_Name_Match_Score__c: score,
+              Name_Match_Status__c: "Name Match successful!!",
+            },
       },
       // Update Loan application First name, middlename , last name and Father name - LoanAppl__c and Applicant__c
       // {
@@ -350,10 +367,15 @@ export const createCompositeRequestForPanAadhar = (loanData, aadharData, isPanAa
 
       {
         method: "PATCH",
-        url: `/services/data/${net.getApiVersion()}/sobjects/Applicant__c/${loanData.Applicant__c
-          }`,
+        url: `/services/data/${net.getApiVersion()}/sobjects/Applicant__c/${
+          loanData.Applicant__c
+        }`,
         referenceId: "applicantUpdateId",
-        body: { ...updateAadharDataToApplicant(loanData), ...updateNameInLoanBody(loanData?.adhaarDetails), Pan__c: loanData?.panDetails?.panNumber, },
+        body: {
+          ...updateAadharDataToApplicant(loanData),
+          ...updateNameInLoanBody(loanData?.adhaarDetails),
+          Pan__c: loanData?.panDetails?.panNumber,
+        },
       },
     ];
 
@@ -365,6 +387,7 @@ export const createCompositeRequestForPanAadhar = (loanData, aadharData, isPanAa
 };
 
 const getDocDetailBody = (data, applicationKycId, type) => {
+  const docType = getDocType(type);
   if (type === "PAN") {
     return {
       Doc_Sub_Name__c: "Pan",
@@ -429,14 +452,22 @@ const getDocDetailBody = (data, applicationKycId, type) => {
     };
   }
 
-  if (type === CaptureAddressConstants.DL) {
+  if (
+    type === CaptureAddressConstants.DL ||
+    type === CaptureAddressConstants.PASSPORT ||
+    type === CaptureAddressConstants.VOTERID ||
+    type === CaptureAddressConstants.NREGACard ||
+    type === CaptureAddressConstants.EBILL ||
+    type === CaptureAddressConstants.GBILL ||
+    type === CaptureAddressConstants.MBILL
+  ) {
     return {
-      Doc_Sub_Name__c: "DL",
-      DcmtSubName__c: "DL",
+      Doc_Sub_Name__c: docType.docType,
+      DcmtSubName__c: docType.docType,
       Appl__c: data?.Applicant__c,
       DocCatgry__c: "KYC Documents",
-      DocSubTyp__c: "Driving License",
-      DocTyp__c: "Proof Of Address (Other Kyc)",
+      DocSubTyp__c: docType.docSubType,
+      DocTyp__c: docType.docType,
       LAN__c: data?.loanId,
       Case__c: "",
       DocStatus__c: "New",
@@ -445,69 +476,69 @@ const getDocDetailBody = (data, applicationKycId, type) => {
     };
   }
 
-  if (type === CaptureAddressConstants.NREGACard) {
-    return {
-      Doc_Sub_Name__c: "nrega",
-      DcmtSubName__c: "nrega",
-      Appl__c: data?.Applicant__c,
-      DocCatgry__c: "KYC Documents",
-      DocSubTyp__c: "Nrega Card",
-      DocTyp__c: "Proof Of Address",
-      LAN__c: data?.loanId,
-      Case__c: "",
-      DocStatus__c: "New",
-      FileAvalbl__c: false,
-      Applicant_KYC__c: applicationKycId,
-    };
-  }
+  // if (type === CaptureAddressConstants.NREGACard) {
+  //   return {
+  //     Doc_Sub_Name__c: "nrega",
+  //     DcmtSubName__c: "nrega",
+  //     Appl__c: data?.Applicant__c,
+  //     DocCatgry__c: "KYC Documents",
+  //     DocSubTyp__c: "Nrega Card",
+  //     DocTyp__c: "Proof Of Address",
+  //     LAN__c: data?.loanId,
+  //     Case__c: "",
+  //     DocStatus__c: "New",
+  //     FileAvalbl__c: false,
+  //     Applicant_KYC__c: applicationKycId,
+  //   };
+  // }
 
-  if (type === CaptureAddressConstants.EBILL) {
-    return {
-      Doc_Sub_Name__c: "Electricity",
-      DcmtSubName__c: "Electricity",
-      Appl__c: data?.Applicant__c,
-      DocCatgry__c: "KYC Documents",
-      DocSubTyp__c: "Electricity Bill",
-      DocTyp__c: "Proof Of Address (Temporary)",
-      LAN__c: data?.loanId,
-      Case__c: "",
-      DocStatus__c: "New",
-      FileAvalbl__c: false,
-      Applicant_KYC__c: applicationKycId,
-    };
-  }
+  // if (type === CaptureAddressConstants.EBILL) {
+  //   return {
+  //     Doc_Sub_Name__c: "Electricity",
+  //     DcmtSubName__c: "Electricity",
+  //     Appl__c: data?.Applicant__c,
+  //     DocCatgry__c: "KYC Documents",
+  //     DocSubTyp__c: "Electricity Bill",
+  //     DocTyp__c: "Proof Of Address (Temporary)",
+  //     LAN__c: data?.loanId,
+  //     Case__c: "",
+  //     DocStatus__c: "New",
+  //     FileAvalbl__c: false,
+  //     Applicant_KYC__c: applicationKycId,
+  //   };
+  // }
 
-  if (type === CaptureAddressConstants.GBILL) {
-    return {
-      Doc_Sub_Name__c: "Gas",
-      DcmtSubName__c: "Gas",
-      Appl__c: data?.Applicant__c,
-      DocCatgry__c: "KYC Documents",
-      DocSubTyp__c: "Gas Bill",
-      DocTyp__c: "Proof Of Address (Temporary)",
-      LAN__c: data?.loanId,
-      Case__c: "",
-      DocStatus__c: "New",
-      FileAvalbl__c: false,
-      Applicant_KYC__c: applicationKycId,
-    };
-  }
+  // if (type === CaptureAddressConstants.GBILL) {
+  //   return {
+  //     Doc_Sub_Name__c: "Gas",
+  //     DcmtSubName__c: "Gas",
+  //     Appl__c: data?.Applicant__c,
+  //     DocCatgry__c: "KYC Documents",
+  //     DocSubTyp__c: "Gas Bill",
+  //     DocTyp__c: "Proof Of Address (Temporary)",
+  //     LAN__c: data?.loanId,
+  //     Case__c: "",
+  //     DocStatus__c: "New",
+  //     FileAvalbl__c: false,
+  //     Applicant_KYC__c: applicationKycId,
+  //   };
+  // }
 
-  if (type === CaptureAddressConstants.MBILL) {
-    return {
-      Doc_Sub_Name__c: "Mobile",
-      DcmtSubName__c: "Mobile",
-      Appl__c: data?.Applicant__c,
-      DocCatgry__c: "KYC Documents",
-      DocSubTyp__c: "Mobile Bill",
-      DocTyp__c: "Proof Of Address (Temporary)",
-      LAN__c: data?.loanId,
-      Case__c: "",
-      DocStatus__c: "New",
-      FileAvalbl__c: false,
-      Applicant_KYC__c: applicationKycId,
-    };
-  }
+  // if (type === CaptureAddressConstants.MBILL) {
+  //   return {
+  //     Doc_Sub_Name__c: "Mobile",
+  //     DcmtSubName__c: "Mobile",
+  //     Appl__c: data?.Applicant__c,
+  //     DocCatgry__c: "KYC Documents",
+  //     DocSubTyp__c: "Mobile Bill",
+  //     DocTyp__c: "Proof Of Address (Temporary)",
+  //     LAN__c: data?.loanId,
+  //     Case__c: "",
+  //     DocStatus__c: "New",
+  //     FileAvalbl__c: false,
+  //     Applicant_KYC__c: applicationKycId,
+  //   };
+  // }
 
   return null;
 };
@@ -560,6 +591,15 @@ const getCompositeRequest = (query, referenceId) => {
   };
 };
 
+const describeCompositeRequest = (objectName, referenceId) => {
+ return {
+    method: 'GET',
+    url: `/services/data/${net.getApiVersion()}/sobjects/${objectName}/describe`,
+    referenceId: referenceId
+  }
+};
+
+
 const postCompositeRequest = (objectName, body, referenceId) => {
   return {
     method: "POST",
@@ -583,7 +623,7 @@ const getLoanDetailPatchBody = (loanData) => ({
     loanData?.loanDetails?.[LOAN_DETAILS_KEYS.reqLoanAmt],
   [LOAN_DETAILS_KEYS.reqTenure]:
     loanData?.loanDetails?.[LOAN_DETAILS_KEYS.reqTenure],
-  // [LOAN_DETAILS_KEYS.loanPurpose]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.loanPurpose],
+  [LOAN_DETAILS_KEYS.loanPurpose]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.loanPurpose],
 });
 
 const getApplicantPatchBody = (loanData) => ({
@@ -799,8 +839,6 @@ export const createCompositeRequestsForAdhaarUpload = (
 
       //// for POA file upload
 
-
-
       {
         method: "GET",
         url: `/services/data/${net.getApiVersion()}/query/?q=SELECT%20id%2C%20Catgry__c%2C%20DocSubTyp__c%2C%20DocTyp__c%20FROM%20DocMstr__c%20WHERE%20DocTyp__c%20%3D%20%27Proof%20Of%20Address%27%20AND%20DocSubTyp__c%20%3D%20%27Aadhaar%27`,
@@ -845,7 +883,7 @@ export const createCompositeRequestsForAdhaarUpload = (
 
     return compositeRequests;
   } catch (error) {
-    console.log("hari>>>>>>error", error)
+    console.log("hari>>>>>>error", error);
     return null;
   }
 };
@@ -978,52 +1016,40 @@ export const updateAadharDataToApplicant = (data) => {
       Gender__c: data?.adhaarDetails?.gender,
       IsPOICmptd__c: 1,
       POI_KYCTyp__c: "Aadhaar eKYC",
-      PoiDocused__c: "Aadhaar"
-
-
-    }
-    const name = data?.adhaarDetails?.name
-    let firstName = null
-    let lastName = null
-    let middlename = null
+      PoiDocused__c: "Aadhaar",
+    };
+    const name = data?.adhaarDetails?.name;
+    let firstName = null;
+    let lastName = null;
+    let middlename = null;
     try {
       if (name && name?.length > 0) {
-        const nameList = name?.toString()?.split(" ")
+        const nameList = name?.toString()?.split(" ");
 
-        firstName = nameList ? nameList.length > 0 ? nameList[0] : name : null
-
-
+        firstName = nameList
+          ? nameList.length > 0
+            ? nameList[0]
+            : name
+          : null;
 
         if (nameList != null && nameList.length == 3) {
-
           middlename = nameList[1] ? nameList[1] : null;
 
           lastName = nameList[2] ? nameList[2] : null;
-
-
-        }
-
-        else if (nameList != null && nameList.length == 2) {
-
+        } else if (nameList != null && nameList.length == 2) {
           //appl.MName__c = string.isNotBlank(nameList[1]) ? nameList[1] : null;
 
           lastName = nameList[1] ? nameList[1] : null;
-
-
         } else if (nameList != null && nameList.length > 3) {
-
           middlename = nameList[1] ? nameList[1] : null;
           for (let i = 2; i <= nameList.length; i++) {
-            lastName = lastName + " " + nameList(i)
-
+            lastName = lastName + " " + nameList(i);
           }
-
-
         } else {
           lastName = firstName;
         }
       }
-    } catch (error) { }
+    } catch (error) {}
 
     if (firstName) {
       request = { ...request, FName__c: firstName };
@@ -1072,64 +1098,76 @@ export const getDocType = (type) => {
   if (type === CaptureAddressConstants.DL) {
     return {
       docType: "Proof Of Address (Other Kyc)",
-      docSubType: "Driving License"
+      docSubType: "Driving License",
     };
-  }else if(type === CaptureAddressConstants.PASSPORT){
+  } else if (type === CaptureAddressConstants.PASSPORT) {
     return {
       docType: "Proof Of Address (Other Kyc)",
-      docSubType: "Passport"
+      docSubType: "Passport",
+    };
+  } else if (type === CaptureAddressConstants.VOTERID) {
+    return {
+      docType: "Proof Of Address (Other Kyc)",
+      docSubType: "Voter Id",
     };
   } else if (type === CaptureAddressConstants.NREGACard) {
     return {
       docType: "Proof Of Address",
-      docSubType: "Nrega Card"
+      docSubType: "Nrega Card",
     };
   } else if (type === CaptureAddressConstants.EBILL) {
     return {
       docType: "Proof Of Address (Temporary)",
-      docSubType: "Electricity Bill"
+      docSubType: "Electricity Bill",
     };
   } else if (type === CaptureAddressConstants.GBILL) {
     return {
       docType: "Proof Of Address (Temporary)",
-      docSubType: "Gas Bill"
+      docSubType: "Gas Bill",
     };
   } else if (type === CaptureAddressConstants.MBILL) {
     return {
       docType: "Proof Of Address (Temporary)",
-      docSubType: "Mobile Bill"
+      docSubType: "Mobile Bill",
     };
   }
 };
 
 const getDocMasterEncodedQuery = (type) => {
   const docType = getDocType(type);
-  if (type === CaptureAddressConstants.DL) {
-    return createEncodedQuery(
-      docType.docType,
-      docType.docSubType
-    );
-  } else if (type === CaptureAddressConstants.NREGACard) {
-    return createEncodedQuery(
-      docType.docType,
-      docType.docSubType
-    );
-  } else if (type === CaptureAddressConstants.EBILL) {
-    return createEncodedQuery(
-      docType.docType,
-      docType.docSubType
-    );
-  } else if (type === CaptureAddressConstants.GBILL) {
-    return createEncodedQuery(
-      docType.docType,
-      docType.docSubType
-    );
-  } else if (type === CaptureAddressConstants.MBILL) {
-    return createEncodedQuery(
-      docType.docType,
-      docType.docSubType
-    );
-  }
+
+  return createEncodedQuery(docType.docType, docType.docSubType);
+  // if (type === CaptureAddressConstants.DL) {
+  //   return createEncodedQuery(
+  //     docType.docType,
+  //     docType.docSubType
+  //   );
+  // } else if(type === CaptureAddressConstants.PASSPORT) {
+  //   return createEncodedQuery(
+  //     docType.docType,
+  //     docType.docSubType
+  //   );
+  // } else if (type === CaptureAddressConstants.NREGACard) {
+  //   return createEncodedQuery(
+  //     docType.docType,
+  //     docType.docSubType
+  //   );
+  // } else if (type === CaptureAddressConstants.EBILL) {
+  //   return createEncodedQuery(
+  //     docType.docType,
+  //     docType.docSubType
+  //   );
+  // } else if (type === CaptureAddressConstants.GBILL) {
+  //   return createEncodedQuery(
+  //     docType.docType,
+  //     docType.docSubType
+  //   );
+  // } else if (type === CaptureAddressConstants.MBILL) {
+  //   return createEncodedQuery(
+  //     docType.docType,
+  //     docType.docSubType
+  //   );
+  // }
 };
 
 export const CurrentAddressDocumentCompositeRequests = (
@@ -1140,13 +1178,12 @@ export const CurrentAddressDocumentCompositeRequests = (
   kycType,
   isAddressRequired
 ) => {
+  console.log("docDetailPost", applicationKycId);
   try {
+    console.log({ query: getDocMasterEncodedQuery(kycType), kycType });
     const compositeRequests = [
       {
-        ...getCompositeRequest(
-          getDocMasterEncodedQuery(kycType),
-          "docQuery"
-        ),
+        ...getCompositeRequest(getDocMasterEncodedQuery(kycType), "docQuery"),
       },
       {
         ...postCompositeRequest(
@@ -1206,83 +1243,87 @@ export const CurrentAddressDocumentCompositeRequests = (
         ...postCompositeRequest("ApplAddr__c", addressBody, "Add_Address"),
       })
     }
-    console.log('BEFORE RETURNING COMPOSITE')
+    console.log("BEFORE RETURNING COMPOSITE");
     return compositeRequests;
   } catch (error) {
-    console.log('ERROR IN FINAL', error)
+    console.log("ERROR IN FINAL", error);
     return null;
   }
 };
 
-
 export const createCompositeRequestForLeadList = (loanData) => {
   try {
     var loanLength = loanData.records.length;
-    var compositeRequest = []
-    var applicationIds = []
+    var compositeRequest = [];
+    var applicationIds = [];
     for (let i = 0; i < loanLength; i++) {
       const record = loanData.records[i];
-      const applicantId = record?.Applicants__r?.records?.[0].Id; // need to check after coapplicant
-      console.log("applicantId ", applicantId)
-      applicationIds.push(applicantId)
-
+      // Change here should be type p
+      const applicantId = record?.Applicants__r?.records?.filter(
+        (el) => el.ApplType__c === "P"
+      )[0].Id; // need to check after coapplicant
+      applicationIds.push(applicantId);
     }
 
-   //['1234','123566']
+    //['1234','123566']
 
     if (applicationIds.length > 0) {
-      const query = `SELECT FIELDS(ALL) FROM ApplKyc__c WHERE Applicant__c IN (${applicationIds.map(id => `'${id}'`).join(', ')}) LIMIT 200`;
+      const query = `SELECT FIELDS(ALL) FROM ApplKyc__c WHERE Applicant__c IN (${applicationIds
+        .map((id) => `'${id}'`)
+        .join(", ")}) LIMIT 200`;
       const encodedQuery = encodeURIComponent(query);
 
-      const query1 = `SELECT FIELDS(ALL) FROM ApplAddr__c WHERE Applicant__c IN (${applicationIds.map(id => `'${id}'`).join(', ')}) LIMIT 200`;
+      const query1 = `SELECT FIELDS(ALL) FROM ApplAddr__c WHERE Applicant__c IN (${applicationIds
+        .map((id) => `'${id}'`)
+        .join(", ")}) LIMIT 200`;
       const encodedQuery1 = encodeURIComponent(query1);
 
-
-      const query2 = `SELECT FIELDS(ALL) FROM ApplAsset__c WHERE Appl__c IN (${applicationIds.map(id => `'${id}'`).join(', ')}) LIMIT 200`;
+      const query2 = `SELECT FIELDS(ALL) FROM ApplAsset__c WHERE Appl__c IN (${applicationIds
+        .map((id) => `'${id}'`)
+        .join(", ")}) LIMIT 200`;
       const encodedQuery2 = encodeURIComponent(query2);
-
 
       compositeRequest.push({
         method: "GET",
         url: `/services/data/${net.getApiVersion()}/query/?q=${encodedQuery}`,
-        referenceId: "ApplicantKyc"
-      },
-
-
-
-      )
+        referenceId: "ApplicantKyc",
+      });
 
       compositeRequest.push({
         method: "GET",
         url: `/services/data/${net.getApiVersion()}/query/?q=${encodedQuery1}`,
-        referenceId: "ApplicantAddress"
-      })
-
+        referenceId: "ApplicantAddress",
+      });
 
       compositeRequest.push({
         method: "GET",
         url: `/services/data/${net.getApiVersion()}/query/?q=${encodedQuery2}`,
-        referenceId: "applicantAssets"
-      })
-
-
-
-
+        referenceId: "applicantAssets",
+      });
     }
-
 
     if (compositeRequest.length > 0) {
-      return compositeRequest
+      return compositeRequest;
     } else {
-      console.log("error >>>", "length is 0")
-      return null
+      console.log("error >>>", "length is 0");
+      return null;
     }
-
-
-
   } catch (error) {
-    console.log("error >>>", error)
-    return null
+    console.log("error >>>", error);
+    return null;
   }
+};
 
+export const createCompositeRequestForMetadata = () => {
+  try {
+    const compositeRequest = [
+      {...describeCompositeRequest(soupConfig.LoanApplicantFields.name, 'LoanApplicantFields')},
+      {...describeCompositeRequest(soupConfig.ApplicantFields.name, 'ApplicantFields')},
+      { ...getCompositeRequest(encodeURIComponent('SELECT FIELDS(ALL) FROM PRODUCT2 WHERE isActive = true LIMIT 200'), 'PRODUCT2')}
+    ]
+    return compositeRequest;
+  } catch (error) {
+    console.log('Error compioste error', error)
+    return null;
+  }
 }

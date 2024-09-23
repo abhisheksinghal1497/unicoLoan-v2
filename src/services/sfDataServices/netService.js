@@ -10,7 +10,6 @@ const errorCallback = (reject) => () => {
 };
 
 export const QueryObject = (query) => {
-
   return new Promise((resolve, reject) => {
     const successCB = (data) => {
       console.log("inside success");
@@ -30,7 +29,7 @@ export const QueryObject = (query) => {
     oauth.getAuthCredentials(successCB, () => {
       console.log("INSIDE ERROR CB");
       reject(ErrorConstants.SOMETHING_WENT_WRONG);
-    })
+    });
   });
 };
 
@@ -86,7 +85,8 @@ export const postObjectData = (objectName, data) => {
   });
 };
 
-export const updateObjectData = (objectName, data, id) => {
+export const updateObjectData = (objectName, data, id, isDelete = false) => {
+  const requestType = isDelete ? "DELETE" : "PATCH";
   return new Promise((resolve, reject) => {
     net.sendRequest(
       "/services/data/",
@@ -97,10 +97,10 @@ export const updateObjectData = (objectName, data, id) => {
         resolve(res);
       },
       (error) => {
-        console.log(error, "updateobject data error")
+        console.log(error, "updateobject data error");
         reject(error);
       },
-      "PATCH",
+      requestType,
       data
     );
   });
@@ -118,14 +118,18 @@ export const compositeRequest = (requests, allOrNone = true) => {
       `${net.getApiVersion()}/composite`,
       (res) => {
         if (res?.compositeResponse?.length > 0) {
-          if (res?.compositeResponse?.[0]?.body?.success || res?.compositeResponse?.[0]?.body?.done) {
+          if (
+            res?.compositeResponse?.[0]?.body?.success ||
+            res?.compositeResponse?.[0]?.body?.done  ||
+            res?.compositeResponse?.[0]?.httpStatusCode === 200 
+          ) {
             resolve(res);
           } else {
-            console.log('CHECK 1 ')
+            console.log("CHECK 1 ");
             reject("Request Failed");
           }
         } else {
-          console.log('CHECK 2 ')
+          console.log("CHECK 2 ");
           reject("Request Failed");
         }
       },
@@ -163,8 +167,6 @@ export const getLeadList = (phone) => {
     net.query(
       query.getLeadList(phone),
       (res) => {
-
-        console.log('HERE IS THE DATA-------------------', res)
         resolve(res);
       },
       (error) => {
@@ -188,7 +190,7 @@ export const getConsentDetailByApplicantId = (applicantId) => {
       }
     );
   });
-}
+};
 
 export const leadConvertApi = (LeadId, mobile) => {
   return new Promise((resolve, reject) => {
@@ -208,8 +210,7 @@ export const leadConvertApi = (LeadId, mobile) => {
   });
 };
 
-
-export const compositeGraphRequest = (requests, ) => {
+export const compositeGraphRequest = (requests) => {
   return new Promise((resolve, reject) => {
     // console.log('compositeGraphApi data', graphs);
     let requestData = {
@@ -219,8 +220,7 @@ export const compositeGraphRequest = (requests, ) => {
       "/services/data/",
       `${net.getApiVersion()}/composite/graph`,
       (res) => {
-        
-        resolve(res)
+        resolve(res);
       },
       (error) => {
         console.log("Error", error);

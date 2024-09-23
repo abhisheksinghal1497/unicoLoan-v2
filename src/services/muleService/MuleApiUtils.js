@@ -364,23 +364,166 @@ export const doOCRForPassport = () => {
     mutationFn: (body) => {
       return new Promise(async (resolve, reject) => {
         try {
-          var result = body?.substring(1, body.length - 1);
-          const request = {
-            consent: "Y",
-            caseId: getUniqueId(),
+          // var result = body?.substring(1, body.length - 1);
+          // const request = {
+          //   consent: "Y",
+          //   caseId: getUniqueId(),
 
-            fileData: {
-              content: `${result}`,
-              title: "passport",
-            },
-          };
+          //   fileData: {
+          //     content: `${result}`,
+          //     title: "passport",
+          //   },
+          // };
 
           const response = await instance.post(
             "/digital-kyc-v1/api/passport",
-            request
+            body
           );
           resolve(response?.data);
-          // resolve("saxasx")
+
+          // const response = {
+          //   statusCode: "200",
+          //   responseId: "34281710-b6c1-11ee-b69f-6045bdcf0441",
+          //   message: "Passport Verification successful!!",
+          //   results: {
+          //     passportNumber: {
+          //       passportNumberFromSource: "K8229530",
+          //       passportNumberMatch: true,
+          //     },
+          //     applicationDate: "24/09/2012",
+          //     typeOfApplication: "Tatkaal",
+          //     dateOfIssue: {
+          //       dispatchedOnFromSource: "24/09/2012",
+          //       dateOfIssueMatch: true,
+          //     },
+          //     name: {
+          //       nameScore: 1,
+          //       nameMatch: true,
+          //       surnameFromPassport: "SHERING",
+          //       nameFromPassport: "SIDDHARTHA",
+          //     },
+          //     ocrDetails: [
+          //       {
+          //         type: "Passport Front",
+          //         details: {
+          //           passportNum: {
+          //             value: "K8229530",
+          //             conf: 1.0,
+          //           },
+          //           givenName: {
+          //             value: "SIDDHARTHA",
+          //             conf: 1.0,
+          //           },
+          //           surname: {
+          //             value: "SHERING",
+          //             conf: 1.0,
+          //           },
+          //           gender: {
+          //             value: "MALE",
+          //             conf: 1.0,
+          //           },
+          //           dob: {
+          //             value: "07/06/1995",
+          //             conf: 1.0,
+          //           },
+          //           placeOfBirth: {
+          //             value: "AHMEDABAD, GUJARAT",
+          //             conf: 1.0,
+          //           },
+          //           countryCode: {
+          //             value: "IND",
+          //             conf: 1.0,
+          //           },
+          //           nationality: {
+          //             value: "INDIAN",
+          //             conf: 1.0,
+          //           },
+          //           placeOfIssue: {
+          //             value: "AHMEDABAD",
+          //             conf: 1.0,
+          //           },
+          //           doi: {
+          //             value: "24/09/2012",
+          //             conf: 1.0,
+          //           },
+          //           doe: {
+          //             value: "23/09/2022",
+          //             conf: 1.0,
+          //           },
+          //           type: {
+          //             value: "P",
+          //             conf: 1.0,
+          //           },
+          //           mrz: {
+          //             line2: "K7729530<5IND9506077M2209232<<<<<<<<<<<<<<<0",
+          //             line1: "P<INDSHERING<<SIDDHARTHA<<<<<<<<<<<<<<<<<<<<",
+          //             conf: 1.0,
+          //           },
+          //         },
+          //       },
+          //       {
+          //         type: "Passport Back",
+          //         details: {
+          //           passportNum: {
+          //             value: "",
+          //             conf: 1.0,
+          //           },
+          //           father: {
+          //             value: "THONDUP TSHERING",
+          //             conf: 1.0,
+          //           },
+          //           mother: {
+          //             value: "SNEHLATA SHERING",
+          //             conf: 1.0,
+          //           },
+          //           spouse: {
+          //             value: "",
+          //             conf: 1.0,
+          //           },
+          //           address: {
+          //             value:
+          //               "5/SHILP ROW HOUSE.B/H DHANANJAY TOWER, SATELLITE,AHMEDABAD, PIN:380015,GUJARAT,INDIA",
+          //             conf: 1.0,
+          //           },
+          //           pin: {
+          //             value: "380015",
+          //             conf: 1.0,
+          //           },
+          //           oldPassportNum: {
+          //             value: "G263256",
+          //             conf: 1.0,
+          //           },
+          //           oldDoi: {
+          //             value: "18/04/2007",
+          //             conf: 1.0,
+          //           },
+          //           oldPlaceOfIssue: {
+          //             value: "AHMEDABAD",
+          //             conf: 1.0,
+          //           },
+          //           fileNum: {
+          //             value: "AH2070416759012",
+          //             conf: 1.0,
+          //           },
+          //           addressSplit: {
+          //             city: "Ahmedabad",
+          //             district: "",
+          //             pin: "380015",
+          //             locality: "",
+          //             line2: "SATELLITE",
+          //             line1: "5/SHILP ROW HOUSE.B/H DHANANJAY TOWER",
+          //             state: "Gujarat",
+          //             street: "",
+          //             landmark: "",
+          //             houseNumber: "",
+          //           },
+          //         },
+          //       },
+          //     ],
+          //   },
+          // };
+
+          // resolve(response);
         } catch (error) {
           errorConsoleLog("doOCRForPassport>>", error);
           reject(ErrorConstants.SOMETHING_WENT_WRONG);
@@ -402,6 +545,79 @@ export const doOCRForVoterID = () => {
             body
           );
           resolve(response?.data);
+
+          // resolve({
+          //   statusCode: "200",
+          //   responseId: "1-46712ce0-5c61-11ef-8276-020017039e7e",
+          //   message: null,
+          //   results: {
+          //     acNo: "11",
+          //     rlnName: "ishwar waghulade",
+          //     partNo: "150",
+          //     nameV3: "",
+          //     psLatLong: "21.195904-75.835621",
+          //     stCode: "S13",
+          //     id: "",
+          //     pin: "",
+          //     district: "Jalgaon",
+          //     rlnNameV1: "ईश्\u200dवर वाघुळदे",
+          //     epicNo: "TWJ3164985",
+          //     state: "Maharashtra",
+          //     slNoInPart: "55",
+          //     sectionNo: "1",
+          //     lastUpdate: "",
+          //     rlnNameV2: "",
+          //     rlnNameV3: "",
+          //     acName: "Raver",
+          //     psName: "Z.P.P.Boys School",
+          //     houseNo: "",
+          //     rlnType: "F",
+          //     pcName: "Raver",
+          //     name: "jitendra ishwar waghulade",
+          //     dob: "",
+          //     gender: "M",
+          //     age: 29,
+          //     nameV2: "",
+          //     nameV1: "जितेंद्र ईश्\u200dवर वाघुळदे",
+          //     partName: "Nhavi Pra.Yawal",
+          //     ocrDetails: [
+          //       {
+          //         details: {
+          //           voterid: {
+          //             value: "TWJ3164985",
+          //             conf: 1.0,
+          //           },
+          //           name: {
+          //             value: "Jitendra Ishwar Waghulade",
+          //             conf: 1.0,
+          //           },
+          //           gender: {
+          //             value: "MALE",
+          //             conf: 0.95,
+          //           },
+          //           relation: {
+          //             value: "Ishwar Waghulade",
+          //             conf: 1.0,
+          //           },
+          //           dob: {
+          //             value: "XX/XX/1994",
+          //             conf: 1.0,
+          //           },
+          //           doc: {
+          //             value: "",
+          //             conf: 0.0,
+          //           },
+          //           age: {
+          //             value: "",
+          //             conf: 0.0,
+          //           },
+          //         },
+          //         type: "Voterid Front",
+          //       },
+          //     ],
+          //   },
+          // });
+
           // resolve("saxasx")
         } catch (error) {
           errorConsoleLog("verifyDrivingLicence>>", error);

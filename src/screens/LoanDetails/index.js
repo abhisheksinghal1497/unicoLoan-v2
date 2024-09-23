@@ -32,7 +32,7 @@ const LoanDetails = (props) => {
 
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
-  console.log("hari>>>loanData", { ...loanData, panDetails: "" });
+
   const submitLoanMutate = useSubmitLoanFormData(loanData);
   const {
     control,
@@ -229,7 +229,6 @@ const LoanDetails = (props) => {
         </View>
 
         {mock_loan_details_data.map((comp) => {
-          console.log(comp.id, comp.type);
           return (
             <FormControl
               compType={comp.type}

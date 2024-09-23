@@ -34,6 +34,7 @@ import { colors } from "../../colors";
 import CustomModal from "../../components/CustomModal";
 import Card from "../../components/Card";
 import moment from "moment";
+import { parsedDate } from "../CurrentAddress";
 
 const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
   const createDataMutate = postObjectMutation();
@@ -41,8 +42,10 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
   const deleteDataMutate = deleteObjectMutation();
   // -1 means there is no active co applicant for now
   const [activeApplicantIndex, setActiveApplicantIndex] = useState(-1);
-  const isCreateForm = !coApplicantsArr[activeApplicantIndex]?.id;
+  const isCreateForm = !coApplicantsArr[activeApplicantIndex]?.Id;
   const [showBottomModal, setShowBottomModal] = useState(false);
+  const selectedID = coApplicantsArr[activeApplicantIndex]?.Id;
+
 
   const {
     control,
@@ -61,7 +64,7 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
 
   const CoApplicantForm = [
     {
-      id: "FName__c",
+      Id: "FName__c",
       label: "First Name",
       type: component.textInput,
       placeHolder: "Enter first Name",
@@ -70,7 +73,7 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
       value: "",
     },
     {
-      id: "MName__c",
+      Id: "MName__c",
       label: "Middle Name",
       type: component.textInput,
       placeHolder: "Enter middle Name",
@@ -79,7 +82,7 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
       value: "",
     },
     {
-      id: "LName__c",
+      Id: "LName__c",
       label: "Last Name",
       type: component.textInput,
       placeHolder: "Enter last Name",
@@ -89,7 +92,7 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
       value: "",
     },
     {
-      id: "DOB__c",
+      Id: "DOB__c",
       label: "Date of birth",
       type: component.datetime,
       placeHolder: "Enter date of birth",
@@ -98,7 +101,7 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
     },
 
     {
-      id: "MobNumber__c",
+      Id: "MobNumber__c",
       label: "Mobile number",
       type: component.textInput,
       placeHolder: "Enter mobile number",
@@ -109,7 +112,7 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
     },
 
     {
-      id: "TotalIncome__c",
+      Id: "TotalIncome__c",
       label: "Total income",
       type: component.textInput,
       placeHolder: "Enter income",
@@ -119,7 +122,7 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
     },
 
     {
-      id: "Relationship__c",
+      Id: "Relationship__c",
       label: "Relationship",
       // type: component.dropdown,
       type: component.textInput,
@@ -130,42 +133,42 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
       value: "",
       // data: [
       //   {
-      //     id: "relationship-1",
+      //     Id: "relationship-1",
       //     label: "Mother",
       //     value: "mother",
       //   },
       //   {
-      //     id: "relationship-2",
+      //     Id: "relationship-2",
       //     label: "Father",
       //     value: "father",
       //   },
       //   {
-      //     id: "relationship-3",
+      //     Id: "relationship-3",
       //     label: "Brother",
       //     value: "brother",
       //   },
       //   {
-      //     id: "relationship-4",
+      //     Id: "relationship-4",
       //     label: "Sister",
       //     value: "sister",
       //   },
       //   {
-      //     id: "relationship-5",
+      //     Id: "relationship-5",
       //     label: "Son",
       //     value: "son",
       //   },
       //   {
-      //     id: "relationship-6",
+      //     Id: "relationship-6",
       //     label: "Daughter",
       //     value: "daughter",
       //   },
       //   {
-      //     id: "relationship-7",
+      //     Id: "relationship-7",
       //     label: "Husband",
       //     value: "husband",
       //   },
       //   {
-      //     id: "relationship-8",
+      //     Id: "relationship-8",
       //     label: "Wife",
       //     value: "wife",
       //   },
@@ -197,14 +200,16 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
       MName__c: formData?.MName__c ?? "",
       ApplType__c: "C",
       LoanAppln__c: loanId,
+      DOB__c: parsedDate(formData?.DOB__c),
     };
 
     try {
-      const response = await createDataMutate.mutateAsync({
+      const Id = await createDataMutate.mutateAsync({
         objectName: "Applicant__c",
         body: data,
       });
-      setCoApplicantsArr([...coApplicantsArr, { ...data, id: uuid.v4() }]);
+      console.log("Id HERE ---->", Id);
+      setCoApplicantsArr([...coApplicantsArr, { ...data, Id }]);
       setActiveApplicantIndex(-1);
       reset();
       setShowBottomModal(false);
@@ -221,7 +226,7 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
         id,
       });
 
-      setCoApplicantsArr(coApplicantsArr.filter((el) => el.id !== id));
+      setCoApplicantsArr(coApplicantsArr.filter((el) => el.Id !== id));
       setActiveApplicantIndex(-1);
       reset();
       setShowBottomModal(false);
@@ -235,8 +240,9 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
     const data = {
       ...formData,
       MName__c: formData?.MName__c ?? "",
+      DOB__c: parsedDate(formData?.DOB__c),
     };
-    const id = coApplicantsArr[activeApplicantIndex]?.id;
+    const id = coApplicantsArr[activeApplicantIndex]?.Id;
     if (!id) {
       Toast.show({ type: "error", text1: ErrorConstants.SOMETHING_WENT_WRONG });
       return;
@@ -249,10 +255,10 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
         id,
       });
       const prevArr = [...coApplicantsArr];
-      const coApplicantIndex = prevArr.findIndex((el) => el.id === id);
+      const coApplicantIndex = prevArr.findIndex((el) => el.Id === id);
       if (coApplicantIndex !== -1) {
         prevArr[coApplicantIndex] = {
-          id: prevArr[coApplicantIndex].id,
+          Id: prevArr[coApplicantIndex].Id,
           ...data,
         };
       }
@@ -298,7 +304,7 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
                 name={"delete"}
                 size={16}
                 color={colors.asteriskRequired}
-                onPress={() => deleteApplicant(data?.id)}
+                onPress={() => deleteApplicant(data?.Id)}
               />
             </View>
 
@@ -371,10 +377,10 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
         />
 
         {coApplicantsArr.map((el, index) => {
-          if (!el?.id) {
+          if (!el?.Id) {
             return <></>;
           }
-          return <CoApplicantCard key={el?.id} data={el} index={index} />;
+          return <CoApplicantCard key={el?.Id} data={el} index={index} />;
         })}
       </View>
 
@@ -408,13 +414,13 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
               compType={comp.type}
               control={control}
               validations={comp.validations}
-              name={comp.id}
+              name={comp.Id}
               label={comp.label}
-              errors={errors[comp.id]}
+              errors={errors[comp.Id]}
               isRequired={comp.isRequired}
               placeholder={comp.placeHolder}
               data={comp.data}
-              key={comp.id}
+              key={comp.Id}
               watch={watch}
               showRightComp={comp.showRightComp || false}
               isMultiline={comp.isMultiline}
@@ -426,16 +432,39 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
             />
           ))}
 
-          <Button
-            type="primary"
-            onPress={
-              isCreateForm
-                ? handleSubmit(createApplicant)
-                : handleSubmit(updateApplicant)
-            }
-            label={isCreateForm ? "Create Applicant" : "Update applicant"}
-            buttonContainer={{ marginTop: 20, marginBottom: 20 }}
-          />
+          {isCreateForm ? (
+            <Button
+              type="primary"
+              onPress={handleSubmit(createApplicant)}
+              label={"Create Applicant"}
+              buttonContainer={{ marginTop: 20, marginBottom: 20 }}
+            />
+          ) : (
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-around" }}
+            >
+              <Button
+                type="secondery"
+                onPress={() => deleteApplicant(selectedID)}
+                label={"Delete"}
+                buttonContainer={{
+                  marginTop: 20,
+                  marginBottom: 20,
+                  paddingHorizontal: horizontalScale(25),
+                }}
+              />
+              <Button
+                type="primary"
+                onPress={handleSubmit(updateApplicant)}
+                label={"Update applicant"}
+                buttonContainer={{
+                  marginTop: 20,
+                  marginBottom: 20,
+                  paddingHorizontal: horizontalScale(25),
+                }}
+              />
+            </View>
+          )}
         </ScrollView>
       </CustomModal>
     </View>

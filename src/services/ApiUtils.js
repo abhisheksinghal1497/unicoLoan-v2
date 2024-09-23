@@ -90,30 +90,38 @@ export const getHomeScreenDetails = () => {
             LocalStorage?.getUserData()?.Phone
           );
           if (getLeadListData && getLeadListData.records?.length > 0) {
-
             try {
-              const compositGraphRequest = await compositeRequest(createCompositeRequestForLeadList(getLeadListData))
+              const compositGraphRequest = await compositeRequest(
+                createCompositeRequestForLeadList(getLeadListData)
+              );
 
-              console.log("compositGraphRequest", JSON.stringify(compositGraphRequest))
-              
-            } catch (error) {
-              
-            }
-           
+            } catch (error) {}
+
             for (let i = 0; i < getLeadListData.records.length; i++) {
               //save the record into the soup
               // const compositGraphRequest = await compositeGraphRequest(createGraphRequestForLeadList(getLeadListData))
               // console.log("compositGraphRequest", JSON.stringify(compositGraphRequest))
               let record = getLeadListData.records[i];
-              const applicantRecord = record?.Applicants__r?.records?.[0]
-            
+
+              // CHANGES NEEDED HERE
+              let applicantRecord = record?.Applicants__r?.records?.filter(el => el.ApplType__c === "P")[0];
+              applicantRecord = {
+                ...applicantRecord,
+                coApplicants: record?.Applicants__r?.records?.filter(
+                  (el) => el.ApplType__c === "C"
+                ),
+              };
               const data = {
                 loanId: record?.Id,
                 applicationDetails: record,
                 Applicant__c: applicantRecord?.Id,
                 External_ID: record?.Id,
-                panDetails: applicantRecord?.PAN__c ? { panNumber: applicantRecord?.PAN__c} : undefined,
-                adhaarDetails: applicantRecord?.AdhrLst4Dgts__c ? { AdhrLst4Dgts__c: applicantRecord?.AdhrLst4Dgts__c } : undefined
+                panDetails: applicantRecord?.PAN__c
+                  ? { panNumber: applicantRecord?.PAN__c }
+                  : undefined,
+                adhaarDetails: applicantRecord?.AdhrLst4Dgts__c
+                  ? { AdhrLst4Dgts__c: applicantRecord?.AdhrLst4Dgts__c }
+                  : undefined,
               };
 
               await saveApplicationData(data);
@@ -148,13 +156,13 @@ export const getEligibilityDetails = (loanData) => {
     mutationFn: async (data) => {
       const { applicationDetails, loanDetails } = data || {};
       return new Promise(async (resolve, reject) => {
-        console.log({applicationDetails, loanDetails})
+        console.log({ applicationDetails, loanDetails });
         try {
           const data = {
             Product: applicationDetails?.Product__c,
             "Sub Product": loanDetails?.loanPurpose,
-            "Request Loan Amount": '2 Lac',
-              // applicationDetails?.ReqLoanAmt__c?.substring(0, 2) + " lac",
+            "Request Loan Amount": "2 Lac",
+            // applicationDetails?.ReqLoanAmt__c?.substring(0, 2) + " lac",
             "Number of Dependents": 11,
             "Residential Stability": "",
             "Cibil Score": 846,
@@ -171,14 +179,14 @@ export const getEligibilityDetails = (loanData) => {
             Parameter: 1,
             "Eligible Status": "Not Eligible",
           };
-  
+
           let loanDetail = { ...loanData };
           loanDetail.eligibilityDetails = { ...data };
 
           await saveApplicationData({ ...loanDetail });
           resolve(loanDetail);
         } catch (error) {
-          console.log('SOME ERROR OCCURED---', error)
+          console.log("SOME ERROR OCCURED---", error);
           reject(error);
         }
       });
@@ -1039,9 +1047,9 @@ export const useSubmitApplicationFormData = (pincodeData) => {
                 const loanId = response?.compositeResponse?.[0]?.body?.id;
                 const applicationId =
                   response?.compositeResponse?.[1]?.body?.id;
-                  console.log('CHECK 2')
-                const loanDetails = response?.compositeResponse?.[2]?.body?.records[0];
-                console.log('--------------------------LOAN DETAILS HERE---------------------------',{loanDetails})
+                console.log("CHECK 2");
+                const loanDetails =
+                  response?.compositeResponse?.[2]?.body?.records[0];
 
                 if (loanId && applicationId) {
                   // convert lead to loan
@@ -1058,8 +1066,7 @@ export const useSubmitApplicationFormData = (pincodeData) => {
                     },
                     Applicant__c: applicationId,
                     External_ID: loanId,
-                    Lead__c: leadcreateResponse?.id
-
+                    Lead__c: leadcreateResponse?.id,
                   };
 
                   await saveApplicationData(dbdata);
@@ -1089,7 +1096,7 @@ export const useSubmitApplicationFormData = (pincodeData) => {
 
           // loan creation
         } catch (error) {
-          console.log('SOme error in api', error)
+          console.log("SOme error in api", error);
           reject(ErrorConstants.SOMETHING_WENT_WRONG);
         }
 
@@ -1519,7 +1526,7 @@ export const useSubmitServiceForm = () => {
   return mutate;
 };
 
-export const useVerifyOtpService = (onSuccess = (data) => { }) => {
+export const useVerifyOtpService = (onSuccess = (data) => {}) => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (data) => {
@@ -1568,22 +1575,20 @@ export const useSaveSelfie = (loanData) => {
           const applicationKycId = ApplKyc__c?.id;
           try {
             const responseComposite = await compositeRequest(
-              createCompositeRequestsForSelfieUpload(data, applicationKycId), false
+              createCompositeRequestsForSelfieUpload(data, applicationKycId),
+              false
             );
-          } catch (error) {
-
-          }
-
+          } catch (error) {}
 
           const response = await saveApplicationData(data);
           if (response) {
             resolve(data);
           } else {
-            console.log("error1>>>>", error)
+            console.log("error1>>>>", error);
             reject(ErrorConstants.SOMETHING_WENT_WRONG);
           }
         } catch (error) {
-          console.log("error>>>>", error)
+          console.log("error>>>>", error);
           reject(ErrorConstants.SOMETHING_WENT_WRONG);
         }
       });
@@ -1672,14 +1677,14 @@ export const getLoanDetailsForm = () => {
             {
               id: LOAN_DETAILS_KEYS.loanPurpose,
               label: "Loan Purpose",
-              type: component.textInput,
+              type: component.dropdown,
               placeHolder: "Select Loan Purpose",
               isRequired: true,
               validations: {
                 ...validations.required,
               },
-              data: [],
-              value: {},
+              data: GetPicklistValues(fieldArray, LOAN_DETAILS_KEYS.loanPurpose),
+              value: "",
             },
 
             {
@@ -1993,7 +1998,7 @@ export const submitDrivingLicenseMutation = (loanData) => {
     networkMode: "always",
     mutationFn: (body) => {
       return new Promise(async (resolve, reject) => {
-        console.log('--------- HERE I AM -----------')
+        console.log("--------- HERE I AM -----------");
         let data = { ...loanData };
 
         try {
@@ -2001,7 +2006,7 @@ export const submitDrivingLicenseMutation = (loanData) => {
 
           const ApplKyc__c = await postObjectData("ApplKyc__c", body?.kycBody);
           const applicationKycId = ApplKyc__c?.id;
-          console.log('COMPOSIT API HIT')
+          console.log("COMPOSIT API HIT");
           const response = await compositeRequest(
             CurrentAddressDocumentCompositeRequests(
               loanData,
@@ -2012,8 +2017,8 @@ export const submitDrivingLicenseMutation = (loanData) => {
               body?.isAddressRequired
             )
           );
-          console.log('RESPONSE HERE----------', response)
-          resolve(response)
+          console.log("RESPONSE HERE----------", response);
+          resolve(response);
         } catch (error) {
           console.log("ERROR IN UPLOAD", error, error?.message);
           reject(ErrorConstants.SOMETHING_WENT_WRONG);
@@ -2039,60 +2044,68 @@ export const postObjectMutation = () => {
     networkMode: "always",
     mutationFn: (body) => {
       return new Promise(async (resolve, reject) => {
-       try {
-        // const response = await postObjectData(body?.objectName, body?.body);
-        // console.log('POST RESPONSE ------------', response)
-        // response(response)
-        resolve(true)
-       } catch (error) {
-        console.log('POST OBJECT ERROR,---',error);
-        reject(ErrorConstants.SOMETHING_WENT_WRONG);
-       }
+        try {
+          const response = await postObjectData(body?.objectName, body?.body);
+          console.log("POST RESPONSE ------------", response);
+          resolve(response?.id);
+        } catch (error) {
+          console.log("POST OBJECT ERROR,---", error);
+          reject(ErrorConstants.SOMETHING_WENT_WRONG);
+        }
       });
     },
   });
 
   return mutate;
-}
+};
 
 export const updateObjectMutation = () => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: (body) => {
       return new Promise(async (resolve, reject) => {
-       try {
-        // const response = await updateObjectData(body?.objectName, body?.body, body?.id);
-        // resolve(response)
-        resolve(true)
-       } catch (error) {
-        console.log('POST OBJECT ERROR,---',error);
-        reject(ErrorConstants.SOMETHING_WENT_WRONG);
-       }
+        try {
+          const response = await updateObjectData(
+            body?.objectName,
+            body?.body,
+            body?.id
+          );
+          resolve(response);
+          // resolve(true)
+        } catch (error) {
+          console.log("POST OBJECT ERROR,---", error);
+          reject(ErrorConstants.SOMETHING_WENT_WRONG);
+        }
       });
     },
   });
 
   return mutate;
-}
+};
 
 export const deleteObjectMutation = () => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: (body) => {
       return new Promise(async (resolve, reject) => {
-       try {
-        // const response = await updateObjectData(body?.objectName, body?.id);
-        resolve(true)
-       } catch (error) {
-        console.log('POST OBJECT ERROR,---',error);
-        reject(ErrorConstants.SOMETHING_WENT_WRONG);
-       }
+        try {
+          const response = await updateObjectData(
+            body?.objectName,
+            {},
+            body?.id,
+            true
+          );
+          resolve(response);
+        } catch (error) {
+          console.log("delete OBJECT ERROR,---", error);
+          reject(ErrorConstants.SOMETHING_WENT_WRONG);
+        }
       });
     },
   });
 
   return mutate;
-}
+};
 
 export const getConsentUrl = (applicationId) => {
   const query = useQueries({
@@ -2100,37 +2113,37 @@ export const getConsentUrl = (applicationId) => {
       {
         queryKey: ["getConsentUrl" + applicationId],
         queryFn: () =>
-          new Promise(async(resolve, reject) => {
-              try {
-                const response = await getConsentLink(applicationId);
-                resolve(response)
-              } catch (error) {
-                console.log('RESPONSE--', error)
-                reject(ErrorConstants.SOMETHING_WENT_WRONG)
-              }
+          new Promise(async (resolve, reject) => {
+            try {
+              const response = await getConsentLink(applicationId);
+              resolve(response);
+            } catch (error) {
+              console.log("RESPONSE--", error);
+              reject(ErrorConstants.SOMETHING_WENT_WRONG);
+            }
           }),
       },
     ],
   });
 
   return query;
-}
+};
 
 export const checkIfUserHasGivenConsent = (applicationId) => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: (body) => {
       return new Promise(async (resolve, reject) => {
-       try {
-        const response = await getConsentDetailByApplicantId(applicationId);
-        resolve(response)
-       } catch (error) {
-        console.log('POST OBJECT ERROR,---',error);
-        reject(ErrorConstants.SOMETHING_WENT_WRONG);
-       }
+        try {
+          const response = await getConsentDetailByApplicantId(applicationId);
+          resolve(response);
+        } catch (error) {
+          console.log("POST OBJECT ERROR,---", error);
+          reject(ErrorConstants.SOMETHING_WENT_WRONG);
+        }
       });
     },
   });
 
   return mutate;
-}
+};
