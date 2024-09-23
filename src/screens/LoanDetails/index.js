@@ -24,6 +24,7 @@ import { useSubmitLoanFormData } from "../../services/ApiUtils";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 import ProgressCard from "../../components/ProgressCard";
 import { getLoanDetailsForm } from "../../services/ApiUtils";
+import { useResetRoutes } from "../../utils/functions";
 
 const LoanDetails = (props) => {
   const [showModal, setShowModal] = useState(false);
@@ -32,6 +33,7 @@ const LoanDetails = (props) => {
 
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
+  const resetRoute = useResetRoutes();
 
   const submitLoanMutate = useSubmitLoanFormData(loanData);
   const {
@@ -210,7 +212,7 @@ const LoanDetails = (props) => {
         titleStyle={{ fontSize: verticalScale(18) }}
         onPressRight={handleRightIconPress}
         onPressLeft={() => {
-          props?.navigation.goBack();
+          resetRoute(screens.HomeScreen);
         }}
         showHelpModal={showHelpModal}
         toggleHelpModal={toggleHelpModal}

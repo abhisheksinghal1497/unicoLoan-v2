@@ -13,12 +13,13 @@ import { useRoute } from "@react-navigation/native";
 import { useSaveSelfie } from "../../services/ApiUtils";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 import Toast from "react-native-toast-message";
-import { updateAadharDataToApplicant } from "../../utils/functions";
+import { updateAadharDataToApplicant, useResetRoutes } from "../../utils/functions";
 
 const CaptureSelfie = ({ navigation }) => {
   const { fonts } = useTheme();
   const [selectedImage, setSelectedImage] = useState(null);
   const route = useRoute();
+  const resetRoute = useResetRoutes()
   const { loanData = {} } = route?.params || {};
   console.log('loanData', loanData?.adhaarDetails)
   const selfieMutate = useSaveSelfie(loanData);
@@ -82,7 +83,7 @@ const CaptureSelfie = ({ navigation }) => {
           title={"Selfie Capture"}
           left={require("../../images/back.png")}
           onPressLeft={() => {
-            navigation.goBack();
+            resetRoute(screens.HomeScreen);
           }}
           onPressRight={() => { }}
           colour="white"

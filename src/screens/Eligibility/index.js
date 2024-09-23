@@ -13,13 +13,14 @@ import { getEligibilityDetails } from "../../services/ApiUtils";
 import { useRoute } from "@react-navigation/native";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 import CoApplicant from "../CoApplicant";
+import { useResetRoutes } from "../../utils/functions";
 
 
 const Eligibility = (props) => {
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
   const { applicationDetails = {}, loanDetails = {}, loanId } = loanData;
-
+  const  resetRoute = useResetRoutes()
   const [cardData, setCardData] = useState();
   const eligibilityDetails = getEligibilityDetails(loanData);
   const [coApplicantsArr, setCoApplicantsArr] = useState(Array.isArray(applicationDetails?.Applicants__r?.records) ? applicationDetails?.Applicants__r?.records.filter(el => el.ApplType__c === 'C') : []);
@@ -96,7 +97,7 @@ const Eligibility = (props) => {
         titleStyle={{ fontSize: verticalScale(18) }}
         onPressRight={handleRightIconPress}
         onPressLeft={() => {
-          props.navigation.goBack();
+          resetRoute(screens.LoanDetails, {loanData})
         }}
         showHelpModal={showHelpModal}
         toggleHelpModal={toggleHelpModal}
