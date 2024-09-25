@@ -79,7 +79,7 @@ export const upsertSoupEntriesWithExternalId = async (soupName, records) => {
         );
 
       } else {
-       
+       console.log("hari>>>elese")
         smartstore.upsertSoupEntriesWithExternalId(
           false,
           soupName,

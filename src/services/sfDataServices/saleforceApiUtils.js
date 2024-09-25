@@ -254,7 +254,7 @@ export const getPincodeData = async () => {
         const metadata = data?.records;
         if (metadata && metadata?.length > 0) {
           LocalStorage.setPincodeLists(metadata);
-          log("api", data?.records);
+          log("api", JSON.stringify(data?.records));
           // save the field into the soups
           try {
             await saveAllLeadFields(soupConfig.pincodeList.name, metadata);

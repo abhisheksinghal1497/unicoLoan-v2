@@ -91,9 +91,9 @@ const ConsentScreen = (props) => {
         showHelpModal={showHelpModal}
         toggleHelpModal={toggleHelpModal}
       />
-      <ActivityIndicatorComponent
-        visible={isLoading || postConsentMutate?.isPending}
-      />
+      {(isLoading || postConsentMutate?.isPending) && <ActivityIndicatorComponent
+
+      />}
 
       {isError || data?.error ? (
         <Text>Something went wrong</Text>

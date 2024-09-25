@@ -250,3 +250,25 @@ export const getConsentLink = (applicationId) => {
     );
   });
 };
+
+
+export const getInPrincipleSanctionLetter = (applicationId) => {
+  return new Promise((resolve, reject) => {
+    net.sendRequest(
+      "/services/apexrest",
+      `/getSanctionLetter?recordId=${applicationId}`,
+      (res) => {
+        // console.log("Entered");
+        console.log("res", res);
+        resolve(res);
+      },
+      (error) => {
+        reject(error);
+      },
+      "GET"
+    );
+  });
+};
+
+
+///getSanctionLetter/
