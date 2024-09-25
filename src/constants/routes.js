@@ -162,5 +162,3 @@ export const routes = [
       options: {},
     },
   ];
-
-  console.log('ROUTES LENGTH----', routes.length)

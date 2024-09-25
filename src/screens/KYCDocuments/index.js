@@ -21,6 +21,8 @@ import { colors } from "../../colors";
 import { useKycDocument } from "../../services/ApiUtils";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 import { useResetRoutes } from "../../utils/functions";
+import { getBase64Image } from "../../services/sfDataServices/netService";
+import RNFetchBlob from "rn-fetch-blob";
 
 const KYCDocuments = ({ navigation }) => {
   const [selectedImage, setSelectedImage] = useState("");
@@ -33,9 +35,30 @@ const KYCDocuments = ({ navigation }) => {
   const [showHelpModal, setShowHelpModal] = useState(false);
   const resetRoute = useResetRoutes();
 
+  const { selfieDetails = {} } = loanData;
+
+  console.log("selfieDetails", selfieDetails?.Document_Detail__c);
+
   const toggleHelpModal = () => {
     setShowHelpModal(!showHelpModal);
   };
+
+  useEffect(() => {
+    if (!selfieDetails?.Document_Detail__c) return;
+
+    (async () => {
+      try {
+        const imageBase64 = await getBase64Image(
+          selfieDetails?.Document_Detail__c
+        );
+        const base64Str = RNFetchBlob.base64.encode(imageBase64);
+        console.log('imageBase64', base64Str)
+        setSelectedImageSelfie(imageBase64);
+      } catch (error) {
+        console.log('ERROR ', error)
+      }
+    })();
+  }, [selfieDetails?.Document_Detail__c]);
 
   useFocusEffect(
     useCallback(() => {
@@ -64,12 +87,10 @@ const KYCDocuments = ({ navigation }) => {
       setSelectedImageBack(currentDataBack);
       const savedSelfie = await AsyncStorage.getItem("selfieCapture");
       const currentDataSelfie = JSON.parse(savedSelfie);
-
-      setSelectedImageSelfie(currentDataSelfie);
-    } catch (error) {
-
-    }
-
+      if (currentDataSelfie) {
+        setSelectedImageSelfie(currentDataSelfie);
+      }
+    } catch (error) {}
   };
   const handleRightIconPress = (index) => {
     if (index === 0) {
@@ -144,7 +165,7 @@ const KYCDocuments = ({ navigation }) => {
         titleStyle={{ fontSize: verticalScale(18) }}
         onPressRight={handleRightIconPress}
         onPressLeft={() => {
-          resetRoute(screens.HomeScreen)
+          resetRoute(screens.HomeScreen);
         }}
         showHelpModal={showHelpModal}
         toggleHelpModal={toggleHelpModal}
@@ -184,13 +205,13 @@ const KYCDocuments = ({ navigation }) => {
               source={
                 selectedImageSelfie
                   ? {
-                    uri: selectedImageSelfie?.path,
-                  }
+                      uri: selectedImageSelfie?.path ?  selectedImageSelfie?.path : selectedImageSelfie,
+                    } 
                   : require("../../images/aadhar-front.png")
               }
               style={{ height: 150, width: 150 }}
               resizeMode="cover"
-            //  source={assets.aadhar_front}
+              //  source={assets.aadhar_front}
             />
           </View>
           <Text style={styles.conText1}> Selfie</Text>
@@ -217,13 +238,13 @@ const CustomImageContainer = ({ selectedImage }) => {
           source={
             selectedImage
               ? {
-                uri: `data:${selectedImage?.mime};base64,${selectedImage?.data}`,
-              }
+                  uri: `data:${selectedImage?.mime};base64,${selectedImage?.data}`,
+                }
               : require("../../images/aadhar-front.png")
           }
           style={{ height: 100, width: 100 }}
           resizeMode="cover"
-        //  source={assets.aadhar_front}
+          //  source={assets.aadhar_front}
         />
       </View>
       <Text style={styles.conText1}> Aadhaar Front Photo</Text>

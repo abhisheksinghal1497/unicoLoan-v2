@@ -18,13 +18,14 @@ import {
   getSelfieCreateRequest,
   getUniqueId,
   toast,
+  compositeFetchImage,
 } from "../utils/functions";
 import {
   getLeadFields,
   getPincodeData,
   saveApplicationData,
 } from "./sfDataServices/saleforceApiUtils";
-import { oauth } from "react-native-force";
+import { net, oauth } from "react-native-force";
 
 import ErrorConstants from "../constants/ErrorConstants";
 import { soupConfig } from "./sfDBServices/SoupConstants";
@@ -37,6 +38,7 @@ import {
   DedupeApi,
   getConsentDetailByApplicantId,
   getConsentLink,
+  getInPrincipleSanctionLetter,
   getLeadList,
   leadConvertApi,
   postObjectData,
@@ -203,6 +205,7 @@ export const getHomeScreenDetails = () => {
 
   return mutate;
 };
+
 export const getEligibilityDetails = (loanData) => {
   const mutate = useMutation({
     networkMode: "always",
@@ -2205,4 +2208,27 @@ export const checkIfUserHasGivenConsent = (applicationId) => {
   });
 
   return mutate;
+};
+
+
+export const getSanctionLetterQuery = (applicationId) => {
+  const query = useQueries({
+    queries: [
+      {
+        queryKey: ["getInPrincipleSanctionLetter" + applicationId],
+        queryFn: () =>
+          new Promise(async (resolve, reject) => {
+            try {
+              const response = await getInPrincipleSanctionLetter(applicationId);
+              resolve(response);
+            } catch (error) {
+              console.log("RESPONSE--", error);
+              reject(ErrorConstants.SOMETHING_WENT_WRONG);
+            }
+          }),
+      },
+    ],
+  });
+
+  return query;
 };
