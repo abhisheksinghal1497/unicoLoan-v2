@@ -33,7 +33,7 @@ const Sanction = (props) => {
   const { colors, fonts } = useTheme();
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
-  const applicationId = loanData?.loanId;
+  const applicationId = loanData?.Applicant__c;
   const [{data, isPending, isError}] = getSanctionLetterQuery(applicationId);
 
   console.log('DATA HERE', data);
