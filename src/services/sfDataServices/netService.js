@@ -121,11 +121,12 @@ export const compositeRequest = (requests, allOrNone = true) => {
           if (
             res?.compositeResponse?.[0]?.body?.success ||
             res?.compositeResponse?.[0]?.body?.done  ||
-            res?.compositeResponse?.[0]?.httpStatusCode === 200 
+            res?.compositeResponse?.[0]?.httpStatusCode === 200 ||
+            res?.compositeResponse?.[0]?.httpStatusCode === 204
           ) {
             resolve(res);
           } else {
-            console.log("CHECK 1 ");
+            console.log("CHECK 1 ", res);
             reject("Request Failed");
           }
         } else {

@@ -15,28 +15,28 @@ import { compositeRequest, QueryObject } from "./netService";
 export const getLeadFields = async () => {
   return new Promise(async (resolve, reject) => {
     // check weather data is present in local constants
-    // try {
-    //   if (LocalStorage.getLeadFields()) {
-    //     resolve(LocalStorage.getLeadFields());
-    //     return;
-    //   }
-    // } catch (error) {}
+    try {
+      if (LocalStorage.getLeadFields()) {
+        resolve(LocalStorage.getLeadFields());
+        return;
+      }
+    } catch (error) {}
 
     //  check weather data is present in soup (SF Local database) data or not
-    // try {
-    //   const getData = await getAllSoupEntries(
-    //     soupConfig.LoanApplicantFields.name,
-    //     soupConfig.LoanApplicantFields.path
-    //   );
+    try {
+      const getData = await getAllSoupEntries(
+        soupConfig.LoanApplicantFields.name,
+        soupConfig.LoanApplicantFields.path
+      );
 
-    //   if (getData && getData?.length > 0) {
-    //     LocalStorage.setLeadFields(getData);
-    //     resolve(getData);
-    //     return;
-    //   }
-    // } catch (error) {
-    //   log("error LeadList>>>>", error);
-    // }
+      if (getData && getData?.length > 0) {
+        LocalStorage.setLeadFields(getData);
+        resolve(getData);
+        return;
+      }
+    } catch (error) {
+      log("error LeadList>>>>", error);
+    }
     // last option make the SF call
     var loanApplicantFieldData = null;
     var applicantFieldData = null;
@@ -63,16 +63,93 @@ export const getLeadFields = async () => {
       loanApplicantFieldData = compositeResponse?.compositeResponse[0]?.body;
       applicantFieldData = compositeResponse?.compositeResponse[1]?.body;
 
-       loanData =
-        compositeResponse?.compositeResponse[2]?.body?.records?.map((el) => ({
-          active: el?.IsActive,
-          defaultValue: "",
-          label: el?.Name,
-          validFor: null,
-          value: el?.Name,
-        })) || [];
-      
-      // console.log('picklist----', JSON.stringify(loanData))
+      let loanPurpose = {};
+      compositeResponse?.compositeResponse[2]?.body?.records?.forEach((el) => {
+        if (loanPurpose[el?.Family]) {
+          loanPurpose[el?.Family] = [
+            ...loanPurpose[el?.Family],
+            {
+              active: el?.IsActive,
+              defaultValue: "",
+              label: el?.Name,
+              validFor: null,
+              value: el?.Name,
+            },
+          ];
+        } else {
+          loanPurpose[el?.Family] = [
+            {
+              active: el?.IsActive,
+              defaultValue: "",
+              label: el?.Name,
+              validFor: null,
+              value: el?.Name,
+            },
+          ];
+        }
+      });
+
+      loanData = Object.keys(loanPurpose).map((el) => ({
+        aggregatable: true,
+        aiPredictionField: false,
+        autoNumber: false,
+        byteLength: 765,
+        calculated: false,
+        calculatedFormula: null,
+        cascadeDelete: false,
+        caseSensitive: false,
+        compoundFieldName: null,
+        controllerName: null,
+        createable: true,
+        custom: true,
+        defaultValue: null,
+        defaultValueFormula: null,
+        defaultedOnCreate: false,
+        dependentPicklist: false,
+        deprecatedAndHidden: false,
+        digits: 0,
+        displayLocationInDecimal: false,
+        encrypted: false,
+        externalId: false,
+        extraTypeInfo: null,
+        filterable: true,
+        filteredLookupInfo: null,
+        formulaTreatNullNumberAsZero: false,
+        groupable: true,
+        highScaleNumber: false,
+        htmlFormatted: false,
+        idLookup: false,
+        inlineHelpText: null,
+        label: "Select loan purpose",
+        length: 255,
+        mask: null,
+        maskType: null,
+        name: el,
+        nameField: false,
+        namePointing: false,
+        nillable: true,
+        permissionable: true,
+        picklistValues: loanPurpose[el],
+        polymorphicForeignKey: false,
+        precision: 0,
+        queryByDistance: false,
+        referenceTargetField: null,
+        referenceTo: [],
+        relationshipName: null,
+        relationshipOrder: null,
+        restrictedDelete: false,
+        restrictedPicklist: true,
+        scale: 0,
+        searchPrefilterable: false,
+        soapType: "xsd:string",
+        sortable: true,
+        type: "picklist",
+        unique: false,
+        updateable: true,
+        writeRequiresMasterRead: false,
+      }));
+
+      // console.log('picklist----', JSON.stringify(compositeResponse?.compositeResponse[2]?.body?.records))
     } catch (error) {
       console.log("Composite failed 122", error);
     }
@@ -85,20 +162,20 @@ export const getLeadFields = async () => {
       fieldsData = [...fieldsData, ...applicantFieldData?.fields];
     }
 
+    if (loanData) {
+      fieldsData = [...fieldsData, ...loanData]
+    }
+
     fieldsData = fieldsData?.filter(
       (field) => field.createable === true || field.updateable === true
     );
 
-    if(loanData){
-      const index = fieldsData?.findIndex(el => el.name === LOAN_DETAILS_KEYS.loanPurpose)
-      if(index !== -1){
-        fieldsData[index].picklistValues = loanData;
-      }
-    }
-
     LocalStorage.setLeadFields(fieldsData);
     try {
-      console.log('LOAN DATA HERE FINAL', fieldsData.find(el => el.name === LOAN_DETAILS_KEYS.loanPurpose));
+      console.log(
+        "LOAN DATA HERE FINAL",
+        fieldsData.find((el) => el.name === LOAN_DETAILS_KEYS.loanPurpose)
+      );
       await saveAllLeadFields(soupConfig.LoanApplicantFields.name, fieldsData);
     } catch (error) {}
 

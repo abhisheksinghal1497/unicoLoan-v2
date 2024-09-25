@@ -78,13 +78,16 @@ export const convertFormArrToObj = (data = []) => {
 
 export const GetPicklistValues = (arr, fieldName, defaultValues) => {
   try {
-    console.log('CHECK ! HERE', {fieldName})
+    console.log("CHECK ! HERE", { fieldName });
     if (!arr || !fieldName) {
       return {};
     }
-    console.log('CHECK 2 HERE',  arr?.find((value) => value.name === fieldName))
+    console.log(
+      "CHECK 2 HERE",
+      arr?.find((value) => value.name === fieldName)
+    );
     const data = arr?.find((value) => value.name === fieldName)?.picklistValues;
-    console.log('DATA here', data)
+    console.log("DATA here", data);
     return data && data?.length > 0 ? data : defaultValues;
   } catch (error) {
     return defaultValues;
@@ -592,13 +595,12 @@ const getCompositeRequest = (query, referenceId) => {
 };
 
 const describeCompositeRequest = (objectName, referenceId) => {
- return {
-    method: 'GET',
+  return {
+    method: "GET",
     url: `/services/data/${net.getApiVersion()}/sobjects/${objectName}/describe`,
-    referenceId: referenceId
-  }
+    referenceId: referenceId,
+  };
 };
-
 
 const postCompositeRequest = (objectName, body, referenceId) => {
   return {
@@ -618,70 +620,118 @@ const patchCompositeRequest = (objectName, objectId, body, referenceId) => {
   };
 };
 
-const getLoanDetailPatchBody = (loanData) => ({
-  [LOAN_DETAILS_KEYS.reqLoanAmt]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.reqLoanAmt],
-  [LOAN_DETAILS_KEYS.reqTenure]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.reqTenure],
-  [LOAN_DETAILS_KEYS.loanPurpose]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.loanPurpose],
-});
+const getLoanDetailPatchBody = (loanData) => {
+  try {
+    return {
+      [LOAN_DETAILS_KEYS.reqLoanAmt]:
+        loanData?.[LOAN_DETAILS_KEYS.reqLoanAmt],
+      [LOAN_DETAILS_KEYS.reqTenure]:
+        loanData?.[LOAN_DETAILS_KEYS.reqTenure],
+      [LOAN_DETAILS_KEYS.loanPurpose]:
+        loanData?.[LOAN_DETAILS_KEYS.loanPurpose],
+    };
+  } catch (error) {
+    console.log("getLoanDetailPatchBody", error);
+    return null
+  }
+};
 
-const getApplicantPatchBody = (loanData) => ({
-  // [LOAN_DETAILS_KEYS.mobile]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.mobile],
-  [LOAN_DETAILS_KEYS.isExistingCustomer]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.isExistingCustomer],
-  [LOAN_DETAILS_KEYS.custId]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.custId],
-});
+const getApplicantPatchBody = (loanData) => {
+  try {
+    console.log('getApplicantPatchBody 1',{
+      [LOAN_DETAILS_KEYS.totalIncome]:
+        loanData?.[LOAN_DETAILS_KEYS.totalIncome],
+      [LOAN_DETAILS_KEYS.isExistingCustomer]:
+        loanData?.[LOAN_DETAILS_KEYS.isExistingCustomer],
+      [LOAN_DETAILS_KEYS.custId]: loanData?.[LOAN_DETAILS_KEYS.custId],
+    })
+    return {
+      [LOAN_DETAILS_KEYS.totalIncome]:
+        loanData?.[LOAN_DETAILS_KEYS.totalIncome],
+      [LOAN_DETAILS_KEYS.isExistingCustomer]:
+        loanData?.[LOAN_DETAILS_KEYS.isExistingCustomer],
+      [LOAN_DETAILS_KEYS.custId]: loanData?.[LOAN_DETAILS_KEYS.custId],
+    };
+  } catch (error) {
+    console.log("getApplicantPatchBody", error);
+    return null
+  }
+};
 
-const getLoanDetailPostBody = (loanData) => ({
-  [LOAN_DETAILS_KEYS.bankBalance]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.bankBalance],
-  [LOAN_DETAILS_KEYS.immovableProperty]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.immovableProperty],
-  [LOAN_DETAILS_KEYS.invPlantMachVehi]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.invPlantMachVehi],
-  [LOAN_DETAILS_KEYS.ownContri]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.ownContri],
-  [LOAN_DETAILS_KEYS.assetVal]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.assetVal],
-  [LOAN_DETAILS_KEYS.totalAsset]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.totalAsset],
-  [LOAN_DETAILS_KEYS.amtConstructPurchase]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.amtConstructPurchase],
-  [LOAN_DETAILS_KEYS.savings]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.savings],
-  [LOAN_DETAILS_KEYS.dispAsset]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.dispAsset],
-  [LOAN_DETAILS_KEYS.familyFund]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.familyFund],
-  [LOAN_DETAILS_KEYS.srvcFund]:
-    loanData?.loanDetails?.[LOAN_DETAILS_KEYS.srvcFund],
-  // [LOAN_DETAILS_KEYS.totalIncome]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.totalIncome],
-  Appl__c: loanData?.Applicant__c,
-});
+const getLoanDetailPostBody = (loanData, Applicant__c) => {
+  try {
+    return {
+      [LOAN_DETAILS_KEYS.bankBalance]: loanData?.[LOAN_DETAILS_KEYS.bankBalance],
+      [LOAN_DETAILS_KEYS.immovableProperty]:
+        loanData?.[LOAN_DETAILS_KEYS.immovableProperty],
+      [LOAN_DETAILS_KEYS.invPlantMachVehi]:
+        loanData?.[LOAN_DETAILS_KEYS.invPlantMachVehi],
+      [LOAN_DETAILS_KEYS.ownContri]: loanData?.[LOAN_DETAILS_KEYS.ownContri],
+      [LOAN_DETAILS_KEYS.assetVal]: loanData?.[LOAN_DETAILS_KEYS.assetVal],
+      [LOAN_DETAILS_KEYS.totalAsset]: loanData?.[LOAN_DETAILS_KEYS.totalAsset],
+      [LOAN_DETAILS_KEYS.amtConstructPurchase]:
+        loanData?.[LOAN_DETAILS_KEYS.amtConstructPurchase],
+      [LOAN_DETAILS_KEYS.savings]: loanData?.[LOAN_DETAILS_KEYS.savings],
+      [LOAN_DETAILS_KEYS.dispAsset]: loanData?.[LOAN_DETAILS_KEYS.dispAsset],
+      [LOAN_DETAILS_KEYS.familyFund]: loanData?.[LOAN_DETAILS_KEYS.familyFund],
+      [LOAN_DETAILS_KEYS.srvcFund]: loanData?.[LOAN_DETAILS_KEYS.srvcFund],
+      [LOAN_DETAILS_KEYS.valShareSecr]: loanData?.[LOAN_DETAILS_KEYS.valShareSecr],
+      [LOAN_DETAILS_KEYS.fd]: loanData?.[LOAN_DETAILS_KEYS.fd],
+      [LOAN_DETAILS_KEYS.currPF]: loanData?.[LOAN_DETAILS_KEYS.currPF],
+      // [LOAN_DETAILS_KEYS.totalIncome]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.totalIncome],
+      Appl__c: Applicant__c,
+    }
+  } catch (error) {
+    
+  }
+  };
 
-export const createCompositeRequestForLoadDetails = (loanData) => {
-  const compositeRequests = [
-    patchCompositeRequest(
-      "LoanAppl__c",
-      loanData?.loanId,
-      getLoanDetailPatchBody(loanData),
-      "patchLoanApplication"
-    ),
-    patchCompositeRequest(
-      "Applicant__c",
-      loanData?.Applicant__c,
-      getApplicantPatchBody(loanData),
-      "patchApplicant"
-    ),
-    postCompositeRequest(
-      "ApplAsset__c",
-      getLoanDetailPostBody(loanData),
-      "postLoanDetail"
-    ),
-  ];
+export const createCompositeRequestForLoadDetails = (
+  formData,
+  loanDetails,
+  loanId,
+  Applicant__c
+) => {
+  try {
+    const compositeRequests = [
+      patchCompositeRequest(
+        "LoanAppl__c",
+        loanId,
+        getLoanDetailPatchBody(formData),
+        "patchLoanApplication"
+      ),
+      patchCompositeRequest(
+        "Applicant__c",
+        Applicant__c,
+        getApplicantPatchBody(formData),
+        "patchApplicant"
+      ),
+    ];
+   
+    if (loanDetails?.Id) {
+      compositeRequests.push(
+        patchCompositeRequest(
+          "ApplAsset__c",
+          loanDetails?.Id,
+          getLoanDetailPostBody(formData),
+          "patchApplAsset__c"
+        )
+      );
+    } else {
+      compositeRequests.push(
+        postCompositeRequest(
+          "ApplAsset__c",
+          getLoanDetailPostBody(formData, Applicant__c),
+          "postLoanDetail"
+        )
+      );
+    }
 
-  return compositeRequests;
+    return compositeRequests;
+  } catch (error) {
+    console.log("Some error occured");
+    return null;
+  }
 };
 
 export const createCompositeRequestsForSelfieUpload = (
@@ -1231,7 +1281,7 @@ export const CurrentAddressDocumentCompositeRequests = (
           "Applicant__c",
           data?.Applicant__c,
           {
-            isPerSameAsResi_ADD__c: 0
+            isPerSameAsResi_ADD__c: 0,
           },
           "UpdateApicant"
         ),
@@ -1241,7 +1291,7 @@ export const CurrentAddressDocumentCompositeRequests = (
     if (isAddressRequired) {
       compositeRequests.push({
         ...postCompositeRequest("ApplAddr__c", addressBody, "Add_Address"),
-      })
+      });
     }
     console.log("BEFORE RETURNING COMPOSITE");
     return compositeRequests;
@@ -1317,13 +1367,50 @@ export const createCompositeRequestForLeadList = (loanData) => {
 export const createCompositeRequestForMetadata = () => {
   try {
     const compositeRequest = [
-      {...describeCompositeRequest(soupConfig.LoanApplicantFields.name, 'LoanApplicantFields')},
-      {...describeCompositeRequest(soupConfig.ApplicantFields.name, 'ApplicantFields')},
-      { ...getCompositeRequest(encodeURIComponent('SELECT FIELDS(ALL) FROM PRODUCT2 WHERE isActive = true LIMIT 200'), 'PRODUCT2')}
-    ]
+      {
+        ...describeCompositeRequest(
+          soupConfig.LoanApplicantFields.name,
+          "LoanApplicantFields"
+        ),
+      },
+      {
+        ...describeCompositeRequest(
+          soupConfig.ApplicantFields.name,
+          "ApplicantFields"
+        ),
+      },
+      {
+        ...getCompositeRequest(
+          encodeURIComponent(
+            "SELECT FIELDS(ALL) FROM PRODUCT2 WHERE isActive = true LIMIT 200"
+          ),
+          "PRODUCT2"
+        ),
+      },
+    ];
     return compositeRequest;
   } catch (error) {
-    console.log('Error compioste error', error)
+    console.log("Error compioste error", error);
     return null;
   }
-}
+};
+
+
+export const compositeFetchImage = (LinkedEntityId) => {
+  try {
+    const compositeRequest = [
+      {
+        ...getCompositeRequest(
+          encodeURIComponent(
+            `SELECT Id,ContentDocumentId from ContentDocumentLink  WHERE LinkedEntityId = 'a16Bi000000GncfIAC'`
+          ),
+          "ContentDocumentLink"
+        ),
+      },
+    ];
+    return compositeRequest;
+  } catch (error) {
+    console.log("Error compioste error", error);
+    return null;
+  }
+};

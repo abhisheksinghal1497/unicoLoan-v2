@@ -66,8 +66,18 @@ export const validations = {
 
   },
   yyMMDate: {
-    pattern: /^(?:[0-9]{2})(?:[0-9]{2})$/,
-    required: true,
+    validate: (value) => {
+      if (!/^[0-9]{4}$/.test(value)) {
+        return 'Please enter years and months.';
+      }
+    
+      const lastTwoDigits = value.slice(2);
+      if (!/(?:0[0-9]|1[0-1])$/.test(lastTwoDigits)) {
+        return 'Months must be between 00 and 11.';
+      }
+  
+      return true;
+    },
   },
   currency: {
     pattern: /^\d{1,16}(\.\d{0,2})?$/,

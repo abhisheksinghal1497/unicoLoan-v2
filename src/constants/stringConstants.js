@@ -13,14 +13,14 @@ export const AadharBasicDetails = {
 export const LOAN_DETAILS_KEYS = {
   reqLoanAmt: "ReqLoanAmt__c",
   reqTenure: "ReqTenInMonths__c",
-  loanPurpose: "LoanPurpose__c",  // not done
+  loanPurpose: "LoanPurpose__c",  
   mobile: "MobNumber__c", // not done
   isExistingCustomer: "ExistingCustomer__c",
   custId: "Customer__c",
   bankBalance: "Bankbalance__c",
   immovableProperty: 'ImmovablePropertyValue__c',
   currPF: "CurrentPfBalance__c",
-  valShareSecr: "valShareSecr", // not done
+  valShareSecr: "SharesAndSecurityBalance__c", 
   fd: "FixedDeposits__c",
   invPlantMachVehi: "InvestmentInPlants_Machinery_Vehicles__c",
   ownContri: "OwnContributions__c",
@@ -31,10 +31,10 @@ export const LOAN_DETAILS_KEYS = {
   dispAsset: "DisposalOfAsset__c",
   familyFund: "FundFromFamily__c",
   srvcFund: "FundFromOtherServices__c",
-  totalIncome: "totalIncome", // not done
+  totalIncome: "Annual_Turnover__c", 
   totalObligation: "totalObligation", // not done
-  resAddr: "resAddr", // not done
-  currAddr: "currAddr", // not done
+  resAddr: "resAddr", 
+  currAddr: "currAddr",
 };
 
 export const KycScreen = {
