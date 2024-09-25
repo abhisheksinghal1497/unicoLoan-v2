@@ -3,6 +3,8 @@ import { logoutApi } from "../ApiUtils";
 import ErrorConstants from "../../constants/ErrorConstants";
 import LocalStorage from "../LocalStorage";
 import { query } from "../../constants/Queries";
+import { compositeFetchImage } from "../../utils/functions";
+import RNFetchBlob from "rn-fetch-blob";
 
 const errorCallback = (reject) => () => {
   logoutApi();
@@ -120,13 +122,13 @@ export const compositeRequest = (requests, allOrNone = true) => {
         if (res?.compositeResponse?.length > 0) {
           if (
             res?.compositeResponse?.[0]?.body?.success ||
-            res?.compositeResponse?.[0]?.body?.done  ||
+            res?.compositeResponse?.[0]?.body?.done ||
             res?.compositeResponse?.[0]?.httpStatusCode === 200 ||
             res?.compositeResponse?.[0]?.httpStatusCode === 204
           ) {
             resolve(res);
           } else {
-            console.log("CHECK 1 ", res);
+            console.log("CHECK 1 ", JSON.stringify(res));
             reject("Request Failed");
           }
         } else {
@@ -251,7 +253,6 @@ export const getConsentLink = (applicationId) => {
   });
 };
 
-
 export const getInPrincipleSanctionLetter = (applicationId) => {
   return new Promise((resolve, reject) => {
     net.sendRequest(
@@ -270,5 +271,83 @@ export const getInPrincipleSanctionLetter = (applicationId) => {
   });
 };
 
+export const getBase64Image = (LinkedEntityId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let documentLink = await compositeRequest(
+        compositeFetchImage(LinkedEntityId)
+      );
+
+      const url = documentLink?.compositeResponse[1]?.body?.records[0]?.VersionData ;
+
+      oauth.getAuthCredentials(async (res) => {
+        try {
+          const instanceUrl = res.instanceUrl;
+
+          const response = await RNFetchBlob.fetch(
+            "GET",
+            `${instanceUrl}${url}`,
+            {
+              Authorization: `Bearer ${res.accessToken}`,
+            }
+          );
+          const base64Str = response.base64();
+          resolve(`data:image/png;base64,${base64Str}`);
+        } catch (error) {
+          console.log("FINAL ERROR HERE", error);
+        }
+      })
+
+      // net.sendRequest(
+      //   url,
+      //   "",
+      //   async (res) => {
+      //     console.log(
+      //       "ACCESS",
+         
+      //     );
+      //   },
+      //   (e) => {
+      //     reject(e);
+      //   },
+      //   "GET",
+      //   null,
+      //   {
+      //     // 'Content-Type': 'multipart/form-data',
+      //   }
+      // );
+    } catch (error) {
+      console.log("SOME ERROR OCCURRED", error);
+      reject(error);
+    }
+  });
+};
+
+const fetchData = async (url) => {
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        // Add any headers if needed
+      },
+    });
+
+    // Check if the response is ok
+    if (!response.ok) throw new Error("Network response was not ok");
+
+    // Get the response as a Blob
+    const blob = await response.blob();
+
+    // Read the blob as an ArrayBuffer
+    const arrayBuffer = await blob.arrayBuffer();
+
+    // Convert ArrayBuffer to Buffer, then to Base64
+    const base64String = Buffer.from(arrayBuffer).toString("base64");
+
+    console.log("Base64 String:", base64String);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
 
 ///getSanctionLetter/

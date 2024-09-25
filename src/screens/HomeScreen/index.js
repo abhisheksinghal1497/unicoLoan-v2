@@ -159,7 +159,7 @@ const HomeScreen = ({ navigation }) => {
           <TouchableOpacity
             style={styles.seeDetailsresumeJourneyButton}
             onPress={() => {
-              navigation?.navigate(screenName, { loanData: item });
+              navigation?.navigate(screens.Sanction, { loanData: item });
             }}
           >
             <Text style={styles.seeDetailsresumeJourneyText}>

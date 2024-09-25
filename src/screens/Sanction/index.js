@@ -8,6 +8,8 @@ import {
   View,
   ImageBackground,
   Platform,
+  PermissionsAndroid,
+  Alert,
 } from "react-native";
 import RNFetchBlob from "rn-fetch-blob";
 import { useTheme } from "react-native-paper";
@@ -21,15 +23,20 @@ import Header from "../../components/Header";
 import CustomShadow from "../../components/FormComponents/CustomShadow";
 import CustomButton from "../../components/Button";
 import { useRoute } from "@react-navigation/native";
+import { Linking } from 'react-native'
 
 const { width: devicWidth } = Dimensions.get("window");
-import { getSanctionPdf } from "../../services/ApiUtils";
+import { getSanctionLetterQuery, getSanctionPdf } from "../../services/ApiUtils";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 
 const Sanction = (props) => {
   const { colors, fonts } = useTheme();
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
+  const applicationId = loanData?.loanId;
+  const [{data, isPending, isError}] = getSanctionLetterQuery(applicationId);
+
+  console.log('DATA HERE', data);
 
   const [isComplete, setIsComplete] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -46,7 +53,40 @@ const Sanction = (props) => {
     getData?.mutate();
   }, []);
 
+  async function hasAndroidPermission() {
+    if (Number(Platform.Version) >= 33) {
+      return true;
+    }
+  
+    const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
+  
+    const hasPermission = await PermissionsAndroid.check(permission);
+    console.log({hasPermission})
+    if (hasPermission) {
+      return true;
+    }
+  
+    const status = await PermissionsAndroid.request(permission);
+    console.log({status})
+    return status === 'granted';
+  }
+
   const downloadPDF = async () => {
+
+    try {
+      const granted = await hasAndroidPermission();
+      console.log({granted})
+      if (!granted) {
+        Alert.alert('Permission Denied!', 'You need to give storage permission to download the file', [{
+          text: 'Give permission',
+          onPress: () => Linking.openSettings()
+        }]);
+        return
+      }
+    } catch (err) {
+      console.warn(err);
+      return
+    } 
     let dirs = RNFetchBlob.fs.dirs;
     RNFetchBlob.config({
       path: dirs.DownloadDir + "/In-Principle-Sanction-Letter.pdf",

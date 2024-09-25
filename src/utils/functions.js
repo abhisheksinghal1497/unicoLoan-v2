@@ -1402,9 +1402,15 @@ export const compositeFetchImage = (LinkedEntityId) => {
       {
         ...getCompositeRequest(
           encodeURIComponent(
-            `SELECT Id,ContentDocumentId from ContentDocumentLink  WHERE LinkedEntityId = 'a16Bi000000GncfIAC'`
+            `SELECT Id,ContentDocumentId from ContentDocumentLink  WHERE LinkedEntityId = '${LinkedEntityId}'`
           ),
           "ContentDocumentLink"
+        ),
+      },
+      {
+        ...getCompositeRequest(
+            "SELECT VersionData FROM ContentVersion WHERE ContentDocumentId = '@{ContentDocumentLink.records[0].ContentDocumentId}'", 
+            "ContentVersion"
         ),
       },
     ];
