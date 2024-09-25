@@ -90,38 +90,91 @@ export const getHomeScreenDetails = () => {
             LocalStorage?.getUserData()?.Phone
           );
           if (getLeadListData && getLeadListData.records?.length > 0) {
+            let compositGraphRequest;
             try {
-              const compositGraphRequest = await compositeRequest(
+              compositGraphRequest = await compositeRequest(
                 createCompositeRequestForLeadList(getLeadListData)
               );
 
+              compositGraphRequest = compositGraphRequest?.compositeResponse;
             } catch (error) {}
 
             for (let i = 0; i < getLeadListData.records.length; i++) {
               //save the record into the soup
               // const compositGraphRequest = await compositeGraphRequest(createGraphRequestForLeadList(getLeadListData))
-              // console.log("compositGraphRequest", JSON.stringify(compositGraphRequest))
-              let record = getLeadListData.records[i];
 
+              let record = getLeadListData.records[i];
               // CHANGES NEEDED HERE
-              let applicantRecord = record?.Applicants__r?.records?.filter(el => el.ApplType__c === "P")[0];
+              let applicantRecord = record?.Applicants__r?.records?.filter(
+                (el) => el.ApplType__c === "P"
+              )[0];
               applicantRecord = {
                 ...applicantRecord,
                 coApplicants: record?.Applicants__r?.records?.filter(
                   (el) => el.ApplType__c === "C"
                 ),
               };
+
+              const kycId = applicantRecord?.Id;
+              const selfieData = compositGraphRequest[0]?.body?.records?.find(
+                (el) =>
+                  el?.Applicant__c === kycId &&
+                  el?.kycDoc__c === "Applicant Photo"
+              );
+              const currentAddress =
+                compositGraphRequest[1]?.body?.records?.find(
+                  (el) =>
+                    el?.AddrTyp__c === "Current Address" &&
+                    el?.Applicant__c === kycId
+                );
+
+              const permanentAddress =
+                compositGraphRequest[1]?.body?.records?.find(
+                  (el) =>
+                    el?.AddrTyp__c === "Permanent Address" &&
+                    el?.Applicant__c === kycId
+                );
+              const loanDetail = compositGraphRequest[2]?.body?.records?.find(
+                (el) => el?.Appl__c === kycId
+              );
+          
               const data = {
                 loanId: record?.Id,
                 applicationDetails: record,
                 Applicant__c: applicantRecord?.Id,
                 External_ID: record?.Id,
+
                 panDetails: applicantRecord?.PAN__c
-                  ? { panNumber: applicantRecord?.PAN__c }
+                  ? // push pan name here
+                    {
+                      panNumber: applicantRecord?.PAN__c,
+                      // Not getting pan name
+                      panName: applicantRecord?.NameInPan__c,
+                    }
                   : undefined,
-                adhaarDetails: applicantRecord?.AdhrLst4Dgts__c
-                  ? { AdhrLst4Dgts__c: applicantRecord?.AdhrLst4Dgts__c }
-                  : undefined,
+                // adhaarDetails: applicantRecord?.AdhrLst4Dgts__c
+                //   ? { AdhrLst4Dgts__c: applicantRecord?.AdhrLst4Dgts__c, permanentAddress }
+                //   : undefined,
+                adhaarDetails: {
+                  AdhrLst4Dgts__c: applicantRecord?.AdhrLst4Dgts__c,
+                  address: {
+                    splitAddress: {
+                      houseNumber: permanentAddress?.HouseNo__c,
+                      landmark: permanentAddress?.Landmark__c,
+                      street: permanentAddress?.AddrLine1__c,
+                      location: permanentAddress?.AddrLine2__c,
+                      state: permanentAddress?.State__c,
+                      country: permanentAddress?.Country__c,
+                      pincode: permanentAddress?.Pincode__c,
+                      district: permanentAddress?.District__c,
+                    },
+                    combinedAddress: permanentAddress?.FullAdrs__c || ''
+                  }
+                },
+                loanDetails: loanDetail,
+                currentAddressDetails: currentAddress,
+                selfieDetails: selfieData,
+                // Save permanent in adhaar from composite 1
               };
 
               await saveApplicationData(data);
@@ -1123,15 +1176,16 @@ export const useSubmitLoanFormData = (loanData) => {
     mutationFn: async (data) => {
       return new Promise(async (resolve, reject) => {
         let loanDetail = { ...loanData };
-        loanDetail.loanDetails = { ...data };
-
-        const response = await compositeRequest(
-          createCompositeRequestForLoadDetails(loanDetail)
-        );
+    
+        // loanDetail.loanDetails = { ...data };
         try {
+          const response = await compositeRequest(
+            createCompositeRequestForLoadDetails(data, loanDetail.loanDetails, loanData?.loanId, loanData?.Applicant__c)
+          );
           await saveApplicationData(loanDetail);
           resolve({ ...loanDetail });
         } catch (error) {
+          console.log('skdjhdf', error)
           reject(ErrorConstants.SOMETHING_WENT_WRONG);
         }
       });
@@ -1643,21 +1697,21 @@ export const getAllRawData = () => {
   });
 };
 
-export const getLoanDetailsForm = () => {
+export const getLoanDetailsForm = (productType) => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (data) => {
       return new Promise(async (resolve, reject) => {
         try {
           const fieldArray = await getLeadFields();
-
+          console.log({productType})
           const mock_data = [
             {
               id: "ReqLoanAmt__c",
               label: "Requested loan amount",
               type: component.textInput,
               placeHolder: "Enter required loan amount",
-              validations: validations.currency,
+              validations: validations.loanAmountRegex,
               keyboardtype: "numeric",
               isRequired: true,
               value: "",
@@ -1668,7 +1722,7 @@ export const getLoanDetailsForm = () => {
               label: "Requested tenure in Months",
               type: component.textInput,
               placeHolder: "Enter requested tenure in months",
-              validations: validations.numberOnly,
+              validations: validations.tenureRegex,
               isRequired: true,
               keyboardtype: "numeric",
               value: "",
@@ -1683,7 +1737,10 @@ export const getLoanDetailsForm = () => {
               validations: {
                 ...validations.required,
               },
-              data: GetPicklistValues(fieldArray, LOAN_DETAILS_KEYS.loanPurpose),
+              data: GetPicklistValues(
+                fieldArray,
+                productType
+              ),
               value: "",
             },
 
@@ -1709,6 +1766,7 @@ export const getLoanDetailsForm = () => {
                 ...validations.required,
               },
               data: [
+                
                 {
                   id: "existCustomer-y",
                   label: "Yes",
@@ -1729,6 +1787,7 @@ export const getLoanDetailsForm = () => {
               type: component.number,
               placeHolder: "Enter Customer ID",
               value: 0,
+         
               keyboardtype: "numeric",
               validations: validations.numberOnly,
             },
@@ -1741,7 +1800,7 @@ export const getLoanDetailsForm = () => {
               keyboardtype: "numeric",
               isRequired: true,
               validations: {
-                ...validations.numberOnly,
+                ...validations.numberOnlyRequired,
                 ...validations.required,
               },
             },
@@ -1754,7 +1813,7 @@ export const getLoanDetailsForm = () => {
               keyboardtype: "numeric",
               isRequired: true,
               validations: {
-                ...validations.numberOnly,
+                ...validations.numberOnlyRequired,
                 ...validations.required,
               },
             },
@@ -1767,7 +1826,7 @@ export const getLoanDetailsForm = () => {
               keyboardtype: "numeric",
               isRequired: true,
               validations: {
-                ...validations.numberOnly,
+                ...validations.numberOnlyRequired,
                 ...validations.required,
               },
             },
@@ -1780,7 +1839,7 @@ export const getLoanDetailsForm = () => {
               keyboardtype: "numeric",
               isRequired: true,
               validations: {
-                ...validations.numberOnly,
+                ...validations.numberOnlyRequired,
                 ...validations.required,
               },
             },
@@ -1793,7 +1852,7 @@ export const getLoanDetailsForm = () => {
               keyboardtype: "numeric",
               isRequired: true,
               validations: {
-                ...validations.numberOnly,
+                ...validations.numberOnlyRequired,
                 ...validations.required,
               },
             },
@@ -1806,7 +1865,7 @@ export const getLoanDetailsForm = () => {
               keyboardtype: "numeric",
               isRequired: true,
               validations: {
-                ...validations.numberOnly,
+                ...validations.numberOnlyRequired,
                 ...validations.required,
               },
             },
@@ -1819,7 +1878,7 @@ export const getLoanDetailsForm = () => {
               keyboardtype: "numeric",
               isRequired: true,
               validations: {
-                ...validations.numberOnly,
+                ...validations.numberOnlyRequired,
                 ...validations.required,
               },
             },
@@ -1832,7 +1891,7 @@ export const getLoanDetailsForm = () => {
               keyboardtype: "numeric",
               isRequired: true,
               validations: {
-                ...validations.numberOnly,
+                ...validations.numberOnlyRequired,
                 ...validations.required,
               },
             },
@@ -1856,7 +1915,7 @@ export const getLoanDetailsForm = () => {
               keyboardtype: "numeric",
               isRequired: true,
               validations: {
-                ...validations.numberOnly,
+                ...validations.numberOnlyRequired,
                 ...validations.required,
               },
             },
@@ -1869,7 +1928,7 @@ export const getLoanDetailsForm = () => {
               keyboardtype: "numeric",
               isRequired: true,
               validations: {
-                ...validations.numberOnly,
+                ...validations.numberOnlyRequired,
                 ...validations.required,
               },
             },
@@ -1882,7 +1941,7 @@ export const getLoanDetailsForm = () => {
               keyboardtype: "numeric",
               isRequired: true,
               validations: {
-                ...validations.numberOnly,
+                ...validations.numberOnlyRequired,
                 ...validations.required,
               },
             },
@@ -1895,7 +1954,7 @@ export const getLoanDetailsForm = () => {
               keyboardtype: "numeric",
               isRequired: true,
               validations: {
-                ...validations.numberOnly,
+                ...validations.numberOnlyRequired,
                 ...validations.required,
               },
             },
@@ -1908,7 +1967,7 @@ export const getLoanDetailsForm = () => {
               keyboardtype: "numeric",
               isRequired: true,
               validations: {
-                ...validations.numberOnly,
+                ...validations.numberOnlyRequired,
                 ...validations.required,
               },
             },
@@ -1921,7 +1980,7 @@ export const getLoanDetailsForm = () => {
               keyboardtype: "numeric",
               isRequired: true,
               validations: {
-                ...validations.numberOnly,
+                ...validations.numberOnlyRequired,
                 ...validations.required,
               },
             },
@@ -1934,7 +1993,7 @@ export const getLoanDetailsForm = () => {
               keyboardtype: "numeric",
               isRequired: true,
               validations: {
-                ...validations.numberOnly,
+                ...validations.numberOnlyRequired,
                 ...validations.required,
               },
             },

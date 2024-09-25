@@ -26,14 +26,23 @@ import ProgressCard from "../../components/ProgressCard";
 import { getLoanDetailsForm } from "../../services/ApiUtils";
 import { useResetRoutes } from "../../utils/functions";
 
+// 
+
 const LoanDetails = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [mock_loan_details_data, setMockDetails] = useState([]);
-  const formData = getLoanDetailsForm();
+  
 
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
   const resetRoute = useResetRoutes();
+
+  const {applicationDetails ={}, loanDetails={}} = loanData;
+  const formData = getLoanDetailsForm(applicationDetails?.Product__c);
+
+  let applicantRecord = applicationDetails?.Applicants__r?.records?.filter(
+    (el) => el.ApplType__c === "P"
+  )[0];
 
   const submitLoanMutate = useSubmitLoanFormData(loanData);
   const {
@@ -50,12 +59,31 @@ const LoanDetails = (props) => {
         loanData?.applicationDetails?.ReqLoanAmt__c,
       [LOAN_DETAILS_KEYS.reqTenure]:
         loanData?.applicationDetails?.ReqTenInMonths__c,
-      [LOAN_DETAILS_KEYS.loanPurpose]: "",
-      [LOAN_DETAILS_KEYS.mobile]: loanData?.applicationDetails?.MobNumber__c,
+      [LOAN_DETAILS_KEYS.loanPurpose]: applicationDetails?.LoanPurpose__c,
+      [LOAN_DETAILS_KEYS.mobile]: applicantRecord?.MobNumber__c,
+      [LOAN_DETAILS_KEYS.isExistingCustomer]: applicationDetails?.ExistingCustomer__c,
       [LOAN_DETAILS_KEYS.resAddr]:
         loanData?.adhaarDetails?.address?.combinedAddress,
       [LOAN_DETAILS_KEYS.currAddr]:
-        loanData?.currentAddressDetails?.fullAddress,
+      loanData?.currentAddressDetails?.FullAdrs__c,
+    
+      [LOAN_DETAILS_KEYS.custId]:applicationDetails?.Customer_ID__c,
+      [LOAN_DETAILS_KEYS.bankBalance]: loanDetails?.Bankbalance__c,
+      [LOAN_DETAILS_KEYS.immovableProperty]: loanDetails?.ImmovablePropertyValue__c,
+      [LOAN_DETAILS_KEYS.currPF]: loanDetails?.CurrentPfBalance__c, // not updating
+      [LOAN_DETAILS_KEYS.valShareSecr]: loanDetails?.SharesAndSecurityBalance__c,
+      [LOAN_DETAILS_KEYS.fd]: loanDetails?.FixedDeposits__c, // not updating
+      [LOAN_DETAILS_KEYS.invPlantMachVehi]: loanDetails?.InvestmentInPlants_Machinery_Vehicles__c,
+      [LOAN_DETAILS_KEYS.ownContri]: loanDetails?.OwnContributions__c,
+      [LOAN_DETAILS_KEYS.assetVal]: loanDetails?.OthersAssetsValue__c,
+      [LOAN_DETAILS_KEYS.totalAsset]: loanDetails?.TotalAssets__c,
+      [LOAN_DETAILS_KEYS.amtConstructPurchase]: loanDetails?.AmountSpentForConstruction_Purchase__c,
+      [LOAN_DETAILS_KEYS.savings]: loanDetails?.Savings__c,
+      [LOAN_DETAILS_KEYS.dispAsset]: loanDetails?.DisposalOfAsset__c,
+      [LOAN_DETAILS_KEYS.familyFund]: loanDetails?.FundFromFamily__c,
+      [LOAN_DETAILS_KEYS.srvcFund]: loanDetails?.FundFromOtherServices__c,
+      [LOAN_DETAILS_KEYS.totalIncome]: '',
+      [LOAN_DETAILS_KEYS.totalObligation]: '',
     },
   });
   const [showHelpModal, setShowHelpModal] = useState(false);
