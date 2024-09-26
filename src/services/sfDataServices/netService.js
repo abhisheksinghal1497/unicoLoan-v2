@@ -132,7 +132,7 @@ export const compositeRequest = (requests, allOrNone = true) => {
             reject("Request Failed");
           }
         } else {
-          console.log("CHECK 2 ");
+          console.log("CHECK 2 ", JSON.stringify(res));
           reject("Request Failed");
         }
       },

@@ -340,10 +340,7 @@ export const doOCRForDL = (panName) => {
             "/digital-kyc-v1/api/drivers-license",
             body
           );
-          console.log(
-            "DL RESPONSE ------------",
-            JSON.stringify(response.data)
-          );
+            // nameCheck(panName, response?.data?.results?.name)
           resolve(response?.data);
         } catch (error) {
           errorConsoleLog("verifyDrivingLicence>>", error);
@@ -359,26 +356,16 @@ export const doOCRForDL = (panName) => {
   return mutate;
 };
 
-export const doOCRForPassport = () => {
+export const doOCRForPassport = (panName) => {
   const mutate = useMutation({
     mutationFn: (body) => {
       return new Promise(async (resolve, reject) => {
         try {
-          // var result = body?.substring(1, body.length - 1);
-          // const request = {
-          //   consent: "Y",
-          //   caseId: getUniqueId(),
-
-          //   fileData: {
-          //     content: `${result}`,
-          //     title: "passport",
-          //   },
-          // };
-
           const response = await instance.post(
             "/digital-kyc-v1/api/passport",
             body
           );
+            // nameCheck(panName, response?.data?.results?.name)
           resolve(response?.data);
 
           // const response = {
@@ -534,89 +521,18 @@ export const doOCRForPassport = () => {
   return mutate;
 };
 
-export const doOCRForVoterID = () => {
+export const doOCRForVoterID = (panName) => {
   const mutate = useMutation({
     mutationFn: (body) => {
-      //return instance.post('/digital-utility-v1/api/name-match', body)
+
       return new Promise(async (resolve, reject) => {
         try {
           const response = await instance.post(
             "/digital-kyc-v1/api/voterid",
             body
           );
+          // nameCheck(panName, response?.data?.results?.name)
           resolve(response?.data);
-
-          // resolve({
-          //   statusCode: "200",
-          //   responseId: "1-46712ce0-5c61-11ef-8276-020017039e7e",
-          //   message: null,
-          //   results: {
-          //     acNo: "11",
-          //     rlnName: "ishwar waghulade",
-          //     partNo: "150",
-          //     nameV3: "",
-          //     psLatLong: "21.195904-75.835621",
-          //     stCode: "S13",
-          //     id: "",
-          //     pin: "",
-          //     district: "Jalgaon",
-          //     rlnNameV1: "ईश्\u200dवर वाघुळदे",
-          //     epicNo: "TWJ3164985",
-          //     state: "Maharashtra",
-          //     slNoInPart: "55",
-          //     sectionNo: "1",
-          //     lastUpdate: "",
-          //     rlnNameV2: "",
-          //     rlnNameV3: "",
-          //     acName: "Raver",
-          //     psName: "Z.P.P.Boys School",
-          //     houseNo: "",
-          //     rlnType: "F",
-          //     pcName: "Raver",
-          //     name: "jitendra ishwar waghulade",
-          //     dob: "",
-          //     gender: "M",
-          //     age: 29,
-          //     nameV2: "",
-          //     nameV1: "जितेंद्र ईश्\u200dवर वाघुळदे",
-          //     partName: "Nhavi Pra.Yawal",
-          //     ocrDetails: [
-          //       {
-          //         details: {
-          //           voterid: {
-          //             value: "TWJ3164985",
-          //             conf: 1.0,
-          //           },
-          //           name: {
-          //             value: "Jitendra Ishwar Waghulade",
-          //             conf: 1.0,
-          //           },
-          //           gender: {
-          //             value: "MALE",
-          //             conf: 0.95,
-          //           },
-          //           relation: {
-          //             value: "Ishwar Waghulade",
-          //             conf: 1.0,
-          //           },
-          //           dob: {
-          //             value: "XX/XX/1994",
-          //             conf: 1.0,
-          //           },
-          //           doc: {
-          //             value: "",
-          //             conf: 0.0,
-          //           },
-          //           age: {
-          //             value: "",
-          //             conf: 0.0,
-          //           },
-          //         },
-          //         type: "Voterid Front",
-          //       },
-          //     ],
-          //   },
-          // });
 
           // resolve("saxasx")
         } catch (error) {

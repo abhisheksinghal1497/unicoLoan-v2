@@ -627,7 +627,6 @@ const getLoanDetailPatchBody = (loanData) => {
       [LOAN_DETAILS_KEYS.reqTenure]: loanData?.[LOAN_DETAILS_KEYS.reqTenure],
       [LOAN_DETAILS_KEYS.loanPurpose]:
         loanData?.[LOAN_DETAILS_KEYS.loanPurpose],
-     
     };
   } catch (error) {
     console.log("getLoanDetailPatchBody", error);
@@ -958,6 +957,32 @@ export const getSelfieCreateRequest = (data) => {
   }
 };
 
+export const addressSameAsPermanentCompositeRequest = (data) => {
+  try {
+    const compositeRequest = [
+      {
+        ...postCompositeRequest(
+          "ApplAddr__c",
+          createCurrentAddressIsSameAsPermanentRequest(data, "Current Address"),
+          "ApplAddr__cPost"
+        ),
+      },
+      {
+        ...patchCompositeRequest(
+          "Applicant__c",
+          data?.Applicant__c,
+          { Current_Same_As_Permanent__c: 1, isPerSameAsResi_ADD__c: 1 },
+          "Applicant__cPatch"
+        ),
+      },
+    ];
+
+    return compositeRequest;
+  } catch (error) {
+    return null;
+  }
+};
+
 export const getAadharCreateRequest = (data, aadharData) => {
   //   // RM__c: data?.RM__c,
 
@@ -1179,39 +1204,7 @@ export const getDocType = (type) => {
 
 const getDocMasterEncodedQuery = (type) => {
   const docType = getDocType(type);
-
   return createEncodedQuery(docType.docType, docType.docSubType);
-  // if (type === CaptureAddressConstants.DL) {
-  //   return createEncodedQuery(
-  //     docType.docType,
-  //     docType.docSubType
-  //   );
-  // } else if(type === CaptureAddressConstants.PASSPORT) {
-  //   return createEncodedQuery(
-  //     docType.docType,
-  //     docType.docSubType
-  //   );
-  // } else if (type === CaptureAddressConstants.NREGACard) {
-  //   return createEncodedQuery(
-  //     docType.docType,
-  //     docType.docSubType
-  //   );
-  // } else if (type === CaptureAddressConstants.EBILL) {
-  //   return createEncodedQuery(
-  //     docType.docType,
-  //     docType.docSubType
-  //   );
-  // } else if (type === CaptureAddressConstants.GBILL) {
-  //   return createEncodedQuery(
-  //     docType.docType,
-  //     docType.docSubType
-  //   );
-  // } else if (type === CaptureAddressConstants.MBILL) {
-  //   return createEncodedQuery(
-  //     docType.docType,
-  //     docType.docSubType
-  //   );
-  // }
 };
 
 export const CurrentAddressDocumentCompositeRequests = (
@@ -1276,6 +1269,7 @@ export const CurrentAddressDocumentCompositeRequests = (
           data?.Applicant__c,
           {
             isPerSameAsResi_ADD__c: 0,
+            Current_Same_As_Permanent__c: 0,
           },
           "UpdateApicant"
         ),
