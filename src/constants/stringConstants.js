@@ -14,7 +14,7 @@ export const LOAN_DETAILS_KEYS = {
   reqLoanAmt: "ReqLoanAmt__c",
   reqTenure: "ReqTenInMonths__c",
   loanPurpose: "LoanPurpose__c",  
-  mobile: "MobNumber__c", // not done
+  mobile: "MobNumber__c",
   isExistingCustomer: "ExistingCustomer__c",
   custId: "Customer__c",
   bankBalance: "Bankbalance__c",
@@ -31,7 +31,7 @@ export const LOAN_DETAILS_KEYS = {
   dispAsset: "DisposalOfAsset__c",
   familyFund: "FundFromFamily__c",
   srvcFund: "FundFromOtherServices__c",
-  totalIncome: "Annual_Turnover__c", 
+  totalIncome: "TotalIncome__c", 
   totalObligation: "totalObligation", // not done
   resAddr: "resAddr", 
   currAddr: "currAddr",

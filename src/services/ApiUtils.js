@@ -87,7 +87,7 @@ export const getHomeScreenDetails = () => {
       return new Promise(async (resolve, reject) => {
         try {
           // FETCH THE PINCODE DATA
-
+          console.log('sasasas->')
           const getLeadListData = await getLeadList(
             LocalStorage?.getUserData()?.Phone
           );
@@ -1773,12 +1773,12 @@ export const getLoanDetailsForm = (productType) => {
                 {
                   id: "existCustomer-y",
                   label: "Yes",
-                  value: "yes",
+                  value: "YES",
                 },
                 {
                   id: "existCustomer-n",
                   label: "No",
-                  value: "no",
+                  value: "NO",
                 },
               ],
               value: {},

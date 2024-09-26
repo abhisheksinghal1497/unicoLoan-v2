@@ -194,7 +194,6 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
       Toast.show({ type: "error", text1: "Only 2 co applicants are allowed" });
       return;
     }
-    console.log({ formData });
     const data = {
       ...formData,
       MName__c: formData?.MName__c ?? "",
@@ -208,7 +207,7 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
         objectName: "Applicant__c",
         body: data,
       });
-      console.log("Id HERE ---->", Id);
+     
       setCoApplicantsArr([...coApplicantsArr, { ...data, Id }]);
       setActiveApplicantIndex(-1);
       reset();

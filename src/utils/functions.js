@@ -623,28 +623,23 @@ const patchCompositeRequest = (objectName, objectId, body, referenceId) => {
 const getLoanDetailPatchBody = (loanData) => {
   try {
     return {
-      [LOAN_DETAILS_KEYS.reqLoanAmt]:
-        loanData?.[LOAN_DETAILS_KEYS.reqLoanAmt],
-      [LOAN_DETAILS_KEYS.reqTenure]:
-        loanData?.[LOAN_DETAILS_KEYS.reqTenure],
+      [LOAN_DETAILS_KEYS.reqLoanAmt]: loanData?.[LOAN_DETAILS_KEYS.reqLoanAmt],
+      [LOAN_DETAILS_KEYS.reqTenure]: loanData?.[LOAN_DETAILS_KEYS.reqTenure],
       [LOAN_DETAILS_KEYS.loanPurpose]:
         loanData?.[LOAN_DETAILS_KEYS.loanPurpose],
+     
     };
   } catch (error) {
     console.log("getLoanDetailPatchBody", error);
-    return null
+    return null;
   }
 };
 
 const getApplicantPatchBody = (loanData) => {
   try {
-    console.log('getApplicantPatchBody 1',{
-      [LOAN_DETAILS_KEYS.totalIncome]:
-        loanData?.[LOAN_DETAILS_KEYS.totalIncome],
-      [LOAN_DETAILS_KEYS.isExistingCustomer]:
-        loanData?.[LOAN_DETAILS_KEYS.isExistingCustomer],
+    console.log("HERE-----------", {
       [LOAN_DETAILS_KEYS.custId]: loanData?.[LOAN_DETAILS_KEYS.custId],
-    })
+    });
     return {
       [LOAN_DETAILS_KEYS.totalIncome]:
         loanData?.[LOAN_DETAILS_KEYS.totalIncome],
@@ -654,14 +649,15 @@ const getApplicantPatchBody = (loanData) => {
     };
   } catch (error) {
     console.log("getApplicantPatchBody", error);
-    return null
+    return null;
   }
 };
 
 const getLoanDetailPostBody = (loanData, Applicant__c) => {
   try {
     return {
-      [LOAN_DETAILS_KEYS.bankBalance]: loanData?.[LOAN_DETAILS_KEYS.bankBalance],
+      [LOAN_DETAILS_KEYS.bankBalance]:
+        loanData?.[LOAN_DETAILS_KEYS.bankBalance],
       [LOAN_DETAILS_KEYS.immovableProperty]:
         loanData?.[LOAN_DETAILS_KEYS.immovableProperty],
       [LOAN_DETAILS_KEYS.invPlantMachVehi]:
@@ -675,16 +671,14 @@ const getLoanDetailPostBody = (loanData, Applicant__c) => {
       [LOAN_DETAILS_KEYS.dispAsset]: loanData?.[LOAN_DETAILS_KEYS.dispAsset],
       [LOAN_DETAILS_KEYS.familyFund]: loanData?.[LOAN_DETAILS_KEYS.familyFund],
       [LOAN_DETAILS_KEYS.srvcFund]: loanData?.[LOAN_DETAILS_KEYS.srvcFund],
-      [LOAN_DETAILS_KEYS.valShareSecr]: loanData?.[LOAN_DETAILS_KEYS.valShareSecr],
+      [LOAN_DETAILS_KEYS.valShareSecr]:
+        loanData?.[LOAN_DETAILS_KEYS.valShareSecr],
       [LOAN_DETAILS_KEYS.fd]: loanData?.[LOAN_DETAILS_KEYS.fd],
       [LOAN_DETAILS_KEYS.currPF]: loanData?.[LOAN_DETAILS_KEYS.currPF],
-      // [LOAN_DETAILS_KEYS.totalIncome]: loanData?.loanDetails?.[LOAN_DETAILS_KEYS.totalIncome],
       Appl__c: Applicant__c,
-    }
-  } catch (error) {
-    
-  }
-  };
+    };
+  } catch (error) {}
+};
 
 export const createCompositeRequestForLoadDetails = (
   formData,
@@ -707,7 +701,7 @@ export const createCompositeRequestForLoadDetails = (
         "patchApplicant"
       ),
     ];
-   
+
     if (loanDetails?.Id) {
       compositeRequests.push(
         patchCompositeRequest(
@@ -1395,7 +1389,6 @@ export const createCompositeRequestForMetadata = () => {
   }
 };
 
-
 export const compositeFetchImage = (LinkedEntityId) => {
   try {
     const compositeRequest = [
@@ -1409,8 +1402,8 @@ export const compositeFetchImage = (LinkedEntityId) => {
       },
       {
         ...getCompositeRequest(
-            "SELECT VersionData FROM ContentVersion WHERE ContentDocumentId = '@{ContentDocumentLink.records[0].ContentDocumentId}'", 
-            "ContentVersion"
+          "SELECT VersionData FROM ContentVersion WHERE ContentDocumentId = '@{ContentDocumentLink.records[0].ContentDocumentId}'",
+          "ContentVersion"
         ),
       },
     ];

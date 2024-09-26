@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
 import {
   FlatList,
   Dimensions,
@@ -39,6 +45,7 @@ import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 import { useResetRoutes } from "../../utils/functions";
 import { get } from "react-hook-form";
 import LocalStorage from "../../services/LocalStorage";
+import { useFocusEffect } from "@react-navigation/native";
 const screenWidth = Dimensions.get("window").width;
 const HomeScreen = ({ navigation }) => {
   const flatListRef = useRef(null);
@@ -52,10 +59,12 @@ const HomeScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [currentScreen, setCurrentScreen] = useState(false);
 
-  useEffect(() => {
-    getLoanCardData?.mutate();
-    getOurServicesCardData?.mutate();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      getLoanCardData?.mutate();
+      getOurServicesCardData?.mutate();
+    }, [])
+  );
 
   useEffect(() => {
     if (getLoanCardData.data) {
@@ -345,10 +354,12 @@ const HomeScreen = ({ navigation }) => {
                 </View>
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={() =>{
-                 LocalStorage.clearAllData();
-                 oauth.logout()
-                 }}>
+              <TouchableOpacity
+                onPress={() => {
+                  LocalStorage.clearAllData();
+                  oauth.logout();
+                }}
+              >
                 <Text>Logout</Text>
               </TouchableOpacity>
             </View>

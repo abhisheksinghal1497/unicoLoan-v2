@@ -26,28 +26,23 @@ import ProgressCard from "../../components/ProgressCard";
 import { getLoanDetailsForm } from "../../services/ApiUtils";
 import { useResetRoutes } from "../../utils/functions";
 
-// 
+//
 
 const LoanDetails = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [mock_loan_details_data, setMockDetails] = useState([]);
-  
-
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
   const resetRoute = useResetRoutes();
-
-  const {applicationDetails ={}, loanDetails={}} = loanData;
-  const formData = getLoanDetailsForm(applicationDetails?.Product__c);
+  const { applicationDetails = {}, loanDetails = {} } = loanData;
 
   let applicantRecord = applicationDetails?.Applicants__r?.records?.filter(
     (el) => el.ApplType__c === "P"
   )[0];
-
+  const formData = getLoanDetailsForm(applicationDetails?.Product__c);
   const submitLoanMutate = useSubmitLoanFormData(loanData);
   const {
     control,
-    handleSubmit,
     formState: { errors, isValid },
     setValue,
     watch,
@@ -55,35 +50,48 @@ const LoanDetails = (props) => {
   } = useForm({
     mode: "onChange",
     defaultValues: {
-      [LOAN_DETAILS_KEYS.reqLoanAmt]:
-        loanData?.applicationDetails?.ReqLoanAmt__c,
-      [LOAN_DETAILS_KEYS.reqTenure]:
-        loanData?.applicationDetails?.ReqTenInMonths__c,
-      [LOAN_DETAILS_KEYS.loanPurpose]: applicationDetails?.LoanPurpose__c,
-      [LOAN_DETAILS_KEYS.mobile]: applicantRecord?.MobNumber__c,
-      [LOAN_DETAILS_KEYS.isExistingCustomer]: applicationDetails?.ExistingCustomer__c,
+      // LOAN DATA - DONE
       [LOAN_DETAILS_KEYS.resAddr]:
         loanData?.adhaarDetails?.address?.combinedAddress,
       [LOAN_DETAILS_KEYS.currAddr]:
-      loanData?.currentAddressDetails?.FullAdrs__c,
-    
-      [LOAN_DETAILS_KEYS.custId]:applicationDetails?.Customer_ID__c,
+        loanData?.currentAddressDetails?.FullAdrs__c,
+      // LOAN DATA ENDS
+
+      // applicationDetails --DONE
+      [LOAN_DETAILS_KEYS.reqLoanAmt]: applicationDetails?.ReqLoanAmt__c,
+      [LOAN_DETAILS_KEYS.reqTenure]: applicationDetails?.ReqTenInMonths__c,
+      [LOAN_DETAILS_KEYS.loanPurpose]: applicationDetails?.LoanPurpose__c,
+      // applicationDetails
+
+      // applicantRecord --DONE
+      [LOAN_DETAILS_KEYS.mobile]: applicantRecord?.MobNumber__c,
+      [LOAN_DETAILS_KEYS.isExistingCustomer]:
+        applicantRecord?.ExistingCustomer__c,
+      [LOAN_DETAILS_KEYS.totalIncome]: applicantRecord?.TotalIncome__c,
+      [LOAN_DETAILS_KEYS.custId]: applicantRecord?.Customer__c,
+      // applicantRecord
+
+      // loanDetails
       [LOAN_DETAILS_KEYS.bankBalance]: loanDetails?.Bankbalance__c,
-      [LOAN_DETAILS_KEYS.immovableProperty]: loanDetails?.ImmovablePropertyValue__c,
-      [LOAN_DETAILS_KEYS.currPF]: loanDetails?.CurrentPfBalance__c, // not updating
-      [LOAN_DETAILS_KEYS.valShareSecr]: loanDetails?.SharesAndSecurityBalance__c,
-      [LOAN_DETAILS_KEYS.fd]: loanDetails?.FixedDeposits__c, // not updating
-      [LOAN_DETAILS_KEYS.invPlantMachVehi]: loanDetails?.InvestmentInPlants_Machinery_Vehicles__c,
+      [LOAN_DETAILS_KEYS.immovableProperty]:
+        loanDetails?.ImmovablePropertyValue__c,
+      [LOAN_DETAILS_KEYS.currPF]: loanDetails?.CurrentPfBalance__c,
+      [LOAN_DETAILS_KEYS.valShareSecr]:
+        loanDetails?.SharesAndSecurityBalance__c,
+      [LOAN_DETAILS_KEYS.fd]: loanDetails?.FixedDeposits__c,
+      [LOAN_DETAILS_KEYS.invPlantMachVehi]:
+        loanDetails?.InvestmentInPlants_Machinery_Vehicles__c,
       [LOAN_DETAILS_KEYS.ownContri]: loanDetails?.OwnContributions__c,
       [LOAN_DETAILS_KEYS.assetVal]: loanDetails?.OthersAssetsValue__c,
       [LOAN_DETAILS_KEYS.totalAsset]: loanDetails?.TotalAssets__c,
-      [LOAN_DETAILS_KEYS.amtConstructPurchase]: loanDetails?.AmountSpentForConstruction_Purchase__c,
+      [LOAN_DETAILS_KEYS.amtConstructPurchase]:
+        loanDetails?.AmountSpentForConstruction_Purchase__c,
       [LOAN_DETAILS_KEYS.savings]: loanDetails?.Savings__c,
       [LOAN_DETAILS_KEYS.dispAsset]: loanDetails?.DisposalOfAsset__c,
       [LOAN_DETAILS_KEYS.familyFund]: loanDetails?.FundFromFamily__c,
       [LOAN_DETAILS_KEYS.srvcFund]: loanDetails?.FundFromOtherServices__c,
-      [LOAN_DETAILS_KEYS.totalIncome]: '',
-      [LOAN_DETAILS_KEYS.totalObligation]: '',
+      // loanDetails
+      [LOAN_DETAILS_KEYS.totalObligation]: "",
     },
   });
   const [showHelpModal, setShowHelpModal] = useState(false);
@@ -109,33 +117,74 @@ const LoanDetails = (props) => {
   }, [formData.error]);
 
   const onSubmit = async () => {
-    const data = watch();
-    console.log("DATA here-------------", data);
-    // const isValid = await trigger();
-    // if (!isValid) {
-    //   // toast("error", "Value is invalid");
+    try {
+      const data = watch();
+      let applicantRecordsArr = [...applicationDetails?.Applicants__r?.records];
+      let updatedApplicantRecordIndex = applicantRecordsArr?.findIndex(
+        (el) => el.ApplType__c === "P"
+      );
+      let updatedApplicantRecord;
 
-    //   return;
-    // }
-    // const data = watch()
-    // await AsyncStorage.setItem("LoanDetails", JSON.stringify(data));
-    submitLoanMutate.mutate(data);
+      if (
+        updatedApplicantRecordIndex !== -1 &&
+        typeof updatedApplicantRecordIndex !== "undefined"
+      ) {
+        updatedApplicantRecord = {
+          ...applicantRecordsArr[updatedApplicantRecordIndex],
+          MobNumber__c: data[LOAN_DETAILS_KEYS.mobile],
+          ExistingCustomer__c: data[LOAN_DETAILS_KEYS.isExistingCustomer],
+          TotalIncome__c: data[LOAN_DETAILS_KEYS.totalIncome],
+          Customer__c: data[LOAN_DETAILS_KEYS.custId],
+        };
+        applicantRecordsArr[updatedApplicantRecordIndex] = {
+          ...updatedApplicantRecord,
+        };
+      }
+
+      const updatedLoanData = {
+        ...loanData,
+        applicationDetails: {
+          ...loanData?.applicationDetails,
+          ReqLoanAmt__c: data[LOAN_DETAILS_KEYS.reqLoanAmt],
+          ReqTenInMonths__c: data[LOAN_DETAILS_KEYS.reqTenure],
+          LoanPurpose__c: data[LOAN_DETAILS_KEYS.loanPurpose],
+
+          Applicants__r: {
+            ...loanData?.applicationDetails.Applicants__r,
+            records: applicantRecordsArr,
+          },
+        },
+
+        loanDetails: {
+          ...loanData?.loanDetails,
+          Bankbalance__c: data[LOAN_DETAILS_KEYS.bankBalance],
+          ImmovablePropertyValue__c: data[LOAN_DETAILS_KEYS.immovableProperty],
+          CurrentPfBalance__c: data[LOAN_DETAILS_KEYS.currPF],
+          SharesAndSecurityBalance__c: data[LOAN_DETAILS_KEYS.valShareSecr],
+          FixedDeposits__c: data[LOAN_DETAILS_KEYS.fd],
+          InvestmentInPlants_Machinery_Vehicles__c:
+            data[LOAN_DETAILS_KEYS.invPlantMachVehi],
+          OwnContributions__c: data[LOAN_DETAILS_KEYS.ownContri],
+          OthersAssetsValue__c: data[LOAN_DETAILS_KEYS.assetVal],
+          TotalAssets__c: data[LOAN_DETAILS_KEYS.totalAsset],
+          AmountSpentForConstruction_Purchase__c:
+            data[LOAN_DETAILS_KEYS.amtConstructPurchase],
+          Savings__c: data[LOAN_DETAILS_KEYS.savings],
+          DisposalOfAsset__c: data[LOAN_DETAILS_KEYS.dispAsset],
+          FundFromFamily__c: data[LOAN_DETAILS_KEYS.familyFund],
+          FundFromOtherServices__c: data[LOAN_DETAILS_KEYS.srvcFund],
+        },
+      };
+
+      await submitLoanMutate.mutateAsync(data);
+      props?.navigation?.navigate(screens.Eligibility, {
+        loanData: updatedLoanData,
+      });
+    } catch (error) {
+      console.log("SOME ERROR OCCURED", error);
+    }
   };
 
-  useEffect(() => {
-    if (submitLoanMutate.data) {
-      props?.navigation?.navigate(screens.Eligibility, {
-        loanData: submitLoanMutate.data,
-      });
-    }
-  }, [submitLoanMutate.data]);
-
-  useEffect(() => {
-    if (submitLoanMutate.error) {
-      // log("submitLoanMutate error", submitLoanMutate.error);
-      // alert(ErrorConstants.SOMETHING_WENT_WRONG);
-    }
-  }, [submitLoanMutate.error]);
 
   const bankBalance = watch(LOAN_DETAILS_KEYS.bankBalance);
   const currPF = watch(LOAN_DETAILS_KEYS.currPF);
@@ -197,15 +246,9 @@ const LoanDetails = (props) => {
       const currentData = JSON.parse(savedData);
 
       if (currentData) {
-        //! showLoader
-        // console.log(currentData, "current value");
-
         for (const key in currentData) {
           setValue(key, currentData[key]);
-          // console.log(`${key}: ${_data[key]} | ${typeof _data[key]}`);
         }
-
-        //! hide Loader
       }
     })();
   }, []);
