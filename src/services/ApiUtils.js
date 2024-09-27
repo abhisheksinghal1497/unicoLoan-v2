@@ -19,6 +19,7 @@ import {
   getUniqueId,
   toast,
   compositeFetchImage,
+  addressSameAsPermanentCompositeRequest,
 } from "../utils/functions";
 import {
   getLeadFields,
@@ -87,7 +88,7 @@ export const getHomeScreenDetails = () => {
       return new Promise(async (resolve, reject) => {
         try {
           // FETCH THE PINCODE DATA
-
+          console.log("sasasas->");
           const getLeadListData = await getLeadList(
             LocalStorage?.getUserData()?.Phone
           );
@@ -136,10 +137,13 @@ export const getHomeScreenDetails = () => {
                     el?.AddrTyp__c === "Permanent Address" &&
                     el?.Applicant__c === kycId
                 );
+
+              console.log("permanentAddress", JSON.stringify(permanentAddress));
+
               const loanDetail = compositGraphRequest[2]?.body?.records?.find(
                 (el) => el?.Appl__c === kycId
               );
-          
+
               const data = {
                 loanId: record?.Id,
                 applicationDetails: record,
@@ -170,8 +174,8 @@ export const getHomeScreenDetails = () => {
                       pincode: permanentAddress?.Pincode__c,
                       district: permanentAddress?.District__c,
                     },
-                    combinedAddress: permanentAddress?.FullAdrs__c || ''
-                  }
+                    combinedAddress: permanentAddress?.FullAdrs__c || "",
+                  },
                 },
                 loanDetails: loanDetail,
                 currentAddressDetails: currentAddress,
@@ -206,25 +210,67 @@ export const getHomeScreenDetails = () => {
   return mutate;
 };
 
+const getNumberOfDependent = (
+  No_of_Family_Dependants_Children__c,
+  No_of_Family_Dependants_Other__c
+) => {
+  if (No_of_Family_Dependants_Children__c && No_of_Family_Dependants_Other__c) {
+    return (
+      No_of_Family_Dependants_Children__c + No_of_Family_Dependants_Other__c
+    );
+  } else if (No_of_Family_Dependants_Children__c) {
+    return No_of_Family_Dependants_Children__c;
+  } else if (No_of_Family_Dependants_Other__c) {
+    return No_of_Family_Dependants_Other__c;
+  }
+
+  return 0;
+};
+
 export const getEligibilityDetails = (loanData) => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (data) => {
-      const { applicationDetails, loanDetails } = data || {};
+      const { applicationDetails = {}, loanDetails = {} } = data || {};
       return new Promise(async (resolve, reject) => {
-        console.log({ applicationDetails, loanDetails });
+        const applicantRecord =
+          applicationDetails?.Applicants__r?.records?.filter(
+            (el) => el.ApplType__c === "P"
+          )[0] || {};
+
+        const dependent = getNumberOfDependent(
+          applicantRecord?.No_of_Family_Dependants_Children__c,
+          applicantRecord?.No_of_Family_Dependants_Other__c
+        );
+
+        function formatNumber(value) {
+          if (!value) {
+            return "0 lac";
+          }
+          const num = typeof value === "string" ? parent(value) : value;
+          if (num === 0) {
+            return "0 lac";
+          }
+          if (num < 10000000) {
+            return Math.floor(num / 100000).toFixed(2) + " lac"; // Return in lakhs
+          } else {
+            return Math.floor(num / 10000000).toFixed(2) + " cr"; // Return in crores
+          }
+        }
+
         try {
           const data = {
             Product: applicationDetails?.Product__c,
-            "Sub Product": loanDetails?.loanPurpose,
-            "Request Loan Amount": "2 Lac",
-            // applicationDetails?.ReqLoanAmt__c?.substring(0, 2) + " lac",
-            "Number of Dependents": 11,
-            "Residential Stability": "",
+            "Sub Product": applicationDetails?.LoanPurpose__c,
+            "Request Loan Amount": formatNumber(
+              applicationDetails?.ReqLoanAmt__c
+            ),
+            "Number of Dependents": dependent,
+            "Residential Stability": applicantRecord?.Present_Accomodation__c,
             "Cibil Score": 846,
-            "DPD Status": true,
+            "DPD Status": 1,
             "Business Vintage": 2,
-            "Net Asset": loanDetails?.totalAsset,
+            "Net Asset": loanDetails?.TotalAssets__c,
             "Total Score": 90,
             "Number of Enquiries in the last 6 months": 2,
             "Eligible Status": "Not Eligible", //Not Eligible
@@ -233,7 +279,6 @@ export const getEligibilityDetails = (loanData) => {
             "Employment Stability": 1,
             Qualification: "BCA",
             Parameter: 1,
-            "Eligible Status": "Not Eligible",
           };
 
           let loanDetail = { ...loanData };
@@ -1179,16 +1224,21 @@ export const useSubmitLoanFormData = (loanData) => {
     mutationFn: async (data) => {
       return new Promise(async (resolve, reject) => {
         let loanDetail = { ...loanData };
-    
+
         // loanDetail.loanDetails = { ...data };
         try {
           const response = await compositeRequest(
-            createCompositeRequestForLoadDetails(data, loanDetail.loanDetails, loanData?.loanId, loanData?.Applicant__c)
+            createCompositeRequestForLoadDetails(
+              data,
+              loanDetail.loanDetails,
+              loanData?.loanId,
+              loanData?.Applicant__c
+            )
           );
           await saveApplicationData(loanDetail);
           resolve({ ...loanDetail });
         } catch (error) {
-          console.log('skdjhdf', error)
+          console.log("skdjhdf", error);
           reject(ErrorConstants.SOMETHING_WENT_WRONG);
         }
       });
@@ -1619,8 +1669,9 @@ export const useResendOtpService = () => {
 export const useSaveSelfie = (loanData) => {
   const mutate = useMutation({
     networkMode: "always",
-    mutationFn: async (selfie) => {
+    mutationFn: async (formData) => {
       return new Promise(async (resolve, reject) => {
+        const { selfie, lat, long } = formData;
         let data = { ...loanData };
         data.selfieDetails = selfie;
 
@@ -1632,9 +1683,15 @@ export const useSaveSelfie = (loanData) => {
           const applicationKycId = ApplKyc__c?.id;
           try {
             const responseComposite = await compositeRequest(
-              createCompositeRequestsForSelfieUpload(data, applicationKycId),
+              createCompositeRequestsForSelfieUpload(
+                data,
+                applicationKycId,
+                lat,
+                long
+              ),
               false
             );
+            console.log("responseComposite", JSON.stringify(responseComposite));
           } catch (error) {}
 
           const response = await saveApplicationData(data);
@@ -1666,12 +1723,10 @@ export const useKycDocument = (loanData) => {
           fullAddress: loanData?.adhaarDetails?.address?.combinedAddress,
         };
 
-        const body = createCurrentAddressIsSameAsPermanentRequest(
-          data,
-          "Current Address"
+        const saveCurrentAddress = await compositeRequest(
+          addressSameAsPermanentCompositeRequest(data)
         );
-
-        const saveCurrentAddress = await postObjectData("ApplAddr__c", body);
+        console.log("saveCurrentAddress", saveCurrentAddress);
 
         if (saveCurrentAddress) {
           console.log("FULL ADDRESS", data.currentAddressDetails);
@@ -1707,7 +1762,7 @@ export const getLoanDetailsForm = (productType) => {
       return new Promise(async (resolve, reject) => {
         try {
           const fieldArray = await getLeadFields();
-          console.log({productType})
+          console.log({ productType });
           const mock_data = [
             {
               id: "ReqLoanAmt__c",
@@ -1740,10 +1795,7 @@ export const getLoanDetailsForm = (productType) => {
               validations: {
                 ...validations.required,
               },
-              data: GetPicklistValues(
-                fieldArray,
-                productType
-              ),
+              data: GetPicklistValues(fieldArray, productType),
               value: "",
             },
 
@@ -1769,16 +1821,15 @@ export const getLoanDetailsForm = (productType) => {
                 ...validations.required,
               },
               data: [
-                
                 {
                   id: "existCustomer-y",
                   label: "Yes",
-                  value: "yes",
+                  value: "YES",
                 },
                 {
                   id: "existCustomer-n",
                   label: "No",
-                  value: "no",
+                  value: "NO",
                 },
               ],
               value: {},
@@ -1790,7 +1841,7 @@ export const getLoanDetailsForm = (productType) => {
               type: component.number,
               placeHolder: "Enter Customer ID",
               value: 0,
-         
+
               keyboardtype: "numeric",
               validations: validations.numberOnly,
             },
@@ -2210,7 +2261,6 @@ export const checkIfUserHasGivenConsent = (applicationId) => {
   return mutate;
 };
 
-
 export const getSanctionLetterQuery = (applicationId) => {
   const query = useQueries({
     queries: [
@@ -2219,7 +2269,9 @@ export const getSanctionLetterQuery = (applicationId) => {
         queryFn: () =>
           new Promise(async (resolve, reject) => {
             try {
-              const response = await getInPrincipleSanctionLetter(applicationId);
+              const response = await getInPrincipleSanctionLetter(
+                applicationId
+              );
               resolve(response);
             } catch (error) {
               console.log("RESPONSE--", error);

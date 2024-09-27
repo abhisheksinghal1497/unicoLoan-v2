@@ -37,8 +37,6 @@ const KYCDocuments = ({ navigation }) => {
 
   const { selfieDetails = {} } = loanData;
 
-  console.log("selfieDetails", selfieDetails?.Document_Detail__c);
-
   const toggleHelpModal = () => {
     setShowHelpModal(!showHelpModal);
   };
@@ -51,8 +49,6 @@ const KYCDocuments = ({ navigation }) => {
         const imageBase64 = await getBase64Image(
           selfieDetails?.Document_Detail__c
         );
-        const base64Str = RNFetchBlob.base64.encode(imageBase64);
-        console.log('imageBase64', base64Str)
         setSelectedImageSelfie(imageBase64);
       } catch (error) {
         console.log('ERROR ', error)

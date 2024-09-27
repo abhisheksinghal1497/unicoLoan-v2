@@ -15,15 +15,20 @@ import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 import CoApplicant from "../CoApplicant";
 import { useResetRoutes } from "../../utils/functions";
 
-
 const Eligibility = (props) => {
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
   const { applicationDetails = {}, loanDetails = {}, loanId } = loanData;
-  const  resetRoute = useResetRoutes()
+  const resetRoute = useResetRoutes();
   const [cardData, setCardData] = useState();
   const eligibilityDetails = getEligibilityDetails(loanData);
-  const [coApplicantsArr, setCoApplicantsArr] = useState(Array.isArray(applicationDetails?.Applicants__r?.records) ? applicationDetails?.Applicants__r?.records.filter(el => el.ApplType__c === 'C') : []);
+  const [coApplicantsArr, setCoApplicantsArr] = useState(
+    Array.isArray(applicationDetails?.Applicants__r?.records)
+      ? applicationDetails?.Applicants__r?.records.filter(
+          (el) => el.ApplType__c === "C"
+        )
+      : []
+  );
   const [showHelpModal, setShowHelpModal] = useState(false);
 
   const toggleHelpModal = () => {
@@ -97,7 +102,7 @@ const Eligibility = (props) => {
         titleStyle={{ fontSize: verticalScale(18) }}
         onPressRight={handleRightIconPress}
         onPressLeft={() => {
-          resetRoute(screens.LoanDetails, {loanData})
+          resetRoute(screens.LoanDetails, { loanData });
         }}
         showHelpModal={showHelpModal}
         toggleHelpModal={toggleHelpModal}
@@ -163,6 +168,7 @@ const Eligibility = (props) => {
 };
 
 const CustomComponent = ({ title, value }) => {
+  console.log({title, value})
   return (
     <View style={styles.customCompCon}>
       <Text variant="titleSmall" style={styles.titleStyle}>
@@ -242,7 +248,6 @@ const styles = StyleSheet.create({
     fontSize: 9,
     marginBottom: 10,
   },
-
 });
 
 export default Eligibility;

@@ -42,7 +42,6 @@ export default function OtpInput({
   };
 
   const handleKeyPress = (e, index, otp) => {
-    console.log('-------------------',e, index, otp)
     if (e.nativeEvent.key === "Backspace" && index > 0) {
       inputRefs[index - 1]?.focus();
     }

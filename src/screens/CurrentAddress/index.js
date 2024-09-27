@@ -78,8 +78,8 @@ const CurrentAddress = ({ navigation }) => {
   // const TempKyc = getTempAddressKycList();
 
   const dlCheck = doOCRForDL(panName);
-  const passportCheck = doOCRForPassport();
-  const voterIdCheck = doOCRForVoterID();
+  const passportCheck = doOCRForPassport(panName);
+  const voterIdCheck = doOCRForVoterID(panName);
   const submitMutation = submitDrivingLicenseMutation(loanData);
   const canvasRef = useRef(null);
 
@@ -239,13 +239,14 @@ const CurrentAddress = ({ navigation }) => {
 
   const voterIdFields = [
     {
-      id: "voterID",
+      id: "VotIdEpicNo__c",
       label: "Voter Id No",
       type: component.textInput,
       placeHolder: "Enter Voter Id No",
       isRequired: true,
       value: "",
     },
+    ...addressForm,
   ];
 
   const neregaFields = [
@@ -402,8 +403,6 @@ const CurrentAddress = ({ navigation }) => {
         firstImageSelected?.data,
         secondImageSelected?.data
       );
-
-      // uploadMultipleFiles("ajdcghsgsddsghghds");
     }
     // wait for 2 seconds
   }, [canvasRef.current, firstImageSelected, secondImageSelected]);
@@ -463,10 +462,32 @@ const CurrentAddress = ({ navigation }) => {
         if (selectedItem === CaptureAddressConstants.PASSPORT) {
           handlePassportRequest(request, dataURL);
         } else if (selectedItem === CaptureAddressConstants.VOTERID) {
-          voterIdCheck?.mutate(request);
+          handleVoterIdRequest(request, dataURL);
         }
       }
     } catch (error) {}
+  };
+
+  const handleVoterIdRequest = async (request, dataURL) => {
+    try {
+      const response = await voterIdCheck?.mutateAsync(request);
+
+      const voterIdDetails = response?.results;
+
+      setValue("VotIdEpicNo__c", voterIdDetails?.epicNo);
+      setValue("Pincode__c", voterIdDetails?.pin);
+      setValue("District__c", voterIdDetails?.district);
+      setValue("city__c", voterIdDetails?.district);
+      setValue("State__c", voterIdDetails?.state);
+
+      // setValue("AddrLine1__c", address?.line1);
+      // setValue("AddrLine2__c", address?.line2);
+      // setValue("Landmark__c", address?.landmark);
+      // setValue("Locality__c", address?.locality);
+    } catch (error) {
+      console.log("RESPONSE ERROR ", error);
+      Toast.show({ type: "error", text1: ErrorConstant.SOMETHING_WENT_WRONG });
+    }
   };
 
   useEffect(() => {
@@ -874,8 +895,6 @@ const CurrentAddress = ({ navigation }) => {
     }
   };
 
-  console.log("IS DL PENDING --------------", dlCheck.isPending);
-
   return (
     <ScrollView style={{ backgroundColor: "#ffff" }}>
       <View style={styles.container}>
@@ -1178,7 +1197,7 @@ const CurrentAddress = ({ navigation }) => {
                 isDisabled={
                   comp.isDisabled ||
                   selectedItem === CaptureAddressConstants.PASSPORT ||
-                  selectedItem === CaptureAddressConstants.VOTERID ||
+                  (selectedItem === CaptureAddressConstants.VOTERID && comp.id === 'VotIdEpicNo__c') ||
                   selectedItem === CaptureAddressConstants.DL
                 }
                 // isUpperCaseRequired={true}
