@@ -138,6 +138,8 @@ export const getHomeScreenDetails = () => {
                     el?.Applicant__c === kycId
                 );
 
+              console.log("permanentAddress", JSON.stringify(permanentAddress));
+
               const loanDetail = compositGraphRequest[2]?.body?.records?.find(
                 (el) => el?.Appl__c === kycId
               );
@@ -242,11 +244,11 @@ export const getEligibilityDetails = (loanData) => {
         );
 
         function formatNumber(value) {
-          if(!value){
+          if (!value) {
             return "0 lac";
           }
-          const num = typeof value === 'string' ? parent(value) : value;
-          if(num === 0){
+          const num = typeof value === "string" ? parent(value) : value;
+          if (num === 0) {
             return "0 lac";
           }
           if (num < 10000000) {
@@ -260,7 +262,9 @@ export const getEligibilityDetails = (loanData) => {
           const data = {
             Product: applicationDetails?.Product__c,
             "Sub Product": applicationDetails?.LoanPurpose__c,
-            "Request Loan Amount": formatNumber(applicationDetails?.ReqLoanAmt__c) ,
+            "Request Loan Amount": formatNumber(
+              applicationDetails?.ReqLoanAmt__c
+            ),
             "Number of Dependents": dependent,
             "Residential Stability": applicantRecord?.Present_Accomodation__c,
             "Cibil Score": 846,
@@ -1665,8 +1669,9 @@ export const useResendOtpService = () => {
 export const useSaveSelfie = (loanData) => {
   const mutate = useMutation({
     networkMode: "always",
-    mutationFn: async (selfie) => {
+    mutationFn: async (formData) => {
       return new Promise(async (resolve, reject) => {
+        const { selfie, lat, long } = formData;
         let data = { ...loanData };
         data.selfieDetails = selfie;
 
@@ -1678,9 +1683,15 @@ export const useSaveSelfie = (loanData) => {
           const applicationKycId = ApplKyc__c?.id;
           try {
             const responseComposite = await compositeRequest(
-              createCompositeRequestsForSelfieUpload(data, applicationKycId),
+              createCompositeRequestsForSelfieUpload(
+                data,
+                applicationKycId,
+                lat,
+                long
+              ),
               false
             );
+            console.log("responseComposite", JSON.stringify(responseComposite));
           } catch (error) {}
 
           const response = await saveApplicationData(data);

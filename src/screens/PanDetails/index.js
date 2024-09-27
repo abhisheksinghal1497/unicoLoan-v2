@@ -93,7 +93,6 @@ const PanDetails = (props) => {
 
         const panCapital = panNumber?.toString()?.toUpperCase();
         const response = verifyPan?.data?.data;
-        log("panVerify data>>>>", JSON.stringify(response));
         setIsVerified(true);
         showResponseData(response?.results?.name, "");
         toast("success", "Pan Verified");
@@ -118,7 +117,6 @@ const PanDetails = (props) => {
     if (uploadPan?.data) {
       try {
         const response = uploadPan?.data?.data;
-        log("uploadPan data>>>>", JSON.stringify(response));
         setUploadIsVerified(true);
         toast("success", "Pan Verified");
         showResponseData(
@@ -255,7 +253,6 @@ const PanDetails = (props) => {
       mediaType: "photo",
     })
       .then(async (image) => {
-        console.log(image, "image value");
         setSelectedImage(image);
         uploadPan.mutate({
           fileData: {

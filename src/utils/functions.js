@@ -729,7 +729,9 @@ export const createCompositeRequestForLoadDetails = (
 
 export const createCompositeRequestsForSelfieUpload = (
   data,
-  applicationKycId
+  applicationKycId,
+  lat,
+  long
 ) => {
   try {
     const compositeRequests = [
@@ -745,6 +747,8 @@ export const createCompositeRequestsForSelfieUpload = (
         body: {
           ...getDocDetailBody(data, applicationKycId, "Selfie"),
           DocMstr__c: "@{docQuery.records[0].Id}",
+          Lat__c: lat,
+          Long__c: long,
         },
       },
       {
@@ -835,9 +839,23 @@ export const createCompositeRequestsForPanUpload = (data, applicationKycId) => {
 export const createCompositeRequestsForAdhaarUpload = (
   data,
   applicationKycId,
-  imageBase64
+  imageBase64,
+  isImageUpload
 ) => {
   try {
+    // IF we are not uploading any image just save address
+    if (!isImageUpload) {
+      return [
+        {
+          ...postCompositeRequest(
+            "ApplAddr__c",
+            getAadharAddressRequest(data),
+            "adhaarPermanentAddress"
+          ),
+        },
+      ];
+    }
+
     const compositeRequests = [
       {
         method: "GET",
@@ -921,6 +939,13 @@ export const createCompositeRequestsForAdhaarUpload = (
         url: `/services/data/${net.getApiVersion()}/sobjects/ApplKyc__c/${applicationKycId}`,
         referenceId: "poaApplKycPatch",
         body: panKycUpdateBody("@{poadocDetailPost.id}"),
+      },
+      {
+        ...postCompositeRequest(
+          "ApplAddr__c",
+          getAadharAddressRequest(data),
+          "adhaarPermanentAddress"
+        ),
       },
     ];
 
@@ -1050,21 +1075,27 @@ export const createCurrentAddressIsSameAsPermanentRequest = (
 export const getAadharAddressRequest = (data) => {
   //   // RM__c: data?.RM__c,
   try {
-    const street = data?.adhaarDetails?.address?.splitAddress?.street;
-    const location = data?.adhaarDetails?.address?.splitAddress?.location;
+    const adhaarDetails = data?.adhaarDetails;
+    console.log("adhaarDetails", adhaarDetails);
     return {
       Applicant__c: data?.Applicant__c,
       LoanAppl__c: data?.data?.loanId,
-      HouseNo__c: data?.adhaarDetails?.address?.splitAddress?.houseNumber,
-      Landmark__c: data?.adhaarDetails?.address?.splitAddress?.landmark,
-      AddrLine1__c: street ? street : location ? location : null,
-      AddrLine2__c: location ? location : street ? street : null,
+      HouseNo__c: adhaarDetails?.address?.splitAddress?.houseNumber ?? null,
+      Landmark__c: adhaarDetails?.address?.splitAddress?.landmark ?? null,
+      AddrLine1__c:
+        adhaarDetails?.address?.splitAddress?.street ??
+        adhaarDetails?.address?.splitAddress?.location ??
+        null,
+      AddrLine2__c:
+        adhaarDetails?.address?.splitAddress?.location ??
+        adhaarDetails?.address?.splitAddress?.street ??
+        null,
       AddrTyp__c: "Permanent Address",
-      State__c: data?.adhaarDetails?.address?.splitAddress?.state,
-      Country__c: data?.adhaarDetails?.address?.splitAddress?.country,
-      Pincode__c: data?.adhaarDetails?.address?.splitAddress?.pincode,
-      District__c: data?.adhaarDetails?.address?.splitAddress?.district,
-      city__c: data?.adhaarDetails?.address?.splitAddress?.district,
+      State__c: adhaarDetails?.address?.splitAddress?.state ?? null,
+      Country__c: adhaarDetails?.address?.splitAddress?.country ?? null,
+      Pincode__c: adhaarDetails?.address?.splitAddress?.pincode ?? null,
+      District__c: adhaarDetails?.address?.splitAddress?.district ?? null,
+      city__c: adhaarDetails?.address?.splitAddress?.district ?? null,
     };
   } catch (error) {
     console.log("getPanCreateRequest>>>>error", error);

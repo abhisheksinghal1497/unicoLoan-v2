@@ -104,7 +104,7 @@ export const verifyAadhar = (panNumber, loanData, panName) => {
             "digital-kyc-v1/api/aadhar-verify",
             request
           );
-          console.log(adhaarVerifyResponse, "HERE-------------2");
+          console.log(JSON.stringify(adhaarVerifyResponse), "HERE-------------2");
           const adhaarName = adhaarVerifyResponse?.data?.results?.name;
 
           try {
@@ -115,6 +115,9 @@ export const verifyAadhar = (panNumber, loanData, panName) => {
                   loanDetails.adhaarDetails =
                     adhaarVerifyResponse.data?.results;
 
+                    console.log('HERE IS adhaarVerifyResponse', JSON.stringify(adhaarVerifyResponse.data?.results))
+
+                    // TO create kyc id from pan and adhaar
                   const response = await compositeRequest(
                     createCompositeRequestForPanAadhar(
                       loanDetails,
@@ -126,23 +129,38 @@ export const verifyAadhar = (panNumber, loanData, panName) => {
 
                   if (response) {
                     try {
+                      // these are kyc id
                       const panApplicationId =
                         response?.compositeResponse?.[0]?.body?.id;
                       const adhaarApplicationId =
                         response?.compositeResponse?.[1]?.body?.id;
 
+                      // AADHAAR IMAGE UPLOAD
                       if (adhaarApplicationId && result) {
-                        console.log("aadhar upload");
                         try {
                           const aadhaarUploadRequests =
                             createCompositeRequestsForAdhaarUpload(
                               loanData,
                               adhaarApplicationId,
-                              result
+                              result,
+                              true
                             );
                           await compositeRequest(aadhaarUploadRequests);
                         } catch (error) {}
-                      }
+                        // IF USER HAS NOT UPLOAD IMAGE JUST UPDATE ADDRESS
+                      } else if (adhaarApplicationId){
+                        try {
+                          const aadhaarUploadRequests =
+                            createCompositeRequestsForAdhaarUpload(
+                              loanDetails,
+                              adhaarApplicationId,
+                              result,
+                              false
+                            );
+                          await compositeRequest(aadhaarUploadRequests);
+                        } catch (error) {}
+                      } 
+                      // PAN IMAGE UPLOAD
                       if (
                         panApplicationId &&
                         loanData?.panDetails?.imageBase64
@@ -290,8 +308,6 @@ export const checkPanAdhaarLinked = async (
         consentText: "Test",
         caseId: getUniqueId(),
       };
-
-      console.log("shd", bodyRequest);
 
       const linkedResponse = await instance.post(
         "digital-kyc-v1/api/pan-aadhar-linked",
@@ -613,8 +629,6 @@ export const checkPanLinkWithAdhaar = (pan) => {
             consentText: "Test",
             caseId: getUniqueId(),
           };
-
-          console.log("shd", bodyRequest);
 
           const linkedResponse = await instance.post(
             "digital-kyc-v1/api/pan-aadhar-linked",

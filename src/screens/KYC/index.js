@@ -316,15 +316,11 @@ const KYC = (props) => {
       try {
         var data = dataURL.slice(1, -1); // remove the firstlast letter
         data = data?.split(",")[1];
-        //console.log(">>>>", data)
-        //  console.log("")
         setAadhaarbase64(data);
       } catch (error) {
         console.log("error>>>", error);
       }
 
-      // let newData =  dataURL.replace(/^data:image\/?[A-z]*;base64,/);
-      console.log("CHECK 2");
       uploadAadharToMuleService?.mutate(dataURL);
     } catch (error) {
       console.log("some error");
@@ -343,7 +339,6 @@ const KYC = (props) => {
 
   useEffect(() => {
     if (uploadAadharToMuleService.data) {
-      log("success", uploadAadharToMuleService.data);
       onAdhaarInitiateSuccess(false);
     }
 
@@ -376,9 +371,6 @@ const KYC = (props) => {
         ? uploadAadharToMuleService?.data?.data
         : adhaarEkycMutate?.data?.data;
       // will remove later
-      console.log("SUP----------------", {
-        aadharInitiateResponse: JSON.stringify(aadharInitiateResponse),
-      });
 
       try {
         verifyAdharApi?.mutate({

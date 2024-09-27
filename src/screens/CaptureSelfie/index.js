@@ -1,4 +1,10 @@
-import { Text, View, SafeAreaView, Image } from "react-native";
+import {
+  Text,
+  View,
+  SafeAreaView,
+  Image,
+  PermissionsAndroid,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import SelfieSection from "../../components/SelfieSection";
@@ -13,17 +19,46 @@ import { useRoute } from "@react-navigation/native";
 import { useSaveSelfie } from "../../services/ApiUtils";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 import Toast from "react-native-toast-message";
-import { updateAadharDataToApplicant, useResetRoutes } from "../../utils/functions";
+import {
+  updateAadharDataToApplicant,
+  useResetRoutes,
+} from "../../utils/functions";
+import Geolocation from "react-native-geolocation-service";
 
 const CaptureSelfie = ({ navigation }) => {
   const { fonts } = useTheme();
   const [selectedImage, setSelectedImage] = useState(null);
   const route = useRoute();
-  const resetRoute = useResetRoutes()
+  const resetRoute = useResetRoutes();
   const { loanData = {} } = route?.params || {};
-  console.log('loanData', loanData?.adhaarDetails)
+  console.log("loanData", loanData?.adhaarDetails);
   const selfieMutate = useSaveSelfie(loanData);
+  const [location, setLocation] = useState(null);
 
+  const requestLocationPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: "Geolocation Permission",
+          message: "Can we access your location?",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK",
+        }
+      );
+      console.log("granted", granted);
+      if (granted === "granted") {
+        console.log("You can use Geolocation");
+        return true;
+      } else {
+        console.log("You cannot use Geolocation");
+        return false;
+      }
+    } catch (err) {
+      return false;
+    }
+  };
 
   const onCameraPress = ({ front = false }) => {
     ImagePicker.openCamera({
@@ -32,7 +67,7 @@ const CaptureSelfie = ({ navigation }) => {
       useFrontCamera: front,
       includeBase64: true,
       multiple: false,
-      mediaType: 'photo'
+      mediaType: "photo",
     })
       .then((image) => {
         setSelectedImage(image);
@@ -51,12 +86,36 @@ const CaptureSelfie = ({ navigation }) => {
     onCameraPress(true);
   };
 
-  const onSubmit = () => {
-    if (!selectedImage) {
-      Toast.show({ type: 'error', text1: 'Please upload image' })
-      return
+  const getLocation = async () => {
+    const result = await requestLocationPermission();
+    if (result) {
+      Geolocation.getCurrentPosition(
+        (position) => {
+          setLocation(position);
+        },
+        (error) => {
+          // See error code charts below.
+          console.log("LOCATION ISSUE", error.code, error.message);
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+      );
     }
-    selfieMutate.mutate(selectedImage);
+  };
+
+  useEffect(() => {
+    getLocation();
+  }, []);
+
+  const onSubmit = async () => {
+    if (!selectedImage) {
+      Toast.show({ type: "error", text1: "Please upload image" });
+      return;
+    }
+    selfieMutate.mutate({
+      selfie: selectedImage,
+      lat: location ? location?.coords?.latitude : null,
+      long: location ? location?.coords?.longitude : null,
+    });
   };
 
   useEffect(() => {
@@ -69,7 +128,7 @@ const CaptureSelfie = ({ navigation }) => {
 
   useEffect(() => {
     if (selfieMutate?.error) {
-      console.log(selfieMutate?.error)
+      console.log(selfieMutate?.error);
       // navigation?.navigate(screens.KYCDocuments, {
       //   loanData: selfieMutate.data,
       // });
@@ -85,7 +144,7 @@ const CaptureSelfie = ({ navigation }) => {
           onPressLeft={() => {
             resetRoute(screens.HomeScreen);
           }}
-          onPressRight={() => { }}
+          onPressRight={() => {}}
           colour="white"
         />
         <ActivityIndicatorComponent visible={selfieMutate?.isPending} />

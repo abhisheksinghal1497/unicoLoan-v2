@@ -122,7 +122,6 @@ const KYCDocuments = ({ navigation }) => {
               >
                 <TouchableOpacity
                   onPress={() => {
-                    console.log('IS TRIGGER API')
                     kycDocumentMutate.mutate();
                     setShowModal(false);
                   }}
