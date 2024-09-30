@@ -49,7 +49,6 @@ import { useFocusEffect } from "@react-navigation/native";
 const screenWidth = Dimensions.get("window").width;
 const HomeScreen = ({ navigation }) => {
   const flatListRef = useRef(null);
-
   const getLoanCardData = getHomeScreenDetails(true);
   const getOurServicesCardData = getHomeScreenOurServices();
   const [data, setData] = useState([]);
@@ -168,7 +167,7 @@ const HomeScreen = ({ navigation }) => {
           <TouchableOpacity
             style={styles.seeDetailsresumeJourneyButton}
             onPress={() => {
-              navigation?.navigate(screenName, { loanData: item });
+              navigation?.navigate(screens.LoanDetails, { loanData: item });
             }}
           >
             <Text style={styles.seeDetailsresumeJourneyText}>

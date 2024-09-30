@@ -79,16 +79,11 @@ export const convertFormArrToObj = (data = []) => {
 
 export const GetPicklistValues = (arr, fieldName, defaultValues) => {
   try {
-    console.log("CHECK ! HERE", { fieldName });
     if (!arr || !fieldName) {
       return {};
     }
-    console.log(
-      "CHECK 2 HERE",
-      arr?.find((value) => value.name === fieldName)
-    );
     const data = arr?.find((value) => value.name === fieldName)?.picklistValues;
-    console.log("DATA here", data);
+
     return data && data?.length > 0 ? data : defaultValues;
   } catch (error) {
     return defaultValues;
@@ -692,7 +687,8 @@ export const createCompositeRequestForLoadDetails = (
   formData,
   loanDetails,
   loanId,
-  Applicant__c
+  Applicant__c,
+  applicantIncomeId
 ) => {
   try {
     const compositeRequests = [
@@ -725,6 +721,41 @@ export const createCompositeRequestForLoadDetails = (
           "ApplAsset__c",
           getLoanDetailPostBody(formData, Applicant__c),
           "postLoanDetail"
+        )
+      );
+    }
+
+    if (applicantIncomeId) {
+      // compositeRequests.push(
+      //   patchCompositeRequest(
+      //     "Applicant_Income__c",
+      //     applicantIncomeId,
+      //     {
+      //       Applicant_Net_Income__c: formData?.[LOAN_DETAILS_KEYS.totalIncome],
+      //     },
+      //     "Applicant_Income__c_PATCH"
+      //   )
+      // );
+
+      compositeRequests.push(
+        postCompositeRequest(
+          "Applicant_Income__c",
+          {
+            Applicant_Net_Income__c: formData?.[LOAN_DETAILS_KEYS.totalIncome],
+            Applicant__c,
+          },
+          "Applicant_Income__c_POST"
+        )
+      );
+    } else {
+      compositeRequests.push(
+        postCompositeRequest(
+          "Applicant_Income__c",
+          {
+            Applicant_Net_Income__c: formData?.[LOAN_DETAILS_KEYS.totalIncome],
+            Applicant__c,
+          },
+          "Applicant_Income__c_POST"
         )
       );
     }
@@ -1359,7 +1390,13 @@ export const createCompositeRequestForLeadList = (loanData) => {
       const query2 = `SELECT FIELDS(ALL) FROM ApplAsset__c WHERE Appl__c IN (${applicationIds
         .map((id) => `'${id}'`)
         .join(", ")}) LIMIT 200`;
+
+      const query3 = `SELECT FIELDS(ALL) FROM Applicant_Income__c WHERE Applicant__c IN (${applicationIds
+        .map((id) => `'${id}'`)
+        .join(", ")}) LIMIT 200`;
+
       const encodedQuery2 = encodeURIComponent(query2);
+      const encodedQuery3 = encodeURIComponent(query3);
 
       compositeRequest.push({
         method: "GET",
@@ -1377,6 +1414,12 @@ export const createCompositeRequestForLeadList = (loanData) => {
         method: "GET",
         url: `/services/data/${net.getApiVersion()}/query/?q=${encodedQuery2}`,
         referenceId: "applicantAssets",
+      });
+
+      compositeRequest.push({
+        method: "GET",
+        url: `/services/data/${net.getApiVersion()}/query/?q=${encodedQuery3}`,
+        referenceId: "Applicant_Income__c",
       });
     }
 

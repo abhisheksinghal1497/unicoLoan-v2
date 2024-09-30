@@ -31,7 +31,7 @@ export const LOAN_DETAILS_KEYS = {
   dispAsset: "DisposalOfAsset__c",
   familyFund: "FundFromFamily__c",
   srvcFund: "FundFromOtherServices__c",
-  totalIncome: "TotalIncome__c", 
+  totalIncome: "Annual_Turnover__c", 
   totalObligation: "totalObligation", // not done
   resAddr: "resAddr", 
   currAddr: "currAddr",

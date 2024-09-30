@@ -39,6 +39,7 @@ const LoanDetails = (props) => {
   let applicantRecord = applicationDetails?.Applicants__r?.records?.filter(
     (el) => el.ApplType__c === "P"
   )[0];
+
   const formData = getLoanDetailsForm(applicationDetails?.Product__c);
   const submitLoanMutate = useSubmitLoanFormData(loanData);
   const {
@@ -67,7 +68,7 @@ const LoanDetails = (props) => {
       [LOAN_DETAILS_KEYS.mobile]: applicantRecord?.MobNumber__c,
       [LOAN_DETAILS_KEYS.isExistingCustomer]:
         applicantRecord?.ExistingCustomer__c,
-      [LOAN_DETAILS_KEYS.totalIncome]: applicantRecord?.TotalIncome__c,
+      [LOAN_DETAILS_KEYS.totalIncome]: applicantRecord?.Annual_Turnover__c,
       [LOAN_DETAILS_KEYS.custId]: applicantRecord?.Customer__c,
       // applicantRecord
 
@@ -91,7 +92,6 @@ const LoanDetails = (props) => {
       [LOAN_DETAILS_KEYS.familyFund]: loanDetails?.FundFromFamily__c,
       [LOAN_DETAILS_KEYS.srvcFund]: loanDetails?.FundFromOtherServices__c,
       // loanDetails
-      [LOAN_DETAILS_KEYS.totalObligation]: "",
     },
   });
   const [showHelpModal, setShowHelpModal] = useState(false);
@@ -119,6 +119,9 @@ const LoanDetails = (props) => {
   const onSubmit = async () => {
     try {
       const data = watch();
+
+      const applicantIncomeId =  await submitLoanMutate.mutateAsync(data);
+
       let applicantRecordsArr = [...applicationDetails?.Applicants__r?.records];
       let updatedApplicantRecordIndex = applicantRecordsArr?.findIndex(
         (el) => el.ApplType__c === "P"
@@ -133,7 +136,7 @@ const LoanDetails = (props) => {
           ...applicantRecordsArr[updatedApplicantRecordIndex],
           MobNumber__c: data[LOAN_DETAILS_KEYS.mobile],
           ExistingCustomer__c: data[LOAN_DETAILS_KEYS.isExistingCustomer],
-          TotalIncome__c: data[LOAN_DETAILS_KEYS.totalIncome],
+          Annual_Turnover__c: data[LOAN_DETAILS_KEYS.totalIncome],
           Customer__c: data[LOAN_DETAILS_KEYS.custId],
         };
         applicantRecordsArr[updatedApplicantRecordIndex] = {
@@ -143,6 +146,7 @@ const LoanDetails = (props) => {
 
       const updatedLoanData = {
         ...loanData,
+        applicantIncomeId: applicantIncomeId,
         applicationDetails: {
           ...loanData?.applicationDetails,
           ReqLoanAmt__c: data[LOAN_DETAILS_KEYS.reqLoanAmt],
@@ -176,7 +180,7 @@ const LoanDetails = (props) => {
         },
       };
 
-      await submitLoanMutate.mutateAsync(data);
+      
       props?.navigation?.navigate(screens.Eligibility, {
         loanData: updatedLoanData,
       });

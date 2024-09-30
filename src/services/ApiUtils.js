@@ -106,12 +106,16 @@ export const getHomeScreenDetails = () => {
             for (let i = 0; i < getLeadListData.records.length; i++) {
               //save the record into the soup
               // const compositGraphRequest = await compositeGraphRequest(createGraphRequestForLeadList(getLeadListData))
-
+              const ApplicantIncomeArr = compositGraphRequest[3]?.body?.records;
+  
               let record = getLeadListData.records[i];
               // CHANGES NEEDED HERE
               let applicantRecord = record?.Applicants__r?.records?.filter(
                 (el) => el.ApplType__c === "P"
               )[0];
+
+              const Applicant__c = applicantRecord?.Id;
+              const applicantIncomeId = Array.isArray(ApplicantIncomeArr) ?  ApplicantIncomeArr.find(el => el?.Applicant__c === Applicant__c)?.Id : undefined
               applicantRecord = {
                 ...applicantRecord,
                 coApplicants: record?.Applicants__r?.records?.filter(
@@ -139,13 +143,13 @@ export const getHomeScreenDetails = () => {
                     el?.Applicant__c === kycId
                 );
 
-              console.log("permanentAddress", JSON.stringify(permanentAddress));
 
               const loanDetail = compositGraphRequest[2]?.body?.records?.find(
                 (el) => el?.Appl__c === kycId
               );
 
               const data = {
+                applicantIncomeId,
                 loanId: record?.Id,
                 applicationDetails: record,
                 Applicant__c: applicantRecord?.Id,
@@ -1488,11 +1492,15 @@ export const useSubmitLoanFormData = (loanData) => {
               data,
               loanDetail.loanDetails,
               loanData?.loanId,
-              loanData?.Applicant__c
+              loanData?.Applicant__c,
+              loanData?.applicantIncomeId
             )
           );
+          const applicantIncomeId =  loanData?.applicantIncomeId ?  loanData?.applicantIncomeId : response.compositeResponse[3]?.body?.id
+          console.log('response', JSON.stringify(response.compositeResponse[3]?.body?.id))
+
           await saveApplicationData(loanDetail);
-          resolve({ ...loanDetail });
+          resolve(applicantIncomeId);
         } catch (error) {
           console.log("skdjhdf", error);
           reject(ErrorConstants.SOMETHING_WENT_WRONG);
@@ -2018,7 +2026,6 @@ export const getLoanDetailsForm = (productType) => {
       return new Promise(async (resolve, reject) => {
         try {
           const fieldArray = await getLeadFields();
-          console.log({ productType });
           const mock_data = [
             {
               id: "ReqLoanAmt__c",
@@ -2286,19 +2293,6 @@ export const getLoanDetailsForm = (productType) => {
               label: "Total Income",
               type: component.number,
               placeHolder: "Enter Total Income",
-              value: 0,
-              keyboardtype: "numeric",
-              isRequired: true,
-              validations: {
-                ...validations.numberOnlyRequired,
-                ...validations.required,
-              },
-            },
-            {
-              id: LOAN_DETAILS_KEYS.totalObligation,
-              label: "Total Obligation",
-              type: component.number,
-              placeHolder: "Enter Total Obligation",
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
