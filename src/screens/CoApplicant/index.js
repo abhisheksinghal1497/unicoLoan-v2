@@ -112,7 +112,7 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
     },
 
     {
-      Id: "TotalIncome__c",
+      Id: "Annual_Turnover__c",
       label: "Total income",
       type: component.textInput,
       placeHolder: "Enter income",
@@ -185,7 +185,7 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
     setValue("DOB__c", applicantData?.DOB__c);
     setValue("MobNumber__c", applicantData?.MobNumber__c);
     setValue("Relationship__c", applicantData?.Relationship__c);
-    setValue("TotalIncome__c", applicantData?.TotalIncome__c);
+    setValue("Annual_Turnover__c", applicantData?.Annual_Turnover__c);
     setShowBottomModal(true);
   };
 
@@ -325,7 +325,7 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
             Relation : {data?.Relationship__c}
           </Text> */}
             <Text style={styles.applicantText2}>
-              Income : {data?.TotalIncome__c}
+              Income : {data?.Annual_Turnover__c}
             </Text>
           </View>
         </TouchableOpacity>
@@ -435,7 +435,7 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
             <Button
               type="primary"
               onPress={handleSubmit(createApplicant)}
-              label={"Create Applicant"}
+              label={"Create Co Applicant"}
               buttonContainer={{ marginTop: 20, marginBottom: 20 }}
             />
           ) : (
@@ -455,7 +455,7 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
               <Button
                 type="primary"
                 onPress={handleSubmit(updateApplicant)}
-                label={"Update applicant"}
+                label={"Update Co applicant"}
                 buttonContainer={{
                   marginTop: 20,
                   marginBottom: 20,
