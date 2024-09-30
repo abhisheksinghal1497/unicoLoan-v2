@@ -10,7 +10,7 @@ import {
   import { FormControl } from "../../components/FormComponents/FormControl";
   import { useTheme } from "react-native-paper";
   import { screens } from "../../constants/screens";
-  import Button from "././../../components/Button";
+  import Button from "../../components/Button";
   import { horizontalScale, verticalScale } from "../../utils/matrcis";
   
   import { styles } from "../ApplicationDetails/styles/ApplicationDetailStyle";
@@ -22,11 +22,11 @@ import {
       getLoanDetailsFormOtherRM,
     getUserDetailQuery,
     useSubmitApplicationFormData,
-  } from "./../../services/ApiUtils";
+  } from "../../services/ApiUtils";
   import DimensionUtils from "../../utils/DimensionUtils";
   import CustomModal from "../../components/CustomModal";
   import { Image } from "react-native";
-  import { getApplicationDetailsForm } from "./../../services/ApiUtils";
+  import { getApplicationDetailsForm } from "../../services/ApiUtils";
   
   import { log } from "../../utils/ConsoleLogUtils";
   import { useRoute } from "@react-navigation/native";

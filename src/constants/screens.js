@@ -44,5 +44,5 @@ export const screens = {
   LoginComponent: "LoginComponent",
   CoApplicant: "CoApplicant",
   ConsentScreen: 'ConsentScreen',
-  LoanDetailsOtherRM: 'LoanDetailsOtherRM'
+  SystemLoanDetails: 'SystemLoanDetails'
 };

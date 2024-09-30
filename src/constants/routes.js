@@ -162,8 +162,8 @@ export const routes = [
       options: {},
     },
     {
-      name: screens.LoanDetailsOtherRM,
-      component: () => import('../screens/LoanDetailsOtherRM'),
+      name: screens.SystemLoanDetails,
+      component: () => import('../screens/SystemLoanDetails'),
       options: {},
     },
   ];
