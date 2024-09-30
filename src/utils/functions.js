@@ -726,25 +726,14 @@ export const createCompositeRequestForLoadDetails = (
     }
 
     if (applicantIncomeId) {
-      // compositeRequests.push(
-      //   patchCompositeRequest(
-      //     "Applicant_Income__c",
-      //     applicantIncomeId,
-      //     {
-      //       Applicant_Net_Income__c: formData?.[LOAN_DETAILS_KEYS.totalIncome],
-      //     },
-      //     "Applicant_Income__c_PATCH"
-      //   )
-      // );
-
       compositeRequests.push(
-        postCompositeRequest(
+        patchCompositeRequest(
           "Applicant_Income__c",
+          applicantIncomeId,
           {
             Applicant_Net_Income__c: formData?.[LOAN_DETAILS_KEYS.totalIncome],
-            Applicant__c,
           },
-          "Applicant_Income__c_POST"
+          "Applicant_Income__c_PATCH"
         )
       );
     } else {
