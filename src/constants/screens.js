@@ -43,5 +43,6 @@ export const screens = {
   ServiceOtp: "ServiceOtp",
   LoginComponent: "LoginComponent",
   CoApplicant: "CoApplicant",
-  ConsentScreen: 'ConsentScreen'
+  ConsentScreen: 'ConsentScreen',
+  SystemLoanDetails: 'SystemLoanDetails'
 };

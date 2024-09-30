@@ -18,6 +18,7 @@ import { useTheme } from "react-native-paper";
 import { screens } from "../constants/screens";
 import { useResetRoutes } from "../utils/functions";
 import { useNavigation } from "@react-navigation/native";
+import { ConfiguratonConstants } from "../constants/ConfigurationConstants";
 
 const PincodeModal = ({ modalVisible = false, setModalVisible = () => { } }) => {
   const [pinCode, setPinCode] = useState("");
@@ -92,7 +93,7 @@ const PincodeModal = ({ modalVisible = false, setModalVisible = () => { } }) => 
       setModalVisible(false);
       setTimeout(() => {
         navigation?.navigate?.(screens.ApplicantDetails, { pincode: pinCode, pincodeData: FilteredPincode[0] });
-      }, 200);
+      }, ConfiguratonConstants.setTimeoutTime);
     }
   };
 

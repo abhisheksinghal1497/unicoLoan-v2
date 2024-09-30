@@ -43,19 +43,6 @@ export const getLeadFields = async () => {
     let loanData = null;
     var fieldsData = [];
 
-    // try {
-    //   // API 1
-    //   loanApplicantFieldData = await getMetaData(
-    //     soupConfig.LoanApplicantFields.name
-    //   );
-
-    // } catch (error) {}
-
-    // try {
-    //   // API 2
-    //   applicantFieldData = await getMetaData(soupConfig.ApplicantFields.name);
-    // } catch (error) {}
-
     try {
       const compositeResponse = await compositeRequest(
         createCompositeRequestForMetadata()

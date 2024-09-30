@@ -11,6 +11,7 @@ import {
 } from "../constants/stringConstants";
 import { query } from "../constants/Queries";
 import { soupConfig } from "../services/sfDBServices/SoupConstants";
+import { ConfiguratonConstants } from "../constants/ConfigurationConstants";
 
 export const alert = (title, subTitle, onPressOK, onPressCancel) => {
   if (onPressCancel) {
@@ -46,7 +47,7 @@ export const isObjEmpty = (obj) => {
   return Object.keys(obj).length === 0;
 };
 
-export function debounce(func, timeout = 1000) {
+export function debounce(func, timeout = ConfiguratonConstants.setTimeoutTime) {
   let timer;
   return (...args) => {
     if (!timer) {
@@ -138,14 +139,22 @@ export const useResetRoutes = () => {
 
 export const createLoanAndAppplicantCompositeRequest = (data, leadID) => {
   try {
+    console.log("LEADID-------------------------", leadID);
     let compositeRequest = [
+      {
+        url: `/services/data/${net.getApiVersion()}/sobjects/Lead/${leadID}?fields=Id,Lead_Id__c,LeadIdFormula__c,BranchCode__c`,
+        method: "GET",
+        referenceId: "reference_id_lead_get",
+      },
       {
         method: "POST",
         url: `/services/data/${net.getApiVersion()}/sobjects/LoanAppl__c`,
         referenceId: "loanCreate",
-        body: getLoanCreateRequest(data, leadID),
+        body: {
+          ...getLoanCreateRequest(data, leadID),
+          BrchCode__c: "@{reference_id_lead_get.BranchCode__c}",
+        },
       },
-
       {
         method: "POST",
         url: `/services/data/${net.getApiVersion()}/sobjects/Applicant__c`,
