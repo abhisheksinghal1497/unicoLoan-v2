@@ -49,6 +49,7 @@ import {
 import LocalStorage from "./LocalStorage";
 import { query } from "../constants/Queries";
 import { nameCheck } from "./muleService/MuleApiUtils";
+import { ConfiguratonConstants } from "../constants/ConfigurationConstants";
 
 export const logoutApi = () => {
   console.log("LOGOUT API");
@@ -330,7 +331,7 @@ export const getHomeScreenCarousel = () => {
           // ];
           resolve(data);
           // reject("Something went wrong");
-        }, 3000);
+        }, ConfiguratonConstants.setTimeoutTime);
       });
     },
   });
@@ -382,7 +383,7 @@ export const getHomeScreenOurServices = () => {
             },
           ];
           resolve(data);
-        }, 100);
+        }, ConfiguratonConstants.setTimeoutTime);
       });
     },
   });
@@ -424,7 +425,7 @@ export const getFAQDetails = () => {
           ];
           resolve(data);
           // reject("Something went wrong");
-        }, 1000);
+        }, ConfiguratonConstants.setTimeoutTime);
       });
     },
   });
@@ -456,7 +457,7 @@ export const getRaiseTicketsScreenCategory = () => {
           ];
           resolve(data);
           reject("Something went wrong");
-        }, 3000);
+        }, ConfiguratonConstants.setTimeoutTime);
       });
     },
   });
@@ -483,7 +484,7 @@ export const getRaiseTicketsListScreen = () => {
           ];
           resolve(data);
           reject("Something went wrong");
-        }, 3000);
+        }, ConfiguratonConstants.setTimeoutTime);
       });
     },
   });
@@ -517,7 +518,7 @@ export const getOtherKycList = () => {
           ];
           resolve(data);
           reject("Something went wrong");
-        }, 3000);
+        }, ConfiguratonConstants.setTimeoutTime);
       });
     },
   });
@@ -547,7 +548,7 @@ export const getTempAddressKycList = () => {
           ];
           resolve(data);
           reject("Something went wrong");
-        }, 3000);
+        }, ConfiguratonConstants.setTimeoutTime);
       });
     },
   });
@@ -584,7 +585,7 @@ export const getListOfTickets = () => {
           ];
           resolve(data);
           reject("Something went wrong");
-        }, 3000);
+        }, ConfiguratonConstants.setTimeoutTime);
       });
     },
   });
@@ -600,7 +601,7 @@ export const createTicketMethod = () => {
           const data = { success: true, response: ticketData };
           resolve(data);
           // reject('Something went wrong')
-        }, 3000);
+        }, ConfiguratonConstants.setTimeoutTime);
       });
     },
   });
@@ -617,7 +618,7 @@ export const uploadAdhaarMethod = () => {
           const data = { success: true, response: AdhaarData };
           resolve(data);
           // reject('Something went wrong')
-        }, 3000);
+        }, ConfiguratonConstants.setTimeoutTime);
       });
     },
   });
@@ -634,7 +635,7 @@ export const uploadKycMethod = () => {
           const data = { success: true, response: AdhaarData };
           resolve(data);
           // reject('Something went wrong')
-        }, 3000);
+        }, ConfiguratonConstants.setTimeoutTime);
       });
     },
   });
@@ -651,7 +652,7 @@ export const uploadOtpMethod = () => {
           const data = { success: true, response: OtpData };
           resolve(data);
           // reject('Something went wrong')
-        }, 3000);
+        }, ConfiguratonConstants.setTimeoutTime);
       });
     },
   });
@@ -683,7 +684,7 @@ export const getUserDetailQuery = (error = false) => {
                     "https://images.unsplash.com/photo-1633332755192-727a05c4013d",
                 });
               }
-            }, 2000);
+            }, ConfiguratonConstants.setTimeoutTime);
           }),
       },
     ],
@@ -737,7 +738,7 @@ export const getQueryDetailsById = (id, isSuccess = true) => {
               } else {
                 reject({ error: "Some error occured" });
               }
-            }, 2000);
+            }, ConfiguratonConstants.setTimeoutTime);
           }),
       },
     ],
@@ -1115,6 +1116,261 @@ export const getApplicationDetailsForm = () => {
   return mutate;
 };
 
+export const getLoanDetailsFormOtherRM = () => {
+  const mutate = useMutation({
+    networkMode: "always",
+    mutationFn: async (data) => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const fieldArray = await getLeadFields();
+
+          const mock_data = [
+            {
+              id: "SFDC_LEAD_ID",
+              label: "SFDC Lead ID",
+              type: component.textInput,
+              placeHolder: "Select User",
+              validations: validations.required,
+              // keyboardtype: "numeric",
+              isRequired: true,
+              value: "",
+              isDisabled: true,
+            },
+            {
+              id: "Lead_Source",
+              label: "Lead Source",
+              type: component.dropdown,
+              placeHolder: "Select Lead Source",
+              validations: validations.text,
+              maxLength: 10,
+              keyboardtype: "numeric",
+              isRequired: true,
+              isDisabled: true,
+              data: GetPicklistValues(fieldArray, "Customer_Profile__c", [
+                {
+                  id: "Customer_Profile__1",
+                  label: "Salf-Employed",
+                  value: "Salf-Employed",
+                },
+                {
+                  id: "Customer_Profile__2",
+                  label: "Salaried",
+                  value: "Salaried",
+                },
+              ]),
+              value: {},
+            },
+            {
+              id: "Branch_Code",
+              label: "Branch Code",
+              type: component.textInput,
+              placeHolder: "Branch Code",
+              validations: validations.required,
+              isRequired: true,
+              value: "",
+              isDisabled: true,
+            },
+            {
+              id: "Branch_Name",
+              label: "Branch Name",
+              type: component.textInput,
+              placeHolder: "Enter branch name",
+              validations: validations.name,
+              isRequired: true,
+              value: "",
+              isDisabled: true,
+            },
+            {
+              id: "RM_Name",
+              label: "RM Name",
+              type: component.textInput,
+              placeHolder: "Enter RM name",
+              validations: validations.name,
+              isRequired: true,
+              value: "",
+              isDisabled: true,
+            },
+            {
+              id: "RM_Employee_Id",
+              label: "RM Employee ID",
+              type: component.textInput,
+              placeHolder: "Enter RM name",
+              validations: validations.name,
+              isRequired: true,
+              value: "",
+              isDisabled: true,
+            },
+            {
+              id: "Product__c",
+              label: "Product",
+              type: component.dropdown,
+              placeHolder: "Select product",
+              validations: validations.text,
+              maxLength: 10,
+              // keyboardtype: "numeric",
+              isRequired: true,
+              data: GetPicklistValues(fieldArray, "Product__c", [
+                {
+                  id: "product_type_1",
+                  label: "HOUSING LOAN",
+                  value: "HOUSING LOAN",
+                },
+
+                {
+                  id: "product_type_2",
+                  label: "NON HOUSING LOAN",
+                  value: "NON HOUSING LOAN",
+                },
+              ]),
+              value: {},
+            },
+            {
+              id: "Product_Sub_Type",
+              label: "Product Sub Type",
+              type: component.dropdown,
+              placeHolder: "Select sub product",
+              validations: validations.text,
+              maxLength: 10,
+              // keyboardtype: "numeric",
+              isRequired: true,
+              data: GetPicklistValues(fieldArray, "Product__c", [
+                {
+                  id: "product_type_1",
+                  label: "HOUSING LOAN",
+                  value: "HOUSING LOAN",
+                },
+
+                {
+                  id: "product_type_2",
+                  label: "NON HOUSING LOAN",
+                  value: "NON HOUSING LOAN",
+                },
+              ]),
+              value: {},
+            },
+            {
+              id: "Loan_ROI",
+              label: "Loan ROI",
+              type: component.textInput,
+              placeHolder: "Enter loan ROI",
+              validations: validations.numberOnlyRequired,
+              keyboardtype: "numeric",
+              isRequired: true,
+              value: "",
+            },
+            {
+              id: "Schemes",
+              label: "Schemes",
+              type: component.textInput,
+              placeHolder: "Search Schemes",
+              validations: validations.name,
+              isRequired: true,
+              value: "",
+              isDisabled: true,
+            },
+            {
+              id: "Promotion",
+              label: "Promotion",
+              type: component.textInput,
+              placeHolder: "Search Promotion",
+              validations: validations.name,
+              isRequired: true,
+              value: "",
+              isDisabled: true,
+            },
+            {
+              id: "Loan_Purpose",
+              label: "Loan Purpose",
+              type: component.dropdown,
+              placeHolder: "Select Loan Purpose",
+              validations: validations.text,
+              maxLength: 10,
+              // keyboardtype: "numeric",
+              isRequired: true,
+              data: GetPicklistValues(fieldArray, "Product__c", [
+                {
+                  id: "product_type_1",
+                  label: "HOUSING LOAN",
+                  value: "HOUSING LOAN",
+                },
+
+                {
+                  id: "product_type_2",
+                  label: "NON HOUSING LOAN",
+                  value: "NON HOUSING LOAN",
+                },
+              ]),
+              value: {},
+            },
+            {
+              id: "ReqLoanAmt__c",
+              label: "Requested loan amount",
+              type: component.textInput,
+              placeHolder: "Enter required loan amount",
+              validations: validations.loanAmountRegex,
+              keyboardtype: "numeric",
+              isRequired: true,
+              value: "",
+            },
+            {
+              id: "ReqTenInMonths__c",
+              label: "Requested tenure in Months",
+              type: component.textInput,
+              placeHolder: "Enter requested tenure in months",
+              validations: validations.tenureRegex,
+              isRequired: false,
+              keyboardtype: "numeric",
+              value: "",
+            },
+
+            {
+              id: LOAN_DETAILS_KEYS.isExistingCustomer,
+              label: "Existing Customer",
+              type: component.dropdown,
+              placeHolder: "Select Existing Customer",
+              isRequired: true,
+              validations: {
+                ...validations.required,
+              },
+              data: [
+                {
+                  id: "existCustomer-y",
+                  label: "Yes",
+                  value: "YES",
+                },
+                {
+                  id: "existCustomer-n",
+                  label: "No",
+                  value: "NO",
+                },
+              ],
+              value: {},
+            },
+
+
+
+            {
+              id: "MobNumber__c",
+              label: "Mobile number",
+              type: component.textInput,
+              placeHolder: "Enter mobile number",
+              validations: validations.phone,
+              isRequired: true,
+              value: "",
+              isDisabled: true,
+              maxLength: 10,
+            },
+          ];
+          resolve([...mock_data]);
+        } catch (error) {
+          reject(error);
+        }
+      });
+    },
+  });
+  return mutate;
+};
+
 export const useSubmitApplicationFormData = (pincodeData) => {
   const mutate = useMutation({
     networkMode: "always",
@@ -1140,7 +1396,7 @@ export const useSubmitApplicationFormData = (pincodeData) => {
               const response = await compositeRequest(
                 createLoanAndAppplicantCompositeRequest(
                   data,
-                  leadcreateResponse?.id
+                  leadcreateResponse?.id ? leadcreateResponse?.id : leadcreateResponse?.Id
                 )
               );
               if (response) {
@@ -1608,7 +1864,7 @@ export const getServiceForm = () => {
                 },
               ];
               resolve(data);
-            }, 2000);
+            }, ConfiguratonConstants.setTimeoutTime);
           }),
       },
     ],
@@ -1625,7 +1881,7 @@ export const useSubmitServiceForm = () => {
         setTimeout(() => {
           resolve({ ...data });
           toast("success", "Otp send to register mobile number");
-        }, 3000);
+        }, ConfiguratonConstants.setTimeoutTime);
       });
     },
   });
@@ -1642,7 +1898,7 @@ export const useVerifyOtpService = (onSuccess = (data) => {}) => {
           onSuccess(data);
           resolve({ ...data });
           toast("success", "Otp verified successfully");
-        }, 3000);
+        }, ConfiguratonConstants.setTimeoutTime);
       });
     },
   });
@@ -1658,7 +1914,7 @@ export const useResendOtpService = () => {
         setTimeout(() => {
           resolve({ ...data });
           toast("success", "Otp sent successfully");
-        }, 3000);
+        }, ConfiguratonConstants.setTimeoutTime);
       });
     },
   });
@@ -1720,7 +1976,7 @@ export const useKycDocument = (loanData) => {
         let data = { ...loanData };
         data.currentAddressDetails = {
           address: loanData?.adhaarDetails?.address?.splitAddress,
-          fullAddress: loanData?.adhaarDetails?.address?.combinedAddress,
+          FullAdrs__c: loanData?.adhaarDetails?.address?.combinedAddress,
         };
 
         const saveCurrentAddress = await compositeRequest(

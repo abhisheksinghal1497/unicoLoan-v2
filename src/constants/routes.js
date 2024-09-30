@@ -161,4 +161,9 @@ export const routes = [
       component: () => import('../screens/CoApplicant'),
       options: {},
     },
+    {
+      name: screens.LoanDetailsOtherRM,
+      component: () => import('../screens/LoanDetailsOtherRM'),
+      options: {},
+    },
   ];

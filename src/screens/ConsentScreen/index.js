@@ -25,6 +25,7 @@ const ConsentScreen = (props) => {
   const [{ data, isError, isLoading }] = getConsentUrl(applicationId);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const resetRoute = useResetRoutes();
+  const [loader, setLoader] = useState(true)
   console.log({ data });
   const toggleHelpModal = () => {
     setShowHelpModal(!showHelpModal);
@@ -91,9 +92,8 @@ const ConsentScreen = (props) => {
         showHelpModal={showHelpModal}
         toggleHelpModal={toggleHelpModal}
       />
-      {(isLoading || postConsentMutate?.isPending) && <ActivityIndicatorComponent
 
-      />}
+        <ActivityIndicatorComponent visible={isLoading || postConsentMutate?.isPending || loader} />
 
       {isError || data?.error ? (
         <Text>Something went wrong</Text>
@@ -104,6 +104,8 @@ const ConsentScreen = (props) => {
             startInLoadingState={true}
             renderLoading={ActivityIndicatorComponent}
             style={{ flex: 1 }}
+            onLoadEnd={() => setLoader(false)}
+            onLoadStart={() => setLoader(true)}
           />
         </View>
       )}

@@ -37,6 +37,17 @@ export const LOAN_DETAILS_KEYS = {
   currAddr: "currAddr",
 };
 
+export const LOAN_DETAILS_KEYS_OTHER_RM = {
+  reqLoanAmt: "ReqLoanAmt__c",
+  reqTenure: "ReqTenInMonths__c",
+  loanPurpose: "LoanPurpose__c",  
+  mobile: "MobNumber__c",
+  isExistingCustomer: "ExistingCustomer__c",
+  RM__c: 'RM__c',
+  Product__c: 'Product__c'
+
+};
+
 export const KycScreen = {
   topLabel: "Let's verify your identity quickly",
   recommended: 'Recommended',
