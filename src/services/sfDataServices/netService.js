@@ -278,7 +278,7 @@ export const getBase64Image = (LinkedEntityId) => {
         compositeFetchImage(LinkedEntityId)
       );
 
-      const url = documentLink?.compositeResponse[1]?.body?.records[0]?.VersionData ;
+      const url = documentLink?.compositeResponse[1]?.body?.records[0]?.VersionData;
 
       oauth.getAuthCredentials(async (res) => {
         try {
@@ -304,7 +304,7 @@ export const getBase64Image = (LinkedEntityId) => {
       //   async (res) => {
       //     console.log(
       //       "ACCESS",
-         
+
       //     );
       //   },
       //   (e) => {
@@ -350,4 +350,44 @@ const fetchData = async (url) => {
   }
 };
 
-///getSanctionLetter/
+// start BRE
+
+export const startBureauBre = (applicationId, loanId) => {
+  return new Promise((resolve, reject) => {
+    net.sendRequest(
+      "/services/apexrest",
+      `/startBureauBre?refId=${applicationId}&loanId=${loanId}`,
+      (res) => {
+        // console.log("Entered");
+        console.log("res", res);
+        resolve(res);
+      },
+      (error) => {
+        reject(error);
+      },
+      "GET"
+    );
+  });
+};
+
+
+export const getBureauBreApi = (applicationId, loanId, meesageId) => {
+  return new Promise((resolve, reject) => {
+    net.sendRequest(
+      "/services/apexrest",
+      `/getBureauBre?applId=${applicationId}&loanId=${loanId}&intgId=${meesageId}`,
+      (res) => {
+        // console.log("Entered");
+        if (!res?.message && !res?.error) {
+          reject("error")
+        }
+        console.log("res", res);
+        resolve(res);
+      },
+      (error) => {
+        reject(error);
+      },
+      "GET"
+    );
+  });
+};

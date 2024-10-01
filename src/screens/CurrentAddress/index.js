@@ -33,7 +33,7 @@ import {
   doOCRForPassport,
   doOCRForVoterID,
 } from "../../services/muleService/MuleApiUtils";
-import { getDocType, toast, useResetRoutes } from "../../utils/functions";
+import { getDocType, getUniqueId, toast, useResetRoutes } from "../../utils/functions";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 import { log } from "../../utils/ConsoleLogUtils";
 import Canvas, { Image as CanvasImage } from "react-native-canvas";
@@ -67,6 +67,7 @@ const CurrentAddress = ({ navigation }) => {
     applicationDetails = {},
     panDetails = { panNumber: "", panName: "" },
   } = loanData;
+  console.log(loanData.Applicant__c)
 
   const panName = panDetails?.panName;
 
@@ -457,7 +458,7 @@ const CurrentAddress = ({ navigation }) => {
             title: selectedItem,
           },
           consent: "Y",
-          caseId: "eeea90ab-f4e0-4d9e-9efa-c03fffbd22c6",
+          caseId: getUniqueId(),
         };
         if (selectedItem === CaptureAddressConstants.PASSPORT) {
           handlePassportRequest(request, dataURL);

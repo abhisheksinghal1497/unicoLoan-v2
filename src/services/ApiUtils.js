@@ -37,6 +37,7 @@ import {
   compositeGraphRequest,
   compositeRequest,
   DedupeApi,
+  getBureauBreApi,
   getConsentDetailByApplicantId,
   getConsentLink,
   getInPrincipleSanctionLetter,
@@ -44,6 +45,7 @@ import {
   leadConvertApi,
   postObjectData,
   QueryObject,
+  startBureauBre,
   updateObjectData,
 } from "./sfDataServices/netService";
 import LocalStorage from "./LocalStorage";
@@ -253,66 +255,68 @@ export const getEligibilityDetails = (loanData) => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (data) => {
-      const { applicationDetails = {}, loanDetails = {} } = data || {};
-      return new Promise(async (resolve, reject) => {
-        const applicantRecord =
-          applicationDetails?.Applicants__r?.records?.filter(
-            (el) => el.ApplType__c === "P"
-          )[0] || {};
+      
+      return startBureauBre(loanData?.Applicant__c, loanData?.loanId)
+      // const { applicationDetails = {}, loanDetails = {} } = data || {};
+      // return new Promise(async (resolve, reject) => {
+      //   const applicantRecord =
+      //     applicationDetails?.Applicants__r?.records?.filter(
+      //       (el) => el.ApplType__c === "P"
+      //     )[0] || {};
 
-        const dependent = getNumberOfDependent(
-          applicantRecord?.No_of_Family_Dependants_Children__c,
-          applicantRecord?.No_of_Family_Dependants_Other__c
-        );
+      //   const dependent = getNumberOfDependent(
+      //     applicantRecord?.No_of_Family_Dependants_Children__c,
+      //     applicantRecord?.No_of_Family_Dependants_Other__c
+      //   );
 
-        function formatNumber(value) {
-          if (!value) {
-            return "0 lac";
-          }
-          const num = typeof value === "string" ? parent(value) : value;
-          if (num === 0) {
-            return "0 lac";
-          }
-          if (num < 10000000) {
-            return Math.floor(num / 100000).toFixed(2) + " lac"; // Return in lakhs
-          } else {
-            return Math.floor(num / 10000000).toFixed(2) + " cr"; // Return in crores
-          }
-        }
+      //   function formatNumber(value) {
+      //     if (!value) {
+      //       return "0 lac";
+      //     }
+      //     const num = typeof value === "string" ? parent(value) : value;
+      //     if (num === 0) {
+      //       return "0 lac";
+      //     }
+      //     if (num < 10000000) {
+      //       return Math.floor(num / 100000).toFixed(2) + " lac"; // Return in lakhs
+      //     } else {
+      //       return Math.floor(num / 10000000).toFixed(2) + " cr"; // Return in crores
+      //     }
+      //   }
 
-        try {
-          const data = {
-            Product: applicationDetails?.Product__c,
-            "Sub Product": applicationDetails?.LoanPurpose__c,
-            "Request Loan Amount": formatNumber(
-              applicationDetails?.ReqLoanAmt__c
-            ),
-            "Number of Dependents": dependent,
-            "Residential Stability": applicantRecord?.Present_Accomodation__c,
-            "Cibil Score": 846,
-            "DPD Status": 1,
-            "Business Vintage": 2,
-            "Net Asset": loanDetails?.TotalAssets__c,
-            "Total Score": 90,
-            "Number of Enquiries in the last 6 months": 2,
-            "Eligible Status": "Not Eligible", //Not Eligible
-            "Eligible Loan Amount": "45 lac",
-            "Customer Segment": applicationDetails?.Customer_Profile__c,
-            "Employment Stability": 1,
-            Qualification: "BCA",
-            Parameter: 1,
-          };
+      //   try {
+      //     const data = {
+      //       Product: applicationDetails?.Product__c,
+      //       "Sub Product": applicationDetails?.LoanPurpose__c,
+      //       "Request Loan Amount": formatNumber(
+      //         applicationDetails?.ReqLoanAmt__c
+      //       ),
+      //       "Number of Dependents": dependent,
+      //       "Residential Stability": applicantRecord?.Present_Accomodation__c,
+      //       "Cibil Score": 846,
+      //       "DPD Status": 1,
+      //       "Business Vintage": 2,
+      //       "Net Asset": loanDetails?.TotalAssets__c,
+      //       "Total Score": 90,
+      //       "Number of Enquiries in the last 6 months": 2,
+      //       "Eligible Status": "Not Eligible", //Not Eligible
+      //       "Eligible Loan Amount": "45 lac",
+      //       "Customer Segment": applicationDetails?.Customer_Profile__c,
+      //       "Employment Stability": 1,
+      //       Qualification: "BCA",
+      //       Parameter: 1,
+      //     };
 
-          let loanDetail = { ...loanData };
-          loanDetail.eligibilityDetails = { ...data };
+      //     let loanDetail = { ...loanData };
+      //     loanDetail.eligibilityDetails = { ...data };
 
-          await saveApplicationData({ ...loanDetail });
-          resolve(loanDetail);
-        } catch (error) {
-          console.log("SOME ERROR OCCURED---", error);
-          reject(error);
-        }
-      });
+      //     await saveApplicationData({ ...loanDetail });
+      //     resolve(loanDetail);
+      //   } catch (error) {
+      //     console.log("SOME ERROR OCCURED---", error);
+      //     reject(error);
+      //   }
+      //});
     },
   });
 
@@ -2573,4 +2577,21 @@ export const getSanctionLetterQuery = (applicationId) => {
   });
 
   return query;
+};
+
+
+export const getBureauBre = (loanData) => {
+  const mutate = useMutation({
+    networkMode: "always",
+    retry:3,
+    
+    retryDelay:15000,
+    mutationFn: async (data) => {
+
+      return getBureauBreApi(loanData?.Applicant__c, loanData?.loanId, data)
+     
+    },
+  });
+
+  return mutate;
 };

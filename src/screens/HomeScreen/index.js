@@ -61,9 +61,13 @@ const HomeScreen = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       getLoanCardData?.mutate();
-      getOurServicesCardData?.mutate();
+      
     }, [])
   );
+
+  useEffect(()=>{
+    getOurServicesCardData?.mutate();
+  },[])
 
   useEffect(() => {
     if (getLoanCardData.data) {
@@ -93,12 +97,12 @@ const HomeScreen = ({ navigation }) => {
   }, [getOurServicesCardData.error]);
 
   useEffect(() => {
-    async function fetchData() {
-      const savedData = await AsyncStorage.getItem("CurrentScreen");
-      const currentData = JSON.parse(savedData);
-      setCurrentScreen(currentData);
-    }
-    fetchData();
+    // async function fetchData() {
+    //   const savedData = await AsyncStorage.getItem("CurrentScreen");
+    //   const currentData = JSON.parse(savedData);
+    //   setCurrentScreen(currentData);
+    // }
+    // fetchData();
   }, []);
 
   const handleNavigation = (index) => {
@@ -167,7 +171,7 @@ const HomeScreen = ({ navigation }) => {
           <TouchableOpacity
             style={styles.seeDetailsresumeJourneyButton}
             onPress={() => {
-              navigation?.navigate(screens.Eligibility, { loanData: item });
+              navigation?.navigate(screenName, { loanData: item });
             }}
           >
             <Text style={styles.seeDetailsresumeJourneyText}>

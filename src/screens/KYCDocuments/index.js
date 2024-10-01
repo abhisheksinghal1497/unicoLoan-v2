@@ -35,6 +35,8 @@ const KYCDocuments = ({ navigation }) => {
   const [showHelpModal, setShowHelpModal] = useState(false);
   const resetRoute = useResetRoutes();
 
+
+
   const { selfieDetails = {} } = loanData;
 
   const toggleHelpModal = () => {
@@ -131,7 +133,9 @@ const KYCDocuments = ({ navigation }) => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
-                    navigation.navigate("CurrentAddress");
+                    navigation.navigate("CurrentAddress",{
+                      loanData:loanData
+                    });
                     setShowModal(false);
                   }}
                   style={styles.cancelButton}
