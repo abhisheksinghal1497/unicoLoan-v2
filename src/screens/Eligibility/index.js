@@ -9,7 +9,7 @@ import { assets } from "../../assets/assets";
 import { screens } from "../../constants/screens";
 import { verticalScale } from "../../utils/matrcis";
 import Header from "../../components/Header";
-import { getEligibilityDetails } from "../../services/ApiUtils";
+import { getBureauBre, getEligibilityDetails } from "../../services/ApiUtils";
 import { useRoute } from "@react-navigation/native";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 import CoApplicant from "../CoApplicant";
@@ -19,9 +19,11 @@ const Eligibility = (props) => {
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
   const { applicationDetails = {}, loanDetails = {}, loanId } = loanData;
+  const [loading, setIsLoading] = useState(false)
   const resetRoute = useResetRoutes();
   const [cardData, setCardData] = useState();
   const eligibilityDetails = getEligibilityDetails(loanData);
+  const breData = getBureauBre(loanData)
   const [coApplicantsArr, setCoApplicantsArr] = useState(
     Array.isArray(applicationDetails?.Applicants__r?.records)
       ? applicationDetails?.Applicants__r?.records.filter(
@@ -60,10 +62,32 @@ const Eligibility = (props) => {
   }, []);
 
   useEffect(() => {
-    if (eligibilityDetails.data) {
-      setCardData(eligibilityDetails.data?.eligibilityDetails);
+    if (eligibilityDetails.data && eligibilityDetails.data.message) {
+      //setCardData(eligibilityDetails.data?.eligibilityDetails);
+      setIsLoading(true)
+      // wait for 10 seconds
+      setTimeout(()=>{ 
+        breData.mutate(eligibilityDetails.data.message)
+        setIsLoading(false)
+
+      },10000)
+
     }
   }, [eligibilityDetails.data]);
+
+  useEffect(()=>{
+    if(breData.data){
+      alert("success")
+    }
+
+  },[breData.data])
+
+  useEffect(() => {
+    if (breData.data) {
+      alert("failure")
+    }
+
+  }, [breData.error])
 
   useEffect(() => {
     if (eligibilityDetails.error) {
@@ -83,7 +107,7 @@ const Eligibility = (props) => {
 
   return (
     <ScrollView style={{ backgroundColor: "#ffff" }}>
-      <ActivityIndicatorComponent visible={eligibilityDetails?.isPending} />
+      <ActivityIndicatorComponent visible={eligibilityDetails?.isPending || loading || breData?.isPending} />
       <Header
         title="Eligibility"
         left={assets.back}
