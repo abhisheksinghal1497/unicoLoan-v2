@@ -113,54 +113,71 @@ export const getHomeScreenDetails = () => {
               let applicantRecord = record?.Applicants__r?.records?.filter(
                 (el) => el.ApplType__c === "P"
               )[0];
-
+              // Form Main Form
               const Applicant__c = applicantRecord?.Id;
-              const applicantIncomeId = Array.isArray(ApplicantIncomeArr) ?  ApplicantIncomeArr.find(el => el?.Applicant__c === Applicant__c)?.Id : undefined
-              applicantRecord = {
-                ...applicantRecord,
-                coApplicants: record?.Applicants__r?.records?.filter(
-                  (el) => el.ApplType__c === "C"
-                ),
-              };
+              const applicantIncomeId = Array.isArray(ApplicantIncomeArr) ?  ApplicantIncomeArr.find(el => el?.Applicant__c === Applicant__c)?.Id : undefined;
 
-              const kycId = applicantRecord?.Id;
+              // For Co Applicant
+              let applicantArr = Array.isArray(record?.Applicants__r?.records) ?  [...record?.Applicants__r?.records] : [];
+
+              applicantArr = applicantArr?.map(elem => {
+                const coApplicantIncomeId = ApplicantIncomeArr.find(el => el?.Applicant__c === elem?.Id)?.Id;
+                return {
+                  ...elem,
+                  coApplicantIncomeId
+                }
+              })
+
               const selfieData = compositGraphRequest[0]?.body?.records?.find(
                 (el) =>
-                  el?.Applicant__c === kycId &&
+                  el?.Applicant__c === Applicant__c &&
                   el?.kycDoc__c === "Applicant Photo"
               );
               const currentAddress =
                 compositGraphRequest[1]?.body?.records?.find(
                   (el) =>
                     el?.AddrTyp__c === "Current Address" &&
-                    el?.Applicant__c === kycId
+                    el?.Applicant__c === Applicant__c
                 );
 
               const permanentAddress =
                 compositGraphRequest[1]?.body?.records?.find(
                   (el) =>
                     el?.AddrTyp__c === "Permanent Address" &&
-                    el?.Applicant__c === kycId
+                    el?.Applicant__c === Applicant__c
                 );
 
 
               const loanDetail = compositGraphRequest[2]?.body?.records?.find(
-                (el) => el?.Appl__c === kycId
+                (el) => el?.Appl__c === Applicant__c
               );
+                
+              const panDetailsArr = compositGraphRequest[0]?.body?.records?.filter(
+                (el) =>
+                  el?.Applicant__c === Applicant__c &&
+                  !!el?.NameInPan__c
+              );
+
+              const panDetails = Array.isArray(panDetailsArr) && panDetailsArr?.length ? panDetailsArr[panDetailsArr.length-1] : null;
 
               const data = {
                 applicantIncomeId,
                 loanId: record?.Id,
-                applicationDetails: record,
+                applicationDetails: {
+                  ...record,
+                  Applicants__r: {
+                    ...record?.Applicants__r,
+                    records: applicantArr
+                  }
+                },
                 Applicant__c: applicantRecord?.Id,
                 External_ID: record?.Id,
 
-                panDetails: applicantRecord?.PAN__c
+                panDetails: applicantRecord?.PAN__c || panDetails
                   ? // push pan name here
                     {
-                      panNumber: applicantRecord?.PAN__c,
-                      // Not getting pan name
-                      panName: applicantRecord?.NameInPan__c,
+                      panNumber: panDetails ? panDetails?.Pan__c : applicantRecord?.PAN__c,
+                      panName: panDetails?.NameInPan__c,
                     }
                   : undefined,
                 // adhaarDetails: applicantRecord?.AdhrLst4Dgts__c
@@ -1409,8 +1426,8 @@ export const useSubmitApplicationFormData = (pincodeData) => {
                 const applicationId =
                   response?.compositeResponse?.[1]?.body?.id;
                 console.log("CHECK 2");
-                const loanDetails =
-                  response?.compositeResponse?.[2]?.body?.records[0];
+                // const loanDetails =
+                //   response?.compositeResponse?.[2]?.body?.records[0];
 
                 if (loanId && applicationId) {
                   // convert lead to loan
@@ -1490,17 +1507,17 @@ export const useSubmitLoanFormData = (loanData) => {
           const response = await compositeRequest(
             createCompositeRequestForLoadDetails(
               data,
-              loanDetail.loanDetails,
+              loanDetail.loanDetails, // ApplAsset__c
               loanData?.loanId,
               loanData?.Applicant__c,
               loanData?.applicantIncomeId
             )
           );
           const applicantIncomeId =  loanData?.applicantIncomeId ?  loanData?.applicantIncomeId : response.compositeResponse[3]?.body?.id
-          console.log('response', JSON.stringify(response.compositeResponse[3]?.body?.id))
+          const applicationAssetId =  loanData?.loanId ?  loanData?.loanId :  response.compositeResponse?.find(el => el?.referenceId === 'postLoanDetail')?.body?.id;
 
           await saveApplicationData(loanDetail);
-          resolve(applicantIncomeId);
+          resolve({applicantIncomeId, applicationAssetId});
         } catch (error) {
           console.log("skdjhdf", error);
           reject(ErrorConstants.SOMETHING_WENT_WRONG);
@@ -1511,6 +1528,29 @@ export const useSubmitLoanFormData = (loanData) => {
 
   return mutate;
 };
+
+
+export const useCompositeRequestMutation = (loanData) => {
+  const mutate = useMutation({
+    networkMode: "always",
+    mutationFn: async (compositeBody) => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const response = await compositeRequest(
+            compositeBody
+          );
+          resolve(response.compositeResponse);
+        } catch (error) {
+          console.log("skdjhdf", error);
+          reject(ErrorConstants.SOMETHING_WENT_WRONG);
+        }
+      });
+    },
+  });
+
+  return mutate;
+};
+
 
 export const useSubmitPanForm = (loanData) => {
   const mutate = useMutation({

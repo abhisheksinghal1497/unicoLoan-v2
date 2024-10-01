@@ -147,6 +147,7 @@ const Eligibility = (props) => {
             coApplicantsArr={coApplicantsArr}
             setCoApplicantsArr={setCoApplicantsArr}
             loanId={loanId}
+            loanData={loanData}
           />
 
           {cardData &&

@@ -120,7 +120,7 @@ const LoanDetails = (props) => {
     try {
       const data = watch();
 
-      const applicantIncomeId =  await submitLoanMutate.mutateAsync(data);
+      const {applicantIncomeId, applicationAssetId} =  await submitLoanMutate.mutateAsync(data);
 
       let applicantRecordsArr = [...applicationDetails?.Applicants__r?.records];
       let updatedApplicantRecordIndex = applicantRecordsArr?.findIndex(
@@ -144,6 +144,8 @@ const LoanDetails = (props) => {
         };
       }
 
+      let loanDetails = loanData?.loanDetails ? loanData?.loanDetails : {}
+
       const updatedLoanData = {
         ...loanData,
         applicantIncomeId: applicantIncomeId,
@@ -160,7 +162,8 @@ const LoanDetails = (props) => {
         },
 
         loanDetails: {
-          ...loanData?.loanDetails,
+          ...loanDetails,
+          Id: applicationAssetId,
           Bankbalance__c: data[LOAN_DETAILS_KEYS.bankBalance],
           ImmovablePropertyValue__c: data[LOAN_DETAILS_KEYS.immovableProperty],
           CurrentPfBalance__c: data[LOAN_DETAILS_KEYS.currPF],

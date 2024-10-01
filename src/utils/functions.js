@@ -384,6 +384,14 @@ export const createCompositeRequestForPanAadhar = (
           Pan__c: loanData?.panDetails?.panNumber,
         },
       },
+
+      {
+        ...postCompositeRequest(
+          "ApplAddr__c",
+          getAadharAddressRequest(loanData),
+          "adhaarPermanentAddress"
+        ),
+      },
     ];
 
     return compositeRequest;
@@ -868,23 +876,9 @@ export const createCompositeRequestsForPanUpload = (data, applicationKycId) => {
 export const createCompositeRequestsForAdhaarUpload = (
   data,
   applicationKycId,
-  imageBase64,
-  isImageUpload
+  imageBase64
 ) => {
   try {
-    // IF we are not uploading any image just save address
-    if (!isImageUpload) {
-      return [
-        {
-          ...postCompositeRequest(
-            "ApplAddr__c",
-            getAadharAddressRequest(data),
-            "adhaarPermanentAddress"
-          ),
-        },
-      ];
-    }
-
     const compositeRequests = [
       {
         method: "GET",
@@ -968,13 +962,6 @@ export const createCompositeRequestsForAdhaarUpload = (
         url: `/services/data/${net.getApiVersion()}/sobjects/ApplKyc__c/${applicationKycId}`,
         referenceId: "poaApplKycPatch",
         body: panKycUpdateBody("@{poadocDetailPost.id}"),
-      },
-      {
-        ...postCompositeRequest(
-          "ApplAddr__c",
-          getAadharAddressRequest(data),
-          "adhaarPermanentAddress"
-        ),
       },
     ];
 
@@ -1354,6 +1341,7 @@ export const createCompositeRequestForLeadList = (loanData) => {
     var loanLength = loanData.records.length;
     var compositeRequest = [];
     var applicationIds = [];
+    const allApplicantId = []
     for (let i = 0; i < loanLength; i++) {
       const record = loanData.records[i];
       // Change here should be type p
@@ -1361,9 +1349,11 @@ export const createCompositeRequestForLeadList = (loanData) => {
         (el) => el.ApplType__c === "P"
       )[0].Id; // need to check after coapplicant
       applicationIds.push(applicantId);
-    }
 
-    //['1234','123566']
+      record?.Applicants__r?.records?.forEach(el => {
+        allApplicantId.push(el?.Id)
+      })
+    }
 
     if (applicationIds.length > 0) {
       const query = `SELECT FIELDS(ALL) FROM ApplKyc__c WHERE Applicant__c IN (${applicationIds
@@ -1380,7 +1370,7 @@ export const createCompositeRequestForLeadList = (loanData) => {
         .map((id) => `'${id}'`)
         .join(", ")}) LIMIT 200`;
 
-      const query3 = `SELECT FIELDS(ALL) FROM Applicant_Income__c WHERE Applicant__c IN (${applicationIds
+      const query3 = `SELECT FIELDS(ALL) FROM Applicant_Income__c WHERE Applicant__c IN (${allApplicantId
         .map((id) => `'${id}'`)
         .join(", ")}) LIMIT 200`;
 
@@ -1470,6 +1460,67 @@ export const compositeFetchImage = (LinkedEntityId) => {
         ...getCompositeRequest(
           "SELECT VersionData FROM ContentVersion WHERE ContentDocumentId = '@{ContentDocumentLink.records[0].ContentDocumentId}'",
           "ContentVersion"
+        ),
+      },
+    ];
+    return compositeRequest;
+  } catch (error) {
+    console.log("Error compioste error", error);
+    return null;
+  }
+};
+
+export const createCoApplicantCompositeRequest = (coApplicantBody) => {
+  try {
+    const compositeRequest = [
+      {
+        ...postCompositeRequest(
+          "Applicant__c",
+          coApplicantBody,
+          "coApplicantPost"
+        ),
+      },
+      {
+        ...postCompositeRequest(
+          "Applicant_Income__c",
+          {
+            Applicant_Net_Income__c: coApplicantBody?.Annual_Turnover__c,
+            Applicant__c: "@{coApplicantPost.id}",
+          },
+          "Applicant_Income__c_POST"
+        ),
+      },
+    ];
+    return compositeRequest;
+  } catch (error) {
+    console.log("Error compioste error", error);
+    return null;
+  }
+};
+
+export const updateCoApplicantCompositeRequest = (
+  coApplicantBody,
+  coApplicantId,
+  applicantIncomeId
+) => {
+  try {
+    const compositeRequest = [
+      {
+        ...patchCompositeRequest(
+          "Applicant__c",
+          coApplicantId,
+          coApplicantBody,
+          "coApplicantPatch"
+        ),
+      },
+      {
+        ...patchCompositeRequest(
+          "Applicant_Income__c",
+          applicantIncomeId,
+          {
+            Applicant_Net_Income__c: coApplicantBody?.Annual_Turnover__c,
+          },
+          "Applicant_Income__c_PATCH"
         ),
       },
     ];
