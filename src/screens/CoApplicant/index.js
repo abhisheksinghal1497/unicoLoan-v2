@@ -22,6 +22,7 @@ import {
   deleteObjectMutation,
   postObjectMutation,
   updateObjectMutation,
+  useCompositeRequestMutation,
 } from "../../services/ApiUtils";
 import uuid from "react-native-uuid";
 import Toast from "react-native-toast-message";
@@ -35,17 +36,27 @@ import CustomModal from "../../components/CustomModal";
 import Card from "../../components/Card";
 import moment from "moment";
 import { parsedDate } from "../CurrentAddress";
+import {
+  createCoApplicantCompositeRequest,
+  updateCoApplicantCompositeRequest,
+} from "../../utils/functions";
+import { useNavigation } from "@react-navigation/native";
 
-const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
-  const createDataMutate = postObjectMutation();
-  const updateDataMutate = updateObjectMutation();
+const CoApplicant = ({
+  coApplicantsArr,
+  setCoApplicantsArr,
+  loanId,
+  loanData,
+}) => {
+  const navigation = useNavigation();
+  const createDataMutate = useCompositeRequestMutation();
+  const updateDataMutate = useCompositeRequestMutation();
   const deleteDataMutate = deleteObjectMutation();
   // -1 means there is no active co applicant for now
   const [activeApplicantIndex, setActiveApplicantIndex] = useState(-1);
   const isCreateForm = !coApplicantsArr[activeApplicantIndex]?.Id;
   const [showBottomModal, setShowBottomModal] = useState(false);
   const selectedID = coApplicantsArr[activeApplicantIndex]?.Id;
-
 
   const {
     control,
@@ -203,15 +214,28 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
     };
 
     try {
-      const Id = await createDataMutate.mutateAsync({
-        objectName: "Applicant__c",
-        body: data,
-      });
-     
-      setCoApplicantsArr([...coApplicantsArr, { ...data, Id }]);
+      const response = await createDataMutate.mutateAsync(
+        createCoApplicantCompositeRequest(data)
+      );
+
+      const coApplicantId = response[0]?.body?.id;
+      const coApplicantIncomeId = response[1]?.body?.id;
+      const applicantData = { ...data, Id: coApplicantId, coApplicantIncomeId };
+      setCoApplicantsArr([...coApplicantsArr, applicantData]);
       setActiveApplicantIndex(-1);
       reset();
       setShowBottomModal(false);
+
+      const updatedArr = Array.isArray(
+        loanData?.applicationDetails?.Applicants__r?.records
+      )
+        ? [
+            ...loanData?.applicationDetails?.Applicants__r?.records,
+            applicantData,
+          ]
+        : [applicantData];
+
+      updateParams(updatedArr);
     } catch (error) {
       console.log("FAILED TO CREATE-----------", error);
       Toast.show({ type: "error", text1: ErrorConstants.SOMETHING_WENT_WRONG });
@@ -228,6 +252,16 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
       setCoApplicantsArr(coApplicantsArr.filter((el) => el.Id !== id));
       setActiveApplicantIndex(-1);
       reset();
+
+      const updatedArr = Array.isArray(
+        loanData?.applicationDetails?.Applicants__r?.records
+      )
+        ? loanData?.applicationDetails?.Applicants__r?.records.filter(
+            (el) => el.Id !== id
+          )
+        : [];
+
+      updateParams(updatedArr);
       setShowBottomModal(false);
     } catch (error) {
       console.log("FAILED TO DELTE-----------", error);
@@ -242,32 +276,47 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
       DOB__c: parsedDate(formData?.DOB__c),
     };
     const id = coApplicantsArr[activeApplicantIndex]?.Id;
+    const coApplicantIncomeId =
+      coApplicantsArr[activeApplicantIndex]?.coApplicantIncomeId;
     if (!id) {
       Toast.show({ type: "error", text1: ErrorConstants.SOMETHING_WENT_WRONG });
       return;
     }
 
     try {
-      const response = await updateDataMutate.mutateAsync({
-        objectName: "Applicant__c",
-        body: data,
-        id,
-      });
+      const response = await updateDataMutate.mutateAsync(
+        updateCoApplicantCompositeRequest(data, id, coApplicantIncomeId)
+      );
       const prevArr = [...coApplicantsArr];
-      const coApplicantIndex = prevArr.findIndex((el) => el.Id === id);
-      if (coApplicantIndex !== -1) {
-        prevArr[coApplicantIndex] = {
-          Id: prevArr[coApplicantIndex].Id,
-          ...data,
-        };
-      }
+      prevArr[activeApplicantIndex] = {
+        ...prevArr[activeApplicantIndex],
+        ...data,
+      };
+
       setCoApplicantsArr([...prevArr]);
       setActiveApplicantIndex(-1);
       reset();
 
+      let updatedArr = Array.isArray(
+        loanData?.applicationDetails?.Applicants__r?.records
+      )
+        ? JSON.parse(JSON.stringify(loanData?.applicationDetails?.Applicants__r?.records)) 
+        : [];
+      
+
+      const coApplicantIndexSF = updatedArr.findIndex((el) => el.Id === id);
+      if (coApplicantIndexSF !== -1) {
+        updatedArr[coApplicantIndexSF] = {
+          ...updatedArr[coApplicantIndexSF],
+          ...data,
+        };
+      }
+
+      updateParams(updatedArr);
+
       setShowBottomModal(false);
     } catch (error) {
-      console.log("FAILED TO CREATE-----------", error);
+      console.log("FAILED TO UPDATE-----------", error);
       Toast.show({ type: "error", text1: ErrorConstants.SOMETHING_WENT_WRONG });
     }
   };
@@ -279,6 +328,28 @@ const CoApplicant = ({ coApplicantsArr, setCoApplicantsArr, loanId }) => {
     }
     setActiveApplicantIndex(coApplicantsArr.length === 0 ? 0 : 1);
     setShowBottomModal(true);
+  };
+
+  const updateParams = (updatedRecords) => {
+    try {
+      let finalLoanData = JSON.parse(JSON.stringify(loanData));
+      const data = {
+        loanData: {
+          ...finalLoanData,
+          applicationDetails: {
+            ...finalLoanData?.applicationDetails,
+            Applicants__r: {
+              ...finalLoanData?.applicationDetails?.Applicants__r,
+              records: updatedRecords,
+            },
+          },
+        },
+      }
+      navigation.setParams(data);
+    } catch (error) {
+      console.log('ERROR', error)
+    }
+   
   };
 
   const CoApplicantCard = ({ data, index }) => {

@@ -134,28 +134,14 @@ export const verifyAadhar = (panNumber, loanData, panName) => {
                         response?.compositeResponse?.[0]?.body?.id;
                       const adhaarApplicationId =
                         response?.compositeResponse?.[1]?.body?.id;
-
-                      // AADHAAR IMAGE UPLOAD
+                        // Adhaar IMAGE UPLOAD
                       if (adhaarApplicationId && result) {
-                        try {
-                          const aadhaarUploadRequests =
-                            createCompositeRequestsForAdhaarUpload(
-                              loanData,
-                              adhaarApplicationId,
-                              result,
-                              true
-                            );
-                          await compositeRequest(aadhaarUploadRequests);
-                        } catch (error) {}
-                        // IF USER HAS NOT UPLOAD IMAGE JUST UPDATE ADDRESS
-                      } else if (adhaarApplicationId){
                         try {
                           const aadhaarUploadRequests =
                             createCompositeRequestsForAdhaarUpload(
                               loanDetails,
                               adhaarApplicationId,
                               result,
-                              false
                             );
                           await compositeRequest(aadhaarUploadRequests);
                         } catch (error) {}
@@ -163,7 +149,7 @@ export const verifyAadhar = (panNumber, loanData, panName) => {
                       // PAN IMAGE UPLOAD
                       if (
                         panApplicationId &&
-                        loanData?.panDetails?.imageBase64
+                        loanDetails?.panDetails?.imageBase64
                       ) {
                         console.log("pan upload");
                         try {
