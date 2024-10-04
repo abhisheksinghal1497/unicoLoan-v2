@@ -18,6 +18,11 @@ export const validations = {
     minLength: 6,
     pattern: /\d*/,
   },
+  otpLogin: {
+    required: true,
+    minLength: 4,
+    pattern: /\d*/,
+  },
   phone: {
     required: true,
     pattern: /[6-9]\d{9}/,
