@@ -5,6 +5,7 @@ import {
   View,
   Text,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import Container from "../../components/Container";
 import Header from "../../components/Header";
@@ -41,6 +42,7 @@ import {
   updateCoApplicantCompositeRequest,
 } from "../../utils/functions";
 import { useNavigation } from "@react-navigation/native";
+import LocalStorage from "../../services/LocalStorage";
 
 const CoApplicant = ({
   coApplicantsArr,
@@ -68,6 +70,7 @@ const CoApplicant = ({
     setValue,
     reset,
     trigger,
+    clearErrors
   } = useForm({
     mode: "onBlur",
     defaultValues: {},
@@ -105,6 +108,7 @@ const CoApplicant = ({
     {
       Id: "DOB__c",
       label: "Date of birth",
+      validations: validations.isOlderThan18,
       type: component.datetime,
       placeHolder: "Enter date of birth",
       isRequired: true,
@@ -205,6 +209,13 @@ const CoApplicant = ({
       Toast.show({ type: "error", text1: "Only 2 co applicants are allowed" });
       return;
     }
+    const currentPhoneNumber = formData?.MobNumber__c;
+    const isUniqueNumber = checkUniquePhoneNumber(currentPhoneNumber);
+
+    if (!isUniqueNumber) {
+      setError("MobNumber__c", "Phone number can't be same");
+      return;
+    }
     const data = {
       ...formData,
       MName__c: formData?.MName__c ?? "",
@@ -269,7 +280,33 @@ const CoApplicant = ({
     }
   };
 
+  const checkUniquePhoneNumber = (currentPhoneNumber) => {
+    const userPhone = LocalStorage?.getUserData()?.Phone;
+    let isUniquePhone = true;
+    coApplicantsArr.forEach((el, i) => {
+      if (i !== activeApplicantIndex) {
+        if (el?.MobNumber__c === currentPhoneNumber) {
+          isUniquePhone = false;
+        }
+      }
+    });
+
+    if (userPhone === currentPhoneNumber || !isUniquePhone) {
+      return false;
+    }
+
+    return true;
+  };
+
   const updateApplicant = async (formData) => {
+    const currentPhoneNumber = formData?.MobNumber__c;
+    const isUniqueNumber = checkUniquePhoneNumber(currentPhoneNumber);
+
+    if (!isUniqueNumber) {
+      setError("MobNumber__c", "Phone number can't be same");
+      return;
+    }
+
     const data = {
       ...formData,
       MName__c: formData?.MName__c ?? "",
@@ -300,9 +337,10 @@ const CoApplicant = ({
       let updatedArr = Array.isArray(
         loanData?.applicationDetails?.Applicants__r?.records
       )
-        ? JSON.parse(JSON.stringify(loanData?.applicationDetails?.Applicants__r?.records)) 
+        ? JSON.parse(
+            JSON.stringify(loanData?.applicationDetails?.Applicants__r?.records)
+          )
         : [];
-      
 
       const coApplicantIndexSF = updatedArr.findIndex((el) => el.Id === id);
       if (coApplicantIndexSF !== -1) {
@@ -326,8 +364,15 @@ const CoApplicant = ({
       Toast.show({ type: "error", text1: "Only 2 co applicants are allowed" });
       return;
     }
+    reset()
     setActiveApplicantIndex(coApplicantsArr.length === 0 ? 0 : 1);
     setShowBottomModal(true);
+  };
+
+  const closeModal = () => {
+    setActiveApplicantIndex(-1);
+    setShowBottomModal(false);
+    clearErrors()
   };
 
   const updateParams = (updatedRecords) => {
@@ -344,12 +389,11 @@ const CoApplicant = ({
             },
           },
         },
-      }
+      };
       navigation.setParams(data);
     } catch (error) {
-      console.log('ERROR', error)
+      console.log("ERROR", error);
     }
-   
   };
 
   const CoApplicantCard = ({ data, index }) => {
@@ -454,16 +498,6 @@ const CoApplicant = ({
         })}
       </View>
 
-      {/* {activeApplicantIndex === -1 && coApplicantsArr.length < 2 && (
-        <View style={styles.buttonview}>
-          <Button
-            onPress={createNewApplicant}
-            type="primary"
-            label="Create Applicant"
-          />
-        </View>
-      )} */}
-
       <CustomModal
         type="bottom"
         showModal={showBottomModal}
@@ -476,9 +510,25 @@ const CoApplicant = ({
         withFeedback={true}
       >
         <ScrollView showsVerticalScrollIndicator={false}>
-          <Text style={{ fontWeight: "bold", fontSize: 18 }}>
-            {isCreateForm ? "Create Applicant" : "Update applicant"}
-          </Text>
+          <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
+            <Text style={{ fontWeight: "bold", fontSize: 18 }}>
+              {isCreateForm ? "Create Applicant" : "Update applicant"}
+            </Text>
+
+            <TouchableOpacity onPress={closeModal}>
+              <Image
+                source={require("../../assets/crossGray.png")}
+                style={{
+                  width: 20,
+                  height: 20,
+                  resizeMode: "contain",
+                  // justifyContent: "flex-end",
+                  marginBottom: verticalScale(12.5),
+                }}
+              />
+            </TouchableOpacity>
+          </View>
+
           {CoApplicantForm.map((comp, i) => (
             <FormControl
               compType={comp.type}
