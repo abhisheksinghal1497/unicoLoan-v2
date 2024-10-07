@@ -375,7 +375,7 @@ export const getBureauBreApi = (applicationId, loanId, meesageId) => {
   return new Promise((resolve, reject) => {
     net.sendRequest(
       "/services/apexrest",
-      `/getBureauBre?applId=${applicationId}&loanId=${loanId}&intgId=${meesageId}`,
+      `/getBureauBre?refId=${applicationId}&loanId=${loanId}&intgId=${meesageId}`,
       (res) => {
         // console.log("Entered");
         if (!res?.message && !res?.error) {
