@@ -149,7 +149,7 @@ const KYCDocuments = ({ navigation }) => {
       </CustomModal>
       <Header
         title="KYC Documents"
-        left={require("../../images/back.png")}
+        left={require("../../assets/back2.png")}
         rightImages={[
           { source: assets.chat },
           { source: assets.questionRound },
@@ -207,7 +207,7 @@ const KYCDocuments = ({ navigation }) => {
                   ? {
                       uri: selectedImageSelfie?.path ?  selectedImageSelfie?.path : selectedImageSelfie,
                     } 
-                  : require("../../images/aadhar-front.png")
+                  : require("../../assets/aadhar-front.png")
               }
               style={{ height: 150, width: 150 }}
               resizeMode="cover"
@@ -240,7 +240,7 @@ const CustomImageContainer = ({ selectedImage }) => {
               ? {
                   uri: `data:${selectedImage?.mime};base64,${selectedImage?.data}`,
                 }
-              : require("../../images/aadhar-front.png")
+              : require("../../assets/aadhar-front.png")
           }
           style={{ height: 100, width: 100 }}
           resizeMode="cover"

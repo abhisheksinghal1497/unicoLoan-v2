@@ -140,7 +140,7 @@ const CaptureSelfie = ({ navigation }) => {
       <SafeAreaView style={styles.container}>
         <Header
           title={"Selfie Capture"}
-          left={require("../../images/back.png")}
+          left={require("../../assets/back2.png")}
           onPressLeft={() => {
             resetRoute(screens.HomeScreen);
           }}
@@ -158,7 +158,7 @@ const CaptureSelfie = ({ navigation }) => {
         />
         <View style={styles.noteContainer}>
           <Image
-            source={require("../../images/bulb.png")}
+            source={require("../../assets/bulb.png")}
             style={styles.bulbImage}
           />
           <Text style={fonts.bodySmall}>

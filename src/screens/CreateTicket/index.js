@@ -155,7 +155,7 @@ const CreateTicket = (props) => {
     <View style={styles.container}>
       <Header
         title="Raise Tickets"
-        left={require("../../images/back.png")}
+        left={require("../../assets/back2.png")}
         onPressLeft={() => {
           props?.navigation.goBack();
         }}

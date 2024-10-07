@@ -64,7 +64,7 @@ const ConsentScreen = (props) => {
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <Header
         title="Consent"
-        left={require("../../images/back.png")}
+        left={require("../../assets/back2.png")}
         rightImages={[
           { source: assets.chat },
           { source: assets.questionRound },

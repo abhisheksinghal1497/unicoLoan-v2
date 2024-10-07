@@ -28,19 +28,20 @@ import { Linking } from 'react-native'
 const { width: devicWidth } = Dimensions.get("window");
 import { getSanctionLetterQuery, getSanctionPdf } from "../../services/ApiUtils";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
+import Toast from "react-native-toast-message";
 
 const Sanction = (props) => {
   const { colors, fonts } = useTheme();
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
   const applicationId = loanData?.Applicant__c;
-  const [{data, isPending, isError}] = getSanctionLetterQuery(applicationId);
+  const [{data, isPending, isError}] = getSanctionLetterQuery(applicationId); //a10Bi000003gAxSIAU
 
   console.log('DATA HERE', data);
 
   const [isComplete, setIsComplete] = useState(false);
   const [progress, setProgress] = useState(0);
-  const pdfUrl = "https://pdfobject.com/pdf/sample.pdf";
+  const pdfUrl = data?.message;
 
   const getData = getSanctionPdf(loanData);
   const [showHelpModal, setShowHelpModal] = useState(false);
@@ -72,8 +73,12 @@ const Sanction = (props) => {
   }
 
   const downloadPDF = async () => {
-
     try {
+      if(!pdfUrl){
+        Toast.show({type: 'success', text1:'Unable to get pdf url'})
+        return
+      }
+
       const granted = await hasAndroidPermission();
       console.log({granted})
       if (!granted) {
@@ -142,7 +147,7 @@ const Sanction = (props) => {
     <View style={styles.container}>
       <Header
         title="IN-Principle Sanction"
-        left={require("../../images/back.png")}
+        left={require("../../assets/back2.png")}
         rightImages={[
           { source: assets.chat },
           { source: assets.questionRound },
@@ -164,7 +169,7 @@ const Sanction = (props) => {
         toggleHelpModal={toggleHelpModal}
       />
 
-      <ActivityIndicatorComponent visible={getData?.isPending} />
+      <ActivityIndicatorComponent visible={getData?.isPending || isPending} />
 
       <Card cardStyle={styles.cardContainer}>
         <ImageBackground
@@ -202,7 +207,7 @@ const Sanction = (props) => {
             <View style={styles.flex}>
               <View style={styles.docDetails}>
                 <Image
-                  source={require("../../images/file.png")}
+                  source={require("../../assets/file.png")}
                   style={styles.fileImage}
                 />
                 <View>
@@ -212,7 +217,7 @@ const Sanction = (props) => {
               </View>
               {isComplete ? (
                 <Image
-                  source={require("../../images/tick.png")}
+                  source={require("../../assets/tick2.png")}
                   style={styles.checkImage}
                 />
               ) : null}

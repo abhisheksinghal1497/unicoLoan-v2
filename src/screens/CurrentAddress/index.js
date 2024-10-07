@@ -18,7 +18,7 @@ import { colors } from "../../colors";
 import customTheme from "../../colors/theme";
 import CustomShadow from "../../components/FormComponents/CustomShadow";
 import Button from "../../components/Button";
-import { submitDrivingLicenseMutation } from "../../services/ApiUtils";
+import { submitCurrentAddressMutation } from "../../services/ApiUtils";
 import Accordion from "react-native-collapsible/Accordion";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import ErrorConstant from "../../constants/ErrorConstants";
@@ -81,7 +81,7 @@ const CurrentAddress = ({ navigation }) => {
   const dlCheck = doOCRForDL(panName);
   const passportCheck = doOCRForPassport(panName);
   const voterIdCheck = doOCRForVoterID(panName);
-  const submitMutation = submitDrivingLicenseMutation(loanData);
+  const submitMutation = submitCurrentAddressMutation(loanData);
   const canvasRef = useRef(null);
 
   const addressForm = [
@@ -902,7 +902,7 @@ const CurrentAddress = ({ navigation }) => {
         <View style={{ marginHorizontal: horizontalScale(10) }}>
           <Header
             title="Upload Documents"
-            left={require("../../images/back.png")}
+            left={require("../../assets/back2.png")}
             rightImages={[
               { source: assets.chat },
               { source: assets.questionRound },

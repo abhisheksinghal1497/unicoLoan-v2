@@ -49,6 +49,7 @@ const CoApplicant = ({
   setCoApplicantsArr,
   loanId,
   loanData,
+  retryBre
 }) => {
   const navigation = useNavigation();
   const createDataMutate = useCompositeRequestMutation();
@@ -259,7 +260,7 @@ const CoApplicant = ({
         objectName: "Applicant__c",
         id,
       });
-
+      retryBre()
       setCoApplicantsArr(coApplicantsArr.filter((el) => el.Id !== id));
       setActiveApplicantIndex(-1);
       reset();
@@ -324,6 +325,7 @@ const CoApplicant = ({
       const response = await updateDataMutate.mutateAsync(
         updateCoApplicantCompositeRequest(data, id, coApplicantIncomeId)
       );
+      retryBre()
       const prevArr = [...coApplicantsArr];
       prevArr[activeApplicantIndex] = {
         ...prevArr[activeApplicantIndex],

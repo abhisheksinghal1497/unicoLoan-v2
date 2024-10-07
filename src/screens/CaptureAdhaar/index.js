@@ -96,7 +96,7 @@ const CaptureAdhaar = ({ navigation }) => {
             <SafeAreaView style={styles.container}>
                 <Header
                     title={selectedImage ? headerText : headerTextSecond}
-                    left={require('../../images/back.png')}
+                    left={require('../../assets/back2.png')}
                     onPressLeft={() => { navigation.goBack() }}
                     onPressRight={() => { }}
                     colour="white" />

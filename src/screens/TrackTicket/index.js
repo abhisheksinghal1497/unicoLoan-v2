@@ -30,7 +30,7 @@ const TrackTicket = (props) => {
       <View>
         <Header
           title={"Track Tickets"}
-          left={require("../../images/back.png")}
+          left={require("../../assets/back2.png")}
           right={require("../../assets/chat_icon.png")}
           onPressLeft={() => {
             props?.navigation?.goBack();
