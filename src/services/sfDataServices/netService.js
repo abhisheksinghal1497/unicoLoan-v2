@@ -382,15 +382,19 @@ export const getBureauBreApi = (applicationId, loanId, meesageId) => {
         if (!res?.message && !res?.error) {
           reject("error");
         }
-        if (res.error || (res?.error !== "BRE Failed" && !res?.message)) {
+
+        if (res?.error === "BRE Failed" || res?.error === 'Bureau Failed') {
+          resolve({ success: false , message: "BRE Failed"});
+          return;
+        }
+
+        if (res.error) {
           console.log("res.error------------------------", res.error);
           reject(ErrorConstants.SOMETHING_WENT_WRONG);
           return;
         }
-        if (res?.error === "BRE Failed") {
-          resolve({ success: false , message: "BRE Failed"});
-          return;
-        }
+        
+       
         console.log("resSUCCESS -----------------------", res);
         resolve({ success: true , message: "BRE Success", data: res?.message ? JSON.parse(res?.message) : res});
       },

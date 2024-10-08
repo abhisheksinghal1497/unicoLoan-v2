@@ -37,6 +37,7 @@ import { useResetRoutes } from "../../utils/functions";
 import Container from "../../components/Container";
 import { EMAIL_CC, Mobile } from "../../constants/stringConstants";
 import LocalStorage from "../../services/LocalStorage";
+import Toast from "react-native-toast-message";
 
 export default function ApplicationDetails(props) {
   const route = useRoute();
@@ -49,11 +50,11 @@ export default function ApplicationDetails(props) {
   const [mock_data, setMockData] = useState([]);
   const applicationFormMutate = useSubmitApplicationFormData(pincodeData);
   const resetRoute = useResetRoutes();
-  const [showHelpModal, setShowHelpModal] = useState(false);
+  // const [showHelpModal, setShowHelpModal] = useState(false);
 
-  const toggleHelpModal = () => {
-    setShowHelpModal(!showHelpModal);
-  };
+  // const toggleHelpModal = () => {
+  //   setShowHelpModal(!showHelpModal);
+  // };
 
   useEffect(() => {
     getFormData?.mutate({ pincode: pincodeData });
@@ -63,7 +64,7 @@ export default function ApplicationDetails(props) {
     if (index === 0) {
       props.navigation.navigate(screens.FAQ);
     } else if (index === 1) {
-      toggleHelpModal();
+      // toggleHelpModal();
     }
   };
 
@@ -122,7 +123,10 @@ export default function ApplicationDetails(props) {
       setError("AltMobile__c", "");
       const isValid = await trigger();
 
-      if (!isValid) return;
+      if (!isValid) {
+        Toast.show({type:'error', text1: 'Please fill form correctly'})
+        return
+      };
 
       const data = new watch();
 
@@ -139,6 +143,7 @@ export default function ApplicationDetails(props) {
           "AltMobile__c",
           "Permanent and Alternate number can't be same"
         );
+        Toast.show({type:'error', text1: 'Please check phone number'})
         return;
       }
 
@@ -147,6 +152,7 @@ export default function ApplicationDetails(props) {
 
       //
     } catch (error) {
+      Toast.show({type:'error', text1: 'Please fill form correctly'})
       console.log("IN ERROR");
     }
   };
@@ -303,7 +309,7 @@ export default function ApplicationDetails(props) {
             left={assets.back}
             rightImages={[
               { source: assets.chat },
-              { source: assets.questionRound },
+              // { source: assets.questionRound },
             ]}
             leftStyle={{ height: verticalScale(15), width: verticalScale(15) }}
             leftImageProps={{ resizeMode: "contain" }}
@@ -318,8 +324,8 @@ export default function ApplicationDetails(props) {
             onPressLeft={() => {
               props?.navigation?.goBack();
             }}
-            showHelpModal={showHelpModal}
-            toggleHelpModal={toggleHelpModal}
+            // showHelpModal={showHelpModal}
+            // toggleHelpModal={toggleHelpModal}
           />
         </View>
         <ScrollView contentContainerStyle={style.scrollviewStyle}>

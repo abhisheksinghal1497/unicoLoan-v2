@@ -201,6 +201,13 @@ const LoanDetails = (props) => {
   const ownContri = watch(LOAN_DETAILS_KEYS.ownContri);
   const assetVal = watch(LOAN_DETAILS_KEYS.assetVal);
   const immovableProperty = watch(LOAN_DETAILS_KEYS.immovableProperty);
+  const isExistingCustomer = watch(LOAN_DETAILS_KEYS.isExistingCustomer) === 'YES';
+
+  useEffect(() => {
+    if(!isExistingCustomer){
+      setValue(LOAN_DETAILS_KEYS.custId, '');
+    }
+  },[isExistingCustomer]);
 
   const calcTotalAssetCost = () => {
     try {
@@ -309,6 +316,9 @@ const LoanDetails = (props) => {
         </View>
 
         {mock_loan_details_data.map((comp) => {
+          if(comp.id === LOAN_DETAILS_KEYS.custId && !isExistingCustomer){
+            return <></>
+          }
           return (
             <FormControl
               compType={comp.type}

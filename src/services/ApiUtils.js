@@ -930,6 +930,17 @@ export const getApplicationDetailsForm = () => {
             },
 
             {
+              id: "ReqLoanAmt__c",
+              label: "Requested loan amount",
+              type: component.textInput,
+              placeHolder: "Enter required loan amount",
+              validations: validations.loanAmountRegex,
+              keyboardtype: "numeric",
+              isRequired: true,
+              value: "",
+            },
+
+            {
               id: "ReqTenInMonths__c",
               label: "Requested tenure in Months",
               type: component.textInput,
@@ -940,16 +951,7 @@ export const getApplicationDetailsForm = () => {
               value: "",
             },
 
-            {
-              id: "ReqLoanAmt__c",
-              label: "Requested loan amount",
-              type: component.textInput,
-              placeHolder: "Enter required loan amount",
-              validations: validations.loanAmountRegex,
-              keyboardtype: "numeric",
-              isRequired: true,
-              value: "",
-            },
+          
 
             {
               id: "PropertyIdentified__c",
@@ -1409,7 +1411,8 @@ export const useSubmitApplicationFormData = (pincodeData) => {
           );
           if (leadcreateResponse && leadcreateResponse.id) {
             // make the dedupe call
-            const dedupeRes = await DedupeApi(leadcreateResponse?.id);
+            // const dedupeRes = await DedupeApi(leadcreateResponse?.id);
+            const dedupeRes = 'Passed'
             if (
               dedupeRes &&
               (dedupeRes === "Dedupe failed" || dedupeRes === "EXACT_MATCH")

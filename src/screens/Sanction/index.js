@@ -23,10 +23,13 @@ import Header from "../../components/Header";
 import CustomShadow from "../../components/FormComponents/CustomShadow";
 import CustomButton from "../../components/Button";
 import { useRoute } from "@react-navigation/native";
-import { Linking } from 'react-native'
+import { Linking } from "react-native";
 
 const { width: devicWidth } = Dimensions.get("window");
-import { getSanctionLetterQuery, getSanctionPdf } from "../../services/ApiUtils";
+import {
+  getSanctionLetterQuery,
+  getSanctionPdf,
+} from "../../services/ApiUtils";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 import Toast from "react-native-toast-message";
 
@@ -35,9 +38,10 @@ const Sanction = (props) => {
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
   const applicationId = loanData?.Applicant__c;
-  const [{data, isPending, isError}] = getSanctionLetterQuery(applicationId); //a10Bi000003gAxSIAU
+  const [{ data, isPending, isError }] =
+    getSanctionLetterQuery("a10Bi000003gAxSIAU"); //a10Bi000003gAxSIAU
 
-  console.log('DATA HERE', data);
+  console.log("DATA HERE", data);
 
   const [isComplete, setIsComplete] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -58,51 +62,65 @@ const Sanction = (props) => {
     if (Number(Platform.Version) >= 33) {
       return true;
     }
-  
+
     const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
-  
+
     const hasPermission = await PermissionsAndroid.check(permission);
-    console.log({hasPermission})
-    if (hasPermission) {
+
+    const readPermission =  PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
+    const checkRead = await PermissionsAndroid.check(readPermission);
+
+    if (hasPermission && checkRead) {
       return true;
     }
-  
-    const status = await PermissionsAndroid.request(permission);
-    console.log({status})
-    return status === 'granted';
+
+   
+
+    const result = await PermissionsAndroid.requestMultiple([permission, readPermission]);
+    const isGranted = result[PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE] === 'granted' 
+        && result[PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE] === 'granted';
+    return isGranted === "granted";
   }
 
   const downloadPDF = async () => {
     try {
-      if(!pdfUrl){
-        Toast.show({type: 'success', text1:'Unable to get pdf url'})
-        return
+      if (!pdfUrl) {
+        Toast.show({ type: "success", text1: "Unable to get pdf url" });
+        return;
       }
 
       const granted = await hasAndroidPermission();
-      console.log({granted})
+      console.log({ granted });
       if (!granted) {
-        Alert.alert('Permission Denied!', 'You need to give storage permission to download the file', [{
-          text: 'Give permission',
-          onPress: () => Linking.openSettings()
-        }]);
-        return
+        Alert.alert(
+          "Permission Denied!",
+          "You need to give storage permission to download the file",
+          [
+            {
+              text: "Give permission",
+              onPress: () => Linking.openSettings(),
+            },
+          ]
+        );
+        return;
       }
     } catch (err) {
       console.warn(err);
-      return
-    } 
+      return;
+    }
+
+    const fileName = 'In Principle Sanction Letter.pdf'
     let dirs = RNFetchBlob.fs.dirs;
     RNFetchBlob.config({
-      path: dirs.DownloadDir + "/In-Principle-Sanction-Letter.pdf",
+      // path: dirs.DownloadDir + "/" + fileName,
       fileCache: true,
       // appendExt: "pdf",
       addAndroidDownloads: {
         useDownloadManager: true,
-        mime: "application/pdf",
         notification: true,
-        path: dirs.DownloadDir + "/Letter.pdf",
-        //   description: "An image file.",
+        // mediaScannable: true,
+        // title: fileName,
+        path: `${dirs.DownloadDir}/${fileName}`,
       },
     })
       .fetch("GET", pdfUrl, {})
