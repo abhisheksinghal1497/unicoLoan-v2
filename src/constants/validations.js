@@ -4,6 +4,28 @@ const validateLength = (value, minLength, maxLength) => {
   return isNumeric && value >= minLength && value <= maxLength;
 };
 
+const isOlderThan18 = (value) => {
+  try {
+    console.log('DATA HERE-----', typeof value, ' ----------------------', {value})
+    const today = new Date();
+    const birthDate = new Date(value);
+    
+    if (!value) return "Date is required"; // Check if the date is provided
+  
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+  
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+      return age - 1; // Subtract a year if birthday hasn't occurred yet this year
+    }
+    
+    return age >= 18 || "You must be at least 18 years old"; // Return an error message if under 18   
+  } catch (error) {
+    return  "You must be at least 18 years old";
+  }
+  
+};
+
 
 export const validations = {
   required: {
@@ -18,6 +40,11 @@ export const validations = {
     minLength: 6,
     pattern: /\d*/,
   },
+  otpLogin: {
+    required: true,
+    minLength: 4,
+    pattern: /\d*/,
+  },
   phone: {
     required: true,
     pattern: /[6-9]\d{9}/,
@@ -30,6 +57,9 @@ export const validations = {
   },
   tenureRegex: {
     validate: (value) => validateLength(value, 36, 360) || 'Tenure should be in between 36 to 360',
+  },
+  isOlderThan18: {
+    validate: (value) => isOlderThan18(value) || "Must be at least 18 years old",
   },
   loanAmountRegex: {
     // pattern: /^[0-9]+$/, 

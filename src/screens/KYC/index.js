@@ -43,6 +43,7 @@ import Canvas, { Image as CanvasImage } from "react-native-canvas";
 import { KycScreen } from "../../constants/stringConstants";
 import { ConfiguratonConstants } from "../../constants/ConfigurationConstants";
 import ErrorConstants from "../../constants/ErrorConstants";
+import Toast from "react-native-toast-message";
 
 const WIDTH = Dimensions.get("window").width;
 const screenName = "Documents";
@@ -58,6 +59,7 @@ const KYC = (props) => {
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
   const resetRoute = useResetRoutes();
+  const [isImageProcessing, setIsImageProcessing] = useState(false)
 
   const {
     applicationDetails = {},
@@ -78,6 +80,7 @@ const KYC = (props) => {
   const [adhaarApiType, setAdhaarApiType] = useState(false);
   const adhaarEkycMutate = makeAdhaarEKYCCall();
   const [showHelpModal, setShowHelpModal] = useState(false);
+  const [mergeAdhaarImages, setMergeAdhaarImages] = useState('')
 
   const toggleHelpModal = () => {
     setShowHelpModal(!showHelpModal);
@@ -110,76 +113,49 @@ const KYC = (props) => {
     }
   }, [canvasRef.current, selectedImage, selectedImageBack]);
 
-  // const mergeBase64Images = (canvasRef, base64Image1, base64Image2) => {
-  //   const canvas = canvasRef.current;
-
-  //   const context = canvas.getContext("2d");
-  //   //context.rotate(45 * Math.PI / 180)
-
-  //   const image1 = new CanvasImage(canvas);
-  //   const image2 = new CanvasImage(canvas);
-
-  //   image1.src = `data:image/jpeg;base64,${base64Image1}`;
-  //   image2.src = `data:image/jpeg;base64,${base64Image2}`;
-
-  //   image1.addEventListener("load", () => {
-  //     // Draw the first image
-  //     context.save();
-
-  //     //  context.drawImage(image1, 0, 0, canvas.width / 2, canvas.height);
-
-  //     image2.addEventListener("load", () => {
-  //       canvas.width = Math.max(image1.width, image2.width);
-  //       canvas.height = image1.height + image2.height;
-  //       // Draw the second image next to the first image
-  //       context.drawImage(image1, 0, 0, image1.width, image1.height);
-  //       context.drawImage(
-  //         image2,
-  //         0,
-  //         image1.height + 50,
-  //         image2.width,
-  //         image2.height
-  //       );
-
-  //       // Optionally, convert the canvas content to base64
-  //     });
-  //   });
-  // };
-
   const mergeBase64Images = (canvasRef, base64Image1, base64Image2) => {
-    const canvas = canvasRef.current;
-    canvas.width = 1000;
-    canvas.height = 800;
-
-    const context = canvas.getContext("2d");
-    //context.rotate(45 * Math.PI / 180)
-
-    const image1 = new CanvasImage(canvas);
-    const image2 = new CanvasImage(canvas);
-
-    image1.src = `data:image/png;base64,${base64Image1}`;
-    image2.src = `data:image/png;base64,${base64Image2}`;
-
-    image1.addEventListener("load", () => {
-      // Draw the first image
-      context.save();
-
-      context.drawImage(image1, 0, 0, canvas.width / 2, canvas.height);
-
-      image2.addEventListener("load", () => {
-        // Draw the second image next to the first image
-        context.drawImage(
-          image2,
-          canvas.width / 2,
-          0,
-          canvas.width / 2,
-          canvas.height
-        );
-
-        // Optionally, convert the canvas content to base64
+    try {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      setIsImageProcessing(true)
+      const context = canvas.getContext("2d");
+      canvas.width = 1000;
+      canvas.height = 800;
+  
+      const image1 = new CanvasImage(canvas);
+      const image2 = new CanvasImage(canvas);
+  
+      image1.src = `data:image/png;base64,${base64Image1}`;
+      image2.src = `data:image/png;base64,${base64Image2}`;
+  
+      // Ensure both images are loaded before drawing
+      const drawImages = () => {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+  
+        const imageHeight = canvas.height / 2;
+  
+        // Draw the first image (top half of the canvas)
+        context.drawImage(image1, 0, 0, canvas.width, imageHeight);
+  
+        // Draw the second image (bottom half of the canvas)
+        context.drawImage(image2, 0, imageHeight, canvas.width, imageHeight);
+        // Optionally, convert the canvas content to a data URL
+        
+        canvas.toDataURL(selectedImage?.mime).then((dataUrl) => {
+          setIsImageProcessing(false)
+          setMergeAdhaarImages(dataUrl);
+        }).catch(e => setIsImageProcessing(false));
+      };
+  
+      image1.addEventListener("load", () => {
+        
+        image2.addEventListener("load", drawImages);
       });
-    });
-  };
+    } catch (error) {
+      setIsImageProcessing(false)
+    }
+   
+}
 
   useFocusEffect(
     useCallback(() => {
@@ -271,7 +247,7 @@ const KYC = (props) => {
     return seconds > 0 || minutes > 0 ? (
       <View style={styles.timerContainer}>
         <Image
-          source={require("../../images/timer.png")}
+          source={require("../../assets/timer.png")}
           style={styles.timerImage}
         />
         <Text
@@ -309,9 +285,11 @@ const KYC = (props) => {
 
   const uploadAadhar = async () => {
     try {
-      //
-      console.log("trigger");
-      const dataURL = await canvasRef.current.toDataURL();
+      if(!mergeAdhaarImages){
+        Toast.show({type:'error', text1:'Please upload image'});
+        return
+      }
+      const dataURL = mergeAdhaarImages;
 
       try {
         var data = dataURL.slice(1, -1); // remove the firstlast letter
@@ -420,7 +398,7 @@ const KYC = (props) => {
       <ScrollView style={styles.container}>
         <Header
           title="Documents"
-          left={require("../../images/back.png")}
+          left={require("../../assets/back2.png")}
           rightImages={[
             { source: assets.chat },
             { source: assets.questionRound },
@@ -447,7 +425,7 @@ const KYC = (props) => {
           visible={
             uploadAadharToMuleService?.isPending ||
             verifyAdharApi?.isPending ||
-            adhaarEkycMutate?.isPending
+            adhaarEkycMutate?.isPending || isImageProcessing
           }
         />
         {<Canvas ref={canvasRef} style={{ width: 0, height: 0 }} />}
@@ -460,7 +438,7 @@ const KYC = (props) => {
             <ProgressCard
               screenName={screenName}
               percentage={10}
-              ImageData={require("../../images/Home.png")}
+              ImageData={require("../../assets/Home.png")}
             />
             <View style={styles.subContainer}>
               <Text style={[styles.smallText, { width: "100%" }]}>
@@ -484,7 +462,7 @@ const KYC = (props) => {
                 </View>
                 <View style={styles.cardContainer}>
                   <Image
-                    source={require("../../images/aadhar-front.png")}
+                    source={require("../../assets/aadhar-front.png")}
                     style={styles.frontImage}
                     resizeMode="cover"
                   />
@@ -519,7 +497,7 @@ const KYC = (props) => {
                 <>
                   <View style={styles.noteContainerAdhaar}>
                     <Image
-                      source={require("../../images/error.png")}
+                      source={require("../../assets/error2.png")}
                       style={styles.bulbImage}
                     />
                     <Text
@@ -541,7 +519,7 @@ const KYC = (props) => {
                 <>
                   <View style={styles.noteContainer}>
                     <Image
-                      source={require("../../images/bulb.png")}
+                      source={require("../../assets/bulb.png")}
                       style={styles.bulbImage}
                     />
                     <Text style={fonts.bodySmall}>
@@ -583,7 +561,7 @@ const KYC = (props) => {
                           ? {
                               uri: `data:${selectedImage.mime};base64,${selectedImage.data}`,
                             }
-                          : require("../../images/aadhar-front.png")
+                          : require("../../assets/aadhar-front.png")
                       }
                       style={[styles.frontImage]}
                     />
@@ -606,7 +584,7 @@ const KYC = (props) => {
                           ? {
                               uri: `data:${selectedImageBack.mime};base64,${selectedImageBack.data}`,
                             }
-                          : require("../../images/aadhar-back.png")
+                          : require("../../assets/aadhar-back.png")
                       }
                       style={[styles.frontImage]}
                     />
@@ -650,7 +628,7 @@ const KYC = (props) => {
               }}
             >
               <Image
-                source={require("../../images/cross.png")}
+                source={require("../../assets/cross2.png")}
                 style={{ height: 20, width: 20 }}
               />
             </TouchableOpacity>
@@ -678,7 +656,7 @@ const KYC = (props) => {
                     //       <Text>Verify</Text>
                     //     ) : (
                     //       <Image
-                    //         source={require("../../images/tick.png")}
+                    //         source={require("../../assets/tick2.png")}
                     //         style={styles.tickImage}
                     //       />
                     //     )
@@ -696,38 +674,6 @@ const KYC = (props) => {
                 );
               })}
             </View>
-
-            {/* <Text style={[fonts.labelMedium, styles.labelText]}>
-              Enter Captcha
-            </Text>
-            <View style={styles.inputContainer}>
-              <TextInput
-                placeholder="Captcha"
-                style={[fonts.inputText, styles.input]}
-                onChangeText={(text) => setCaptcha(text)}
-              />
-            </View>
-            <View
-              style={[
-                styles.rowContainer,
-                { marginBottom: 20, maxWidth: "90%", alignSelf: "center" },
-              ]}
-            >
-              <ImageBackground
-                source={require("../../images/captcha-bg.png")}
-                style={styles.captchaContainer}
-              >
-                <Text style={[fonts.labelLarge, styles.captchaText]}>
-                  iWXn11
-                </Text>
-              </ImageBackground>
-              <TouchableOpacity style={styles.refreshContiner}>
-                <Image
-                  source={require("../../images/refresh.png")}
-                  style={styles.refreshImage}
-                />
-              </TouchableOpacity>
-            </View> */}
             <CustomButton
               type="primary"
               label="Continue"
@@ -764,7 +710,7 @@ const KYC = (props) => {
 
               <TouchableOpacity onPress={hideModal} style={{ height: 20 }}>
                 <Image
-                  source={require("../../images/cross.png")}
+                  source={require("../../assets/cross2.png")}
                   style={{ height: 16, width: 16 }}
                 />
               </TouchableOpacity>

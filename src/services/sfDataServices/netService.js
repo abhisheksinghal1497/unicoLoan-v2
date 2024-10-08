@@ -278,7 +278,8 @@ export const getBase64Image = (LinkedEntityId) => {
         compositeFetchImage(LinkedEntityId)
       );
 
-      const url = documentLink?.compositeResponse[1]?.body?.records[0]?.VersionData;
+      const url =
+        documentLink?.compositeResponse[1]?.body?.records[0]?.VersionData;
 
       oauth.getAuthCredentials(async (res) => {
         try {
@@ -296,7 +297,7 @@ export const getBase64Image = (LinkedEntityId) => {
         } catch (error) {
           console.log("FINAL ERROR HERE", error);
         }
-      })
+      });
 
       // net.sendRequest(
       //   url,
@@ -370,19 +371,28 @@ export const startBureauBre = (applicationId, loanId) => {
   });
 };
 
-
 export const getBureauBreApi = (applicationId, loanId, meesageId) => {
   return new Promise((resolve, reject) => {
     net.sendRequest(
       "/services/apexrest",
       `/getBureauBre?refId=${applicationId}&loanId=${loanId}&intgId=${meesageId}`,
       (res) => {
+        console.log('BRE RESPONSES----', res)
         // console.log("Entered");
         if (!res?.message && !res?.error) {
-          reject("error")
+          reject("error");
         }
-        console.log("res", res);
-        resolve(res);
+        if (res.error || (res?.error !== "BRE Failed" && !res?.message)) {
+          console.log("res.error------------------------", res.error);
+          reject(ErrorConstants.SOMETHING_WENT_WRONG);
+          return;
+        }
+        if (res?.error === "BRE Failed") {
+          resolve({ success: false , message: "BRE Failed"});
+          return;
+        }
+        console.log("resSUCCESS -----------------------", res);
+        resolve({ success: true , message: "BRE Success", data: res?.message ? JSON.parse(res?.message) : res});
       },
       (error) => {
         reject(error);

@@ -7,7 +7,7 @@ import { Text } from "react-native-paper";
 import customTheme from "../../colors/theme";
 import { assets } from "../../assets/assets";
 import { screens } from "../../constants/screens";
-import { verticalScale } from "../../utils/matrcis";
+import { horizontalScale, verticalScale } from "../../utils/matrcis";
 import Header from "../../components/Header";
 import { getBureauBre, getEligibilityDetails } from "../../services/ApiUtils";
 import { useRoute } from "@react-navigation/native";
@@ -19,11 +19,10 @@ const Eligibility = (props) => {
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
   const { applicationDetails = {}, loanDetails = {}, loanId } = loanData;
-  const [loading, setIsLoading] = useState(false)
+  const [loading, setIsLoading] = useState(false);
   const resetRoute = useResetRoutes();
-  const [cardData, setCardData] = useState();
   const eligibilityDetails = getEligibilityDetails(loanData);
-  const breData = getBureauBre(loanData)
+  const breData = getBureauBre(loanData);
   const [coApplicantsArr, setCoApplicantsArr] = useState(
     Array.isArray(applicationDetails?.Applicants__r?.records)
       ? applicationDetails?.Applicants__r?.records.filter(
@@ -63,31 +62,26 @@ const Eligibility = (props) => {
 
   useEffect(() => {
     if (eligibilityDetails.data && eligibilityDetails.data.message) {
-      //setCardData(eligibilityDetails.data?.eligibilityDetails);
-      setIsLoading(true)
+      setIsLoading(true);
       // wait for 10 seconds
-      setTimeout(()=>{ 
-        breData.mutate(eligibilityDetails.data.message)
-        setIsLoading(false)
-
-      },10000)
-
+      setTimeout(() => {
+        breData.mutate(eligibilityDetails.data.message);
+        setIsLoading(false);
+      }, 10000);
     }
   }, [eligibilityDetails.data]);
 
-  useEffect(()=>{
-    if(breData.data){
-      alert("success")
+  useEffect(() => {
+    if (breData.data) {
+      alert("success");
     }
-
-  },[breData.data])
+  }, [breData.data]);
 
   useEffect(() => {
     if (breData.data) {
-      alert("failure")
+      alert("failure");
     }
-
-  }, [breData.error])
+  }, [breData.error]);
 
   useEffect(() => {
     if (eligibilityDetails.error) {
@@ -98,40 +92,106 @@ const Eligibility = (props) => {
   const onPressContinue = () => {
     if (!eligibilityDetails?.isPending) {
       props.navigation.navigate(screens.Sanction, {
-        loanData: eligibilityDetails.data,
+        loanData: {
+          ...loanData,
+          eligibilityDetails: breData?.data?.data
+        },
       });
     }
   };
 
+  function formatNumber(value) {
+    if (!value) {
+      return "0 lac";
+    }
+    const num = typeof value === "string" ? parseInt(value) : value;
+    if (num === 0) {
+      return "0 lac";
+    }
+    if (num < 10000000) {
+      return Math.floor(num / 100000).toFixed(2) + " lac"; // Return in lakhs
+    } else {
+      return Math.floor(num / 10000000).toFixed(2) + " cr"; // Return in crores
+    }
+  }
+
+  const cardData = useMemo(() => {
+    const {
+      businessVintage,
+      cibilScore,
+      customerSegment,
+      dpdStatus,
+      eligibilityStatus,
+      eligibleLoanAmount,
+      employmentStability,
+      netAssetCreationValue,
+      numberOfDependents,
+      numberOfEnquiries,
+      product,
+      qualification,
+      requestedLoanAmount,
+      residentialStability,
+      subProduct,
+      totalScore,
+    } = breData?.data?.data || {};
+    return {
+      Product: product,
+      "Sub Product": subProduct,
+      "Request Loan Amount": formatNumber(requestedLoanAmount),
+      "Number of Dependents": numberOfDependents,
+      "Residential Stability": residentialStability,
+      "Cibil Score": cibilScore,
+      "DPD Status": dpdStatus,
+      "Business Vintage": businessVintage,
+      "Net Asset": netAssetCreationValue,
+      "Total Score": totalScore,
+      "Number of Enquiries in the last 6 months": numberOfEnquiries,
+      "Eligible Status": eligibilityStatus,
+      "Eligible Loan Amount": eligibleLoanAmount,
+      "Customer Segment": customerSegment,
+      "Employment Stability": employmentStability,
+      Qualification: qualification,
+      //       Parameter: 1,
+    };
+  }, [breData?.data, applicationDetails, loanDetails]);
+
   const isEligible = cardData && cardData["Eligible Status"] === "Eligible";
+  const isBreSuccess = breData?.data?.success;
 
-  return (
-    <ScrollView style={{ backgroundColor: "#ffff" }}>
-      <ActivityIndicatorComponent visible={eligibilityDetails?.isPending || loading || breData?.isPending} />
-      <Header
-        title="Eligibility"
-        left={assets.back}
-        rightImages={[
-          { source: assets.chat },
-          { source: assets.questionRound },
-        ]}
-        leftStyle={{ height: verticalScale(15), width: verticalScale(15) }}
-        leftImageProps={{ resizeMode: "contain" }}
-        rightStyle={{
-          height: verticalScale(23),
-          width: verticalScale(23),
-          marginHorizontal: 10,
-        }}
-        rightImageProps={{ resizeMode: "contain" }}
-        titleStyle={{ fontSize: verticalScale(18) }}
-        onPressRight={handleRightIconPress}
-        onPressLeft={() => {
-          resetRoute(screens.LoanDetails, { loanData });
-        }}
-        showHelpModal={showHelpModal}
-        toggleHelpModal={toggleHelpModal}
-      />
+  const retryBre = () => {
+    eligibilityDetails.mutate({ applicationDetails, loanDetails });
+  };
 
+  const BreRetryUi = () => {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <View style={{ alignItems: "center" }}>
+          <Text
+            style={{
+              fontSize: verticalScale(18),
+              fontWeight: "bold",
+              textTransform: "uppercase",
+              marginBottom: verticalScale(10),
+            }}
+          >
+            Not able to process
+          </Text>
+          <CustomButton
+            buttonContainer={{
+              paddingHorizontal: horizontalScale(50),
+              paddingVertical: verticalScale(6),
+            }}
+            type="primary"
+            label="Retry"
+            onPress={retryBre}
+          />
+        </View>
+      </View>
+    );
+  };
+
+  const ShowEligibleDetails = () => {
+    return (
       <View style={styles.topCon}>
         {cardData && (
           <Card cardStyle={styles.cardCon}>
@@ -172,6 +232,7 @@ const Eligibility = (props) => {
             setCoApplicantsArr={setCoApplicantsArr}
             loanId={loanId}
             loanData={loanData}
+            retryBre={retryBre}
           />
 
           {cardData &&
@@ -180,20 +241,60 @@ const Eligibility = (props) => {
               <CustomComponent title={el} key={i} value={cardData[el]} />
             ))}
         </Card>
-        {cardData && (
+        {isEligible ? (
           <CustomButton
             type="primary"
             label="Continue"
             onPress={onPressContinue}
           />
+        ) : (
+          <CustomButton type="primary" label="Retry" onPress={retryBre} />
         )}
       </View>
+    );
+  };
+
+  console.log("HERE IS BRE DATA", breData?.data);
+
+  return (
+    <ScrollView
+      style={{ backgroundColor: "#ffff" }}
+      contentContainerStyle={{ flexGrow: 1 }}
+    >
+      <ActivityIndicatorComponent
+        visible={eligibilityDetails?.isPending || loading || breData?.isPending}
+      />
+      <Header
+        title="Eligibility"
+        left={assets.back}
+        rightImages={[
+          { source: assets.chat },
+          { source: assets.questionRound },
+        ]}
+        leftStyle={{ height: verticalScale(15), width: verticalScale(15) }}
+        leftImageProps={{ resizeMode: "contain" }}
+        rightStyle={{
+          height: verticalScale(23),
+          width: verticalScale(23),
+          marginHorizontal: 10,
+        }}
+        rightImageProps={{ resizeMode: "contain" }}
+        titleStyle={{ fontSize: verticalScale(18) }}
+        onPressRight={handleRightIconPress}
+        onPressLeft={() => {
+          resetRoute(screens.LoanDetails, { loanData });
+        }}
+        showHelpModal={showHelpModal}
+        toggleHelpModal={toggleHelpModal}
+      />
+      {!loading &&
+        !breData?.isPending &&
+        (isBreSuccess ? <ShowEligibleDetails /> : <BreRetryUi />)}
     </ScrollView>
   );
 };
 
 const CustomComponent = ({ title, value }) => {
-  console.log({title, value})
   return (
     <View style={styles.customCompCon}>
       <Text variant="titleSmall" style={styles.titleStyle}>

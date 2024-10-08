@@ -122,7 +122,7 @@ const EMICalculatorComponent = ({ navigation }) => {
       {/* <View style={{ marginHorizontal: horizontalScale(15),marginTop:20 }}>
         <Header
           title={"EMI Calculator"}
-          left={require("../../images/back.png")}
+          left={require("../../assets/back2.png")}
           onPressLeft={() => {
             navigation.goBack();
           }}

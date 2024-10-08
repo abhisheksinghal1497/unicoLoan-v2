@@ -255,7 +255,7 @@ export const getEligibilityDetails = (loanData) => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (data) => {
-      
+      // return startBureauBre('a10Bi000002inBxIAI', 'a1ABi000000v0ZaMAI')
       return startBureauBre(loanData?.Applicant__c, loanData?.loanId)
       // const { applicationDetails = {}, loanDetails = {} } = data || {};
       // return new Promise(async (resolve, reject) => {
@@ -2400,7 +2400,7 @@ export const getSanctionPdf = (loanData) => {
   return mutate;
 };
 
-export const submitDrivingLicenseMutation = (loanData) => {
+export const submitCurrentAddressMutation = (loanData) => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: (body) => {
@@ -2583,11 +2583,11 @@ export const getSanctionLetterQuery = (applicationId) => {
 export const getBureauBre = (loanData) => {
   const mutate = useMutation({
     networkMode: "always",
-    retry:3,
+    retry:10,
     
     retryDelay:15000,
     mutationFn: async (data) => {
-
+      // return getBureauBreApi('a10Bi000002inBxIAI', 'a1ABi000000v0ZaMAI', data)
       return getBureauBreApi(loanData?.Applicant__c, loanData?.loanId, data)
      
     },

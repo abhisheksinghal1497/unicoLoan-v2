@@ -19,6 +19,7 @@ export default function OtpInput({
   isDisabled = false,
   otpLimit = 6,
   isRequired = false,
+  outlineStyle = {},
   trigger = () => {},
   ...rest
 }) {
@@ -64,7 +65,6 @@ export default function OtpInput({
                   key={index}
                   ref={(ref) => (inputRefs[index] = ref)}
                   keyboardType="numeric"
-                  underlineColor="transparent"
                   cursorColor={colors.coreBlue}
                   disabled={isDisabled}
                   onChangeText={(text) =>
@@ -82,12 +82,15 @@ export default function OtpInput({
                   ]}
                   maxLength={1}
                   mode="outlined"
-                  outlineStyle={{
-                    backgroundColor: colors.white,
-                    margin: -2,
-
-                    borderColor: "rgba(232, 232, 234, 1.0)",
-                  }}
+                  outlineStyle={[
+                    {
+                      backgroundColor: colors.white,
+                      margin: -2,
+                      borderColor: "rgba(232, 232, 234, 1.0)",
+                    },
+                    outlineStyle,
+                  ]}
+                  
                   {...rest}
                 />
               ))}
@@ -127,5 +130,6 @@ const styles = StyleSheet.create({
   otpInput: {
     marginLeft: horizontalScale(8),
     borderBottomWidth: 0,
+    borderRadius:20
   },
 });

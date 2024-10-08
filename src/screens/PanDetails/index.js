@@ -277,7 +277,7 @@ const PanDetails = (props) => {
       />
       <Header
         title="PAN Details"
-        left={require("../../images/back.png")}
+        left={require("../../assets/back2.png")}
         rightImages={[
           { source: assets.chat },
           { source: assets.questionRound },
@@ -346,7 +346,7 @@ const PanDetails = (props) => {
                       <Text style={styles.verifyTextStyle}>Verify</Text>
                     ) : (
                       <Image
-                        source={require("../../images/tick.png")}
+                        source={require("../../assets/tick2.png")}
                         style={styles.tickImage}
                       />
                     )
@@ -414,7 +414,7 @@ const PanDetails = (props) => {
                       <Text>Verify</Text>
                     ) : (
                       <Image
-                        source={require("../../images/tick.png")}
+                        source={require("../../assets/tick2.png")}
                         style={styles.tickImage}
                       />
                     )

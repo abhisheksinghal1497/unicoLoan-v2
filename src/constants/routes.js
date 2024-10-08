@@ -153,7 +153,12 @@ export const routes = [
     },
     {
       name: screens.LoginComponent,
-      component: () => import('../screens/login/LoginComponent'),
+      component: () => import('../screens/login'),
+      options: {},
+    },
+    {
+      name: screens.Register,
+      component: () => import('../screens/Register'),
       options: {},
     },
     {
