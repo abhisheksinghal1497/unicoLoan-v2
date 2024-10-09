@@ -44,6 +44,7 @@ import { KycScreen } from "../../constants/stringConstants";
 import { ConfiguratonConstants } from "../../constants/ConfigurationConstants";
 import ErrorConstants from "../../constants/ErrorConstants";
 import Toast from "react-native-toast-message";
+import useOtpCounter from "../../hooks/useOtpCounter";
 
 const WIDTH = Dimensions.get("window").width;
 const screenName = "Documents";
@@ -75,33 +76,16 @@ const KYC = (props) => {
   // const verifyAdharApi = checkPanLinkWithAdhaar(panDetails.panNumber);
   const canvasRef = useRef(null);
   const [aadhaarBase64, setAadhaarbase64] = useState(null);
-  const [minutes, setMinutes] = useState(0);
-  const [seconds, setSeconds] = useState(0);
   const [adhaarApiType, setAdhaarApiType] = useState(false);
   const adhaarEkycMutate = makeAdhaarEKYCCall();
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [mergeAdhaarImages, setMergeAdhaarImages] = useState('')
+  const {secondsLeft, formattedTime, startCountDown} = useOtpCounter(120);
 
   const toggleHelpModal = () => {
     setShowHelpModal(!showHelpModal);
   };
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      if (seconds > 0) {
-        setSeconds(seconds - 1);
-      } else if (minutes > 0) {
-        setMinutes(minutes - 1);
-        setSeconds(59);
-      } else {
-        clearInterval(timer);
-      }
-    }, 1000);
-
-    return () => {
-      clearInterval(timer);
-    };
-  }, [minutes, seconds]);
 
   useEffect(() => {
     if (canvasRef.current && selectedImage && selectedImageBack) {
@@ -120,7 +104,7 @@ const KYC = (props) => {
       setIsImageProcessing(true)
       const context = canvas.getContext("2d");
       canvas.width = 1000;
-      canvas.height = 800;
+      canvas.height = 1200;
   
       const image1 = new CanvasImage(canvas);
       const image2 = new CanvasImage(canvas);
@@ -244,7 +228,7 @@ const KYC = (props) => {
   // const startTimer = React.useCallback()
 
   const TimerContent = () => {
-    return seconds > 0 || minutes > 0 ? (
+    return secondsLeft > 0 ? (
       <View style={styles.timerContainer}>
         <Image
           source={require("../../assets/timer.png")}
@@ -256,8 +240,9 @@ const KYC = (props) => {
             { color: "rgba(124, 126, 139, 1)", marginTop: 3 },
           ]}
         >
-          {minutes.toString().padStart(2, "0")}:
-          {seconds.toString().padStart(2, "0")}
+          {formattedTime}
+          {/* {minutes.toString().padStart(2, "0")}:
+          {seconds.toString().padStart(2, "0")} */}
         </Text>
       </View>
     ) : (
@@ -310,9 +295,8 @@ const KYC = (props) => {
     toast("success", "success");
     setType(1);
     setVisible(true);
-    setMinutes(ConfiguratonConstants.TIME_OUT_TIME_MINUTES);
-    setSeconds(0);
     setAdhaarApiType(adhaarType);
+    startCountDown();
   };
 
   useEffect(() => {

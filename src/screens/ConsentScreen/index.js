@@ -91,6 +91,7 @@ const ConsentScreen = (props) => {
         }}
         showHelpModal={showHelpModal}
         toggleHelpModal={toggleHelpModal}
+        
       />
 
         <ActivityIndicatorComponent visible={isLoading || postConsentMutate?.isPending || loader} />
@@ -104,8 +105,9 @@ const ConsentScreen = (props) => {
             startInLoadingState={true}
             renderLoading={ActivityIndicatorComponent}
             style={{ flex: 1 }}
-            onLoadEnd={() => setLoader(false)}
             onLoadStart={() => setLoader(true)}
+            onLoad={() => setLoader(false)}
+            
           />
         </View>
       )}
