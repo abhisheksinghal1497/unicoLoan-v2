@@ -24,8 +24,6 @@ import { useNavigation } from "@react-navigation/native";
 import { screens } from "../../constants/screens";
 
 const LoginComponent = () => {
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [otp, setOtp] = useState("");
   const [showOtpField, setShowOtpField] = useState(false);
   const [timer, setTimer] = useState(10);
   const navigation = useNavigation();
@@ -160,7 +158,7 @@ const LoginComponent = () => {
             label="Continue"
             labelStyle={{ color: "#fff" }}
             onPress={handleSendOtp}
-            disabled={!phoneNumber}
+            disable={!isValid}
           />
         </View>
       </View>
@@ -217,7 +215,7 @@ const LoginComponent = () => {
             label="Submit"
             labelStyle={{ color: "#fff" }}
             onPress={onOtpSubmit}
-            // disabled={!phoneNumber}
+            disable={!isValid}
           />
         </View>
 
@@ -262,7 +260,12 @@ const LoginComponent = () => {
           >
             <Text style={[styles.notRegisteredText]}>
               Not registered yet?{" "}
-              <Text onPress={() => navigation.navigate(screens.Register)} style={{ color: "#0076C7" }}>Click here to register</Text>
+              <Text
+                onPress={() => navigation.navigate(screens.Register)}
+                style={{ color: "#0076C7" }}
+              >
+                Click here to register
+              </Text>
             </Text>
           </View>
         </ImageBackground>

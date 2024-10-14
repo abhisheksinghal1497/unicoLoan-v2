@@ -39,7 +39,7 @@ const Sanction = (props) => {
   const { loanData = {} } = route?.params || {};
   const applicationId = loanData?.Applicant__c;
   const [{ data, isPending, isError }] =
-    getSanctionLetterQuery("a10Bi000003gAxSIAU"); //a10Bi000003gAxSIAU
+    getSanctionLetterQuery(applicationId); //a10Bi000003gAxSIAU
 
   console.log("DATA HERE", data);
 
