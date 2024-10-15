@@ -34,6 +34,7 @@ import { getAllSoupEntries } from "./sfDBServices/salesforceDbUtils";
 
 import { LOAN_DETAILS_KEYS } from "../constants/stringConstants";
 import {
+  assignBranchManagerApi,
   compositeGraphRequest,
   compositeRequest,
   DedupeApi,
@@ -1411,8 +1412,7 @@ export const useSubmitApplicationFormData = (pincodeData) => {
           );
           if (leadcreateResponse && leadcreateResponse.id) {
             // make the dedupe call
-            // const dedupeRes = await DedupeApi(leadcreateResponse?.id);
-            const dedupeRes = 'Passed'
+            const dedupeRes = await DedupeApi(leadcreateResponse?.id);
             if (
               dedupeRes &&
               (dedupeRes === "Dedupe failed" || dedupeRes === "EXACT_MATCH")
@@ -1420,7 +1420,6 @@ export const useSubmitApplicationFormData = (pincodeData) => {
               reject("Not able to create the loan");
             } else {
               // loan create
-
               const response = await compositeRequest(
                 createLoanAndAppplicantCompositeRequest(
                   data,
@@ -2598,3 +2597,14 @@ export const getBureauBre = (loanData) => {
 
   return mutate;
 };
+
+export const assignBranchManagerMutation = (leadId) => {
+  const mutate = useMutation({
+    networkMode: "always",
+    mutationFn: async (data) => {
+      return assignBranchManagerApi(leadId)
+    },
+  });
+
+  return mutate;
+}

@@ -405,3 +405,21 @@ export const getBureauBreApi = (applicationId, loanId, meesageId) => {
     );
   });
 };
+
+export const assignBranchManagerApi = (LeadId) => {
+  return new Promise((resolve, reject) => {
+    net.sendRequest(
+      "/services/apexrest",
+      `/assigntomanager/?recordId=${LeadId}`,
+      (res) => {
+        // console.log("Entered");
+        console.log("res", res);
+        resolve(res);
+      },
+      (error) => {
+        reject(error);
+      },
+      "GET"
+    );
+  });
+};
