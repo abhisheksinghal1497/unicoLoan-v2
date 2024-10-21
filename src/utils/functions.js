@@ -287,7 +287,7 @@ export const getPeriodValues = (str, index) => {
         return str.substring(2, 4);
       }
     }
-  } catch (error) {}
+  } catch (error) { }
   return null;
 };
 
@@ -350,17 +350,17 @@ export const createCompositeRequestForPanAadhar = (
         referenceId: "aadhar",
         body: isPanAadharLinked
           ? {
-              ...getAadharCreateRequest(loanData, aadharData),
-              IsPanAdrLnk__c: "true",
-              ValidationStatus__c: "Success",
-            }
+            ...getAadharCreateRequest(loanData, aadharData),
+            IsPanAdrLnk__c: "true",
+            ValidationStatus__c: "Success",
+          }
           : {
-              ...getAadharCreateRequest(loanData, aadharData),
-              IsPanAdrLnk__c: "false",
-              ValidationStatus__c: "Success",
-              KARZA_Name_Match_Score__c: score,
-              Name_Match_Status__c: "Name Match successful!!",
-            },
+            ...getAadharCreateRequest(loanData, aadharData),
+            IsPanAdrLnk__c: "false",
+            ValidationStatus__c: "Success",
+            KARZA_Name_Match_Score__c: score,
+            Name_Match_Status__c: "Name Match successful!!",
+          },
       },
       // Update Loan application First name, middlename , last name and Father name - LoanAppl__c and Applicant__c
       // {
@@ -374,9 +374,8 @@ export const createCompositeRequestForPanAadhar = (
 
       {
         method: "PATCH",
-        url: `/services/data/${net.getApiVersion()}/sobjects/Applicant__c/${
-          loanData.Applicant__c
-        }`,
+        url: `/services/data/${net.getApiVersion()}/sobjects/Applicant__c/${loanData.Applicant__c
+          }`,
         referenceId: "applicantUpdateId",
         body: {
           ...updateAadharDataToApplicant(loanData),
@@ -688,7 +687,7 @@ const getLoanDetailPostBody = (loanData, Applicant__c) => {
       [LOAN_DETAILS_KEYS.currPF]: loanData?.[LOAN_DETAILS_KEYS.currPF],
       Appl__c: Applicant__c,
     };
-  } catch (error) {}
+  } catch (error) { }
 };
 
 export const createCompositeRequestForLoadDetails = (
@@ -734,12 +733,22 @@ export const createCompositeRequestForLoadDetails = (
     }
 
     if (applicantIncomeId) {
+
+      compositeRequests.push(
+        {
+          method: "GET",
+          url: `/services/data/${net.getApiVersion()}/query/?q=SELECT%20id%2C%20Catgry__c%2C%20DocSubTyp__c%2C%20DocTyp__c%20FROM%20DocMstr__c%20WHERE%20DocTyp__c%3D%27Photograph%27%20LIMIT%201`,
+          referenceId: "incomeQuery",
+        },
+      )
+
       compositeRequests.push(
         patchCompositeRequest(
           "Applicant_Income__c",
           applicantIncomeId,
           {
             Applicant_Net_Income__c: formData?.[LOAN_DETAILS_KEYS.totalIncome],
+            Total_Income__c: formData?.[LOAN_DETAILS_KEYS.totalIncome]
           },
           "Applicant_Income__c_PATCH"
         )
@@ -749,6 +758,7 @@ export const createCompositeRequestForLoadDetails = (
         postCompositeRequest(
           "Applicant_Income__c",
           {
+            Total_Income__c: formData?.[LOAN_DETAILS_KEYS.totalIncome],
             Applicant_Net_Income__c: formData?.[LOAN_DETAILS_KEYS.totalIncome],
             Applicant__c,
           },
@@ -1165,7 +1175,7 @@ export const updateAadharDataToApplicant = (data) => {
           lastName = firstName;
         }
       }
-    } catch (error) {}
+    } catch (error) { }
 
     if (firstName) {
       request = { ...request, FName__c: firstName };
@@ -1473,6 +1483,7 @@ export const compositeFetchImage = (LinkedEntityId) => {
 export const createCoApplicantCompositeRequest = (coApplicantBody) => {
   try {
     const compositeRequest = [
+
       {
         ...postCompositeRequest(
           "Applicant__c",
@@ -1490,6 +1501,25 @@ export const createCoApplicantCompositeRequest = (coApplicantBody) => {
           "Applicant_Income__c_POST"
         ),
       },
+
+    //  {
+    //    ...patchCompositeRequest(
+    //       "Applicant_Income__c",
+    //       mainApplicantIncomeId,
+    //       {
+          
+    //         Total_Income__c: mainApplicantIncome + coApplicantBody?.Annual_Turnover__c
+    //       },
+    //       "Main_Applicant_Income__c_PATCH"
+    //     )
+    //  }
+
+      
+      // {
+      //   method: "GET",
+      //   url: `/services/data/${net.getApiVersion()}/query/?q=SELECT%20Total_Income__c%2C%20Applicant_Net_Income__c%20FROM%20Applicant_Income__c%20WHERE%20Id%3D%27${mainApplicantIncomeId}%27`,
+      //   referenceId: "totalIncomeQuery",
+      // },
     ];
     return compositeRequest;
   } catch (error) {
@@ -1501,7 +1531,8 @@ export const createCoApplicantCompositeRequest = (coApplicantBody) => {
 export const updateCoApplicantCompositeRequest = (
   coApplicantBody,
   coApplicantId,
-  applicantIncomeId
+  applicantIncomeId,
+  mainApplicantIncomeId, mainApplicantIncome
 ) => {
   try {
     const compositeRequest = [
@@ -1523,6 +1554,17 @@ export const updateCoApplicantCompositeRequest = (
           "Applicant_Income__c_PATCH"
         ),
       },
+      // {
+      //   ...patchCompositeRequest(
+      //     "Applicant_Income__c",
+      //     mainApplicantIncomeId,
+      //     {
+
+      //       Total_Income__c: mainApplicantIncome + coApplicantBody?.Annual_Turnover__c
+      //     },
+      //     "Main_Applicant_Income__c_PATCH"
+      //   )
+      // }
     ];
     return compositeRequest;
   } catch (error) {

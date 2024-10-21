@@ -26,15 +26,14 @@ import { colors } from "../../colors";
 import customTheme from "../../colors/theme";
 import { horizontalScale, verticalScale } from "../../utils/matrcis";
 import CircularProgress from "../../components/CircularProgress";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { screens } from "../../constants/screens";
 import {
   getPinCodes,
   getHomeScreenDetails,
   getHomeScreenOurServices,
 } from "../../services/ApiUtils";
-import CustomModal from "../../components/CustomModal";
-import Button from "../../components/Button";
+
 import PincodeModal from "../../components/PincodeModal";
 import { oauth } from "react-native-force";
 import { brandDetails } from "../../constants/stringConstants";
@@ -42,8 +41,7 @@ import useGetProgressPercentage, {
   getCurrentScreenNameForResume,
 } from "../../utils/useGetProgressPercentage";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
-import { useResetRoutes } from "../../utils/functions";
-import { get } from "react-hook-form";
+
 import LocalStorage from "../../services/LocalStorage";
 import { useFocusEffect } from "@react-navigation/native";
 const screenWidth = Dimensions.get("window").width;
@@ -58,16 +56,17 @@ const HomeScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [currentScreen, setCurrentScreen] = useState(false);
 
+
   useFocusEffect(
     useCallback(() => {
       getLoanCardData?.mutate();
-      
+
     }, [])
   );
 
-  useEffect(()=>{
+  useEffect(() => {
     getOurServicesCardData?.mutate();
-  },[])
+  }, [])
 
   useEffect(() => {
     if (getLoanCardData.data) {
@@ -152,6 +151,12 @@ const HomeScreen = ({ navigation }) => {
   const ResumeLoanJourney = ({ item }) => {
     const progress = useGetProgressPercentage(item);
     const screenName = getCurrentScreenNameForResume(item);
+    console.log("loan ownerId", item.applicationDetails?.OwnerId)
+    console.log("login ownerId", LocalStorage?.getUserData().Id)
+    const isLoginIserOwner = LocalStorage?.getUserData().Id === item.applicationDetails?.OwnerId
+    //OwnerId
+    //LocalStorage?.getUserData().Id
+
 
     const textStyle = (size, color = colors.coreBlue) => ({
       color,
@@ -171,11 +176,13 @@ const HomeScreen = ({ navigation }) => {
           <TouchableOpacity
             style={styles.seeDetailsresumeJourneyButton}
             onPress={() => {
-              navigation?.navigate(screens.LoanDetails, { loanData: item });
+
+              navigation?.navigate(isLoginIserOwner ? screenName : screens.SystemLoanDetails, { loanData: item });
             }}
           >
-            <Text style={styles.seeDetailsresumeJourneyText}>
-              Resume Journey
+            <Text style={styles.seeDetailsresumeJourneyText}>{
+              isLoginIserOwner ? 
+              "Resume Journey" :"See Details"}
             </Text>
           </TouchableOpacity>
         </View>
@@ -267,7 +274,7 @@ const HomeScreen = ({ navigation }) => {
 
       return (
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <ProgressBardSection />
+          {isLoginIserOwner && <ProgressBardSection />}
           <LoanDetailsSection />
         </View>
       );

@@ -14,23 +14,33 @@ import { useRoute } from "@react-navigation/native";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 import CoApplicant from "../CoApplicant";
 import { useResetRoutes } from "../../utils/functions";
-
+import { assignBranchManagerMutation } from "../../services/ApiUtils";
 const Eligibility = (props) => {
+
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
-  const { applicationDetails = {}, loanDetails = {}, loanId } = loanData;
+  const { applicationDetails = {}, loanDetails = {}, loanId, Annual_Turnover__c } = loanData;
+  console.log("mainApplicant ampunt", loanDetails)
   const [loading, setIsLoading] = useState(false);
   const resetRoute = useResetRoutes();
   const eligibilityDetails = getEligibilityDetails(loanData);
   const breData = getBureauBre(loanData);
+  const assignBranchManger = assignBranchManagerMutation(loanId)
   const [coApplicantsArr, setCoApplicantsArr] = useState(
     Array.isArray(applicationDetails?.Applicants__r?.records)
       ? applicationDetails?.Applicants__r?.records.filter(
-          (el) => el.ApplType__c === "C"
-        )
+        (el) => el.ApplType__c === "C"
+      )
       : []
   );
   const [showHelpModal, setShowHelpModal] = useState(false);
+
+  var mainApplicantIncome = 0
+
+  const[isBreError, setBreError] = useState(false)
+
+
+
 
   const toggleHelpModal = () => {
     setShowHelpModal(!showHelpModal);
@@ -57,6 +67,7 @@ const Eligibility = (props) => {
   });
 
   useEffect(() => {
+    setBreError(false)
     eligibilityDetails.mutate({ applicationDetails, loanDetails });
   }, []);
 
@@ -65,27 +76,42 @@ const Eligibility = (props) => {
       setIsLoading(true);
       // wait for 10 seconds
       setTimeout(() => {
+        
         breData.mutate(eligibilityDetails.data.message);
         setIsLoading(false);
       }, 10000);
     }
   }, [eligibilityDetails.data]);
 
+
+  useEffect(() => {
+    if (assignBranchManger.data) {
+      onPressContinue();
+    }
+  }, [assignBranchManger.data])
+
+  useEffect(() => {
+    if (assignBranchManger.error){
+    alert("Something went wrong. Please try again later")
+    }
+  }, [assignBranchManger.error])
+
   useEffect(() => {
     if (breData.data) {
-      alert("success");
+      // alert("success");
     }
   }, [breData.data]);
 
   useEffect(() => {
-    if (breData.data) {
-      alert("failure");
+    if (breData.error) {
+      setBreError(true)
     }
   }, [breData.error]);
 
   useEffect(() => {
     if (eligibilityDetails.error) {
       alert(eligibilityDetails.error);
+      setBreError(true)
     }
   }, [eligibilityDetails.error]);
 
@@ -134,23 +160,44 @@ const Eligibility = (props) => {
       subProduct,
       totalScore,
     } = breData?.data?.data || {};
-    return {
-      Product: product,
-      "Sub Product": subProduct,
-      "Request Loan Amount": formatNumber(requestedLoanAmount),
-      "Number of Dependents": numberOfDependents,
-      "Residential Stability": residentialStability,
-      "Cibil Score": cibilScore,
-      "DPD Status": dpdStatus,
-      "Business Vintage": businessVintage,
-      "Net Asset": netAssetCreationValue,
-      "Total Score": totalScore,
-      "Number of Enquiries in the last 6 months": numberOfEnquiries,
-      "Eligible Status": eligibilityStatus,
-      "Eligible Loan Amount": eligibleLoanAmount,
-      "Customer Segment": customerSegment,
-      "Employment Stability": employmentStability,
-      Qualification: qualification,
+
+    if (applicationDetails.Customer_Profile__c === "Self-Employed") {
+      return {
+        "Customer Segment": customerSegment,
+        "Product": product,
+        "Sub Product": subProduct,
+        "Request Loan Amount": requestedLoanAmount,
+        "Residential Stability": residentialStability,
+        "Cibil Score": cibilScore,
+        "DPD Status": dpdStatus,
+        "Number of Enquiries in the last 6 months": numberOfEnquiries,
+        "Business Vintage": businessVintage,
+        "Net Asset Create Value": netAssetCreationValue,
+        "Total Score": totalScore,
+        "Eligible Status": eligibilityStatus,
+        "Eligible Loan Amount": eligibleLoanAmount,
+      }
+
+    } else {
+      return {
+        "Customer Segment": customerSegment,
+        "Product": product,
+        "Sub Product": subProduct,
+        "Request Loan Amount": requestedLoanAmount,
+        "Number of Dependents": numberOfDependents,
+        "Residential Stability": residentialStability,
+        "Cibil Score": cibilScore,
+        "DPD Status": dpdStatus,
+
+        "Number of Enquiries in the last 6 months": numberOfEnquiries,
+        "Employment Stability": employmentStability,
+        "Qualification": qualification,
+        "Eligible Status": eligibilityStatus,
+        "Eligible Loan Amount": eligibleLoanAmount,
+
+
+
+      }
       //       Parameter: 1,
     };
   }, [breData?.data, applicationDetails, loanDetails]);
@@ -159,6 +206,7 @@ const Eligibility = (props) => {
   const isBreSuccess = breData?.data?.success;
 
   const retryBre = () => {
+    setBreError(false)
     eligibilityDetails.mutate({ applicationDetails, loanDetails });
   };
 
@@ -212,7 +260,7 @@ const Eligibility = (props) => {
                       ₹ {cardData ? cardData["Eligible Loan Amount"] : 0}
                     </Text>
                     <Text style={styles.cardText3}>
-                      @6.75% - 7.25% interest p.a
+                      {/* @6.75% - 7.25% interest p.a */}
                     </Text>
                   </>
                 )}
@@ -233,6 +281,8 @@ const Eligibility = (props) => {
             loanId={loanId}
             loanData={loanData}
             retryBre={retryBre}
+
+
           />
 
           {cardData &&
@@ -244,8 +294,10 @@ const Eligibility = (props) => {
         {isEligible ? (
           <CustomButton
             type="primary"
-            label="Continue"
-            onPress={onPressContinue}
+            label="Confirm"
+            onPress={() => {
+              assignBranchManger?.mutate()
+            }}
           />
         ) : (
           <CustomButton type="primary" label="Retry" onPress={retryBre} />
@@ -262,7 +314,7 @@ const Eligibility = (props) => {
       contentContainerStyle={{ flexGrow: 1 }}
     >
       <ActivityIndicatorComponent
-        visible={eligibilityDetails?.isPending || loading || breData?.isPending}
+        visible={eligibilityDetails?.isPending || loading || breData?.isPending || assignBranchManger?.isPending}
       />
       <Header
         title="Eligibility"
@@ -287,9 +339,8 @@ const Eligibility = (props) => {
         showHelpModal={showHelpModal}
         toggleHelpModal={toggleHelpModal}
       />
-      {!loading &&
-        !breData?.isPending &&
-        (isBreSuccess ? <ShowEligibleDetails /> : <BreRetryUi />)}
+      {
+        (!isBreError ? <ShowEligibleDetails /> : <BreRetryUi />)}
     </ScrollView>
   );
 };

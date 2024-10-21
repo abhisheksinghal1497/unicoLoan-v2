@@ -186,6 +186,7 @@ const LoanDetails = (props) => {
       
       props?.navigation?.navigate(screens.Eligibility, {
         loanData: updatedLoanData,
+        Annual_Turnover__c: data[LOAN_DETAILS_KEYS.totalIncome]
       });
     } catch (error) {
       console.log("SOME ERROR OCCURED", error);

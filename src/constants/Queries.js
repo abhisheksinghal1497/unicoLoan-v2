@@ -9,4 +9,8 @@ export const query = {
   getContentDocument: (contentVersionId) => `SELECT Id, Title, ContentDocumentId FROM ContentVersion WHERE Id = '${contentVersionId?.trim()}'`,
   getLoanDetailById: (loanId) => `SELECT FIELDS(ALL) FROM LoanAppl__c WHERE Id  = '${loanId}'`,
   getUserConsentId: (applicantId) => `SELECT Consent_Status__c FROM Applicant__c WHERE Id  = '${applicantId}'`,
+  getApplicantIncome: (id) => `SELECT Total_Income__c, Applicant_Net_Income__c FROM Applicant_Income__c WHERE Id =  '${id}'`,
+  getAllApplicantsIncome: (loanId) => `SELECT Id, (SELECT Annual_Turnover__c FROM Applicants__r LIMIT 200) FROM  LoanAppl__c WHERE Id = '${loanId?.trim()}'`
 };
+
+//`SELECT Total_Income__c, Applicant_Net_Income__c FROM Applicant_Income__c WHERE Id = '${dynamicId}'`;

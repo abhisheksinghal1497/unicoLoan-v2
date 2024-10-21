@@ -32,14 +32,16 @@ import {
 } from "../../services/ApiUtils";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 import Toast from "react-native-toast-message";
+import { oauth } from "react-native-force";
 
 const Sanction = (props) => {
   const { colors, fonts } = useTheme();
   const route = useRoute();
   const { loanData = {} } = route?.params || {};
   const applicationId = loanData?.Applicant__c;
+  const loanId = loanData?.loanId;
   const [{ data, isPending, isError }] =
-    getSanctionLetterQuery(applicationId); //a10Bi000003gAxSIAU
+    getSanctionLetterQuery(loanId); //a10Bi000003gAxSIAU
 
   console.log("DATA HERE", data);
 
@@ -67,18 +69,18 @@ const Sanction = (props) => {
 
     const hasPermission = await PermissionsAndroid.check(permission);
 
-    const readPermission =  PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
+    const readPermission = PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
     const checkRead = await PermissionsAndroid.check(readPermission);
 
     if (hasPermission && checkRead) {
       return true;
     }
 
-   
+
 
     const result = await PermissionsAndroid.requestMultiple([permission, readPermission]);
-    const isGranted = result[PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE] === 'granted' 
-        && result[PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE] === 'granted';
+    const isGranted = result[PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE] === 'granted'
+      && result[PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE] === 'granted';
     return isGranted === "granted";
   }
 
@@ -111,6 +113,24 @@ const Sanction = (props) => {
 
     const fileName = 'In Principle Sanction Letter.pdf'
     let dirs = RNFetchBlob.fs.dirs;
+
+    // oauth.getAuthCredentials(async (res) => {
+    //   try {
+    //     const instanceUrl = res.instanceUrl;
+
+    //     const response = await RNFetchBlob.fetch(
+    //       "GET",
+    //       pdfUrl,
+    //       {
+    //         Authorization: `Bearer ${res.accessToken}`,
+    //       }
+    //     );
+    //     const base64Str = response.base64();
+    //     console.log("base64Str>>>>>>>>>>", base64Str)
+    //   } catch (error) {
+    //     console.log("FINAL ERROR HERE", error);
+    //   }
+    // });
     RNFetchBlob.config({
       // path: dirs.DownloadDir + "/" + fileName,
       fileCache: true,
@@ -123,7 +143,7 @@ const Sanction = (props) => {
         path: `${dirs.DownloadDir}/${fileName}`,
       },
     })
-      .fetch("GET", pdfUrl, {})
+      .fetch("GET", pdfUrl,)
       .progress((received, total) => {
         console.log(`${received / total}`);
 

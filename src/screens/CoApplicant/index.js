@@ -229,6 +229,7 @@ const CoApplicant = ({
       const response = await createDataMutate.mutateAsync(
         createCoApplicantCompositeRequest(data)
       );
+      retryBre()
 
       const coApplicantId = response[0]?.body?.id;
       const coApplicantIncomeId = response[1]?.body?.id;

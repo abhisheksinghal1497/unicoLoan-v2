@@ -15,6 +15,7 @@ import {
   fieldLabelViewStyle,
   fieldLabelStyle,
 } from "../../constants/commonStyles";
+import { getErrMsg } from "../../services/globalHelper";
 
 export default function CustomDatepicker({
   control,
@@ -26,7 +27,7 @@ export default function CustomDatepicker({
   isDisabled = false,
   isRequired = false,
   isVisible = true,
-  trigger = () => {},
+  trigger = () => { },
   ...rest
 }) {
   const { colors: themeColor } = useTheme();
@@ -103,8 +104,15 @@ export default function CustomDatepicker({
                   />
                 </CustomShadow>
               </TouchableOpacity>
-              {error?.message && (
+              {/* {error?.message && (
                 <Text style={styles.errorMessage}>{error?.message}</Text>
+              )} */}
+
+              {error && (
+                <Text style={styles.errorMessage}>
+                  {" "}
+                  &#9432; {getErrMsg(error, label, name)}
+                </Text>
               )}
 
               <DatePicker
