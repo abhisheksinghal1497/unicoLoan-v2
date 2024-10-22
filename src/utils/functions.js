@@ -693,6 +693,7 @@ const getLoanDetailPostBody = (loanData, Applicant__c, loanId) => {
       Asset_Type__c: 'Loan'
     };
   } catch (error) { }
+<<<<<<< HEAD
 };
 
 const updateLoanDetailPostBody = (loanData, Applicant__c, loanId) => {
@@ -722,6 +723,7 @@ const updateLoanDetailPostBody = (loanData, Applicant__c, loanId) => {
       Asset_Type__c: 'Loan'
     };
   } catch (error) { }
+
 };
 
 export const createCompositeRequestForLoadDetails = (
@@ -1555,6 +1557,7 @@ export const createCoApplicantCompositeRequest = (coApplicantBody) => {
         ),
       },
 
+
       //  {
       //    ...patchCompositeRequest(
       //       "Applicant_Income__c",
@@ -1567,6 +1570,21 @@ export const createCoApplicantCompositeRequest = (coApplicantBody) => {
       //     )
       //  }
 
+
+
+    //  {
+    //    ...patchCompositeRequest(
+    //       "Applicant_Income__c",
+    //       mainApplicantIncomeId,
+    //       {
+          
+    //         Total_Income__c: mainApplicantIncome + coApplicantBody?.Annual_Turnover__c
+    //       },
+    //       "Main_Applicant_Income__c_PATCH"
+    //     )
+    //  }
+
+      
 
       // {
       //   method: "GET",
