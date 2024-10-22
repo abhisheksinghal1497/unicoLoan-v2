@@ -40,7 +40,7 @@ const LoanDetails = (props) => {
     (el) => el.ApplType__c === "P"
   )[0];
 
-  const formData = getLoanDetailsForm(applicationDetails?.Product__c);
+  const formData = getLoanDetailsForm(applicationDetails?.Product__c, applicationDetails.Customer_Profile__c);
   const submitLoanMutate = useSubmitLoanFormData(loanData);
   const {
     control,
@@ -62,6 +62,7 @@ const LoanDetails = (props) => {
       [LOAN_DETAILS_KEYS.reqLoanAmt]: applicationDetails?.ReqLoanAmt__c,
       [LOAN_DETAILS_KEYS.reqTenure]: applicationDetails?.ReqTenInMonths__c,
       [LOAN_DETAILS_KEYS.loanPurpose]: applicationDetails?.LoanPurpose__c,
+      
       // applicationDetails
 
       // applicantRecord --DONE
@@ -70,6 +71,7 @@ const LoanDetails = (props) => {
         applicantRecord?.ExistingCustomer__c,
       [LOAN_DETAILS_KEYS.totalIncome]: applicantRecord?.Annual_Turnover__c,
       [LOAN_DETAILS_KEYS.custId]: applicantRecord?.Customer__c,
+      [LOAN_DETAILS_KEYS.customerSegment]: applicantRecord?.Customer_Segment__c,
       // applicantRecord
 
       // loanDetails
@@ -186,6 +188,7 @@ const LoanDetails = (props) => {
       
       props?.navigation?.navigate(screens.Eligibility, {
         loanData: updatedLoanData,
+        Annual_Turnover__c: data[LOAN_DETAILS_KEYS.totalIncome]
       });
     } catch (error) {
       console.log("SOME ERROR OCCURED", error);

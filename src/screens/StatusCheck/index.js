@@ -79,6 +79,7 @@ const RenderLoanDropdown = ({ loanData = [], setSelectedLoan = () => { } }) => {
   useEffect(() => {
     const loan = loanData.find((el) => el.loanId === applicationNumber);
     if (loan) {
+      console.log(">>>>",loan.Name)
       setSelectedLoan(loan);
     }
 
@@ -94,7 +95,7 @@ const RenderLoanDropdown = ({ loanData = [], setSelectedLoan = () => { } }) => {
       validations: validations.text,
       data: loanData.map((el) => ({
         id: el.loanId,
-        label: el.loanId,
+        label: el.applicationDetails?.Name,
         value: el.loanId,
       })),
     },

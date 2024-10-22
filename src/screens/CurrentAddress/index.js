@@ -47,6 +47,7 @@ export const parsedDate = (date) => {
     const formattedDate = parsedDate.format("YYYY-MM-DD");
     return formattedDate;
   } catch (error) {
+    alert(error)
     return date;
   }
 };

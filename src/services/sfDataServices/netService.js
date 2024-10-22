@@ -242,8 +242,12 @@ export const getConsentLink = (applicationId) => {
       `/getConsentLink?recordId=${applicationId}`,
       (res) => {
         // console.log("Entered");
+        if (res?.message?.includes("https")){
         console.log("res", res);
         resolve(res);
+        }else{
+          reject("Something went wrong.")
+        }
       },
       (error) => {
         reject(error);
@@ -410,7 +414,7 @@ export const assignBranchManagerApi = (LeadId) => {
   return new Promise((resolve, reject) => {
     net.sendRequest(
       "/services/apexrest",
-      `/assigntomanager/?recordId=${LeadId}`,
+      `/assigntomanager/?loanId=${LeadId}`,
       (res) => {
         // console.log("Entered");
         console.log("res", res);

@@ -80,7 +80,7 @@ const KYC = (props) => {
   const adhaarEkycMutate = makeAdhaarEKYCCall();
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [mergeAdhaarImages, setMergeAdhaarImages] = useState('')
-  const {secondsLeft, formattedTime, startCountDown} = useOtpCounter(120);
+  const { secondsLeft, formattedTime, startCountDown } = useOtpCounter(120);
 
   const toggleHelpModal = () => {
     setShowHelpModal(!showHelpModal);
@@ -103,47 +103,46 @@ const KYC = (props) => {
       if (!canvas) return;
       setIsImageProcessing(true)
       const context = canvas.getContext("2d");
-      canvas.width = 1000;
-      canvas.height = 1200;
-  
+      canvas.width = 600;
+      canvas.height = 800; 
       const image1 = new CanvasImage(canvas);
       const image2 = new CanvasImage(canvas);
-  
+
       image1.src = `data:image/png;base64,${base64Image1}`;
       image2.src = `data:image/png;base64,${base64Image2}`;
-  
+
       // Ensure both images are loaded before drawing
       const drawImages = () => {
         context.clearRect(0, 0, canvas.width, canvas.height);
-  
+
         const imageHeight = canvas.height / 2;
-  
+
         // Draw the first image (top half of the canvas)
-        context.drawImage(image1, 0, 0, canvas.width, imageHeight);
-  
+        context.drawImage(image1, 0, 0, canvas.width, canvas.height / 2);
         // Draw the second image (bottom half of the canvas)
-        context.drawImage(image2, 0, imageHeight, canvas.width, imageHeight);
+        context.drawImage(image2, 0, canvas.height / 2, canvas.width, canvas.height / 2);
+
         // Optionally, convert the canvas content to a data URL
-        
+
         canvas.toDataURL(selectedImage?.mime).then((dataUrl) => {
           setIsImageProcessing(false)
           setMergeAdhaarImages(dataUrl);
         }).catch(e => setIsImageProcessing(false));
       };
-  
+
       image1.addEventListener("load", () => {
-        
+
         image2.addEventListener("load", drawImages);
       });
     } catch (error) {
       setIsImageProcessing(false)
     }
-   
-}
+
+  }
 
   useFocusEffect(
     useCallback(() => {
-      fetchData();
+     // fetchData();
     }, [])
   );
 
@@ -270,8 +269,8 @@ const KYC = (props) => {
 
   const uploadAadhar = async () => {
     try {
-      if(!mergeAdhaarImages){
-        Toast.show({type:'error', text1:'Please upload image'});
+      if (!mergeAdhaarImages) {
+        Toast.show({ type: 'error', text1: 'Please upload image' });
         return
       }
       const dataURL = mergeAdhaarImages;
@@ -340,7 +339,7 @@ const KYC = (props) => {
           intitialResponse: aadharInitiateResponse,
           imageBase64: aadhaarBase64,
         });
-      } catch (error) {}
+      } catch (error) { }
     }
   };
 
@@ -543,8 +542,8 @@ const KYC = (props) => {
                       source={
                         selectedImage
                           ? {
-                              uri: `data:${selectedImage.mime};base64,${selectedImage.data}`,
-                            }
+                            uri: `data:${selectedImage.mime};base64,${selectedImage.data}`,
+                          }
                           : require("../../assets/aadhar-front.png")
                       }
                       style={[styles.frontImage]}
@@ -566,8 +565,8 @@ const KYC = (props) => {
                       source={
                         selectedImageBack
                           ? {
-                              uri: `data:${selectedImageBack.mime};base64,${selectedImageBack.data}`,
-                            }
+                            uri: `data:${selectedImageBack.mime};base64,${selectedImageBack.data}`,
+                          }
                           : require("../../assets/aadhar-back.png")
                       }
                       style={[styles.frontImage]}

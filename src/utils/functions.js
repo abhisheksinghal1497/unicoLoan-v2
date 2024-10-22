@@ -271,6 +271,7 @@ export const getApplicantRequest = (data) => {
       ),
       Address__c: data?.Address__c,
       Pincode__c: data?.Pincode__c,
+      CustProfile__c: data?.Customer_Profile__c
       // Consent_Status__c: "Verified"
     };
   } catch (error) {
@@ -287,7 +288,7 @@ export const getPeriodValues = (str, index) => {
         return str.substring(2, 4);
       }
     }
-  } catch (error) {}
+  } catch (error) { }
   return null;
 };
 
@@ -350,17 +351,17 @@ export const createCompositeRequestForPanAadhar = (
         referenceId: "aadhar",
         body: isPanAadharLinked
           ? {
-              ...getAadharCreateRequest(loanData, aadharData),
-              IsPanAdrLnk__c: "true",
-              ValidationStatus__c: "Success",
-            }
+            ...getAadharCreateRequest(loanData, aadharData),
+            IsPanAdrLnk__c: "true",
+            ValidationStatus__c: "Success",
+          }
           : {
-              ...getAadharCreateRequest(loanData, aadharData),
-              IsPanAdrLnk__c: "false",
-              ValidationStatus__c: "Success",
-              KARZA_Name_Match_Score__c: score,
-              Name_Match_Status__c: "Name Match successful!!",
-            },
+            ...getAadharCreateRequest(loanData, aadharData),
+            IsPanAdrLnk__c: "false",
+            ValidationStatus__c: "Success",
+            KARZA_Name_Match_Score__c: score,
+            Name_Match_Status__c: "Name Match successful!!",
+          },
       },
       // Update Loan application First name, middlename , last name and Father name - LoanAppl__c and Applicant__c
       // {
@@ -374,9 +375,8 @@ export const createCompositeRequestForPanAadhar = (
 
       {
         method: "PATCH",
-        url: `/services/data/${net.getApiVersion()}/sobjects/Applicant__c/${
-          loanData.Applicant__c
-        }`,
+        url: `/services/data/${net.getApiVersion()}/sobjects/Applicant__c/${loanData.Applicant__c
+          }`,
         referenceId: "applicantUpdateId",
         body: {
           ...updateAadharDataToApplicant(loanData),
@@ -639,6 +639,7 @@ const getLoanDetailPatchBody = (loanData) => {
       [LOAN_DETAILS_KEYS.reqTenure]: loanData?.[LOAN_DETAILS_KEYS.reqTenure],
       [LOAN_DETAILS_KEYS.loanPurpose]:
         loanData?.[LOAN_DETAILS_KEYS.loanPurpose],
+      ProductSubType__c: loanData?.[LOAN_DETAILS_KEYS.loanPurpose]
     };
   } catch (error) {
     console.log("getLoanDetailPatchBody", error);
@@ -657,6 +658,7 @@ const getApplicantPatchBody = (loanData) => {
       [LOAN_DETAILS_KEYS.isExistingCustomer]:
         loanData?.[LOAN_DETAILS_KEYS.isExistingCustomer],
       [LOAN_DETAILS_KEYS.custId]: loanData?.[LOAN_DETAILS_KEYS.custId],
+      [LOAN_DETAILS_KEYS.customerSegment]: loanData?.[LOAN_DETAILS_KEYS.customerSegment],
     };
   } catch (error) {
     console.log("getApplicantPatchBody", error);
@@ -664,7 +666,7 @@ const getApplicantPatchBody = (loanData) => {
   }
 };
 
-const getLoanDetailPostBody = (loanData, Applicant__c) => {
+const getLoanDetailPostBody = (loanData, Applicant__c, loanId) => {
   try {
     return {
       [LOAN_DETAILS_KEYS.bankBalance]:
@@ -687,8 +689,39 @@ const getLoanDetailPostBody = (loanData, Applicant__c) => {
       [LOAN_DETAILS_KEYS.fd]: loanData?.[LOAN_DETAILS_KEYS.fd],
       [LOAN_DETAILS_KEYS.currPF]: loanData?.[LOAN_DETAILS_KEYS.currPF],
       Appl__c: Applicant__c,
+      LoanAppln__c: loanId,
+      Asset_Type__c: 'Loan'
     };
-  } catch (error) {}
+  } catch (error) { }
+};
+
+const updateLoanDetailPostBody = (loanData, Applicant__c, loanId) => {
+  try {
+    return {
+      [LOAN_DETAILS_KEYS.bankBalance]:
+        loanData?.[LOAN_DETAILS_KEYS.bankBalance],
+      [LOAN_DETAILS_KEYS.immovableProperty]:
+        loanData?.[LOAN_DETAILS_KEYS.immovableProperty],
+      [LOAN_DETAILS_KEYS.invPlantMachVehi]:
+        loanData?.[LOAN_DETAILS_KEYS.invPlantMachVehi],
+      [LOAN_DETAILS_KEYS.ownContri]: loanData?.[LOAN_DETAILS_KEYS.ownContri],
+      [LOAN_DETAILS_KEYS.assetVal]: loanData?.[LOAN_DETAILS_KEYS.assetVal],
+      [LOAN_DETAILS_KEYS.totalAsset]: loanData?.[LOAN_DETAILS_KEYS.totalAsset],
+      [LOAN_DETAILS_KEYS.amtConstructPurchase]:
+        loanData?.[LOAN_DETAILS_KEYS.amtConstructPurchase],
+      [LOAN_DETAILS_KEYS.savings]: loanData?.[LOAN_DETAILS_KEYS.savings],
+      [LOAN_DETAILS_KEYS.dispAsset]: loanData?.[LOAN_DETAILS_KEYS.dispAsset],
+      [LOAN_DETAILS_KEYS.familyFund]: loanData?.[LOAN_DETAILS_KEYS.familyFund],
+      [LOAN_DETAILS_KEYS.srvcFund]: loanData?.[LOAN_DETAILS_KEYS.srvcFund],
+      [LOAN_DETAILS_KEYS.valShareSecr]:
+        loanData?.[LOAN_DETAILS_KEYS.valShareSecr],
+      [LOAN_DETAILS_KEYS.fd]: loanData?.[LOAN_DETAILS_KEYS.fd],
+      [LOAN_DETAILS_KEYS.currPF]: loanData?.[LOAN_DETAILS_KEYS.currPF],
+      // Appl__c: Applicant__c,
+      // LoanAppln__c: loanId,
+      Asset_Type__c: 'Loan'
+    };
+  } catch (error) { }
 };
 
 export const createCompositeRequestForLoadDetails = (
@@ -719,7 +752,7 @@ export const createCompositeRequestForLoadDetails = (
         patchCompositeRequest(
           "ApplAsset__c",
           loanDetails?.Id,
-          getLoanDetailPostBody(formData),
+          updateLoanDetailPostBody(formData, Applicant__c, loanId),
           "patchApplAsset__c"
         )
       );
@@ -727,19 +760,29 @@ export const createCompositeRequestForLoadDetails = (
       compositeRequests.push(
         postCompositeRequest(
           "ApplAsset__c",
-          getLoanDetailPostBody(formData, Applicant__c),
+          getLoanDetailPostBody(formData, Applicant__c, loanId),
           "postLoanDetail"
         )
       );
     }
 
     if (applicantIncomeId) {
+
+      compositeRequests.push(
+        {
+          method: "GET",
+          url: `/services/data/${net.getApiVersion()}/query/?q=SELECT%20id%2C%20Catgry__c%2C%20DocSubTyp__c%2C%20DocTyp__c%20FROM%20DocMstr__c%20WHERE%20DocTyp__c%3D%27Photograph%27%20LIMIT%201`,
+          referenceId: "incomeQuery",
+        },
+      )
+
       compositeRequests.push(
         patchCompositeRequest(
           "Applicant_Income__c",
           applicantIncomeId,
           {
             Applicant_Net_Income__c: formData?.[LOAN_DETAILS_KEYS.totalIncome],
+            Total_Income__c: formData?.[LOAN_DETAILS_KEYS.totalIncome]
           },
           "Applicant_Income__c_PATCH"
         )
@@ -749,6 +792,7 @@ export const createCompositeRequestForLoadDetails = (
         postCompositeRequest(
           "Applicant_Income__c",
           {
+            Total_Income__c: formData?.[LOAN_DETAILS_KEYS.totalIncome],
             Applicant_Net_Income__c: formData?.[LOAN_DETAILS_KEYS.totalIncome],
             Applicant__c,
           },
@@ -1095,7 +1139,7 @@ export const getAadharAddressRequest = (data) => {
     console.log("adhaarDetails", adhaarDetails);
     return {
       Applicant__c: data?.Applicant__c,
-      LoanAppl__c: data?.data?.loanId,
+      LoanAppl__c: data?.loanId,
       HouseNo__c: adhaarDetails?.address?.splitAddress?.houseNumber ?? null,
       Landmark__c: adhaarDetails?.address?.splitAddress?.landmark ?? null,
       AddrLine1__c:
@@ -1120,6 +1164,24 @@ export const getAadharAddressRequest = (data) => {
   }
 };
 
+const calculateAge = (birthDate) => {
+  try {
+    const today = new Date();
+    const birthDateObj = new Date(birthDate);
+    let age = today.getFullYear() - birthDateObj.getFullYear();
+    const monthDifference = today.getMonth() - birthDateObj.getMonth();
+
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDateObj.getDate())) {
+      age--;
+    }
+
+    return age;
+  } catch (error) {
+    return 18
+  }
+
+}
+
 export const updateAadharDataToApplicant = (data) => {
   //   // RM__c: data?.RM__c,
   try {
@@ -1133,6 +1195,7 @@ export const updateAadharDataToApplicant = (data) => {
       IsPOICmptd__c: 1,
       POI_KYCTyp__c: "Aadhaar eKYC",
       PoiDocused__c: "Aadhaar",
+      Age__c: calculateAge(data?.adhaarDetails?.dob)
     };
     const name = data?.adhaarDetails?.name;
     let firstName = null;
@@ -1165,7 +1228,7 @@ export const updateAadharDataToApplicant = (data) => {
           lastName = firstName;
         }
       }
-    } catch (error) {}
+    } catch (error) { }
 
     if (firstName) {
       request = { ...request, FName__c: firstName };
@@ -1473,6 +1536,7 @@ export const compositeFetchImage = (LinkedEntityId) => {
 export const createCoApplicantCompositeRequest = (coApplicantBody) => {
   try {
     const compositeRequest = [
+
       {
         ...postCompositeRequest(
           "Applicant__c",
@@ -1490,6 +1554,25 @@ export const createCoApplicantCompositeRequest = (coApplicantBody) => {
           "Applicant_Income__c_POST"
         ),
       },
+
+      //  {
+      //    ...patchCompositeRequest(
+      //       "Applicant_Income__c",
+      //       mainApplicantIncomeId,
+      //       {
+
+      //         Total_Income__c: mainApplicantIncome + coApplicantBody?.Annual_Turnover__c
+      //       },
+      //       "Main_Applicant_Income__c_PATCH"
+      //     )
+      //  }
+
+
+      // {
+      //   method: "GET",
+      //   url: `/services/data/${net.getApiVersion()}/query/?q=SELECT%20Total_Income__c%2C%20Applicant_Net_Income__c%20FROM%20Applicant_Income__c%20WHERE%20Id%3D%27${mainApplicantIncomeId}%27`,
+      //   referenceId: "totalIncomeQuery",
+      // },
     ];
     return compositeRequest;
   } catch (error) {
@@ -1501,7 +1584,8 @@ export const createCoApplicantCompositeRequest = (coApplicantBody) => {
 export const updateCoApplicantCompositeRequest = (
   coApplicantBody,
   coApplicantId,
-  applicantIncomeId
+  applicantIncomeId,
+  mainApplicantIncomeId, mainApplicantIncome
 ) => {
   try {
     const compositeRequest = [
@@ -1523,6 +1607,17 @@ export const updateCoApplicantCompositeRequest = (
           "Applicant_Income__c_PATCH"
         ),
       },
+      // {
+      //   ...patchCompositeRequest(
+      //     "Applicant_Income__c",
+      //     mainApplicantIncomeId,
+      //     {
+
+      //       Total_Income__c: mainApplicantIncome + coApplicantBody?.Annual_Turnover__c
+      //     },
+      //     "Main_Applicant_Income__c_PATCH"
+      //   )
+      // }
     ];
     return compositeRequest;
   } catch (error) {

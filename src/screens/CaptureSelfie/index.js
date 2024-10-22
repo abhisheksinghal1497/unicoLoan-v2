@@ -61,7 +61,7 @@ const CaptureSelfie = ({ navigation }) => {
   };
 
   const onCameraPress = ({ front = false }) => {
-    ImagePicker.openPicker({
+    ImagePicker.openCamera({
       cropping: true,
       compressImageQuality: 0.6,
       // useFrontCamera: front,
@@ -144,7 +144,7 @@ const CaptureSelfie = ({ navigation }) => {
           onPressLeft={() => {
             resetRoute(screens.HomeScreen);
           }}
-          onPressRight={() => {}}
+          onPressRight={() => { }}
           colour="white"
         />
         <ActivityIndicatorComponent visible={selfieMutate?.isPending} />
