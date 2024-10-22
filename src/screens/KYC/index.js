@@ -397,9 +397,13 @@ const KYC = (props) => {
           titleStyle={{ fontSize: verticalScale(18) }}
           onPressRight={handleRightIconPress}
           onPressLeft={() => {
-            resetRoute(screens.PanDetails, {
-              loanData: loanData,
-            });
+            // resetRoute(screens.PanDetails, {
+            //   loanData: loanData,
+            // });
+
+            if (props?.navigation.canGoBack()) {
+              props?.navigation.goBack();
+            }
           }}
           showHelpModal={showHelpModal}
           toggleHelpModal={toggleHelpModal}

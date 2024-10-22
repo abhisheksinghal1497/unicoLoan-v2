@@ -1469,7 +1469,7 @@ export const useSubmitApplicationFormData = (pincodeData) => {
                 const loanId = response?.compositeResponse?.[1]?.body?.id;
                 const applicationId =
                   response?.compositeResponse?.[2]?.body?.id;
-                console.log("CHECK 2");
+                const applicationDetails = response?.compositeResponse?.[3]?.body?.records?.[0]//records
                 // const loanDetails =
                 //   response?.compositeResponse?.[2]?.body?.records[0];
 
@@ -1483,9 +1483,7 @@ export const useSubmitApplicationFormData = (pincodeData) => {
 
                   const dbdata = {
                     loanId: loanId,
-                    applicationDetails: {
-                      ...data,
-                    },
+                    applicationDetails: applicationDetails,
                     Applicant__c: applicationId,
                     External_ID: loanId,
                     Lead__c: leadcreateResponse?.id,

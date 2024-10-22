@@ -1,7 +1,7 @@
 import {
   Image,
   StyleSheet,
-  Text,
+ 
   View,
   ScrollView,
   Keyboard,
@@ -36,6 +36,7 @@ import AdhaarSection from "../../components/AdhaarSection";
 import { ConfiguratonConstants } from "../../constants/ConfigurationConstants";
 import ErrorConstants from "../../constants/ErrorConstants";
 import { useRoute } from "@react-navigation/native";
+import { Text } from "react-native-paper";
 
 const PanDetails = (props) => {
   const route = useRoute();
@@ -59,7 +60,7 @@ const PanDetails = (props) => {
     setValue,
     trigger,
   } = useForm({
-    mode: "onBlur",
+    
     defaultValues: {},
   });
 
@@ -95,7 +96,7 @@ const PanDetails = (props) => {
         const response = verifyPan?.data?.data;
         setIsVerified(true);
         showResponseData(response?.results?.name, "");
-        toast("success", "Pan Verified");
+       // toast("success", "Pan Verified");
         setPanDetails({
           panNumber: panCapital,
           panName: response?.results?.name,
@@ -235,6 +236,7 @@ const PanDetails = (props) => {
 
   useEffect(() => {
     const subscription = watch((value, { name, type }) => {
+     
       setIsVerified(false);
       setUploadIsVerified(false);
       setSelectedImage(null);
@@ -394,40 +396,8 @@ const PanDetails = (props) => {
 
           {(isVerified || isUploadVerified) &&
             responseData &&
-            responseData.map((comp, index) => {
-              return (
-                <FormControl
-                  compType={comp.type}
-                  control={control}
-                  validations={comp.validations}
-                  name={comp.id}
-                  label={comp.label}
-                  errors={errors[comp.id]}
-                  isRequired={comp.isRequired}
-                  placeholder={comp.placeHolder}
-                  data={comp.data}
-                  key={comp.id}
-                  watch={watch}
-                  showRightComp={comp.showRightComp || false}
-                  rightComp={() =>
-                    !isVerified ? (
-                      <Text>Verify</Text>
-                    ) : (
-                      <Image
-                        source={require("../../assets/tick2.png")}
-                        style={styles.tickImage}
-                      />
-                    )
-                  }
-                  rightCompPress={verifyPanBtn}
-                  isMultiline={comp.isMultiline}
-                  maxLength={comp.maxLength}
-                  isDisabled={comp.isDisabled}
-                  isUpperCaseRequired={true}
-                  isEditable={comp.isEditable}
-                />
-              );
-            })}
+            <Text variant="labelLarge" style={{textAlign:'center', fontSize:14, color:colors.GREEN_COLOR}}>Pan Verified Successfully.</Text>
+           }
 
           {(isVerified || isUploadVerified) && (
             <View>
