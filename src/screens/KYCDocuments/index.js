@@ -88,7 +88,7 @@ const KYCDocuments = ({ navigation }) => {
       if (currentDataSelfie) {
         setSelectedImageSelfie(currentDataSelfie);
       }
-    } catch (error) {}
+    } catch (error) { }
   };
   const handleRightIconPress = (index) => {
     if (index === 0) {
@@ -133,8 +133,8 @@ const KYCDocuments = ({ navigation }) => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
-                    navigation.navigate("CurrentAddress",{
-                      loanData:loanData
+                    navigation.navigate("CurrentAddress", {
+                      loanData: loanData
                     });
                     setShowModal(false);
                   }}
@@ -179,11 +179,13 @@ const KYCDocuments = ({ navigation }) => {
         </Text>
       </View>
 
-      <View style={styles.con2}>
-        <CustomImageContainer selectedImage={selectedImage} />
-        <CustomImageContainer selectedImage={selectedImageBack} />
+      <View style ={{justifyContent:'center', alignItems:'center', padding:16, minHeight:150}}>
+        <Text style ={{fontSize:14}}>Name:- {loanData?.panDetails?.panName}</Text>
+        <Text style={{ fontSize: 14 , marginVertical:5, textAlign:'center'}}>Address:- {loanData?.adhaarDetails?.address?.combinedAddress}</Text>
+        {/* <CustomImageContainer selectedImage={selectedImage} />
+        <CustomImageContainer selectedImage={selectedImageBack} /> */}
       </View>
-      <SuccessText Successtext={"E-Addhaar Successfully Verified"} />
+      <SuccessText Successtext={"Addhaar Verified Successfully"} />
       <View style={styles.con3} />
       <View style={styles.con4}>
         {/* <CustomImageContainer selectedImage={selectedImageSelfie} /> */}
@@ -205,13 +207,13 @@ const KYCDocuments = ({ navigation }) => {
               source={
                 selectedImageSelfie
                   ? {
-                      uri: selectedImageSelfie?.path ?  selectedImageSelfie?.path : selectedImageSelfie,
-                    } 
+                    uri: selectedImageSelfie?.path ? selectedImageSelfie?.path : selectedImageSelfie,
+                  }
                   : require("../../assets/aadhar-front.png")
               }
               style={{ height: 150, width: 150 }}
               resizeMode="cover"
-              //  source={assets.aadhar_front}
+            //  source={assets.aadhar_front}
             />
           </View>
           <Text style={styles.conText1}> Selfie</Text>
@@ -238,13 +240,13 @@ const CustomImageContainer = ({ selectedImage }) => {
           source={
             selectedImage
               ? {
-                  uri: `data:${selectedImage?.mime};base64,${selectedImage?.data}`,
-                }
+                uri: `data:${selectedImage?.mime};base64,${selectedImage?.data}`,
+              }
               : require("../../assets/aadhar-front.png")
           }
           style={{ height: 100, width: 100 }}
           resizeMode="cover"
-          //  source={assets.aadhar_front}
+        //  source={assets.aadhar_front}
         />
       </View>
       <Text style={styles.conText1}> Aadhaar Front Photo</Text>
