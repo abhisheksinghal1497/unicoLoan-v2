@@ -17,8 +17,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import Header from "../../components/Header";
 import Button from "./../../components/Button";
+import { assets } from "../../assets/assets";
+import { useNavigation } from "@react-navigation/native";
 
-const EMICalculatorComponent = ({ navigation }) => {
+const EMICalculatorComponent = () => {
+  const navigation = useNavigation()
   const defaultValues = {
     Loan_Amount: "",
     Interest_Rate: "",
@@ -118,20 +121,29 @@ const EMICalculatorComponent = ({ navigation }) => {
     }
   };
   return (
-    <View style={{ flex: 1, backgroundColor: colors.white}}>
-      {/* <View style={{ marginHorizontal: horizontalScale(15),marginTop:20 }}>
-        <Header
-          title={"EMI Calculator"}
-          left={require("../../assets/back2.png")}
-          onPressLeft={() => {
-            navigation.goBack();
-          }}
-          onPressRight={() => {}}
-          colour="white"
-        />
-      </View> */}
+    <View style={{ flex: 1, backgroundColor: colors.white }}>
+      <Header
+        title="Emi Calculator"
+        left={assets.back}
+        // rightImages={[
+        //   { source: assets.chat },
+        //   { source: assets.questionRound },
+        // ]}
+        leftStyle={{ height: verticalScale(15), width: verticalScale(15) }}
+        leftImageProps={{ resizeMode: "contain" }}
+        // rightStyle={{
+        //   height: verticalScale(23),
+        //   width: verticalScale(23),
+        //   marginHorizontal: 10,
+        // }}
+        rightImageProps={{ resizeMode: "contain" }}
+        titleStyle={{ fontSize: verticalScale(18) }}
+        onPressLeft={() => {
+          navigation.goBack()
+        }}
+      />
 
-      <View style={{ flex: 1, margin:16 }}>
+      <View style={{ flex: 1, margin: 16 }}>
         <View>
           <FormControl
             compType={component.sliderAndInput}

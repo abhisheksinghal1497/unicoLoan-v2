@@ -16,9 +16,11 @@ import DimensionUtils from "../../utils/DimensionUtils";
 import Loader from "../../components/Loader";
 import { toast } from "../../utils/functions";
 import FastImage from "react-native-fast-image";
+import { useNavigation } from "@react-navigation/native";
 
 export default function ApplicationDetails(props) {
   const [{ data = {}, isLoading, isError }] = getUserDetailQuery();
+  const navigation = useNavigation()
   const { colors } = useTheme();
   const style = styles(colors);
   const goBack = () => props.navigation.goBack();
@@ -93,28 +95,33 @@ export default function ApplicationDetails(props) {
   const Container = ({ children }) => {
     return (
       <View style={{ flex: 1, backgroundColor: "#fff" }}>
+              <Header
+        title="Profile"
+        left={assets.back}
+        // rightImages={[
+        //   { source: assets.chat },
+        //   { source: assets.questionRound },
+        // ]}
+        leftStyle={{ height: verticalScale(15), width: verticalScale(15) }}
+        leftImageProps={{ resizeMode: "contain" }}
+        // rightStyle={{
+        //   height: verticalScale(23),
+        //   width: verticalScale(23),
+        //   marginHorizontal: 10,
+        // }}
+        rightImageProps={{ resizeMode: "contain" }}
+        titleStyle={{ fontSize: verticalScale(18) }}
+        onPressLeft={() => {
+          navigation.goBack()
+        }}
+      />
         <View
           style={{
             paddingHorizontal: horizontalScale(15),
             marginTop: verticalScale(10),
           }}
         >
-          {/* <Header
-            colour="#fff"
-            title="Profile"
-            left={assets.back}
-            leftStyle={{
-              height: verticalScale(15),
-              width: verticalScale(15),
-            }}
-            leftImageProps={{
-              resizeMode: "contain",
-            }}
-            titleStyle={{
-              fontSize: verticalScale(18),
-            }}
-            onPressLeft={goBack}
-          /> */}
+  
         </View>
         {isError ? <Text>Some error occurred</Text> : children}
       </View>
