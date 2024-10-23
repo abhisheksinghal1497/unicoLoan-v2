@@ -43,7 +43,7 @@ export const screens = {
   ServiceOtp: "ServiceOtp",
   LoginComponent: "LoginComponent",
   CoApplicant: "CoApplicant",
-  ConsentScreen: 'ConsentScreen',
+  ConsentScreen: 'Consent',
   SystemLoanDetails: 'SystemLoanDetails',
   Register:'Register'
 };
