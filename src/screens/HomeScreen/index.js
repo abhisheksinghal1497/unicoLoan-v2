@@ -41,7 +41,7 @@ import useGetProgressPercentage, {
   getCurrentScreenNameForResume,
 } from "../../utils/useGetProgressPercentage";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons"
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import LocalStorage from "../../services/LocalStorage";
 import { useFocusEffect } from "@react-navigation/native";
@@ -57,17 +57,15 @@ const HomeScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [currentScreen, setCurrentScreen] = useState(false);
 
-
   useFocusEffect(
     useCallback(() => {
       getLoanCardData?.mutate();
-
     }, [])
   );
 
   useEffect(() => {
     getOurServicesCardData?.mutate();
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (getLoanCardData.data) {
@@ -150,16 +148,14 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const ResumeLoanJourney = ({ item }) => {
-
-    console.log("loan ownerId", item.applicationDetails?.OwnerId)
-    console.log("login ownerId", LocalStorage?.getUserData().Id)
-    const isLoginIserOwner = LocalStorage?.getUserData().Id === item.applicationDetails?.OwnerId
-
-    const progress = isLoginIserOwner ? useGetProgressPercentage(item) : 80;
-    const screenName = isLoginIserOwner ? getCurrentScreenNameForResume(item) : "";
+    const progress = useGetProgressPercentage(item);
+    const screenName = getCurrentScreenNameForResume(item);
+    console.log("loan ownerId", item.applicationDetails?.OwnerId);
+    console.log("login ownerId", LocalStorage?.getUserData().Id);
+    const isLoginIserOwner =
+      LocalStorage?.getUserData().Id === item.applicationDetails?.OwnerId;
     //OwnerId
     //LocalStorage?.getUserData().Id
-
 
     const textStyle = (size, color = colors.coreBlue) => ({
       color,
@@ -183,9 +179,8 @@ const HomeScreen = ({ navigation }) => {
               navigation?.navigate(isLoginIserOwner ? screenName : screens?.SystemLoanDetails, { loanData: item });
             }}
           >
-            <Text style={styles.seeDetailsresumeJourneyText}>{
-              isLoginIserOwner ?
-                "Resume Journey" : "See Details"}
+            <Text style={styles.seeDetailsresumeJourneyText}>
+              {isLoginIserOwner ? "Resume Journey" : "See Details"}
             </Text>
           </TouchableOpacity>
         </View>
@@ -195,13 +190,12 @@ const HomeScreen = ({ navigation }) => {
     const CardHeader = () => {
       return (
         <View style={{}}>
-
           <View
             style={{
               flexDirection: "row",
               flexWrap: "wrap",
               justifyContent: "space-between",
-              alignItems: 'baseline'
+              alignItems: "baseline",
             }}
           >
             <Text style={textStyle(15)}>
@@ -230,8 +224,14 @@ const HomeScreen = ({ navigation }) => {
       const ProgressBardSection = () => {
         return (
           <View>
-            <View style={{ alignItems: "baseline", justifyContent: 'center' }}>
-              <View style={{ marginTop: 5, flexDirection: 'row', justifyContent: 'center' }}>
+            <View style={{ alignItems: "baseline", justifyContent: "center" }}>
+              <View
+                style={{
+                  marginTop: 5,
+                  flexDirection: "row",
+                  justifyContent: "center",
+                }}
+              >
                 <CircularProgress
                   imageStyle={{ width: 25, height: 25 }}
                   ImageData={require("../../assets/Home2.png")}
@@ -241,8 +241,8 @@ const HomeScreen = ({ navigation }) => {
                   bgColor={colors.progressBg}
                   pgColor={colors.coreBlue}
                 />
-                <View style={{ alignSelf: 'center', marginLeft: 5 }}>
-                  <Text style={textStyle(14)} >{screenName}</Text>
+                <View style={{ alignSelf: "center", marginLeft: 5 }}>
+                  <Text style={textStyle(14)}>{screenName}</Text>
                 </View>
               </View>
               <View
@@ -283,7 +283,13 @@ const HomeScreen = ({ navigation }) => {
       };
 
       return (
-        <View style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 5 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            paddingVertical: 5,
+          }}
+        >
           {<ProgressBardSection />}
           <LoanDetailsSection />
         </View>
@@ -357,13 +363,20 @@ const HomeScreen = ({ navigation }) => {
         keyboardDismissMode="on-drag"
         contentContainerStyle={{ flexGrow: 1, marginBottom: 50 }}
       >
-        <View style={{ justifyContent: "space-around", flex: 1, }}>
-          <View style={{ backgroundColor: colors.coreCream, flex: 1, marginBottom: -30, minHeight: 140 }}>
+        <View style={{ justifyContent: "space-around", flex: 1 }}>
+          <View
+            style={{
+              backgroundColor: colors.coreCream,
+              flex: 1,
+              marginBottom: -30,
+              minHeight: 140,
+            }}
+          >
             <View style={styles.profileImageView}>
               <TouchableOpacity
                 onPress={() => navigation.navigate(screens.Profile)}
               >
-                <View style={{ flexDirection: "row", alignItems: 'center' }}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Image
                     source={require("../../assets/profileIcon.png")}
                     style={styles.profileIcon}
@@ -436,7 +449,17 @@ const HomeScreen = ({ navigation }) => {
                   onPress={() => handleNavigation(index)}
                 >
                   <View />
-                  <Image style={styles.serviceImage} source={item.image} />
+                  <View
+                    style={{
+                      backgroundColor: "rgba(210, 177, 172, 0.4)",
+                      alignSelf: "flex-start",
+                      padding: horizontalScale(8),
+                      borderRadius: 10,
+                    }}
+                  >
+                    <Image style={styles.serviceImage} source={item.image} />
+                  </View>
+
                   <Text style={styles.serviceText}>{item.title}</Text>
                   <View />
                 </TouchableOpacity>
@@ -559,8 +582,6 @@ const styles = StyleSheet.create({
     margin: 10,
     maxHeight: 250,
 
-
-
     // marginLeft: verticalScale(-5),
   },
   servicesCards: {
@@ -570,12 +591,12 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     shadowColor: colors.black,
     marginBottom: verticalScale(10),
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 3.84,
-    elevation: 5,
-    justifyContent: 'flex-start',
-    padding: 12
+    // shadowOffset: { width: 0, height: 4 },
+    // shadowOpacity: 1,
+    // shadowRadius: 3.84,
+    // elevation: 5,
+    justifyContent: "center",
+    paddingLeft: horizontalScale(5),
   },
   ourSericesCards: {
     flexDirection: "row",
@@ -587,13 +608,12 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     resizeMode: "contain",
-
   },
   serviceText: {
-
+    // alignSelf: "center",
     marginTop: verticalScale(9),
     ...customTheme.fonts.TextMon,
-    fontSize: 12
+    fontSize: 12,
   },
   yourLoan: {
     color: colors.black,

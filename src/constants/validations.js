@@ -71,6 +71,10 @@ export const validations = {
     required: true,
     pattern:  /^(0|[1-9]\d*)$/, // Matches non-negative integers (0 or positive)
   },
+  numberOnlyRequiredAboveZero: {
+    required: true,
+    pattern: /^(0|[1-9]\d+)$/, // Matches positive integers (greater than 0)
+  },
   name: {
     required: true,
     minLength: 2,
