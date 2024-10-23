@@ -89,6 +89,8 @@ export const postObjectData = (objectName, data) => {
 
 export const updateObjectData = (objectName, data, id, isDelete = false) => {
   const requestType = isDelete ? "DELETE" : "PATCH";
+  console.log("             ")
+
   return new Promise((resolve, reject) => {
     net.sendRequest(
       "/services/data/",

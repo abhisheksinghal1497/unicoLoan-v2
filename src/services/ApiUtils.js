@@ -2436,9 +2436,10 @@ export const getLoanDetailsForm = (productType, customerProfile) => {
 };
 
 export const getSanctionPdf = (loanData, loanId) => {
+  
   const mutate = useMutation({
     networkMode: "always",
-    mutationFn: () => {
+    mutationFn: (id) => {
       return new Promise(async (resolve, reject) => {
         let data = { ...loanData };
         data.sanctionDetails = {
@@ -2446,8 +2447,8 @@ export const getSanctionPdf = (loanData, loanId) => {
         };
 
         try {
-          console.log("data>>>", "success");
-          await updateObjectData("LoanAppl__c", { Stepper__c: "In Principal Sanction", loanId })
+          console.log("data>>>", "success"+id);
+          await updateObjectData("LoanAppl__c", { 'Stepper__c': "In Principal Sanction" }, id)
           await saveApplicationData(data);
           resolve({
             url: "http://www.clickdimensions.com/links/TestPDFfile.pdf",
@@ -2661,7 +2662,16 @@ export const getBureauBre = (loanData) => {
 export const assignBranchManagerMutation = (leadId) => {
   const mutate = useMutation({
     networkMode: "always",
-    mutationFn: async (data) => {
+    mutationFn: async (isEligible) => {
+      try {
+        if (isEligible){
+          await updateObjectData("LoanAppl__c", { 'Stepper__c': "In Principal Sanction" }, leadId)
+
+        }
+        
+      } catch (error) {
+        
+      }
       return assignBranchManagerApi(leadId)
     },
   });

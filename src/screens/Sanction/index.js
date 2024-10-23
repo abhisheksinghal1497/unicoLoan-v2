@@ -41,6 +41,7 @@ const Sanction = (props) => {
   const { loanData = {} } = route?.params || {};
   const applicationId = loanData?.Applicant__c;
   const loanId = loanData?.loanId;
+ 
   const resetRoute = useResetRoutes();
 
   const [{ data, isPending, isError }] =
@@ -60,7 +61,7 @@ const Sanction = (props) => {
   };
 
   useEffect(() => {
-    getData?.mutate();
+    //getData?.mutate(route?.params?.loanData?.loanId);
   }, []);
 
   async function hasAndroidPermission() {

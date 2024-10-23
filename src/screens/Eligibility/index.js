@@ -314,7 +314,7 @@ const Eligibility = (props) => {
             type="primary"
             label="Confirm"
             onPress={() => {
-              assignBranchManger?.mutate()
+              assignBranchManger?.mutate(isEligible)
             }}
           />
         ) : (

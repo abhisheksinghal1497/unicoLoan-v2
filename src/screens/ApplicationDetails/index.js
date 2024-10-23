@@ -168,7 +168,7 @@ export default function ApplicationDetails(props) {
   useEffect(() => {
     if (applicationFormMutate.error) {
       log("applicationFormMutate error", applicationFormMutate.error);
-      alert(ErrorConstants.SOMETHING_WENT_WRONG);
+      alert(applicationFormMutate.error);
     }
   }, [applicationFormMutate.error]);
 
