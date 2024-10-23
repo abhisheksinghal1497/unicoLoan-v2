@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import { useForm } from "react-hook-form";
@@ -25,6 +25,7 @@ import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 import ProgressCard from "../../components/ProgressCard";
 import { getLoanDetailsForm } from "../../services/ApiUtils";
 import { useResetRoutes } from "../../utils/functions";
+import Toast from "react-native-toast-message";
 
 //
 
@@ -121,7 +122,12 @@ const LoanDetails = (props) => {
   const onSubmit = async () => {
     try {
       const data = watch();
-
+      const isValid = await trigger();
+      if(!isValid){
+        Toast.show({type:'error', text1: 'Please check form'})
+        return
+      }
+      console.log('COMING HERE------------------------', isValid)
       const {applicantIncomeId, applicationAssetId} =  await submitLoanMutate.mutateAsync(data);
 
       let applicantRecordsArr = [...applicationDetails?.Applicants__r?.records];
@@ -191,7 +197,7 @@ const LoanDetails = (props) => {
         Annual_Turnover__c: data[LOAN_DETAILS_KEYS.totalIncome]
       });
     } catch (error) {
-      console.log("SOME ERROR OCCURED", error);
+      Toast.show({type:'error', text1: 'Please check form'})
     }
   };
 
