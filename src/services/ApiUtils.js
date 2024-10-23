@@ -440,11 +440,11 @@ export const getHomeScreenOurServices = () => {
               title: "FAQs",
               image: require("../assets/FAQ.png"),
             },
-            {
-              key: "Services",
-              title: "Services",
-              image: require("../assets/FAQ.png"),
-            },
+            // {
+            //   key: "Services",
+            //   title: "Services",
+            //   image: require("../assets/FAQ.png"),
+            // },
           ];
           resolve(data);
         }, ConfiguratonConstants.setTimeoutTime);

@@ -67,6 +67,8 @@ const KYC = (props) => {
     panDetails = { panNumber: "", panName: "" },
   } = loanData;
 
+  console.log("panName>>>", panDetails.panName)
+
   // 'AMUPH7294R'
   const verifyAdharApi = verifyAadhar(
     panDetails.panNumber,
@@ -203,16 +205,16 @@ const KYC = (props) => {
       keyboardtype: "numeric",
     },
 
-    {
-      id: "adhaarName",
-      label: "Adhaar Name",
-      type: component.textInput,
-      placeHolder: "Enter your Adhaar Name",
-      isRequired: true,
-      data: [],
-      value: "",
-      showRightComp: false,
-    },
+    // {
+    //   id: "adhaarName",
+    //   label: "Adhaar Name",
+    //   type: component.textInput,
+    //   placeHolder: "Enter your Adhaar Name",
+    //   isRequired: true,
+    //   data: [],
+    //   value: "",
+    //   showRightComp: false,
+    // },
   ];
 
   const showModal = () => {
@@ -345,14 +347,16 @@ const KYC = (props) => {
 
   const onSubmitAdhaar = () => {
     const AdhaarDetails = watch("adhaarNumber");
-    const AdhaarName = watch("adhaarName");
+    //const AdhaarName = watch("adhaarName");
 
     if (!AdhaarDetails && AdhaarDetails?.toString()?.length !== 12) {
       setError("adhaarNumber", "Please enter valid adhaar number");
-    } else if (!AdhaarName) {
-      setError("adhaarName", "Please enter the Name.");
-    } else {
-      adhaarEkycMutate?.mutate({ number: AdhaarDetails, name: AdhaarName });
+    }
+    //  else if (!AdhaarName) {
+    //   setError("adhaarName", "Please enter the Name.");
+    // } 
+    else {
+      adhaarEkycMutate?.mutate({ number: AdhaarDetails, name: panDetails?.panName });
     }
   };
   const handleRightIconPress = (index) => {

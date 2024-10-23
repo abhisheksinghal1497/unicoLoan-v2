@@ -6,14 +6,15 @@ import { verticalScale } from "../utils/matrcis";
 import { debounce } from "../utils/functions";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import HelpModal from "../screens/ApplicationDetails/component/HelpModal";
+import Icon from "react-native-vector-icons/MaterialIcons";
 
 const Header = (props) => {
   const {
     rightImages = [],
-    onPressRight = () => {},
-    onPressLeft = () => {},
+    onPressRight = () => { },
+    onPressLeft = () => { },
     showHelpModal = false,
-    toggleHelpModal = () => {},
+    toggleHelpModal = () => { },
   } = props;
   const { fonts } = useTheme();
   const insets = useSafeAreaInsets();
@@ -53,15 +54,25 @@ const Header = (props) => {
         {props.title}
       </Text>
       <View
-        style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end" }}
+        style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end", marginHorizontal: 16 }}
       >
         {rightImages.map((imageProps, index) => (
-          <TouchableOpacity key={index} onPress={() => handlePressRight(index)}>
-            <Image
-              source={imageProps.source}
-              style={[styles.rightImage, props.rightStyle]}
-              {...imageProps.imageProps}
-            />
+          <TouchableOpacity key={index} onPress={() => handlePressRight(index)} style={{}}>
+            {index === 1 ?
+              <Icon
+                size={24}
+                color={colors.coreBlue}
+                name="call"
+              />
+
+
+              :
+              <Image
+                source={imageProps.source}
+                style={[styles.rightImage, props.rightStyle]}
+                {...imageProps.imageProps}
+              />
+            }
           </TouchableOpacity>
         ))}
       </View>
