@@ -72,7 +72,7 @@ export default function ApplicationDetails(props) {
             style={{ margin: DimensionUtils.pixelSizeHorizontal(16),  }}
           >
 
-            <Text variant="labelLarge" style={{ color: colors.black, fontSize: 16, textAlign:'center' }}>This loan is assigned to the Unico System.</Text>
+            <Text variant="labelLarge" style={{ color: colors.black, fontSize: 16, textAlign: 'center' }}>This loan is assigned to the Unico branch ({loanData?.applicationDetails?.branchname__c}).</Text>
 
             <View style ={{marginVertical:16}}>
             <Card>
