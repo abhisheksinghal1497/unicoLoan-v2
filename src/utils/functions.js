@@ -639,7 +639,8 @@ const getLoanDetailPatchBody = (loanData) => {
       [LOAN_DETAILS_KEYS.reqTenure]: loanData?.[LOAN_DETAILS_KEYS.reqTenure],
       [LOAN_DETAILS_KEYS.loanPurpose]:
         loanData?.[LOAN_DETAILS_KEYS.loanPurpose],
-      ProductSubType__c: loanData?.[LOAN_DETAILS_KEYS.loanPurpose]
+      ProductSubType__c: loanData?.[LOAN_DETAILS_KEYS.loanPurpose],
+      Stepper__c:"Eligibility Details"	
     };
   } catch (error) {
     console.log("getLoanDetailPatchBody", error);

@@ -175,8 +175,8 @@ const HomeScreen = ({ navigation }) => {
           <TouchableOpacity
             style={styles.seeDetailsresumeJourneyButton}
             onPress={() => {
-              // navigation?.navigate(screens.LoanDetails, { loanData: item });
-              navigation?.navigate(isLoginIserOwner ? screens.PanDetails : screens.SystemLoanDetails, { loanData: item });
+
+              navigation?.navigate(isLoginIserOwner ? screenName : screens?.SystemLoanDetails, { loanData: item });
             }}
           >
             <Text style={styles.seeDetailsresumeJourneyText}>
@@ -394,7 +394,11 @@ const HomeScreen = ({ navigation }) => {
                   oauth.logout();
                 }}
               >
-                <Icon size={24} name="logout" color={colors.coreBlue} />
+                <Icon
+                  size={24}
+                  name="logout"
+                  color={colors.coreBlue}
+                />
               </TouchableOpacity>
             </View>
           </View>
