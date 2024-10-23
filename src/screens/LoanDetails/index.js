@@ -125,6 +125,7 @@ const LoanDetails = (props) => {
       const {applicantIncomeId, applicationAssetId} =  await submitLoanMutate.mutateAsync(data);
 
       let applicantRecordsArr = [...applicationDetails?.Applicants__r?.records];
+      console.log(applicantRecordsArr.length)
       let updatedApplicantRecordIndex = applicantRecordsArr?.findIndex(
         (el) => el.ApplType__c === "P"
       );

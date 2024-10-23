@@ -2102,7 +2102,7 @@ export const getAllRawData = () => {
 };
 
 export const getLoanDetailsForm = (productType, customerProfile) => {
-  console.log("applicationDetails.Customer_Profile__c>>>", customerProfile)
+ 
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (data) => {
@@ -2435,7 +2435,7 @@ export const getLoanDetailsForm = (productType, customerProfile) => {
   return mutate;
 };
 
-export const getSanctionPdf = (loanData) => {
+export const getSanctionPdf = (loanData, loanId) => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: () => {
@@ -2447,6 +2447,7 @@ export const getSanctionPdf = (loanData) => {
 
         try {
           console.log("data>>>", "success");
+          await updateObjectData("LoanAppl__c", { Stepper__c: "In Principal Sanction", loanId })
           await saveApplicationData(data);
           resolve({
             url: "http://www.clickdimensions.com/links/TestPDFfile.pdf",

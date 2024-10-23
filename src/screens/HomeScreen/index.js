@@ -156,7 +156,7 @@ const HomeScreen = ({ navigation }) => {
     const isLoginIserOwner = LocalStorage?.getUserData().Id === item.applicationDetails?.OwnerId
 
     const progress = isLoginIserOwner ? useGetProgressPercentage(item) : 80;
-    const screenName = isLoginIserOwner ? getCurrentScreenNameForResume(item) : "";
+    const screenName = isLoginIserOwner ? getCurrentScreenNameForResume(item) : getCurrentScreenNameForResume(item);
     //OwnerId
     //LocalStorage?.getUserData().Id
 
@@ -180,7 +180,7 @@ const HomeScreen = ({ navigation }) => {
             style={styles.seeDetailsresumeJourneyButton}
             onPress={() => {
 
-              navigation?.navigate(isLoginIserOwner ? screenName : screens.SystemLoanDetails, { loanData: item });
+              navigation?.navigate(isLoginIserOwner ? screenName : screenName, { loanData: item });
             }}
           >
             <Text style={styles.seeDetailsresumeJourneyText}>{
@@ -382,8 +382,8 @@ const HomeScreen = ({ navigation }) => {
                 }}
               >
                 <Icon
-                size={24}
-                name="logout"
+                  size={24}
+                  name="logout"
                   color={colors.coreBlue}
                 />
               </TouchableOpacity>

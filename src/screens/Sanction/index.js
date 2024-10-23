@@ -52,7 +52,7 @@ const Sanction = (props) => {
   const [progress, setProgress] = useState(0);
   const pdfUrl = data?.message;
 
-  const getData = getSanctionPdf(loanData);
+  const getData = getSanctionPdf(loanData, loanId);
   const [showHelpModal, setShowHelpModal] = useState(false);
 
   const toggleHelpModal = () => {
