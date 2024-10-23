@@ -15,6 +15,7 @@ import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 import CoApplicant from "../CoApplicant";
 import { useResetRoutes } from "../../utils/functions";
 import { assignBranchManagerMutation } from "../../services/ApiUtils";
+import { toast } from "../../utils/functions";
 const Eligibility = (props) => {
 
   const route = useRoute();
@@ -26,6 +27,7 @@ const Eligibility = (props) => {
   const eligibilityDetails = getEligibilityDetails(loanData);
   const breData = getBureauBre(loanData);
   const assignBranchManger = assignBranchManagerMutation(loanId)
+  const [retryClick, setRetryClick] = useState(0)
   const [coApplicantsArr, setCoApplicantsArr] = useState(
     Array.isArray(applicationDetails?.Applicants__r?.records)
       ? applicationDetails?.Applicants__r?.records.filter(
@@ -35,9 +37,10 @@ const Eligibility = (props) => {
   );
   const [showHelpModal, setShowHelpModal] = useState(false);
 
+
   var mainApplicantIncome = 0
 
-  const[isBreError, setBreError] = useState(false)
+  const [isBreError, setBreError] = useState(false)
 
 
 
@@ -76,7 +79,7 @@ const Eligibility = (props) => {
       setIsLoading(true);
       // wait for 10 seconds
       setTimeout(() => {
-        
+
         breData.mutate(eligibilityDetails.data.message);
         setIsLoading(false);
       }, 10000);
@@ -86,19 +89,20 @@ const Eligibility = (props) => {
 
   useEffect(() => {
     if (assignBranchManger.data) {
+      toast("success", "This loan Application is assigned successfully to the Unico Branch");
       onPressContinue();
     }
   }, [assignBranchManger.data])
 
   useEffect(() => {
-    if (assignBranchManger.error){
-    alert("Something went wrong. Please try again later")
+    if (assignBranchManger.error) {
+      alert("Something went wrong. Please try again later")
     }
   }, [assignBranchManger.error])
 
   useEffect(() => {
     if (breData.data) {
-      if (!breData?.data?.success){
+      if (!breData?.data?.success) {
         setBreError(true)
       }
     }
@@ -119,12 +123,16 @@ const Eligibility = (props) => {
 
   const onPressContinue = () => {
     if (!eligibilityDetails?.isPending) {
-      props.navigation.navigate(screens.Sanction, {
-        loanData: {
-          ...loanData,
-          eligibilityDetails: breData?.data?.data
-        },
-      });
+      if (retryClick < 1) {
+        props.navigation.navigate(screens.Sanction, {
+          loanData: {
+            ...loanData,
+            eligibilityDetails: breData?.data?.data
+          },
+        });
+      }else{
+        resetRoute(screens.HomeScreen)
+      }
     }
   };
 
@@ -233,7 +241,15 @@ const Eligibility = (props) => {
             }}
             type="primary"
             label="Retry"
-            onPress={retryBre}
+            onPress={() => {
+              setRetryClick(1)
+
+              if (retryClick < 1) {
+                retryBre()
+              } else {
+                assignBranchManger?.mutate()
+              }
+            }}
           />
         </View>
       </View>
@@ -336,18 +352,22 @@ const Eligibility = (props) => {
         titleStyle={{ fontSize: verticalScale(18) }}
         onPressRight={handleRightIconPress}
         onPressLeft={() => {
+          if(retryClick < 1){
           resetRoute(screens.LoanDetails, { loanData });
+          }else{
+            resetRoute(screens.HomeScreen);
+          }
         }}
         showHelpModal={showHelpModal}
         toggleHelpModal={toggleHelpModal}
       />
-      
-        {!loading &&
-      !breData?.isPending &&
-      isBreSuccess &&   <ShowEligibleDetails /> }
+
+      {!loading &&
+        !breData?.isPending &&
+        isBreSuccess && <ShowEligibleDetails />}
 
       {
-        isBreError &&  <BreRetryUi />
+        isBreError && <BreRetryUi />
       }
     </ScrollView>
   );

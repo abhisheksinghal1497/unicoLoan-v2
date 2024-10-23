@@ -24,6 +24,7 @@ import CustomShadow from "../../components/FormComponents/CustomShadow";
 import CustomButton from "../../components/Button";
 import { useRoute } from "@react-navigation/native";
 import { Linking } from "react-native";
+import { useResetRoutes } from "../../utils/functions";
 
 const { width: devicWidth } = Dimensions.get("window");
 import {
@@ -40,6 +41,8 @@ const Sanction = (props) => {
   const { loanData = {} } = route?.params || {};
   const applicationId = loanData?.Applicant__c;
   const loanId = loanData?.loanId;
+  const resetRoute = useResetRoutes();
+
   const [{ data, isPending, isError }] =
     getSanctionLetterQuery(loanId); //a10Bi000003gAxSIAU
 
@@ -201,7 +204,13 @@ const Sanction = (props) => {
         titleStyle={{ fontSize: verticalScale(18) }}
         onPressRight={handleRightIconPress}
         onPressLeft={() => {
-          props?.navigation.goBack();
+          // props?.navigation.goBack();
+          try {
+          //  resetRoute(screens.HomeScreen);
+            resetRoute(screens.HomeScreen)
+          } catch (error) {
+            
+          }
         }}
         showHelpModal={showHelpModal}
         toggleHelpModal={toggleHelpModal}
