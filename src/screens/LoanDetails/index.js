@@ -24,8 +24,8 @@ import { useSubmitLoanFormData } from "../../services/ApiUtils";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 import ProgressCard from "../../components/ProgressCard";
 import { getLoanDetailsForm } from "../../services/ApiUtils";
-import { useResetRoutes } from "../../utils/functions";
 import Toast from "react-native-toast-message";
+import { toast, useResetRoutes } from "../../utils/functions";
 
 //
 
@@ -124,7 +124,7 @@ const LoanDetails = (props) => {
       const data = watch();
       const isValid = await trigger();
       if(!isValid){
-        Toast.show({type:'error', text1: 'Please check form'})
+        Toast.show({type:'error', text1: 'Please check all the fields'})
         return
       }
       console.log('COMING HERE------------------------', isValid)
@@ -147,6 +147,7 @@ const LoanDetails = (props) => {
           ExistingCustomer__c: data[LOAN_DETAILS_KEYS.isExistingCustomer],
           Annual_Turnover__c: data[LOAN_DETAILS_KEYS.totalIncome],
           Customer__c: data[LOAN_DETAILS_KEYS.custId],
+          Customer_Segment__c: data[LOAN_DETAILS_KEYS.customerSegment],
         };
         applicantRecordsArr[updatedApplicantRecordIndex] = {
           ...updatedApplicantRecord,
@@ -198,8 +199,9 @@ const LoanDetails = (props) => {
         Annual_Turnover__c: data[LOAN_DETAILS_KEYS.totalIncome]
       });
     } catch (error) {
-      Toast.show({type:'error', text1: 'Please check form'})
-    }
+      console.log("SOME ERROR OCCURED", error);
+      alert("Something went wrong. Please try again later.")
+     }
   };
 
 

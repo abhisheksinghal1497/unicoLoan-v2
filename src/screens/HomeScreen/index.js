@@ -148,12 +148,13 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const ResumeLoanJourney = ({ item }) => {
-    const progress = useGetProgressPercentage(item);
-    const screenName = getCurrentScreenNameForResume(item);
+    
     console.log("loan ownerId", item.applicationDetails?.OwnerId);
     console.log("login ownerId", LocalStorage?.getUserData().Id);
     const isLoginIserOwner =
       LocalStorage?.getUserData().Id === item.applicationDetails?.OwnerId;
+    const progress = isLoginIserOwner ? useGetProgressPercentage(item):80;
+    const screenName = isLoginIserOwner ? getCurrentScreenNameForResume(item) : "In-Progress";
     //OwnerId
     //LocalStorage?.getUserData().Id
 

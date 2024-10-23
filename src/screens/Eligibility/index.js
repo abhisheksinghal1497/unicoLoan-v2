@@ -123,7 +123,7 @@ const Eligibility = (props) => {
 
   const onPressContinue = () => {
     if (!eligibilityDetails?.isPending) {
-      if (retryClick < 1) {
+      if (retryClick <= 1) {
         props.navigation.navigate(screens.Sanction, {
           loanData: {
             ...loanData,
