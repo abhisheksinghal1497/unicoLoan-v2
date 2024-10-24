@@ -115,9 +115,9 @@ export const verifyAadhar = (panNumber, loanData, panName) => {
                   loanDetails.adhaarDetails =
                     adhaarVerifyResponse.data?.results;
 
-                    console.log('HERE IS adhaarVerifyResponse', JSON.stringify(adhaarVerifyResponse.data?.results))
+                  console.log('HERE IS adhaarVerifyResponse', JSON.stringify(adhaarVerifyResponse.data?.results))
 
-                    // TO create kyc id from pan and adhaar
+                  // TO create kyc id from pan and adhaar
                   const response = await compositeRequest(
                     createCompositeRequestForPanAadhar(
                       loanDetails,
@@ -134,7 +134,7 @@ export const verifyAadhar = (panNumber, loanData, panName) => {
                         response?.compositeResponse?.[0]?.body?.id;
                       const adhaarApplicationId =
                         response?.compositeResponse?.[1]?.body?.id;
-                        // Adhaar IMAGE UPLOAD
+                      // Adhaar IMAGE UPLOAD
                       if (adhaarApplicationId && result) {
                         try {
                           const aadhaarUploadRequests =
@@ -144,8 +144,8 @@ export const verifyAadhar = (panNumber, loanData, panName) => {
                               result,
                             );
                           await compositeRequest(aadhaarUploadRequests);
-                        } catch (error) {}
-                      } 
+                        } catch (error) { }
+                      }
                       // PAN IMAGE UPLOAD
                       if (
                         panApplicationId &&
@@ -159,7 +159,7 @@ export const verifyAadhar = (panNumber, loanData, panName) => {
                               panApplicationId
                             );
                           await compositeRequest(panUploadRequests);
-                        } catch (error) {}
+                        } catch (error) { }
                       }
                     } catch (error) {
                       console.log("error", error);
@@ -342,8 +342,16 @@ export const doOCRForDL = (panName) => {
             "/digital-kyc-v1/api/drivers-license",
             body
           );
-            // nameCheck(panName, response?.data?.results?.name)
-          resolve(response?.data);
+          try {
+            const nameMatch = await nameCheck(panName, response?.data?.results?.name)
+            if (nameMatch) {
+              resolve(response?.data);
+            }else{
+              reject("Name not match with pan.");
+            }
+          } catch (error) {
+            reject("Name not match with pan.");
+          }
         } catch (error) {
           errorConsoleLog("verifyDrivingLicence>>", error);
           reject(
@@ -367,8 +375,19 @@ export const doOCRForPassport = (panName) => {
             "/digital-kyc-v1/api/passport",
             body
           );
-            // nameCheck(panName, response?.data?.results?.name)
-          resolve(response?.data);
+
+          try {
+            const nameMatchCheck = await nameCheck(panName, response?.data?.results?.name?.nameFromPassport + " " + response?.data?.results?.name?.surnameFromPassport)
+            if (nameMatchCheck) {
+              resolve(response?.data);
+            } else {
+              reject("Name not match with pan.");
+            }
+          } catch (error) {
+            reject("Name not match with pan.");
+
+          }
+
 
           // const response = {
           //   statusCode: "200",
@@ -533,8 +552,18 @@ export const doOCRForVoterID = (panName) => {
             "/digital-kyc-v1/api/voterid",
             body
           );
-          // nameCheck(panName, response?.data?.results?.name)
-          resolve(response?.data);
+          try {
+            const nameMatchData = await nameCheck(panName, response?.data?.results?.name)
+            if (nameMatchData) {
+              resolve(response?.data);
+            } else {
+              reject("Name not match with pan.");
+            }
+
+          } catch (error) {
+            reject("Name not match with pan.");
+          }
+
 
           // resolve("saxasx")
         } catch (error) {
