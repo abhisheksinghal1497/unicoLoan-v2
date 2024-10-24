@@ -63,13 +63,14 @@ const CaptureSelfie = ({ navigation }) => {
   const onCameraPress = ({ front = false }) => {
     ImagePicker.openCamera({
       cropping: true,
-      compressImageQuality: 0.6,
+      compressImageQuality: 0.4,
       // useFrontCamera: front,
       includeBase64: true,
       multiple: false,
       mediaType: "photo",
     })
       .then((image) => {
+        
         setSelectedImage(image);
         AsyncStorage.setItem("selfieCapture", JSON.stringify(image));
       })
