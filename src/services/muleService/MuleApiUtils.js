@@ -104,7 +104,10 @@ export const verifyAadhar = (panNumber, loanData, panName) => {
             "digital-kyc-v1/api/aadhar-verify",
             request
           );
-          console.log(JSON.stringify(adhaarVerifyResponse), "HERE-------------2");
+          console.log(
+            JSON.stringify(adhaarVerifyResponse),
+            "HERE-------------2"
+          );
           const adhaarName = adhaarVerifyResponse?.data?.results?.name;
 
           try {
@@ -115,7 +118,10 @@ export const verifyAadhar = (panNumber, loanData, panName) => {
                   loanDetails.adhaarDetails =
                     adhaarVerifyResponse.data?.results;
 
-                  console.log('HERE IS adhaarVerifyResponse', JSON.stringify(adhaarVerifyResponse.data?.results))
+                  console.log(
+                    "HERE IS adhaarVerifyResponse",
+                    JSON.stringify(adhaarVerifyResponse.data?.results)
+                  );
 
                   // TO create kyc id from pan and adhaar
                   const response = await compositeRequest(
@@ -141,10 +147,10 @@ export const verifyAadhar = (panNumber, loanData, panName) => {
                             createCompositeRequestsForAdhaarUpload(
                               loanDetails,
                               adhaarApplicationId,
-                              result,
+                              result
                             );
                           await compositeRequest(aadhaarUploadRequests);
-                        } catch (error) { }
+                        } catch (error) {}
                       }
                       // PAN IMAGE UPLOAD
                       if (
@@ -159,7 +165,7 @@ export const verifyAadhar = (panNumber, loanData, panName) => {
                               panApplicationId
                             );
                           await compositeRequest(panUploadRequests);
-                        } catch (error) { }
+                        } catch (error) {}
                       }
                     } catch (error) {
                       console.log("error", error);
@@ -343,10 +349,13 @@ export const doOCRForDL = (panName) => {
             body
           );
           try {
-            const nameMatch = await nameCheck(panName, response?.data?.results?.name)
+            const nameMatch = await nameCheck(
+              panName,
+              response?.data?.results?.name
+            );
             if (nameMatch) {
               resolve(response?.data);
-            }else{
+            } else {
               reject("Name not match with pan.");
             }
           } catch (error) {
@@ -377,7 +386,12 @@ export const doOCRForPassport = (panName) => {
           );
 
           try {
-            const nameMatchCheck = await nameCheck(panName, response?.data?.results?.name?.nameFromPassport + " " + response?.data?.results?.name?.surnameFromPassport)
+            const nameMatchCheck = await nameCheck(
+              panName,
+              response?.data?.results?.name?.nameFromPassport +
+                " " +
+                response?.data?.results?.name?.surnameFromPassport
+            );
             if (nameMatchCheck) {
               resolve(response?.data);
             } else {
@@ -385,9 +399,7 @@ export const doOCRForPassport = (panName) => {
             }
           } catch (error) {
             reject("Name not match with pan.");
-
           }
-
 
           // const response = {
           //   statusCode: "200",
@@ -545,7 +557,6 @@ export const doOCRForPassport = (panName) => {
 export const doOCRForVoterID = (panName) => {
   const mutate = useMutation({
     mutationFn: (body) => {
-
       return new Promise(async (resolve, reject) => {
         try {
           const response = await instance.post(
@@ -553,17 +564,18 @@ export const doOCRForVoterID = (panName) => {
             body
           );
           try {
-            const nameMatchData = await nameCheck(panName, response?.data?.results?.name)
+            const nameMatchData = await nameCheck(
+              panName,
+              response?.data?.results?.name
+            );
             if (nameMatchData) {
               resolve(response?.data);
             } else {
               reject("Name not match with pan.");
             }
-
           } catch (error) {
             reject("Name not match with pan.");
           }
-
 
           // resolve("saxasx")
         } catch (error) {
@@ -665,4 +677,27 @@ export const checkPanLinkWithAdhaar = (pan) => {
   return mutate;
 };
 
+export const detectSelfie = async (selfieBase64) => {
+  try {
 
+    console.log('SELFIE', selfieBase64)
+
+    const request = {
+      fileData: {
+        content: selfieBase64,
+        title: "livenessimage.jpeg",
+      },
+      faceSelectionMode: "best",
+      caseId: getUniqueId(),
+    };
+
+    const imageResponse = await instance.post(
+      "digital-utility-v1/api/liveness/image",
+      request
+    );
+
+    return imageResponse
+  } catch (error) {
+    throw new Error(error)
+  }
+};

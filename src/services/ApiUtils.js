@@ -51,7 +51,7 @@ import {
 } from "./sfDataServices/netService";
 import LocalStorage from "./LocalStorage";
 import { query } from "../constants/Queries";
-import { nameCheck } from "./muleService/MuleApiUtils";
+import { detectSelfie, nameCheck } from "./muleService/MuleApiUtils";
 import { ConfiguratonConstants } from "../constants/ConfigurationConstants";
 
 export const logoutApi = () => {
@@ -103,7 +103,7 @@ export const getHomeScreenDetails = () => {
               );
 
               compositGraphRequest = compositGraphRequest?.compositeResponse;
-            } catch (error) { }
+            } catch (error) {}
 
             for (let i = 0; i < getLeadListData.records.length; i++) {
               //save the record into the soup
@@ -111,25 +111,33 @@ export const getHomeScreenDetails = () => {
               const ApplicantIncomeArr = compositGraphRequest[3]?.body?.records;
 
               let record = getLeadListData.records[i];
-              console.log("record owner id>>", record?.OwnerId)
+              console.log("record owner id>>", record?.OwnerId);
               // CHANGES NEEDED HERE
               let applicantRecord = record?.Applicants__r?.records?.filter(
                 (el) => el.ApplType__c === "P"
               )[0];
               // Form Main Form
               const Applicant__c = applicantRecord?.Id;
-              const applicantIncomeId = Array.isArray(ApplicantIncomeArr) ? ApplicantIncomeArr.find(el => el?.Applicant__c === Applicant__c)?.Id : undefined;
+              const applicantIncomeId = Array.isArray(ApplicantIncomeArr)
+                ? ApplicantIncomeArr.find(
+                    (el) => el?.Applicant__c === Applicant__c
+                  )?.Id
+                : undefined;
 
               // For Co Applicant
-              let applicantArr = Array.isArray(record?.Applicants__r?.records) ? [...record?.Applicants__r?.records] : [];
+              let applicantArr = Array.isArray(record?.Applicants__r?.records)
+                ? [...record?.Applicants__r?.records]
+                : [];
 
-              applicantArr = applicantArr?.map(elem => {
-                const coApplicantIncomeId = ApplicantIncomeArr.find(el => el?.Applicant__c === elem?.Id)?.Id;
+              applicantArr = applicantArr?.map((elem) => {
+                const coApplicantIncomeId = ApplicantIncomeArr.find(
+                  (el) => el?.Applicant__c === elem?.Id
+                )?.Id;
                 return {
                   ...elem,
-                  coApplicantIncomeId
-                }
-              })
+                  coApplicantIncomeId,
+                };
+              });
 
               const selfieData = compositGraphRequest[0]?.body?.records?.find(
                 (el) =>
@@ -150,18 +158,20 @@ export const getHomeScreenDetails = () => {
                     el?.Applicant__c === Applicant__c
                 );
 
-
               const loanDetail = compositGraphRequest[2]?.body?.records?.find(
                 (el) => el?.Appl__c === Applicant__c
               );
 
-              const panDetailsArr = compositGraphRequest[0]?.body?.records?.filter(
-                (el) =>
-                  el?.Applicant__c === Applicant__c &&
-                  !!el?.NameInPan__c
-              );
+              const panDetailsArr =
+                compositGraphRequest[0]?.body?.records?.filter(
+                  (el) =>
+                    el?.Applicant__c === Applicant__c && !!el?.NameInPan__c
+                );
 
-              const panDetails = Array.isArray(panDetailsArr) && panDetailsArr?.length ? panDetailsArr[panDetailsArr.length - 1] : null;
+              const panDetails =
+                Array.isArray(panDetailsArr) && panDetailsArr?.length
+                  ? panDetailsArr[panDetailsArr.length - 1]
+                  : null;
 
               const data = {
                 applicantIncomeId,
@@ -170,19 +180,22 @@ export const getHomeScreenDetails = () => {
                   ...record,
                   Applicants__r: {
                     ...record?.Applicants__r,
-                    records: applicantArr
-                  }
+                    records: applicantArr,
+                  },
                 },
                 Applicant__c: applicantRecord?.Id,
                 External_ID: record?.Id,
 
-                panDetails: applicantRecord?.PAN__c || panDetails
-                  ? // push pan name here
-                  {
-                    panNumber: panDetails ? panDetails?.Pan__c : applicantRecord?.PAN__c,
-                    panName: panDetails?.NameInPan__c,
-                  }
-                  : undefined,
+                panDetails:
+                  applicantRecord?.PAN__c || panDetails
+                    ? // push pan name here
+                      {
+                        panNumber: panDetails
+                          ? panDetails?.Pan__c
+                          : applicantRecord?.PAN__c,
+                        panName: panDetails?.NameInPan__c,
+                      }
+                    : undefined,
                 // adhaarDetails: applicantRecord?.AdhrLst4Dgts__c
                 //   ? { AdhrLst4Dgts__c: applicantRecord?.AdhrLst4Dgts__c, permanentAddress }
                 //   : undefined,
@@ -202,7 +215,11 @@ export const getHomeScreenDetails = () => {
                     combinedAddress: permanentAddress?.FullAdrs__c || "",
                   },
                 },
-                loanDetails: { ...loanDetail, "Applicant_Net_Income__c": applicantRecord?.Applicant_Net_Income__c },
+                loanDetails: {
+                  ...loanDetail,
+                  Applicant_Net_Income__c:
+                    applicantRecord?.Applicant_Net_Income__c,
+                },
                 currentAddressDetails: currentAddress,
                 selfieDetails: selfieData,
                 // Save permanent in adhaar from composite 1
@@ -256,42 +273,36 @@ export const getEligibilityDetails = (loanData) => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (data) => {
-
       try {
         //loanData.applicantIncomeId
-        const response = await QueryObject(query.getAllApplicantsIncome(loanData?.loanId))
+        const response = await QueryObject(
+          query.getAllApplicantsIncome(loanData?.loanId)
+        );
         if (response) {
           if (response) {
             let record = response.records[0]?.Applicants__r?.records;
             let totalIncome = 0;
             if (record && record?.length > 0) {
-
               for (let i = 0; i < record.length; i++) {
-                totalIncome = totalIncome + record[i].Annual_Turnover__c
-
+                totalIncome = totalIncome + record[i].Annual_Turnover__c;
               }
-
             }
 
-
-            console.log("totalIncome>>>", totalIncome)
+            console.log("totalIncome>>>", totalIncome);
             if (totalIncome > 0) {
-              await updateObjectData("Applicant_Income__c", {
-                Total_Income__c: totalIncome
-              }, loanData.applicantIncomeId)
-
+              await updateObjectData(
+                "Applicant_Income__c",
+                {
+                  Total_Income__c: totalIncome,
+                },
+                loanData.applicantIncomeId
+              );
             }
-
-
-
           }
         }
-        return startBureauBre(loanData?.Applicant__c, loanData?.loanId)
-
-
-
+        return startBureauBre(loanData?.Applicant__c, loanData?.loanId);
       } catch (error) {
-        alert(error)
+        alert(error);
       }
 
       // return startBureauBre('a10Bi000002inBxIAI', 'a1ABi000000v0ZaMAI')
@@ -990,8 +1001,6 @@ export const getApplicationDetailsForm = () => {
               value: "",
             },
 
-
-
             {
               id: "PropertyIdentified__c",
               label: "Property Identified?",
@@ -1413,8 +1422,6 @@ export const getLoanDetailsFormOtherRM = () => {
               value: {},
             },
 
-
-
             {
               id: "MobNumber__c",
               label: "Mobile number",
@@ -1455,13 +1462,17 @@ export const useSubmitApplicationFormData = (pincodeData) => {
               dedupeRes &&
               (dedupeRes === "Dedupe failed" || dedupeRes === "EXACT_MATCH")
             ) {
-              reject("Requested Loan is already exists or Something went wrong.");
+              reject(
+                "Requested Loan is already exists or Something went wrong."
+              );
             } else {
               // loan create
               const response = await compositeRequest(
                 createLoanAndAppplicantCompositeRequest(
                   data,
-                  leadcreateResponse?.id ? leadcreateResponse?.id : leadcreateResponse?.Id
+                  leadcreateResponse?.id
+                    ? leadcreateResponse?.id
+                    : leadcreateResponse?.Id
                 )
               );
               if (response) {
@@ -1469,7 +1480,8 @@ export const useSubmitApplicationFormData = (pincodeData) => {
                 const loanId = response?.compositeResponse?.[1]?.body?.id;
                 const applicationId =
                   response?.compositeResponse?.[2]?.body?.id;
-                const applicationDetails = response?.compositeResponse?.[3]?.body?.records?.[0]//records
+                const applicationDetails =
+                  response?.compositeResponse?.[3]?.body?.records?.[0]; //records
                 // const loanDetails =
                 //   response?.compositeResponse?.[2]?.body?.records[0];
 
@@ -1555,8 +1567,14 @@ export const useSubmitLoanFormData = (loanData) => {
               loanData?.applicantIncomeId
             )
           );
-          const applicantIncomeId = loanData?.applicantIncomeId ? loanData?.applicantIncomeId : response.compositeResponse[3]?.body?.id
-          const applicationAssetId = loanData?.loanId ? loanData?.loanId : response.compositeResponse?.find(el => el?.referenceId === 'postLoanDetail')?.body?.id;
+          const applicantIncomeId = loanData?.applicantIncomeId
+            ? loanData?.applicantIncomeId
+            : response.compositeResponse[3]?.body?.id;
+          const applicationAssetId = loanData?.loanId
+            ? loanData?.loanId
+            : response.compositeResponse?.find(
+                (el) => el?.referenceId === "postLoanDetail"
+              )?.body?.id;
 
           await saveApplicationData(loanDetail);
           resolve({ applicantIncomeId, applicationAssetId });
@@ -1571,16 +1589,13 @@ export const useSubmitLoanFormData = (loanData) => {
   return mutate;
 };
 
-
 export const useCompositeRequestMutation = () => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (compositeBody) => {
       return new Promise(async (resolve, reject) => {
         try {
-          const response = await compositeRequest(
-            compositeBody
-          );
+          const response = await compositeRequest(compositeBody);
           resolve(response.compositeResponse);
         } catch (error) {
           console.log("skdjhdf", error);
@@ -1592,7 +1607,6 @@ export const useCompositeRequestMutation = () => {
 
   return mutate;
 };
-
 
 export const useSubmitPanForm = (loanData) => {
   const mutate = useMutation({
@@ -1979,7 +1993,7 @@ export const useSubmitServiceForm = () => {
   return mutate;
 };
 
-export const useVerifyOtpService = (onSuccess = (data) => { }) => {
+export const useVerifyOtpService = (onSuccess = (data) => {}) => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (data) => {
@@ -2022,6 +2036,24 @@ export const useSaveSelfie = (loanData) => {
         data.selfieDetails = selfie;
 
         try {
+          const data = await detectSelfie(selfie?.data);
+          console.log('DETECT SELFIE RESPONSE---------------------', data.data)
+          if(data?.data?.results?.multipleFacesDetected){
+            reject("Multiple faces detected");
+            return;
+          }
+
+          if(data?.data?.results?.livenessScore < 0.5){
+            reject("Can't detect face");
+            return;
+          }
+        } catch (error) {
+          console.log("ERROR SELFIE VERIFY", error);
+          reject("Not able to process selfie");
+          return;
+        }
+
+        try {
           const ApplKyc__c = await postObjectData(
             "ApplKyc__c",
             getSelfieCreateRequest(data)
@@ -2038,7 +2070,7 @@ export const useSaveSelfie = (loanData) => {
               false
             );
             console.log("responseComposite", JSON.stringify(responseComposite));
-          } catch (error) { }
+          } catch (error) {}
 
           const response = await saveApplicationData(data);
           if (response) {
@@ -2102,7 +2134,6 @@ export const getAllRawData = () => {
 };
 
 export const getLoanDetailsForm = (productType, customerProfile) => {
- 
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (data) => {
@@ -2153,19 +2184,39 @@ export const getLoanDetailsForm = (productType, customerProfile) => {
               validations: {
                 ...validations.required,
               },
-              data: customerProfile === "Self-Employed"? [
-                { id: 'Affordable-SENP', label: "Affordable-SENP", value:"Affordable-SENP"},
-                { id: 'Prime-Self Employed Professional', label: "Prime-Self Employed Professional", value: "Prime-Self Employed Professional" },
-                { id: 'Prime-SENP', label: "Prime-SENP", value: "Prime-SENP" }
-              ] :[
-                  { id: 'Affordable-Salaried', label: "Affordable-Salaried", value: "Affordable-Salaried" },
-                  { id: 'Prime-Salaried', label: "Prime-Salaried", value: "Prime-Salaried" },
-                 
-
-              ] ,
+              data:
+                customerProfile === "Self-Employed"
+                  ? [
+                      {
+                        id: "Affordable-SENP",
+                        label: "Affordable-SENP",
+                        value: "Affordable-SENP",
+                      },
+                      {
+                        id: "Prime-Self Employed Professional",
+                        label: "Prime-Self Employed Professional",
+                        value: "Prime-Self Employed Professional",
+                      },
+                      {
+                        id: "Prime-SENP",
+                        label: "Prime-SENP",
+                        value: "Prime-SENP",
+                      },
+                    ]
+                  : [
+                      {
+                        id: "Affordable-Salaried",
+                        label: "Affordable-Salaried",
+                        value: "Affordable-Salaried",
+                      },
+                      {
+                        id: "Prime-Salaried",
+                        label: "Prime-Salaried",
+                        value: "Prime-Salaried",
+                      },
+                    ],
               value: "",
             },
-
 
             {
               id: "MobNumber__c",
@@ -2436,7 +2487,6 @@ export const getLoanDetailsForm = (productType, customerProfile) => {
 };
 
 export const getSanctionPdf = (loanData, loanId) => {
-  
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: (id) => {
@@ -2447,8 +2497,12 @@ export const getSanctionPdf = (loanData, loanId) => {
         };
 
         try {
-          console.log("data>>>", "success"+id);
-          await updateObjectData("LoanAppl__c", { 'Stepper__c': "In Principal Sanction" }, id)
+          console.log("data>>>", "success" + id);
+          await updateObjectData(
+            "LoanAppl__c",
+            { Stepper__c: "In Principal Sanction" },
+            id
+          );
           await saveApplicationData(data);
           resolve({
             url: "http://www.clickdimensions.com/links/TestPDFfile.pdf",
@@ -2642,7 +2696,6 @@ export const getSanctionLetterQuery = (applicationId) => {
   return query;
 };
 
-
 export const getBureauBre = (loanData) => {
   const mutate = useMutation({
     networkMode: "always",
@@ -2651,8 +2704,7 @@ export const getBureauBre = (loanData) => {
     retryDelay: 15000,
     mutationFn: async (data) => {
       // return getBureauBreApi('a10Bi000002inBxIAI', 'a1ABi000000v0ZaMAI', data)
-      return getBureauBreApi(loanData?.Applicant__c, loanData?.loanId, data)
-
+      return getBureauBreApi(loanData?.Applicant__c, loanData?.loanId, data);
     },
   });
 
@@ -2664,17 +2716,17 @@ export const assignBranchManagerMutation = (leadId) => {
     networkMode: "always",
     mutationFn: async (isEligible) => {
       try {
-        if (isEligible){
-          await updateObjectData("LoanAppl__c", { 'Stepper__c': "In Principal Sanction" }, leadId)
-
+        if (isEligible) {
+          await updateObjectData(
+            "LoanAppl__c",
+            { Stepper__c: "In Principal Sanction" },
+            leadId
+          );
         }
-        
-      } catch (error) {
-        
-      }
-      return assignBranchManagerApi(leadId)
+      } catch (error) {}
+      return assignBranchManagerApi(leadId);
     },
   });
 
   return mutate;
-}
+};
