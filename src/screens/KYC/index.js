@@ -293,7 +293,7 @@ const KYC = (props) => {
   };
 
   const onAdhaarInitiateSuccess = (adhaarType) => {
-    toast("success", "success");
+    toast("success", "Otp sent successfully.");
     setType(1);
     setVisible(true);
     setAdhaarApiType(adhaarType);

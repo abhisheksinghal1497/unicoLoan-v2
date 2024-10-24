@@ -684,7 +684,7 @@ export const detectSelfie = async (selfieBase64) => {
 
     const request = {
       fileData: {
-        content: selfieBase64,
+        content: `data:image/jpeg;base64,${selfieBase64}`,
         title: "livenessimage.jpeg",
       },
       faceSelectionMode: "best",

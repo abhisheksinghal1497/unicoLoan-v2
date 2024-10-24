@@ -2044,9 +2044,10 @@ export const useSaveSelfie = (loanData) => {
           }
 
           if(data?.data?.results?.livenessScore < 0.5){
-            reject("Can't detect face");
+            reject("Can't detect face.");
             return;
           }
+          
         } catch (error) {
           console.log("ERROR SELFIE VERIFY", error);
           reject("Not able to process selfie");

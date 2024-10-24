@@ -20,6 +20,7 @@ import { useSaveSelfie } from "../../services/ApiUtils";
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 import Toast from "react-native-toast-message";
 import {
+  toast,
   updateAadharDataToApplicant,
   useResetRoutes,
 } from "../../utils/functions";
@@ -130,6 +131,7 @@ const CaptureSelfie = ({ navigation }) => {
   useEffect(() => {
     if (selfieMutate?.error) {
       console.log(selfieMutate?.error);
+      toast("error", selfieMutate?.error);
       // navigation?.navigate(screens.KYCDocuments, {
       //   loanData: selfieMutate.data,
       // });
@@ -163,7 +165,7 @@ const CaptureSelfie = ({ navigation }) => {
             style={styles.bulbImage}
           />
           <Text style={fonts.bodySmall}>
-            Place <Text style={fonts.bodyBold}>your</Text>Face within Circle
+            Place <Text style={fonts.bodyBold}>your</Text> Face within Circle
           </Text>
         </View>
 
