@@ -144,7 +144,7 @@ const KYC = (props) => {
 
   useFocusEffect(
     useCallback(() => {
-     // fetchData();
+      fetchData();
     }, [])
   );
 
