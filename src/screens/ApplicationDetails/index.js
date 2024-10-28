@@ -98,6 +98,8 @@ export default function ApplicationDetails(props) {
     },
   });
 
+  console.log('VALUE OF YYMM', watch('Period_of_stay__c'))
+
   const { colors } = useTheme();
 
   useEffect(() => {

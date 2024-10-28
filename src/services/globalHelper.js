@@ -17,8 +17,6 @@ function arrangeErrorMessage(obj) {
 }
 
 export const getErrMsg = (err, fieldname = "value", name = '') => {
-  console.log(">>>>>>R",err, {fieldname, name})
-
   if(err && err["0"]){
     console.log('COMING HERE')
     return arrangeErrorMessage(err)

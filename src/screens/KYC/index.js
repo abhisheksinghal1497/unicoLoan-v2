@@ -9,6 +9,7 @@ import {
   View,
   ActivityIndicator,
   ScrollView,
+  Alert
 } from "react-native";
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { colors } from "../../colors";
@@ -601,10 +602,8 @@ const KYC = (props) => {
         )}
       </ScrollView>
       <Modal
-        withHandle={false}
-        statusBarTranslucent={true}
         visible={visible}
-        onDismiss={hideModal}
+        dismissable={false}
         contentContainerStyle={styles.modalContainer}
       >
         {type === 0 ? (
