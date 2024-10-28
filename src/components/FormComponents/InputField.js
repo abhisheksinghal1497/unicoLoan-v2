@@ -11,6 +11,7 @@ import {
   fieldLabelViewStyle,
   fieldLabelStyle,
 } from "../../constants/commonStyles";
+import { validations as validationRegex } from "../../constants/validations";
 
 export default InputField = ({
   control,
@@ -38,6 +39,40 @@ export default InputField = ({
   ...rest
 }) => {
   const { colors, fonts } = useTheme();
+  function isEqual(obj1, obj2) {
+    // Check if both objects have the same keys
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+    
+    if (keys1.length !== keys2.length) {
+      return false;
+    }
+  
+    for (let key of keys1) {
+      // Check if the values are functions and compare their string representations
+      if (typeof obj1[key] === 'function' && typeof obj2[key] === 'function') {
+        if (obj1[key].toString() !== obj2[key].toString()) {
+          return false;
+        }
+      } else if (obj1[key] !== obj2[key]) {
+        return false;
+      }
+    }
+  
+    return true;
+  }
+
+ const formatValue = (value) => {
+  if(isEqual(validationRegex.yyMMDate, validations) && value){
+      if(typeof value === 'string' && value.length > 2){
+        if(value.includes('/')){
+          return value;
+        }
+        return value.slice(0, 2) + '/' + value.slice(2);
+      }
+  }
+  return value;
+ }
 
   return (
     <Controller
@@ -73,6 +108,14 @@ export default InputField = ({
                   onChangeText={(value) => {
                     if (onChangeText) {
                       onChangeText(value);
+                    }else if(isEqual(validationRegex.yyMMDate, validations) && value) {
+                      if(value.includes('/')){
+                        const arr = value.split('/').join('');
+                        onChange(arr);
+                      }else{
+                        onChange(value);
+                      }
+
                     } else {
                       if (type === "numeric") {
                         try {
@@ -90,12 +133,12 @@ export default InputField = ({
                           );
                           onChange(value);
                         }
-                      } else {
+                      }  else {
                         onChange(value);
                       }
                     }
                   }}
-                  value={value?.toString()}
+                  value={formatValue(value?.toString())}
                   disabled={isDisabled}
                   dense={true}
                   style={[

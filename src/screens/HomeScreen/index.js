@@ -176,7 +176,7 @@ const HomeScreen = ({ navigation }) => {
           <TouchableOpacity
             style={styles.seeDetailsresumeJourneyButton}
             onPress={() => {
-
+              // navigation?.navigate(screens.Eligibility, { loanData: item });
               navigation?.navigate(isLoginIserOwner ? screenName : screens?.SystemLoanDetails, { loanData: item });
             }}
           >

@@ -282,12 +282,19 @@ export const getApplicantRequest = (data) => {
 export const getPeriodValues = (str, index) => {
   try {
     if (str) {
+      if(str.includes('/')){
+        const arr = str.split('/');
+        return arr[index]
+      }
+
       if (index === 0) {
         return str.substring(0, 2);
       } else {
         return str.substring(2, 4);
       }
     }
+
+    return '00'
   } catch (error) { }
   return null;
 };

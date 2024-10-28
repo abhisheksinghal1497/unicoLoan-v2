@@ -82,6 +82,8 @@ const PanDetails = (props) => {
   const uploadPan = uploadAndVerifyPan();
   const [showHelpModal, setShowHelpModal] = useState(false);
 
+  console.log('ERRROR hERE', verifyPan?.error)
+
   const toggleHelpModal = () => {
     setShowHelpModal(!showHelpModal);
   };
@@ -105,6 +107,7 @@ const PanDetails = (props) => {
     }
 
     if (verifyPan?.error) {
+      console.log('verifyPan?.error', verifyPan?.error)
       setError("panNumber", {
         type: "custom",
         message: ErrorConstants.PAN_UNVERIFIED,

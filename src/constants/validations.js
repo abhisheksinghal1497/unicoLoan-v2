@@ -1,4 +1,3 @@
-
 const validateLength = (value, minLength, maxLength) => {
   const isNumeric = /^[0-9]+$/.test(value);
   return isNumeric && value >= minLength && value <= maxLength;
@@ -6,26 +5,29 @@ const validateLength = (value, minLength, maxLength) => {
 
 const isOlderThan18 = (value) => {
   try {
-    console.log('DATA HERE-----', typeof value, ' ----------------------', {value})
+    console.log("DATA HERE-----", typeof value, " ----------------------", {
+      value,
+    });
     const today = new Date();
     const birthDate = new Date(value);
-    
+
     if (!value) return "Date is required"; // Check if the date is provided
-  
+
     const age = today.getFullYear() - birthDate.getFullYear();
     const monthDifference = today.getMonth() - birthDate.getMonth();
-  
-    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+
+    if (
+      monthDifference < 0 ||
+      (monthDifference === 0 && today.getDate() < birthDate.getDate())
+    ) {
       return age - 1; // Subtract a year if birthday hasn't occurred yet this year
     }
-    
-    return age >= 18 || "You must be at least 18 years old"; // Return an error message if under 18   
-  } catch (error) {
-    return  "You must be at least 18 years old";
-  }
-  
-};
 
+    return age >= 18 || "You must be at least 18 years old"; // Return an error message if under 18
+  } catch (error) {
+    return "You must be at least 18 years old";
+  }
+};
 
 export const validations = {
   required: {
@@ -56,20 +58,24 @@ export const validations = {
     pattern: /\d*/,
   },
   tenureRegex: {
-    validate: (value) => validateLength(value, 36, 360) || 'Tenure should be in between 36 to 360',
+    validate: (value) =>
+      validateLength(value, 36, 360) || "Tenure should be in between 36 to 360",
   },
   isOlderThan18: {
-    validate: (value) => isOlderThan18(value) || "Must be at least 18 years old",
+    validate: (value) =>
+      isOlderThan18(value) || "Must be at least 18 years old",
   },
   loanAmountRegex: {
-    // pattern: /^[0-9]+$/, 
-    // minLength: 100000, 
-    // maxLength: 20000000, 
-    validate: (value) => validateLength(value, 100000, 20000000) || 'Amount should be in between 1 Lakh to 2 Crores',
+    // pattern: /^[0-9]+$/,
+    // minLength: 100000,
+    // maxLength: 20000000,
+    validate: (value) =>
+      validateLength(value, 100000, 20000000) ||
+      "Amount should be in between 1 Lakh to 2 Crores",
   },
   numberOnlyRequired: {
     required: true,
-    pattern:  /^(0|[1-9]\d*)$/, // Matches non-negative integers (0 or positive)
+    pattern: /^(0|[1-9]\d*)$/, // Matches non-negative integers (0 or positive)
   },
   numberOnlyRequiredAboveZero: {
     required: true,
@@ -78,7 +84,7 @@ export const validations = {
   name: {
     required: true,
     minLength: 2,
-    pattern: /^[a-zA-Z]+$/
+    pattern: /^[a-zA-Z]+$/,
   },
   nameWithoutRequired: {
     minLength: 2,
@@ -93,35 +99,39 @@ export const validations = {
     required: true,
     pattern: /\d*/,
     maxLength: 12,
-    minLength: 12
+    minLength: 12,
   },
   email: {
     pattern: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
-
   },
   yyMMDate: {
     validate: (value) => {
-      if (!/^[0-9]{4}$/.test(value)) {
-        return 'Please enter years and months.';
+      if (value.includes("/")) {
+        const [_, months] = value.split("/");
+        if (!/(?:0[0-9]|1[0-1])$/.test(months)) {
+          return "Months must be between 00 and 11.";
+        }
+        return true
       }
-    
+
+      if (!/^[0-9]{4}$/.test(value)) {
+        return "Please enter years and months.";
+      }
+
       const lastTwoDigits = value.slice(2);
       if (!/(?:0[0-9]|1[0-1])$/.test(lastTwoDigits)) {
-        return 'Months must be between 00 and 11.';
+        return "Months must be between 00 and 11.";
       }
-  
+
       return true;
     },
   },
   currency: {
     pattern: /^\d{1,16}(\.\d{0,2})?$/,
-    required: true
+    required: true,
   },
   numberWith4digitsAndNoDecimal: {
-
     pattern: /^ [0 - 9]{ 1, 4}$/,
-    required: true
-  }
+    required: true,
+  },
 };
-
-
