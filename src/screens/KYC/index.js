@@ -68,13 +68,13 @@ const KYC = (props) => {
     panDetails = { panNumber: "", panName: "" },
   } = loanData;
 
-  console.log("panName>>>", panDetails.panName)
+
 
   // 'AMUPH7294R'
   const verifyAdharApi = verifyAadhar(
-    panDetails.panNumber,
+    panDetails?.panNumber,
     loanData,
-    panDetails.panName
+    panDetails?.panName
   );
   // const verifyAdharApi = checkPanLinkWithAdhaar(panDetails.panNumber);
   const canvasRef = useRef(null);
@@ -83,7 +83,7 @@ const KYC = (props) => {
   const adhaarEkycMutate = makeAdhaarEKYCCall();
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [mergeAdhaarImages, setMergeAdhaarImages] = useState('')
-  const { secondsLeft, formattedTime, startCountDown } = useOtpCounter(120);
+  const { secondsLeft, formattedTime, startCountDown, resetTimer } = useOtpCounter(120);
 
   const toggleHelpModal = () => {
     setShowHelpModal(!showHelpModal);
@@ -107,7 +107,7 @@ const KYC = (props) => {
       setIsImageProcessing(true)
       const context = canvas.getContext("2d");
       canvas.width = 600;
-      canvas.height = 800; 
+      canvas.height = 800;
       const image1 = new CanvasImage(canvas);
       const image2 = new CanvasImage(canvas);
 
@@ -254,7 +254,11 @@ const KYC = (props) => {
           if (type === 0) {
             onSubmitAdhaar();
           } else if (type === 1) {
-            uploadAadhar();
+            if (adhaarApiType) {
+              onSubmitAdhaar()
+            } else {
+              uploadAadhar();
+            }
           }
         }}
       >
@@ -296,6 +300,7 @@ const KYC = (props) => {
   const onAdhaarInitiateSuccess = (adhaarType) => {
     toast("success", "Otp sent successfully.");
     setType(1);
+    resetTimer()
     setVisible(true);
     setAdhaarApiType(adhaarType);
     startCountDown();
@@ -357,6 +362,7 @@ const KYC = (props) => {
     //   setError("adhaarName", "Please enter the Name.");
     // } 
     else {
+
       adhaarEkycMutate?.mutate({ number: AdhaarDetails, name: panDetails?.panName });
     }
   };

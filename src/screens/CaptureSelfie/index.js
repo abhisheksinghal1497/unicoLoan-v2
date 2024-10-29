@@ -62,7 +62,7 @@ const CaptureSelfie = ({ navigation }) => {
   };
 
   const onCameraPress = ({ front = false }) => {
-    ImagePicker.openCamera({
+    ImagePicker.openPicker({
       cropping: true,
       compressImageQuality: 0.4,
       // useFrontCamera: front,

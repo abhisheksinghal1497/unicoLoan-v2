@@ -6,12 +6,21 @@ const useOtpCounter = (initialSeconds) => {
   const [startTime, setStartTime] = useState(null);
 
   const startCountDown = useCallback(() => {
+    console.log(">>>isCountingDown", isCountingDown)
     if (!isCountingDown) {
-      setSecondsLeft(initialSeconds);
+      
+      setSecondsLeft(120);
       setIsCountingDown(true);
       setStartTime(Date.now());
     }
   }, [isCountingDown]);
+
+  const resetTimer = () => {
+     setSecondsLeft(120);
+    setIsCountingDown(true)
+    setStartTime(Date.now());
+  };
+
 
   useEffect(() => {
     let timer;
@@ -41,7 +50,7 @@ const useOtpCounter = (initialSeconds) => {
     )}`;
   }, [secondsLeft]);
 
-  return {secondsLeft, formattedTime, startCountDown};
+  return { secondsLeft, formattedTime, startCountDown, resetTimer };
 };
 
 export default useOtpCounter;

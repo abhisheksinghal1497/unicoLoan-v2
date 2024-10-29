@@ -215,11 +215,11 @@ export const getHomeScreenDetails = () => {
                     combinedAddress: permanentAddress?.FullAdrs__c || "",
                   },
                 },
-                loanDetails: {
+                loanDetails: loanDetail ? {
                   ...loanDetail,
                   Applicant_Net_Income__c:
                     applicantRecord?.Applicant_Net_Income__c,
-                },
+                }:null,
                 currentAddressDetails: currentAddress,
                 selfieDetails: selfieData,
                 // Save permanent in adhaar from composite 1
@@ -996,7 +996,7 @@ export const getApplicationDetailsForm = () => {
               type: component.textInput,
               placeHolder: "Enter requested tenure in months",
               validations: validations.tenureRegex,
-              isRequired: true,
+              isRequired: false,
               keyboardtype: "numeric",
               value: "",
             },
@@ -2291,7 +2291,7 @@ export const getLoanDetailsForm = (productType, customerProfile) => {
                 ...validations.required,
               },
             },
-            {
+            customerProfile === "Self-Employed" && {
               id: LOAN_DETAILS_KEYS.currPF,
               label: "Current balance in Pf",
               type: component.number,
