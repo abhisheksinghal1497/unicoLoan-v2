@@ -22,13 +22,40 @@ export const getCurrentScreenNameForResume = (item) => {
   }
 };
 
-const useGetProgressPercentage = (item) => {
-  const route = useRoute();
-  let routeName = route.name;
+export const useGetProgressPercentageForHomeScreen = (item) => {
+
+  const routeName = getCurrentScreenNameForResume(item);
+
+  let percentage = 0;
+  if (routeName === screens.ApplicantDetails) {
+    percentage = 10;
+  } else if (routeName === screens.PanDetails) {
+    percentage = 20;
+  } else if (routeName === screens.KYC) {
+    percentage = 40;
+  } else if (routeName === screens.CaptureSelfie) {
+    percentage = 50;
+  } else if (routeName === screens.KYCDocuments) {
+    percentage = 60;
+  } else if (routeName === screens.LoanDetails) {
+    percentage = 80;
+  } else if (routeName === screens.Eligibility) {
+    percentage = 100;
+  } else if (routeName === screens.Sanction) {
+    percentage = 100;
+  } else if (routeName === "COMPLETED") {
+    percentage = 100;
+  }
+  return percentage;
+};
+
+export const useGetProgressPercentage = (item, isFromHomeScreen  = false) => {
+  const route = isFromHomeScreen? null : useRoute();
+  let routeName = isFromHomeScreen ? screens.HomeScreen : route.name;
   if (routeName === screens.HomeScreen) {
     routeName = getCurrentScreenNameForResume(item);
   }
-  const ProgressBarPercent = route?.params?.ProgressBarPercent;
+  const ProgressBarPercent = screens.HomeScreen? route?.params?.ProgressBarPercent : null;
   let percentage = 0;
   if (ProgressBarPercent) {
     percentage = ProgressBarPercent;
@@ -45,9 +72,9 @@ const useGetProgressPercentage = (item) => {
   } else if (routeName === screens.LoanDetails) {
     percentage = 80;
   } else if (routeName === screens.Eligibility) {
-    percentage = 100;
+    percentage = 80;
   } else if (routeName === screens.Sanction) {
-    percentage = 100;
+    percentage = 80;
   } else if (routeName === "COMPLETED") {
     percentage = 100;
   }

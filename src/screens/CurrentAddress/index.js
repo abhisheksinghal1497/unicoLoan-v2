@@ -772,7 +772,7 @@ const CurrentAddress = ({ navigation }) => {
           : address?.addressLine1,
         AddrLine2__c: address?.addressLine1
           ? address?.addressLine1
-          : address?.completeAddress,
+          : "",
         AddrTyp__c: "Current Address",
         State__c: address?.state,
         // Country__c: data?.adhaarDetails?.address?.splitAddress?.country,
@@ -888,8 +888,16 @@ const CurrentAddress = ({ navigation }) => {
         body = getRequestForOthers(formData);
       }
       await submitMutation?.mutateAsync(body);
+      const AddrLine1__c = body?.addressBody?.AddrLine1__c ? body?.addressBody?.AddrLine1__c : ""
+      const AddrLine2__c = body?.addressBody?.AddrLine2__c ? body?.addressBody?.AddrLine2__c :""
+      const city__c = body?.addressBody?.city__c ? body?.addressBody?.city__c :""
+      const State__c = body?.addressBody?.State__c ?body?.addressBody?.State__c :""
+      const Pincode__c = body?.addressBody?.Pincode__c ?body?.addressBody?.Pincode__c :""
       navigation?.navigate(screens.LoanDetails, {
-        loanData: { ...loanData, currentAddress: body },
+        loanData: { ...loanData, currentAddressDetails: {
+          FullAdrs__c: AddrLine1__c + " " + AddrLine2__c
+            + " " + city__c + " " + State__c + " " + Pincode__c
+        } },
       });
     } catch (error) {
       toast("error", ErrorConstant.SOMETHING_WENT_WRONG);

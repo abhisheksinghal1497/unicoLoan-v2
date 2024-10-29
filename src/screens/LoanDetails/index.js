@@ -57,7 +57,7 @@ const LoanDetails = (props) => {
         loanData?.adhaarDetails?.address?.combinedAddress,
       [LOAN_DETAILS_KEYS.currAddr]:
         loanData?.currentAddressDetails?.FullAdrs__c,
-      // LOAN DATA ENDS
+    //  LOAN DATA ENDS
 
       // applicationDetails --DONE
       [LOAN_DETAILS_KEYS.reqLoanAmt]: applicationDetails?.ReqLoanAmt__c,

@@ -20,6 +20,7 @@ import {
   TextInput,
   ActivityIndicator,
   Alert,
+  AppState,
 } from "react-native";
 import CardComponent from "./cardComponent";
 import { colors } from "../../colors";
@@ -37,9 +38,7 @@ import {
 import PincodeModal from "../../components/PincodeModal";
 import { oauth } from "react-native-force";
 import { brandDetails } from "../../constants/stringConstants";
-import useGetProgressPercentage, {
-  getCurrentScreenNameForResume,
-} from "../../utils/useGetProgressPercentage";
+
 import ActivityIndicatorComponent from "../../components/ActivityIndicator";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
@@ -50,18 +49,36 @@ const HomeScreen = ({ navigation }) => {
   const flatListRef = useRef(null);
   const getLoanCardData = getHomeScreenDetails(true);
   const getOurServicesCardData = getHomeScreenOurServices();
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(null);
   const [data2, setData2] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDotIndex, setSelectedDotIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [currentScreen, setCurrentScreen] = useState(false);
+  const [hasFetched, setHasFetched] = useState(false);
+
+  // useFocusEffect(
+  //   useCallback(() => {
+
+  //   }, [])
+  // );
 
   useFocusEffect(
-    useCallback(() => {
-      getLoanCardData?.mutate();
-    }, [])
+    React.useCallback(() => {
+      if (!hasFetched && !getLoanCardData.data) {
+        console.log(">>>>>>>>>>>>>>>hvhjvhjv", hasFetched)
+        setHasFetched(true);
+        getLoanCardData?.mutate()
+
+      }
+
+      return () => {
+        // Optional cleanup logic
+      };
+    }, [hasFetched])
   );
+
+
 
   useEffect(() => {
     getOurServicesCardData?.mutate();
@@ -101,6 +118,7 @@ const HomeScreen = ({ navigation }) => {
     //   setCurrentScreen(currentData);
     // }
     // fetchData();
+
   }, []);
 
   const handleNavigation = (index) => {
@@ -148,13 +166,12 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const ResumeLoanJourney = ({ item }) => {
-    
-    console.log("loan ownerId", item.applicationDetails?.OwnerId);
-    console.log("login ownerId", LocalStorage?.getUserData().Id);
+
+
     const isLoginIserOwner =
-      LocalStorage?.getUserData().Id === item.applicationDetails?.OwnerId;
-    const progress = isLoginIserOwner ? useGetProgressPercentage(item):80;
-    const screenName = isLoginIserOwner ? getCurrentScreenNameForResume(item) : "In-Progress";
+      item?.isLoginIserOwner;
+    const progress = item?.progress;
+    const screenName = item?.screenName;
     //OwnerId
     //LocalStorage?.getUserData().Id
 
@@ -412,23 +429,25 @@ const HomeScreen = ({ navigation }) => {
             <Text style={styles.yourLoan}>Your Loans</Text>
 
             <View style={styles.secondcards}>
-              <FlatList
-                ref={flatListRef}
-                data={
-                  data?.length > 0
-                    ? [...data, { loanId: null }]
-                    : [{ loanId: null }]
-                }
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={renderItems}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                onScroll={handleScroll}
-                scrollEventThrottle={16}
-              />
+              {data &&
+                <FlatList
+                  ref={flatListRef}
+                  data={
+                    data?.length > 0
+                      ? [...data, { loanId: null }]
+                      : [{ loanId: null }]
+                  }
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={renderItems}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  onScroll={handleScroll}
+                  scrollEventThrottle={16}
+                />
+              }
             </View>
             <View style={styles.dotsContainer}>
-              {[...data, {}].map((_, index) => (
+              {data && [...data, {}].map((_, index) => (
                 <TouchableOpacity
                   key={index}
                   style={[

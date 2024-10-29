@@ -34,7 +34,10 @@ export const soupConfig = {
       currentAddressDetails: null,
       Applicant__c: null,
       Lead__c: null,
-      Id: null
+      Id: null,
+      isLoginIserOwner:true,
+      progress:0,
+      screenName:null
     }
   },
 };

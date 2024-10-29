@@ -53,6 +53,7 @@ import LocalStorage from "./LocalStorage";
 import { query } from "../constants/Queries";
 import { detectSelfie, nameCheck } from "./muleService/MuleApiUtils";
 import { ConfiguratonConstants } from "../constants/ConfigurationConstants";
+import useGetProgressPercentage, { getCurrentScreenNameForResume } from "../utils/useGetProgressPercentage";
 
 export const logoutApi = () => {
   console.log("LOGOUT API");
@@ -91,6 +92,7 @@ export const getHomeScreenDetails = () => {
     mutationFn: async () => {
       return new Promise(async (resolve, reject) => {
         try {
+          var loanData = []
           // FETCH THE PINCODE DATA
           const getLeadListData = await getLeadList(
             LocalStorage?.getUserData()?.Phone
@@ -103,7 +105,7 @@ export const getHomeScreenDetails = () => {
               );
 
               compositGraphRequest = compositGraphRequest?.compositeResponse;
-            } catch (error) {}
+            } catch (error) { }
 
             for (let i = 0; i < getLeadListData.records.length; i++) {
               //save the record into the soup
@@ -111,7 +113,7 @@ export const getHomeScreenDetails = () => {
               const ApplicantIncomeArr = compositGraphRequest[3]?.body?.records;
 
               let record = getLeadListData.records[i];
-              console.log("record owner id>>", record?.OwnerId);
+
               // CHANGES NEEDED HERE
               let applicantRecord = record?.Applicants__r?.records?.filter(
                 (el) => el.ApplType__c === "P"
@@ -120,8 +122,8 @@ export const getHomeScreenDetails = () => {
               const Applicant__c = applicantRecord?.Id;
               const applicantIncomeId = Array.isArray(ApplicantIncomeArr)
                 ? ApplicantIncomeArr.find(
-                    (el) => el?.Applicant__c === Applicant__c
-                  )?.Id
+                  (el) => el?.Applicant__c === Applicant__c
+                )?.Id
                 : undefined;
 
               // For Co Applicant
@@ -173,7 +175,7 @@ export const getHomeScreenDetails = () => {
                   ? panDetailsArr[panDetailsArr.length - 1]
                   : null;
 
-              const data = {
+              var request = {
                 applicantIncomeId,
                 loanId: record?.Id,
                 applicationDetails: {
@@ -189,12 +191,12 @@ export const getHomeScreenDetails = () => {
                 panDetails:
                   applicantRecord?.PAN__c || panDetails
                     ? // push pan name here
-                      {
-                        panNumber: panDetails
-                          ? panDetails?.Pan__c
-                          : applicantRecord?.PAN__c,
-                        panName: panDetails?.NameInPan__c,
-                      }
+                    {
+                      panNumber: panDetails
+                        ? panDetails?.Pan__c
+                        : applicantRecord?.PAN__c,
+                      panName: panDetails?.NameInPan__c,
+                    }
                     : undefined,
                 // adhaarDetails: applicantRecord?.AdhrLst4Dgts__c
                 //   ? { AdhrLst4Dgts__c: applicantRecord?.AdhrLst4Dgts__c, permanentAddress }
@@ -219,28 +221,57 @@ export const getHomeScreenDetails = () => {
                   ...loanDetail,
                   Applicant_Net_Income__c:
                     applicantRecord?.Applicant_Net_Income__c,
-                }:null,
-                currentAddressDetails: currentAddress,
+                } : null,
+                currentAddressDetails: currentAddress?.length > 0 ? currentAddress[0] : currentAddress,
+
                 selfieDetails: selfieData,
                 // Save permanent in adhaar from composite 1
               };
+              await saveApplicationData(request);
+              try {
+                const isLoginIserOwner = LocalStorage?.getUserData().Id === request?.applicationDetails?.OwnerId
+                const progress = isLoginIserOwner ? useGetProgressPercentage(request, true) : 80
+                const screenName = isLoginIserOwner ? getCurrentScreenNameForResume(request) : "In-Progress"
+                request = {
+                  ...request,
+                  isLoginIserOwner: isLoginIserOwner,
+                  progress: progress,
+                  screenName: screenName
 
-              await saveApplicationData(data);
+                }
+
+                loanData.push(request)
+
+
+              } catch (error) {
+                console.log("error>>>", error)
+              }
+
+
+
+
+
+
+
+
+
             }
           } else {
             resolve([]);
           }
 
-          const data = await getAllSoupEntries(
-            soupConfig.applicationList.name,
-            soupConfig.applicationList.path
-          );
+          resolve(loanData)
 
-          if (data && data?.length > 0) {
-            resolve(data);
-          } else {
-            resolve([]);
-          }
+          // const data = await getAllSoupEntries(
+          //   soupConfig.applicationList.name,
+          //   soupConfig.applicationList.path
+          // );
+
+          // if (data && data?.length > 0) {
+          //   resolve(data);
+          // } else {
+          //   resolve([]);
+          // }
         } catch (error) {
           console.log("error>>", error);
           resolve([]);
@@ -1465,6 +1496,7 @@ export const useSubmitApplicationFormData = (pincodeData) => {
               reject(
                 "Requested Loan is already exists or Something went wrong."
               );
+              return
             } else {
               // loan create
               const response = await compositeRequest(
@@ -1573,8 +1605,8 @@ export const useSubmitLoanFormData = (loanData) => {
           const applicationAssetId = loanData?.loanId
             ? loanData?.loanId
             : response.compositeResponse?.find(
-                (el) => el?.referenceId === "postLoanDetail"
-              )?.body?.id;
+              (el) => el?.referenceId === "postLoanDetail"
+            )?.body?.id;
 
           await saveApplicationData(loanDetail);
           resolve({ applicantIncomeId, applicationAssetId });
@@ -1614,9 +1646,8 @@ export const useSubmitPanForm = (loanData) => {
     mutationFn: async (data) => {
       return new Promise(async (resolve, reject) => {
         let loanDetail = { ...loanData };
-        loanDetail.panDetails = data.panDetails;
-        loanDetail.panDetails.imageBase64 = data?.imageBase64;
-        const imageBase64 = data.imageBase64;
+        loanDetail.panDetails = { ...data.panDetails, imageBase64: data?.imageBase64 };
+        // loanDetail.panDetails.imageBase64 = data?.imageBase64 ? data?.imageBase64 : null;
 
         // try {
         //   // Step 1
@@ -1993,7 +2024,7 @@ export const useSubmitServiceForm = () => {
   return mutate;
 };
 
-export const useVerifyOtpService = (onSuccess = (data) => {}) => {
+export const useVerifyOtpService = (onSuccess = (data) => { }) => {
   const mutate = useMutation({
     networkMode: "always",
     mutationFn: async (data) => {
@@ -2038,16 +2069,16 @@ export const useSaveSelfie = (loanData) => {
         try {
           const data = await detectSelfie(selfie?.data);
           console.log('DETECT SELFIE RESPONSE---------------------', data.data)
-          if(data?.data?.results?.multipleFacesDetected){
+          if (data?.data?.results?.multipleFacesDetected) {
             reject("Multiple faces detected");
             return;
           }
 
-          if(data?.data?.results?.livenessScore < 0.5){
+          if (data?.data?.results?.livenessScore < 0.5) {
             reject("Can't detect face.");
             return;
           }
-          
+
         } catch (error) {
           console.log("ERROR SELFIE VERIFY", error);
           reject("Not able to process selfie");
@@ -2071,7 +2102,7 @@ export const useSaveSelfie = (loanData) => {
               false
             );
             console.log("responseComposite", JSON.stringify(responseComposite));
-          } catch (error) {}
+          } catch (error) { }
 
           const response = await saveApplicationData(data);
           if (response) {
@@ -2188,34 +2219,34 @@ export const getLoanDetailsForm = (productType, customerProfile) => {
               data:
                 customerProfile === "Self-Employed"
                   ? [
-                      {
-                        id: "Affordable-SENP",
-                        label: "Affordable-SENP",
-                        value: "Affordable-SENP",
-                      },
-                      {
-                        id: "Prime-Self Employed Professional",
-                        label: "Prime-Self Employed Professional",
-                        value: "Prime-Self Employed Professional",
-                      },
-                      {
-                        id: "Prime-SENP",
-                        label: "Prime-SENP",
-                        value: "Prime-SENP",
-                      },
-                    ]
+                    {
+                      id: "Affordable-SENP",
+                      label: "Affordable-SENP",
+                      value: "Affordable-SENP",
+                    },
+                    {
+                      id: "Prime-Self Employed Professional",
+                      label: "Prime-Self Employed Professional",
+                      value: "Prime-Self Employed Professional",
+                    },
+                    {
+                      id: "Prime-SENP",
+                      label: "Prime-SENP",
+                      value: "Prime-SENP",
+                    },
+                  ]
                   : [
-                      {
-                        id: "Affordable-Salaried",
-                        label: "Affordable-Salaried",
-                        value: "Affordable-Salaried",
-                      },
-                      {
-                        id: "Prime-Salaried",
-                        label: "Prime-Salaried",
-                        value: "Prime-Salaried",
-                      },
-                    ],
+                    {
+                      id: "Affordable-Salaried",
+                      label: "Affordable-Salaried",
+                      value: "Affordable-Salaried",
+                    },
+                    {
+                      id: "Prime-Salaried",
+                      label: "Prime-Salaried",
+                      value: "Prime-Salaried",
+                    },
+                  ],
               value: "",
             },
 
@@ -2724,7 +2755,7 @@ export const assignBranchManagerMutation = (leadId) => {
             leadId
           );
         }
-      } catch (error) {}
+      } catch (error) { }
       return assignBranchManagerApi(leadId);
     },
   });

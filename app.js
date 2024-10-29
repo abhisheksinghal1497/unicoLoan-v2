@@ -136,7 +136,8 @@ export const App = function () {
       <ErrorBoundary FallbackComponent={ErrorScreen}>
         <QueryClientProvider client={queryClient}>
           <Reduxprovider store={store}>
-            {isConnected ? <Dashboard /> : <NoInternet />}
+            {/* {isConnected ? <Dashboard /> : <NoInternet />} */}
+            <Dashboard/>
             <Toast position="bottom" bottomOffset={20} />
           </Reduxprovider>
         </QueryClientProvider>

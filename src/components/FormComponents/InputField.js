@@ -63,15 +63,20 @@ export default InputField = ({
   }
 
  const formatValue = (value) => {
-  if(isEqual(validationRegex.yyMMDate, validations) && value){
-      if(typeof value === 'string' && value.length > 2){
-        if(value.includes('/')){
+  try {
+    if (isEqual(validationRegex.yyMMDate, validations) && value) {
+      if (typeof value === 'string' && value.length > 2) {
+        if (value.includes('/')) {
           return value;
         }
         return value.slice(0, 2) + '/' + value.slice(2);
       }
+    }
+    return value;
+  } catch (error) {
+    return ""
   }
-  return value;
+ 
  }
 
   return (

@@ -208,7 +208,7 @@ const PanDetails = (props) => {
 
   const submitPan = async () => {
     try {
-      panSubmitMutate?.mutate({ panDetails, imageBase64: selectedImage?.data });
+      panSubmitMutate?.mutate({ panDetails, imageBase64: selectedImage?.data ? selectedImage?.data :null  });
     } catch (error) {
       toast("error", "Some error occurred");
     }
