@@ -33,6 +33,7 @@ import {
   getPinCodes,
   getHomeScreenDetails,
   getHomeScreenOurServices,
+  getServicesData,
 } from "../../services/ApiUtils";
 
 import PincodeModal from "../../components/PincodeModal";
@@ -50,12 +51,13 @@ const HomeScreen = ({ navigation }) => {
   const getLoanCardData = getHomeScreenDetails(true);
   const getOurServicesCardData = getHomeScreenOurServices();
   const [data, setData] = useState(null);
-  const [data2, setData2] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [data2, setData2] = useState(getServicesData());
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedDotIndex, setSelectedDotIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [currentScreen, setCurrentScreen] = useState(false);
   const [hasFetched, setHasFetched] = useState(false);
+  const currentRef = useRef(null)
 
   // useFocusEffect(
   //   useCallback(() => {
@@ -63,53 +65,51 @@ const HomeScreen = ({ navigation }) => {
   //   }, [])
   // );
 
-  useFocusEffect(
-    React.useCallback(() => {
-      if (!hasFetched && !getLoanCardData.data) {
-        console.log(">>>>>>>>>>>>>>>hvhjvhjv", hasFetched)
-        setHasFetched(true);
-        getLoanCardData?.mutate()
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     if (!hasFetched && !getLoanCardData.data) {
+  //       console.log(">>>>>>>>>>>>>>>hvhjvhjv", hasFetched)
+  //       setHasFetched(true);
+  //    //   getLoanCardData?.mutate()
 
-      }
+  //     }
 
-      return () => {
-        // Optional cleanup logic
-      };
-    }, [hasFetched])
-  );
+  //     return () => {
+  //       // Optional cleanup logic
+  //     };
+  //   }, [hasFetched])
+  // );
 
 
 
-  useEffect(() => {
-    getOurServicesCardData?.mutate();
-  }, []);
+
 
   useEffect(() => {
     if (getLoanCardData.data) {
-      setIsLoading(false);
+
 
       setData(getLoanCardData.data);
     }
   }, [getLoanCardData.data]);
 
-  useEffect(() => {
-    if (getOurServicesCardData.data) {
-      setIsLoading(false);
-      setData2(getOurServicesCardData.data);
-    }
-  }, [getOurServicesCardData.data]);
+  // useEffect(() => {
+  //   if (getOurServicesCardData.data) {
+  //     setIsLoading(false);
+  //     setData2(getOurServicesCardData.data);
+  //   }
+  // }, [getOurServicesCardData.data]);
 
-  useEffect(() => {
-    if (getLoanCardData.error) {
-      Alert.alert(getLoanCardData.error);
-    }
-  }, [getLoanCardData.error]);
+  // useEffect(() => {
+  //   if (getLoanCardData.error) {
+  //     Alert.alert(getLoanCardData.error);
+  //   }
+  // }, [getLoanCardData.error]);
 
-  useEffect(() => {
-    if (getOurServicesCardData.error) {
-      Alert.alert(getOurServicesCardData.error);
-    }
-  }, [getOurServicesCardData.error]);
+  // useEffect(() => {
+  //   if (getOurServicesCardData.error) {
+  //     Alert.alert(getOurServicesCardData.error);
+  //   }
+  // }, [getOurServicesCardData.error]);
 
   useEffect(() => {
     // async function fetchData() {
@@ -118,6 +118,16 @@ const HomeScreen = ({ navigation }) => {
     //   setCurrentScreen(currentData);
     // }
     // fetchData();
+    try {
+      if (currentRef?.current) {
+        
+        navigation?.setOptions?.({ headerShown: false })
+        getLoanCardData?.mutate()
+      }
+
+    } catch (error) {
+
+    }
 
   }, []);
 
@@ -348,6 +358,7 @@ const HomeScreen = ({ navigation }) => {
           width: screenWidth - 20,
           margin: 10,
           maxHeight: 250,
+          minHeight: 200
         }}
       >
         <ImageBackground
@@ -364,13 +375,13 @@ const HomeScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1 }} ref={currentRef}>
       <StatusBar
         barStyle="dark-content"
         hidden={false}
-        backgroundColor={colors.coreCream}
+        backgroundColor={colors.white}
       />
-      <ActivityIndicatorComponent visible={isLoading} />
+      <ActivityIndicatorComponent visible={getLoanCardData?.isPending} />
       <PincodeModal
         setModalVisible={setModalVisible}
         modalVisible={modalVisible}

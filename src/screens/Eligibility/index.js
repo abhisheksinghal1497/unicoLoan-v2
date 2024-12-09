@@ -136,20 +136,6 @@ const Eligibility = (props) => {
     }
   };
 
-  function formatNumber(value) {
-    if (!value) {
-      return "0 lac";
-    }
-    const num = typeof value === "string" ? parseInt(value) : value;
-    if (num === 0) {
-      return "0 lac";
-    }
-    if (num < 10000000) {
-      return Math.floor(num / 100000).toFixed(2) + " lac"; // Return in lakhs
-    } else {
-      return Math.floor(num / 10000000).toFixed(2) + " cr"; // Return in crores
-    }
-  }
 
   const cardData = useMemo(() => {
     const {

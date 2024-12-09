@@ -55,9 +55,9 @@
             'scheme' would be "sfdc", 'host' would be "login.salesforce.com",
             and 'path' would be "/oauth/done".
         -->
-        <!--
+
         <activity android:name="com.salesforce.androidsdk.ui.LoginActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+
             android:launchMode="singleInstance"
             android:exported="true">
 
@@ -70,7 +70,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        -->
+
         <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
 	</application>
 

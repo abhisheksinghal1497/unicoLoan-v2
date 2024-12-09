@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   container: {
-    flex: 1,
+    // flex: 1,
 
   },
   paginationContainer: {
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
 
   card2: {
     borderRadius: 35,
-    marginTop: verticalScale(5),
+   
     // width: Dimensions.get('window').width - 1000 , 
     height: verticalScale(140),
     shadowColor: colors.black,

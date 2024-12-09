@@ -31,7 +31,7 @@ const customTheme = {
       // level5: "#E6F4FF",
     },
     border: "#D2D2D2",
-    disableBg: "#E8E8EA",
+    disableBg: "#F5F5F5",
     black: "#000000",
     labelColor: 'rgba(136, 136, 136, 1)'
   },

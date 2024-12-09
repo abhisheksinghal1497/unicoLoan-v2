@@ -58,6 +58,7 @@ export const validations = {
     pattern: /\d*/,
   },
   tenureRegex: {
+    required: false,
     validate: (value) =>
       validateLength(value, 36, 360) || "Tenure should be in between 36 to 360",
   },
@@ -79,7 +80,8 @@ export const validations = {
   },
   numberOnlyRequiredAboveZero: {
     required: true,
-    pattern: /^(0|[1-9]\d+)$/, // Matches positive integers (greater than 0)
+    validate: (value) =>
+      value >= 0 || "Value should not be negative", // Matches positive integers (greater than 0)
   },
   name: {
     required: true,
@@ -88,7 +90,7 @@ export const validations = {
   },
   nameWithoutRequired: {
     minLength: 2,
-    pattern: /[a-zA-Z]+/,
+    pattern: /^[a-zA-Z]+$/,
   },
   pan: {
     required: true,

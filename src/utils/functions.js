@@ -183,7 +183,7 @@ export const getLeadCreationRequest = (data) => {
       MobilePhone: data?.MobNumber__c,
       Email: data?.EmailId__c,
       Bulk_Lead__c: false,
-      Status: "New Lead",
+      Status: "Closed Lead",
       Alternative_Mobile_Number__c: data?.AltMobile__c,
       Customer_Profile__c: data?.Customer_Profile__c,
       LeadSource: data?.LeadSource__c,

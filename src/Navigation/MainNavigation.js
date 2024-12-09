@@ -6,6 +6,7 @@ import { makeMetadataApiCall } from "../services/sfDataServices/salesforceApiSer
 import { screens } from "../constants/screens";
 import { routes } from "../constants/routes";
 import { withSuspend } from "../components/WithSuspanse";
+import { encryptData } from "../utils/CryptoUtils";
 
 const Stack = createStackNavigator();
 
@@ -22,8 +23,10 @@ const createRoutes = (_routes) => {
 
 const Dashboard = () => {
   const getData = makeMetadataApiCall();
+  //encryptData({ name: "Harikrishna", company: "PWC" })
   useEffect(() => {
     getData.mutate();
+
   }, []);
   return (
     <NavigationContainer>

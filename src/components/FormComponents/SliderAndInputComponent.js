@@ -42,7 +42,7 @@ export default function SliderAndInputComponent({
         return (
           <View style={styles.container}>
             <View style={styles.labelContainer}>
-              <Text style={{ }}>
+              <Text variant="bodyLarge" style={{ fontSize:16}}>
                 {required && <Text style={styles.asterisk}>* </Text>}
                 {label}
               </Text>

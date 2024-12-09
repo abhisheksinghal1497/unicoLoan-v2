@@ -89,7 +89,7 @@ export const getPinCodes = () => {
 export const getHomeScreenDetails = () => {
   const mutate = useMutation({
     networkMode: "always",
-    mutationFn: async () => {
+    mutationFn: () => {
       return new Promise(async (resolve, reject) => {
         try {
           var loanData = []
@@ -189,15 +189,15 @@ export const getHomeScreenDetails = () => {
                 External_ID: record?.Id,
 
                 panDetails:
-                  applicantRecord?.PAN__c || panDetails
-                    ? // push pan name here
-                    {
-                      panNumber: panDetails
-                        ? panDetails?.Pan__c
-                        : applicantRecord?.PAN__c,
-                      panName: panDetails?.NameInPan__c,
-                    }
-                    : undefined,
+                  applicantRecord?.PAN__c && panDetails
+                  && // push pan name here
+                  {
+                    panNumber: panDetails
+                      ? panDetails?.Pan__c
+                      : applicantRecord?.PAN__c,
+                    panName: panDetails?.NameInPan__c,
+                  }
+                ,
                 // adhaarDetails: applicantRecord?.AdhrLst4Dgts__c
                 //   ? { AdhrLst4Dgts__c: applicantRecord?.AdhrLst4Dgts__c, permanentAddress }
                 //   : undefined,
@@ -451,44 +451,44 @@ export const getHomeScreenOurServices = () => {
     mutationFn: async () => {
       return new Promise((resolve, reject) => {
         setTimeout(() => {
-          const data = [
-            {
-              key: "EMI calculators",
-              title: "EMI Calculators",
-              image: require("../assets/Calculators.png"),
-            },
-            {
-              key: "applyForLoan",
-              title: "Apply For Loan",
-              image: require("../assets/applyForLoan.png"),
-            },
-            {
-              key: "statusCheck",
-              title: "Status Check",
-              image: require("../assets/StatusCheck.png"),
-            },
-            {
-              key: "RaiseTicket",
-              title: "Raise Ticket",
-              image: require("../assets/RaiseTicket.png"),
-            },
-            {
-              key: "Myticket",
-              title: "My ticket",
-              image: require("../assets/MyTickett.png"),
-            },
-            {
-              key: "FAQs",
-              title: "FAQs",
-              image: require("../assets/FAQ.png"),
-            },
-            // {
-            //   key: "Services",
-            //   title: "Services",
-            //   image: require("../assets/FAQ.png"),
-            // },
-          ];
-          resolve(data);
+          // const data = [
+          //   {
+          //     key: "EMI calculators",
+          //     title: "EMI Calculators",
+          //     image: require("../assets/Calculators.png"),
+          //   },
+          //   {
+          //     key: "applyForLoan",
+          //     title: "Apply For Loan",
+          //     image: require("../assets/applyForLoan.png"),
+          //   },
+          //   {
+          //     key: "statusCheck",
+          //     title: "Status Check",
+          //     image: require("../assets/StatusCheck.png"),
+          //   },
+          //   {
+          //     key: "RaiseTicket",
+          //     title: "Raise Ticket",
+          //     image: require("../assets/RaiseTicket.png"),
+          //   },
+          //   {
+          //     key: "Myticket",
+          //     title: "My ticket",
+          //     image: require("../assets/MyTickett.png"),
+          //   },
+          //   {
+          //     key: "FAQs",
+          //     title: "FAQs",
+          //     image: require("../assets/FAQ.png"),
+          //   },
+          //   // {
+          //   //   key: "Services",
+          //   //   title: "Services",
+          //   //   image: require("../assets/FAQ.png"),
+          //   // },
+          // ];
+          resolve([]);
         }, ConfiguratonConstants.setTimeoutTime);
       });
     },
@@ -859,6 +859,7 @@ export const getApplicationDetailsForm = () => {
     mutationFn: async (data) => {
       return new Promise(async (resolve, reject) => {
         try {
+          console.log("hari>>>>>>>>>>>>>")
           const fieldArray = await getLeadFields();
 
           const mock_data = [
@@ -1611,7 +1612,6 @@ export const useSubmitLoanFormData = (loanData) => {
           await saveApplicationData(loanDetail);
           resolve({ applicantIncomeId, applicationAssetId });
         } catch (error) {
-          console.log("skdjhdf", error);
           reject(ErrorConstants.SOMETHING_WENT_WRONG);
         }
       });
@@ -2304,10 +2304,7 @@ export const getLoanDetailsForm = (productType, customerProfile) => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: {
-                ...validations.numberOnlyRequired,
-                ...validations.required,
-              },
+              validations: validations.numberOnlyRequiredAboveZero,
             },
             {
               id: LOAN_DETAILS_KEYS.immovableProperty,
@@ -2317,10 +2314,7 @@ export const getLoanDetailsForm = (productType, customerProfile) => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: {
-                ...validations.numberOnlyRequired,
-                ...validations.required,
-              },
+              validations: validations.numberOnlyRequiredAboveZero,
             },
             customerProfile === "Self-Employed" && {
               id: LOAN_DETAILS_KEYS.currPF,
@@ -2330,10 +2324,7 @@ export const getLoanDetailsForm = (productType, customerProfile) => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: {
-                ...validations.numberOnlyRequired,
-                ...validations.required,
-              },
+              validations: validations.numberOnlyRequiredAboveZero,
             },
             {
               id: LOAN_DETAILS_KEYS.valShareSecr,
@@ -2343,10 +2334,7 @@ export const getLoanDetailsForm = (productType, customerProfile) => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: {
-                ...validations.numberOnlyRequired,
-                ...validations.required,
-              },
+              validations: validations.numberOnlyRequiredAboveZero,
             },
             {
               id: LOAN_DETAILS_KEYS.fd,
@@ -2356,10 +2344,7 @@ export const getLoanDetailsForm = (productType, customerProfile) => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: {
-                ...validations.numberOnlyRequired,
-                ...validations.required,
-              },
+              validations: validations.numberOnlyRequiredAboveZero,
             },
             {
               id: LOAN_DETAILS_KEYS.invPlantMachVehi,
@@ -2369,10 +2354,7 @@ export const getLoanDetailsForm = (productType, customerProfile) => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: {
-                ...validations.numberOnlyRequired,
-                ...validations.required,
-              },
+              validations: validations.numberOnlyRequiredAboveZero,
             },
             {
               id: LOAN_DETAILS_KEYS.ownContri,
@@ -2382,10 +2364,7 @@ export const getLoanDetailsForm = (productType, customerProfile) => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: {
-                ...validations.numberOnlyRequired,
-                ...validations.required,
-              },
+              validations: validations.numberOnlyRequiredAboveZero,
             },
             {
               id: LOAN_DETAILS_KEYS.assetVal,
@@ -2395,10 +2374,7 @@ export const getLoanDetailsForm = (productType, customerProfile) => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: {
-                ...validations.numberOnlyRequired,
-                ...validations.required,
-              },
+              validations: validations.numberOnlyRequiredAboveZero,
             },
             {
               id: LOAN_DETAILS_KEYS.totalAsset,
@@ -2419,10 +2395,7 @@ export const getLoanDetailsForm = (productType, customerProfile) => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: {
-                ...validations.numberOnlyRequired,
-                ...validations.required,
-              },
+              validations: validations.numberOnlyRequiredAboveZero,
             },
             {
               id: LOAN_DETAILS_KEYS.savings,
@@ -2432,10 +2405,7 @@ export const getLoanDetailsForm = (productType, customerProfile) => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: {
-                ...validations.numberOnlyRequired,
-                ...validations.required,
-              },
+              validations: validations.numberOnlyRequiredAboveZero,
             },
             {
               id: LOAN_DETAILS_KEYS.dispAsset,
@@ -2445,10 +2415,7 @@ export const getLoanDetailsForm = (productType, customerProfile) => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: {
-                ...validations.numberOnlyRequired,
-                ...validations.required,
-              },
+              validations: validations.numberOnlyRequiredAboveZero,
             },
             {
               id: LOAN_DETAILS_KEYS.familyFund,
@@ -2458,10 +2425,7 @@ export const getLoanDetailsForm = (productType, customerProfile) => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: {
-                ...validations.numberOnlyRequired,
-                ...validations.required,
-              },
+              validations: validations.numberOnlyRequiredAboveZero,
             },
             {
               id: LOAN_DETAILS_KEYS.srvcFund,
@@ -2471,10 +2435,7 @@ export const getLoanDetailsForm = (productType, customerProfile) => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: {
-                ...validations.numberOnlyRequired,
-                ...validations.required,
-              },
+              validations: validations.numberOnlyRequiredAboveZero,
             },
             {
               id: LOAN_DETAILS_KEYS.totalIncome,
@@ -2484,10 +2445,7 @@ export const getLoanDetailsForm = (productType, customerProfile) => {
               value: 0,
               keyboardtype: "numeric",
               isRequired: true,
-              validations: {
-                ...validations.numberOnlyRequired,
-                ...validations.required,
-              },
+              validations: validations.numberOnlyRequiredAboveZero,
             },
             {
               id: LOAN_DETAILS_KEYS.resAddr,
@@ -2762,3 +2720,43 @@ export const assignBranchManagerMutation = (leadId) => {
 
   return mutate;
 };
+
+export const getServicesData = () => {
+  return [
+    {
+      key: "EMI calculators",
+      title: "EMI Calculators",
+      image: require("../assets/Calculators.png"),
+    },
+    {
+      key: "applyForLoan",
+      title: "Apply For Loan",
+      image: require("../assets/applyForLoan.png"),
+    },
+    {
+      key: "statusCheck",
+      title: "Status Check",
+      image: require("../assets/StatusCheck.png"),
+    },
+    {
+      key: "RaiseTicket",
+      title: "Raise Ticket",
+      image: require("../assets/RaiseTicket.png"),
+    },
+    {
+      key: "Myticket",
+      title: "My ticket",
+      image: require("../assets/MyTickett.png"),
+    },
+    {
+      key: "FAQs",
+      title: "FAQs",
+      image: require("../assets/FAQ.png"),
+    },
+    // {
+    //   key: "Services",
+    //   title: "Services",
+    //   image: require("../assets/FAQ.png"),
+    // },
+  ];
+}

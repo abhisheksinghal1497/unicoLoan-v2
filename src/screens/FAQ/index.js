@@ -39,7 +39,7 @@ const FAQ = (props) => {
 
   return (
     <View style={styles.container}>
-      <Header
+      {/* <Header
         title={HeaderTexts.FAQ}
         titleStyle={styles.headerTitle}
         left={require("../../assets/Back.png")}
@@ -49,7 +49,7 @@ const FAQ = (props) => {
         }}
         onPressRight={() => {}}
         colour="white"
-      />
+      /> */}
 
       {isLoading ? (
         <View style={styles.loader}>

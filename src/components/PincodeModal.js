@@ -13,12 +13,13 @@ import CustomModal from "./CustomModal";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import { verticalScale } from "../utils/matrcis";
 import { getPinCodes } from "../services/ApiUtils";
-import Button from "./Button";
+
 import { useTheme } from "react-native-paper";
 import { screens } from "../constants/screens";
 import { useResetRoutes } from "../utils/functions";
 import { useNavigation } from "@react-navigation/native";
 import { ConfiguratonConstants } from "../constants/ConfigurationConstants";
+import SearchBarText from "./SearchBarText";
 
 const PincodeModal = ({ modalVisible = false, setModalVisible = () => { } }) => {
   const [pinCode, setPinCode] = useState("");
@@ -29,6 +30,7 @@ const PincodeModal = ({ modalVisible = false, setModalVisible = () => { } }) => 
   const [pincodeDataRes, setPinCodeRes] = useState(false)
 
   const HandlePinCode = (value) => {
+   
     setPinCode(value);
   };
 
@@ -40,36 +42,7 @@ const PincodeModal = ({ modalVisible = false, setModalVisible = () => { } }) => 
     setModalVisible(false);
   };
 
-  const FilteredPincode = useMemo(() => {
-    function filterDuplicatePincode(pinData) {
-      const uniquePins = new Set();
-      const uniquePinData = [];
-      pinData?.forEach?.((item) => {
-        if (item && item.PinCode__r && item.PinCode__r.PIN__c) {
-          const pinCode = item.PinCode__r.PIN__c;
-          if (!uniquePins.has(pinCode)) {
-            uniquePins.add(pinCode);
-            uniquePinData.push(item);
-          }
-        }
-      });
-      return uniquePinData;
-    }
 
-
-    const matchingPincodes = filterDuplicatePincode(pincodeDataRes)?.filter(
-      (pin) =>
-        pinCode?.length > 0 &&
-        pin?.PinCode__r?.PIN__c.toString().includes(pinCode)
-    );
-    if (pincodeDataRes) {
-
-      return matchingPincodes;
-    } else {
-      return []
-    }
-
-  }, [pinCode, pincodeDataRes]);
 
   useEffect(() => {
 
@@ -87,18 +60,15 @@ const PincodeModal = ({ modalVisible = false, setModalVisible = () => { } }) => 
 
   }, [pincodeDataRes])
 
-  const handleOkPress = () => {
-    if (FilteredPincode?.length >= 1) {
-      setPinCode("");
+  const continueClicked = (pincode, pincodeData) =>{
       setModalVisible(false);
-      setTimeout(() => {
-        navigation?.navigate?.(screens.ApplicantDetails, { pincode: pinCode, pincodeData: FilteredPincode[0] });
-      }, ConfiguratonConstants.setTimeoutTime);
-    }
-  };
+    setTimeout(() => {
+      navigation?.navigate?.(screens.ApplicantDetails, { pincode: pincode, pincodeData: pincodeData });
+    }, ConfiguratonConstants.setTimeoutTime);
+  
+  }
 
-  const isValid = FilteredPincode.length !== 0 || pinCode.length === 0;
-
+  
 
 
   return (
@@ -119,29 +89,12 @@ const PincodeModal = ({ modalVisible = false, setModalVisible = () => { } }) => 
           color={"#828282"}
         />
       </View>
-      <View style={styles.textInputContainer}>
-        <TextInput
-          style={styles.pinValue}
-          keyboardType="numeric"
-          maxLength={6}
-          onChangeText={(val) => HandlePinSearch(val)}
-          value={pinCode}
-          placeholder="Enter pincode here"
-        />
-      </View>
-
-      {!isValid && (
-        <View>
-          <Text style={{ color: colors.error }}>
-            Pincode is not serviceable
-          </Text>
-        </View>
-      )}
+     
 
 
 
 
-      <ScrollView style={styles.scrollView} propagateSwipe={true}>
+      {/* <ScrollView style={styles.scrollView} propagateSwipe={true}>
         {FilteredPincode.map((pincode, index) => (
           <TouchableOpacity
             onPress={() => HandlePinCode(pincode?.PinCode__r?.PIN__c)}
@@ -152,15 +105,8 @@ const PincodeModal = ({ modalVisible = false, setModalVisible = () => { } }) => 
             </Text>
           </TouchableOpacity>
         ))}
-      </ScrollView>
-      <View style={styles.button}>
-        <Button
-          disable={pinCode?.length != 6 || !isValid}
-          label="Ok"
-          type="primary"
-          onPress={handleOkPress}
-        />
-      </View>
+      </ScrollView> */}
+      <SearchBarText pincodeDataRes={pincodeDataRes} continueClicked={continueClicked} />
     </CustomModal>
   );
 };
@@ -173,7 +119,7 @@ const styles = StyleSheet.create({
   },
   modal: {
     width: "95%",
-    height: "55%",
+    height: "65%",
     alignSelf: "center",
   },
   modalHeader: {
